@@ -1,3 +1,8 @@
+import csv
+import json
+import subprocess
+import sys
+import zipfile
 from pathlib import Path
 
 
@@ -72,6 +77,112 @@ def test_analyze_survey_points_to_demo_data():
     assert "attribute values on the horizontal" in report_contract
     assert "Do not embed or recalculate from" in report_contract
     assert "Exclude\nraw respondent data" in report_contract
+    assert "scripts/build_interactive_report.py" in report_contract
+    assert (ROOT / "scripts/build_interactive_report.py").exists()
+    runner = (ROOT / "scripts/run_vivaglint_analysis.py").read_text(encoding="utf-8")
+    assert 'with_name("build_interactive_report.py")' in runner
+
+
+def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
+    survey = tmp_path / "survey.csv"
+    attributes = tmp_path / "attributes.csv"
+    questions = ["Q_ONE", "Q_TWO", "Q_THREE", "Q_FOUR"]
+    with survey.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=["user_id", "survey_cycle_title", *questions],
+        )
+        writer.writeheader()
+        for row in range(40):
+            writer.writerow(
+                {
+                    "user_id": row + 1,
+                    "survey_cycle_title": "H1" if row < 20 else "H2",
+                    **{
+                        question: ((row + index) % 5) + 1
+                        for index, question in enumerate(questions)
+                    },
+                }
+            )
+    with attributes.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=["user_id", "segment", "team_id"],
+        )
+        writer.writeheader()
+        for row in range(40):
+            writer.writerow(
+                {
+                    "user_id": row + 1,
+                    "segment": f"Group {(row % 4) + 1}",
+                    "team_id": "Team A",
+                }
+            )
+
+    config = tmp_path / "analysis-config.json"
+    config.write_text(
+        json.dumps(
+            {
+                "survey_csv": survey.name,
+                "attribute_file": attributes.name,
+                "attribute_cols": ["survey_cycle_title", "segment", "team_id"],
+                "question_cols": questions,
+                "input_format": "wide_items",
+                "scale_points": 5,
+                "emp_id_col": "user_id",
+            }
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "analysis-manifest.json").write_text(
+        json.dumps(
+            {
+                "repeatability_check": {"status": "passed"},
+                "analyses": [
+                    {
+                        "name": "attrition",
+                        "status": "skipped",
+                        "message": "attrition_file and term_date_col are required.",
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "scripts/build_interactive_report.py"),
+            "--config",
+            str(config),
+            "--output-dir",
+            str(tmp_path),
+        ],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    report = tmp_path / f"{tmp_path.name}-report.html"
+    share_zip = tmp_path / f"{tmp_path.name}-share.zip"
+    report_text = report.read_text(encoding="utf-8")
+    for tab in (
+        "Overview",
+        "Item results",
+        "Scores change",
+        "Heatmap",
+        "Relationships",
+        "Alerts",
+        "Factors",
+        "Attrition analysis",
+        "Downloads",
+    ):
+        assert f">{tab}</button>" in report_text
+    with zipfile.ZipFile(share_zip) as archive:
+        names = set(archive.namelist())
+    assert "OPEN_REPORT.html" in names
+    assert survey.name not in names
+    assert attributes.name not in names
 
 
 def test_knowledge_vault_source_priority():

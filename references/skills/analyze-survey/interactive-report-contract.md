@@ -3,6 +3,11 @@
 Every successful `analyze-survey` run must produce an interactive HTML report
 in this format. This contract is required, not an optional example.
 
+The deterministic implementation is
+`scripts/build_interactive_report.py`. The analysis runner invokes it
+automatically after repeatability passes. Do not rely on an agent to recreate
+the dashboard from prose.
+
 ## Required package
 
 Create:

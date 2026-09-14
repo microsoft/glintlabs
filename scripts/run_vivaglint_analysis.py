@@ -576,13 +576,45 @@ def main() -> int:
         json.dump(manifest, handle, indent=2)
         handle.write("\n")
 
+    report_status = "skipped"
+    report_failed = False
+    if (
+        not args.skip_repeatability_check
+        and not failed
+        and repeatability_check["status"] == "passed"
+    ):
+        report_command = [
+            sys.executable,
+            str(Path(__file__).with_name("build_interactive_report.py")),
+            "--config",
+            str(config_path),
+            "--output-dir",
+            str(output_dir),
+        ]
+        report_process = subprocess.run(
+            report_command,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if report_process.returncode == 0:
+            report_status = "completed"
+        else:
+            report_status = "failed"
+            report_failed = True
+            print(
+                report_process.stderr.strip() or report_process.stdout.strip(),
+                file=sys.stderr,
+            )
+
     print(json.dumps({
         "output_dir": str(output_dir),
         "completed": len(completed),
         "failed": len(failed),
         "repeatability": repeatability_check["status"],
+        "report": report_status,
     }, indent=2))
-    return 1 if failed or repeatability_check["status"] == "failed" else 0
+    return 1 if failed or repeatability_check["status"] == "failed" or report_failed else 0
 
 
 if __name__ == "__main__":

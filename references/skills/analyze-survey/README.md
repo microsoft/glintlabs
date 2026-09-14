@@ -36,3 +36,5 @@ the disclosed offline fallback.
 After the analysis passes repeatability, generate the interactive report and
 shareable ZIP defined in `interactive-report-contract.md`. Use precomputed
 aggregate interactions rather than browser-side employee analysis.
+`scripts/run_vivaglint_analysis.py` invokes
+`scripts/build_interactive_report.py` automatically.

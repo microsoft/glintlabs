@@ -97,8 +97,17 @@ When valid attrition inputs are available:
 7. Inspect `analysis-manifest.json`.
 8. After repeatability passes, read
    `references/skills/analyze-survey/interactive-report-contract.md`.
-9. Generate the required interactive HTML report and privacy-safe shareable
-   ZIP exactly as specified in that contract.
+9. Confirm the runner automatically completed
+   `scripts/build_interactive_report.py`. If debugging requires a direct run,
+   execute:
+
+   ```bash
+   python scripts/build_interactive_report.py \
+     --config <analysis-config.json> \
+     --output-dir <analysis-output-directory>
+   ```
+
+   Do not hand-author a substitute report.
 10. Validate JavaScript syntax, linked artifacts, minimum-N suppression, and
     exclusion of respondent-level files from the ZIP.
 11. Open the HTML report and report what completed, skipped, or failed,
