@@ -1,12 +1,15 @@
 ---
 name: analyze-survey
-description: "Run the standard People Science survey analysis package using vivaglint and produce a stable analysis manifest. Use when the user has Viva Glint survey exports, survey CSVs, cycle files, attribute files, or attrition files and asks to run descriptives, correlations, factor analysis, cycle comparisons, by-attribute analysis, or attrition analysis."
+description: "Run the standard People Science survey analysis package using vivaglint and produce a stable manifest, interactive Glint report, and privacy-safe share ZIP. Use for Viva Glint survey exports, survey CSVs, cycle files, attribute files, attrition files, or the canonical demo workbook."
 allowed-tools: Bash, Read, Write, Glob, Grep
 ---
 
 # Analyze Survey
 
-Run a standard, local People Science analysis workflow over Viva Glint survey exports using the pinned `vivaglint` package. Do not copy analysis code into this plugin. The skill's job is orchestration, validation, and manifest creation.
+Run a standard, local People Science analysis workflow over Viva Glint survey
+exports using the pinned `vivaglint` package, then package the completed
+aggregate outputs in the required interactive Glint report. Do not copy
+analysis code into this plugin.
 
 ## Use when
 
@@ -22,16 +25,35 @@ Do not use this skill when the user only wants an interpretation of existing res
 
 ## Required inputs
 
-Always start a survey-analysis request by asking:
+The first action in every survey-analysis request is to ask:
 
-> Do you have survey data you would like to reference? If not, you can use demo data.
+> Do you have your own survey data you would like to analyze? If not, I can use the demo Viva Glint workbook.
 
-If the user does not provide data or chooses demo data, use:
+Do not ask for scale points, identifiers, attributes, or other configuration
+until the user answers this question.
+
+If the user does not have data or chooses demo data, reference and use:
+
+```text
+Demo Viva Glint Dataset with Attributes.xlsx
+https://microsoft.sharepoint-df.com/:x:/t/EVE/cQqUFHaCVNxhR5SuuM1bWSpIEgUCf21SzklCzncCB16W6hH3Kg
+```
+
+Use worksheet `Sheet1`, `input_format: wide_items`, `emp_id_col: user_id`,
+scale points `5`, numeric `Q_*` columns as survey items, and join worksheet
+`user_properties` by `user_id`.
+
+The analysis runner requires CSV input. Download or export `Sheet1` to a local
+CSV before creating `analysis-config.json`. If the SharePoint workbook cannot
+be accessed, continue with the bundled offline fallback rather than blocking:
 
 ```text
 demo-data/survey/config.json
 demo-data/survey/glint_demo_data.csv
 ```
+
+When the fallback is used, state that it is the bundled offline demo and still
+reference the SharePoint workbook as the canonical demo source.
 
 Ask for missing required inputs:
 
@@ -44,9 +66,25 @@ Ask for missing required inputs:
 | Attribute columns | Optional | Required when attribute file is provided. |
 | Attrition file | Optional | Needed for attrition analysis. |
 | Termination date column | Optional | Required when attrition file is provided. |
+| Survey completion date | Required for attrition | The survey data must contain `Survey Cycle Completion Date`. |
+| Attrition attributes | Tenure and organization by default | Run overall, tenure, and organization views first. Offer additional attributes when available and relevant. |
 | Cycle CSVs | Optional | Needed for cycle comparisons. |
 
-The demo dataset uses `input_format: wide_items`, `emp_id_col: user_id`, and numeric `Q_*` survey item columns.
+The demo workbook includes survey-cycle metadata, collaboration attributes,
+tenure, organization, organization group, management level, job title,
+location, organization size, team size, and manager-defined teams. It does
+not include termination outcomes, survey completion dates, or termination
+dates, so do not claim attrition analysis completed on the workbook alone.
+
+## Attrition defaults
+
+When valid attrition inputs are available:
+
+1. Run the overall attrition analysis.
+2. Run tenure and organization as separate attribute views by default.
+3. Offer other available attributes as additional separate views.
+4. Report tenure or organization as missing if unavailable.
+5. Do not create high-dimensional attribute intersections by default.
 
 ## Process
 
@@ -57,7 +95,14 @@ The demo dataset uses `input_format: wide_items`, `emp_id_col: user_id`, and num
 5. Run `scripts/run_vivaglint_analysis.py` with the config and output directory.
 6. Require the built-in repeatability check to run. The script runs the analysis twice, compares completed artifacts by SHA-256 hash, and writes `repeatability_check` into `analysis-manifest.json`.
 7. Inspect `analysis-manifest.json`.
-8. Report what completed, what skipped, what failed, whether repeatability passed, and what should be interpreted next.
+8. After repeatability passes, read
+   `references/skills/analyze-survey/interactive-report-contract.md`.
+9. Generate the required interactive HTML report and privacy-safe shareable
+   ZIP exactly as specified in that contract.
+10. Validate JavaScript syntax, linked artifacts, minimum-N suppression, and
+    exclusion of respondent-level files from the ZIP.
+11. Open the HTML report and report what completed, skipped, or failed,
+    whether repeatability passed, and where the report and ZIP were written.
 
 ## Output contract
 
@@ -72,9 +117,15 @@ factor_analysis_summary.csv
 cycle_comparisons.csv
 by_attribute.csv
 attrition.csv
+<analysis-name>-report.html
+<analysis-name>-share.zip
 ```
 
 Only artifacts for completed analyses are required. Skipped or failed analyses must be recorded in the manifest.
+
+The report and ZIP are required after a successful repeatable analysis. Follow
+`references/skills/analyze-survey/interactive-report-contract.md` exactly.
+Do not finish a successful analysis with only CSV files and a manifest.
 
 ## Repeatability requirement
 

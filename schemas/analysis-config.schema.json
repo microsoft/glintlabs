@@ -42,8 +42,28 @@
       "type": "array",
       "items": { "type": "string" }
     },
+    "attribute_view_mode": {
+      "enum": ["combined", "separate"],
+      "default": "combined",
+      "description": "Analyze attribute columns as one intersection or as separate segment views."
+    },
     "attrition_file": { "type": "string" },
     "term_date_col": { "type": "string" },
+    "attrition_attribute_cols": {
+      "type": "array",
+      "description": "Separate attrition segment views to run. Defaults to tenure and organization when attrition is requested.",
+      "items": { "type": "string" },
+      "default": ["tenure", "organization"]
+    },
+    "attrition_time_periods": {
+      "type": "array",
+      "description": "Post-survey attrition windows in days.",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "default": [90, 180, 365]
+    },
     "min_group_size": {
       "type": "integer",
       "minimum": 5,

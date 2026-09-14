@@ -27,12 +27,51 @@ def test_each_skill_has_first_priority_reference_folder():
 
 def test_analyze_survey_points_to_demo_data():
     skill = (ROOT / "skills/analyze-survey/SKILL.md").read_text(encoding="utf-8")
+    source = (ROOT / "demo-data/survey/source.json").read_text(encoding="utf-8")
     demo_config = ROOT / "demo-data/survey/config.json"
     demo_csv = ROOT / "demo-data/survey/glint_demo_data.csv"
+    demo_url = (
+        "https://microsoft.sharepoint-df.com/:x:/t/EVE/"
+        "cQqUFHaCVNxhR5SuuM1bWSpIEgUCf21SzklCzncCB16W6hH3Kg"
+    )
 
-    assert "Do you have survey data you would like to reference? If not, you can use demo data." in skill
+    assert (
+        "Do you have your own survey data you would like to analyze? "
+        "If not, I can use the demo Viva Glint workbook."
+    ) in skill
+    assert skill.index("The first action") < skill.index("Ask for missing required inputs")
+    assert demo_url in skill
+    assert demo_url in source
     assert demo_config.exists()
     assert demo_csv.exists()
+    assert "Run tenure and organization as separate attribute views by default." in skill
+    assert "do not claim attrition analysis completed" in skill
+    assert "interactive-report-contract.md" in skill
+    assert "<analysis-name>-report.html" in skill
+    assert "<analysis-name>-share.zip" in skill
+
+    report_contract = (
+        ROOT / "references/skills/analyze-survey/interactive-report-contract.md"
+    ).read_text(encoding="utf-8")
+    required_tabs = (
+        "Overview",
+        "Item results",
+        "Scores change",
+        "Heatmap",
+        "Relationships",
+        "Alerts",
+        "Factors",
+        "Attrition analysis",
+        "Downloads",
+    )
+    positions = [report_contract.index(f"**{name}**") for name in required_tabs]
+    assert positions == sorted(positions)
+    assert "OPEN_REPORT.html" in report_contract
+    assert "Force the light Glint report theme" in report_contract
+    assert "questions on the vertical axis" in report_contract
+    assert "attribute values on the horizontal" in report_contract
+    assert "Do not embed or recalculate from" in report_contract
+    assert "Exclude\nraw respondent data" in report_contract
 
 
 def test_knowledge_vault_source_priority():

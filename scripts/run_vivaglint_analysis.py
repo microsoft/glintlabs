@@ -166,14 +166,23 @@ def load_survey(
 
     raw = pd.read_csv(survey_csv)
     attribute_cols = config.get("attribute_cols") or []
+    attrition_attribute_cols = config.get("attrition_attribute_cols") or []
+    all_attribute_cols = list(dict.fromkeys([
+        *attribute_cols,
+        *attrition_attribute_cols,
+    ]))
     question_cols = detect_wide_item_columns(
         raw,
         emp_id_col=emp_id_col,
-        attribute_cols=attribute_cols,
+        attribute_cols=all_attribute_cols,
         configured_question_cols=config.get("question_cols"),
     )
 
-    data = raw[[emp_id_col, *attribute_cols, *question_cols]].copy()
+    passthrough_cols = [
+        col for col in ["Survey Cycle Completion Date", *all_attribute_cols]
+        if col in raw.columns
+    ]
+    data = raw[[emp_id_col, *passthrough_cols, *question_cols]].copy()
     for question in question_cols:
         data[f"{question}_COMMENT"] = ""
         data[f"{question}_COMMENT_TOPICS"] = ""
@@ -192,6 +201,7 @@ def load_survey(
         file_path=str(survey_csv),
     )
     survey.metadata["attribute_cols"] = attribute_cols
+    survey.metadata["attrition_attribute_cols"] = attrition_attribute_cols
     survey.metadata["input_format"] = input_format
     survey.metadata["question_cols"] = question_cols
     return survey
@@ -406,6 +416,7 @@ def main() -> int:
     if "by_attribute" in requested:
         attribute_file = resolve_path(config_path, config.get("attribute_file"))
         attribute_cols = config.get("attribute_cols") or []
+        attribute_view_mode = config.get("attribute_view_mode", "combined")
         missing_attribute_cols = [
             col for col in attribute_cols
             if col not in survey.data.columns
@@ -416,6 +427,22 @@ def main() -> int:
             analyses.append(skip("by_attribute", "attribute_file is required because attribute columns are not already present in the survey data."))
         else:
             def by_attribute() -> str:
+                if attribute_view_mode == "separate":
+                    frames = []
+                    for attribute_col in attribute_cols:
+                        attribute_frame = analyze_by_attributes(
+                            survey,
+                            attribute_file=str(attribute_file) if attribute_file else None,
+                            scale_points=scale_points,
+                            attribute_cols=[attribute_col],
+                            emp_id_col=emp_id_col,
+                            min_group_size=min_group_size,
+                        ).rename(columns={attribute_col: "attribute_value"})
+                        attribute_frame.insert(0, "attribute_name", attribute_col)
+                        frames.append(attribute_frame)
+                    frame = pd.concat(frames, ignore_index=True, sort=False)
+                    return write_csv(output_dir, "by_attribute", frame)
+
                 frame = analyze_by_attributes(
                     survey,
                     attribute_file=str(attribute_file) if attribute_file else None,
@@ -437,15 +464,49 @@ def main() -> int:
             analyses.append(skip("attrition", "attrition_file and term_date_col are required."))
         else:
             def attrition() -> str:
-                frame = analyze_attrition(
-                    survey,
-                    attrition_file=str(attrition_file),
-                    emp_id_col=emp_id_col,
-                    term_date_col=term_date_col,
-                    scale_points=scale_points,
-                    attribute_cols=config.get("attribute_cols") or None,
-                    min_group_size=min_group_size,
+                attrition_attribute_cols = config.get(
+                    "attrition_attribute_cols",
+                    ["tenure", "organization"],
                 )
+                missing_attrition_cols = [
+                    col for col in attrition_attribute_cols
+                    if col not in survey.data.columns
+                ]
+                if missing_attrition_cols:
+                    raise ValueError(
+                        "Default attrition attribute column(s) not found: "
+                        + ", ".join(missing_attrition_cols)
+                    )
+
+                common_args = {
+                    "survey": survey,
+                    "attrition_file": str(attrition_file),
+                    "emp_id_col": emp_id_col,
+                    "term_date_col": term_date_col,
+                    "scale_points": scale_points,
+                    "time_periods": config.get(
+                        "attrition_time_periods",
+                        [90, 180, 365],
+                    ),
+                    "min_group_size": min_group_size,
+                }
+                frames = []
+                overall = analyze_attrition(**common_args)
+                overall.insert(0, "attribute_value", "")
+                overall.insert(0, "attribute_name", "")
+                overall.insert(0, "analysis_scope", "overall")
+                frames.append(overall)
+
+                for attribute_col in attrition_attribute_cols:
+                    segmented = analyze_attrition(
+                        **common_args,
+                        attribute_cols=[attribute_col],
+                    ).rename(columns={attribute_col: "attribute_value"})
+                    segmented.insert(0, "attribute_name", attribute_col)
+                    segmented.insert(0, "analysis_scope", "attribute")
+                    frames.append(segmented)
+
+                frame = pd.concat(frames, ignore_index=True, sort=False)
                 return write_csv(output_dir, "attrition", frame)
             result = run_step("attrition", attrition)
             analyses.append(result)

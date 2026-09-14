@@ -6,7 +6,9 @@ People Science analytics plugin suite for Viva Glint survey data.
 
 This plugin provides a set of focused skills that share a common analysis contract:
 
-1. `analyze-survey` runs a standard set of `vivaglint` codebooks and writes an `analysis-manifest.json`.
+1. `analyze-survey` runs a standard set of `vivaglint` codebooks, writes an
+   `analysis-manifest.json`, and packages the required interactive Glint HTML
+   report and privacy-safe shareable ZIP.
 2. `analysis-qa` reviews output validity, privacy thresholds, and interpretation readiness.
 3. `interpret-analysis` turns codebook outputs into People Science findings and caveats.
 4. `people-science-knowledge-vault` finds and synthesizes externally published People Science knowledge using a strict two-tier source hierarchy.
@@ -95,16 +97,34 @@ tests without changing this source hierarchy.
 
 Survey-analysis workflows should begin by asking:
 
-> Do you have survey data you would like to reference? If not, you can use demo data.
+> Do you have your own survey data you would like to analyze? If not, I can use the demo Viva Glint workbook.
 
-If the user chooses demo data, use:
+If the user chooses demo data, use the canonical workbook:
 
 ```text
-demo-data/survey/config.json
-demo-data/survey/glint_demo_data.csv
+Demo Viva Glint Dataset with Attributes.xlsx
+https://microsoft.sharepoint-df.com/:x:/t/EVE/cQqUFHaCVNxhR5SuuM1bWSpIEgUCf21SzklCzncCB16W6hH3Kg
 ```
 
+Export `Sheet1` to CSV and join `user_properties` by `user_id`. If SharePoint
+access is unavailable, use the bundled `demo-data/survey/config.json` and
+`demo-data/survey/glint_demo_data.csv` fallback and disclose that substitution.
+
 The demo source is registered in `demo-data/survey/source.json`.
+
+## Analyze-survey report output
+
+Every successful, repeatable survey analysis produces the standardized report
+defined in:
+
+```text
+references/skills/analyze-survey/interactive-report-contract.md
+```
+
+The report uses the fixed nine-tab Glint layout, shared attribute filtering,
+precomputed privacy-safe aggregates, and a ZIP containing
+`OPEN_REPORT.html`. Raw respondent and employee-property files are excluded
+from the shareable package.
 
 ## Analysis engine
 
