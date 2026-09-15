@@ -121,6 +121,43 @@ def test_direct_export_runner_detects_csv_contract(tmp_path):
     assert config["question_cols"] == ["Q_ONE", "Q_TWO"]
     assert config["attribute_cols"] == ["department"]
     assert "email" not in config["attribute_cols"]
+    assert config["source_file_name"] == survey.name
+    assert len(config["source_sha256"]) == 64
+
+
+def test_direct_export_runner_normalizes_glint_score_encoding(tmp_path):
+    survey = tmp_path / "survey.csv"
+    survey.write_text(
+        "user_id,Q_ONE,Q_TWO,department\n"
+        "1,0,100,Sales\n"
+        "2,25,75,Sales\n"
+        "3,50,50,Engineering\n"
+        "4,75,25,Engineering\n"
+        "5,100,0,Finance\n",
+        encoding="utf-8",
+    )
+    script_path = ROOT / "scripts/analyze_survey_export.py"
+    spec = importlib.util.spec_from_file_location("analyze_survey_export_scores", script_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+
+    class Args:
+        survey_export = str(survey)
+        output_dir = str(tmp_path / "output")
+        sheet = None
+        attribute_sheet = None
+        emp_id_col = None
+        scale_points = 5
+        question_cols = None
+        attribute_cols = None
+        min_group_size = 5
+
+    config_path = module.build_config(Args(), Path(Args.output_dir))
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    normalized = list(csv.DictReader(Path(config["survey_csv"]).open(encoding="utf-8")))
+    assert [int(float(row["Q_ONE"])) for row in normalized] == [1, 2, 3, 4, 5]
+    assert [int(float(row["Q_TWO"])) for row in normalized] == [5, 4, 3, 2, 1]
 
 
 def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
@@ -223,6 +260,20 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert "OPEN_REPORT.html" in names
     assert survey.name not in names
     assert attributes.name not in names
+
+
+def test_numeric_attribute_bucketing_handles_missing_values():
+    script_path = ROOT / "scripts/build_interactive_report.py"
+    spec = importlib.util.spec_from_file_location("build_interactive_report", script_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+    frame = module.pd.DataFrame(
+        {"user_id": range(12), "numeric_attribute": [*range(1, 12), None]}
+    )
+    buckets = module.bucket_numeric(frame, {"user_id"})
+    assert "numeric_attribute" in buckets
+    assert frame["numeric_attribute"].isna().sum() == 1
 
 
 def test_knowledge_vault_source_priority():

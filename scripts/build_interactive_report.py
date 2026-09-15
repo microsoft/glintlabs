@@ -50,6 +50,11 @@ def normalize_items(frame: pd.DataFrame, questions: list[str], scale: int) -> No
 
 
 def bucket_numeric(frame: pd.DataFrame, protected: set[str]) -> dict[str, list[str]]:
+    def bucket_label(item: Any) -> str | None:
+        if not hasattr(item, "left"):
+            return None
+        return f"{math.floor(item.left) + 1}-{math.floor(item.right)}"
+
     bucketed = {}
     for column in frame.select_dtypes(include="number").columns:
         if column in protected or frame[column].nunique(dropna=True) <= 10:
@@ -59,14 +64,10 @@ def bucket_numeric(frame: pd.DataFrame, protected: set[str]) -> dict[str, list[s
             positive = values[values > 0]
             cuts = pd.qcut(positive, 4, duplicates="drop")
             mapped = pd.Series("0", index=frame.index, dtype="object")
-            mapped.loc[positive.index] = cuts.map(
-                lambda item: f"{math.floor(item.left) + 1}-{math.floor(item.right)}"
-            ).astype("object")
+            mapped.loc[positive.index] = cuts.map(bucket_label).astype("object")
         else:
             cuts = pd.qcut(values, 5, duplicates="drop")
-            mapped = cuts.map(
-                lambda item: f"{math.floor(item.left) + 1}-{math.floor(item.right)}"
-            ).astype("object")
+            mapped = cuts.map(bucket_label).astype("object")
         frame[column] = mapped
         bucketed[column] = sorted(frame[column].dropna().astype(str).unique())
     return bucketed

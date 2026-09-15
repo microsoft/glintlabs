@@ -540,6 +540,13 @@ def main() -> int:
             "scale_points": scale_points,
             "attribute_cols": config.get("attribute_cols") or [],
             "input_format": config.get("input_format", "glint_export"),
+            "source": {
+                "file_name": config.get("source_file_name"),
+                "sha256": config.get("source_sha256"),
+                "url": config.get("source_url"),
+                "survey_sheet": config.get("source_survey_sheet"),
+                "attribute_sheet": config.get("source_attribute_sheet"),
+            },
         },
         "analyses": [item.to_manifest() for item in analyses],
         "artifacts": artifacts,

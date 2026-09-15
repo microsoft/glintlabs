@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import subprocess
@@ -143,11 +144,20 @@ def detect_questions(
         )
     invalid = []
     for question in questions:
-        values = numeric_series(frame, question).dropna()
-        if values.empty or values.min() < 1 or values.max() > scale_points:
+        numeric = numeric_series(frame, question)
+        values = numeric.dropna()
+        unique = sorted(values.unique())
+        if values.empty:
             invalid.append(question)
-        else:
-            frame[question] = values.reindex(frame.index)
+            continue
+        if values.min() >= 1 and values.max() <= scale_points:
+            frame[question] = numeric
+            continue
+        if len(unique) == scale_points:
+            mapping = {value: index + 1 for index, value in enumerate(unique)}
+            frame[question] = numeric.map(mapping)
+            continue
+        invalid.append(question)
     if invalid:
         raise ValueError(
             f"Question values must be between 1 and {scale_points}: "
@@ -179,6 +189,29 @@ def sidecar_config(source: Path) -> dict[str, Any]:
     if configured_source and Path(configured_source).name == source.name:
         return config
     return {}
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def linked_source_url(source: Path) -> str | None:
+    if "viva glint dataset with attributes" not in source.name.casefold():
+        return None
+    registry = (
+        Path(__file__).resolve().parents[1]
+        / "references"
+        / "skills"
+        / "analyze-survey"
+        / "linked-dataset.json"
+    )
+    if not registry.exists():
+        return None
+    return json.loads(registry.read_text(encoding="utf-8")).get("source_url")
 
 
 def detect_attributes(
@@ -214,10 +247,13 @@ def read_export(
     input_dir: Path,
     sheet: str | None,
     attribute_sheet: str | None,
-) -> tuple[pd.DataFrame, Path, pd.DataFrame | None, Path | None]:
+) -> tuple[pd.DataFrame, Path, pd.DataFrame | None, Path | None, dict[str, str | None]]:
     suffix = source.suffix.casefold()
     if suffix == ".csv":
-        return pd.read_csv(source), source, None, None
+        return pd.read_csv(source), source, None, None, {
+            "survey_sheet": None,
+            "attribute_sheet": None,
+        }
     if suffix not in {".xlsx", ".xlsm"}:
         raise ValueError("Survey export must be a .csv, .xlsx, or .xlsm file.")
 
@@ -237,14 +273,20 @@ def read_export(
         ]
         selected_attribute_sheet = matches[0] if matches else None
     if not selected_attribute_sheet:
-        return survey, survey_csv, None, None
+        return survey, survey_csv, None, None, {
+            "survey_sheet": survey_sheet,
+            "attribute_sheet": None,
+        }
     if selected_attribute_sheet not in workbook.sheet_names:
         raise ValueError(f"Attribute worksheet '{selected_attribute_sheet}' was not found.")
 
     attributes = pd.read_excel(workbook, sheet_name=selected_attribute_sheet)
     attributes_csv = input_dir / "attributes.csv"
     attributes.to_csv(attributes_csv, index=False)
-    return survey, survey_csv, attributes, attributes_csv
+    return survey, survey_csv, attributes, attributes_csv, {
+        "survey_sheet": survey_sheet,
+        "attribute_sheet": selected_attribute_sheet,
+    }
 
 
 def build_config(options: argparse.Namespace, output: Path) -> Path:
@@ -259,7 +301,7 @@ def build_config(options: argparse.Namespace, output: Path) -> Path:
     input_dir = output / "_input"
     input_dir.mkdir(parents=True, exist_ok=True)
     registered_defaults = sidecar_config(source)
-    survey, survey_path, attribute_frame, attribute_path = read_export(
+    survey, survey_path, attribute_frame, attribute_path, workbook_source = read_export(
         source, input_dir, options.sheet, options.attribute_sheet
     )
     emp_id_col = detect_emp_id(
@@ -272,14 +314,21 @@ def build_config(options: argparse.Namespace, output: Path) -> Path:
         options.question_cols,
         options.scale_points,
     )
+    normalized_survey_path = input_dir / "survey.csv"
+    survey.to_csv(normalized_survey_path, index=False)
+    survey_path = normalized_survey_path
 
     configured_attributes = options.attribute_cols or registered_defaults.get(
         "attribute_cols"
     )
-    inline_attributes = detect_attributes(
-        survey,
-        {emp_id_col, *questions},
-        configured_attributes if attribute_frame is None else None,
+    inline_attributes = (
+        detect_attributes(
+            survey,
+            {emp_id_col, *questions},
+            configured_attributes,
+        )
+        if attribute_frame is None
+        else []
     )
     external_attributes: list[str] = []
     if attribute_frame is not None:
@@ -316,7 +365,14 @@ def build_config(options: argparse.Namespace, output: Path) -> Path:
         "attribute_cols": attribute_cols,
         "min_group_size": options.min_group_size,
         "analyses": analyses,
+        "source_file_name": source.name,
+        "source_sha256": file_sha256(source),
+        "source_url": linked_source_url(source),
+        "source_survey_sheet": workbook_source["survey_sheet"],
+        "source_attribute_sheet": workbook_source["attribute_sheet"],
     }
+    if attribute_cols:
+        config["attribute_view_mode"] = "separate"
     if attribute_path:
         config["attribute_file"] = str(attribute_path)
 

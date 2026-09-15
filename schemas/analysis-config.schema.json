@@ -38,6 +38,11 @@
       "items": { "type": "string" }
     },
     "attribute_file": { "type": "string" },
+    "source_file_name": { "type": "string" },
+    "source_sha256": { "type": "string" },
+    "source_url": { "type": ["string", "null"] },
+    "source_survey_sheet": { "type": ["string", "null"] },
+    "source_attribute_sheet": { "type": ["string", "null"] },
     "attribute_cols": {
       "type": "array",
       "items": { "type": "string" }
