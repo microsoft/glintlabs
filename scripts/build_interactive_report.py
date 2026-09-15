@@ -11,7 +11,10 @@ import zipfile
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import pandas as pd
+from scipy.cluster.hierarchy import cut_tree, linkage
+from scipy.spatial.distance import squareform
 from scipy.stats import t as student_t
 
 
@@ -214,18 +217,83 @@ def correlation_rows(frame: pd.DataFrame, questions: list[str]) -> list[list[Any
     return rows
 
 
+def silhouette_score(distance: np.ndarray, assignments: np.ndarray) -> float:
+    scores = []
+    for index, cluster in enumerate(assignments):
+        same = np.flatnonzero(assignments == cluster)
+        other_clusters = np.unique(assignments[assignments != cluster])
+        if len(same) <= 1 or len(other_clusters) == 0:
+            scores.append(0.0)
+            continue
+        within = float(distance[index, same[same != index]].mean())
+        nearest = min(
+            float(distance[index, assignments == other].mean())
+            for other in other_clusters
+        )
+        denominator = max(within, nearest)
+        scores.append((nearest - within) / denominator if denominator else 0.0)
+    return float(np.mean(scores))
+
+
+def cluster_plan(rows: list[list[Any]], question_count: int) -> dict[str, Any]:
+    if question_count < 4:
+        return {"recommended": None, "scores": {}, "assignments": {}}
+    correlation = np.eye(question_count)
+    for first, second, value, _, _ in rows:
+        correlation[int(first), int(second)] = float(value)
+        correlation[int(second), int(first)] = float(value)
+    distance = np.clip(1 - correlation, 0, 1)
+    tree = linkage(squareform(distance, checks=False), method="average")
+    maximum = min(15, question_count - 1)
+    scores: dict[str, float] = {}
+    assignments: dict[str, list[int]] = {}
+    for cluster_count in range(3, maximum + 1):
+        labels = cut_tree(tree, n_clusters=[cluster_count]).reshape(-1)
+        remap = {
+            value: index
+            for index, value in enumerate(
+                sorted(np.unique(labels), key=lambda value: int(np.flatnonzero(labels == value)[0]))
+            )
+        }
+        normalized = np.array([remap[value] for value in labels], dtype=int)
+        assignments[str(cluster_count)] = normalized.tolist()
+        scores[str(cluster_count)] = round(
+            silhouette_score(distance, normalized), 4
+        )
+    recommended = max(
+        (int(value) for value in scores),
+        key=lambda value: (scores[str(value)], -value),
+    )
+    return {
+        "recommended": recommended,
+        "scores": scores,
+        "assignments": assignments,
+    }
+
+
 def relationship_cube(
     frame: pd.DataFrame, questions: list[str], attributes: list[str]
 ) -> dict[str, Any]:
-    result = {"overall": correlation_rows(frame, questions), "segments": {}}
+    overall = correlation_rows(frame, questions)
+    result = {
+        "overall": overall,
+        "segments": {},
+        "clusters": {
+            "overall": cluster_plan(overall, len(questions)),
+            "segments": {},
+        },
+    }
     for attribute in attributes:
         values = {}
+        cluster_values = {}
         for value, group in frame.dropna(subset=[attribute]).groupby(attribute):
             if len(group) >= RELATIONSHIP_MIN_N:
                 rows = correlation_rows(group, questions)
                 if len(rows) == len(questions) * (len(questions) - 1) // 2:
                     values[str(value)] = rows
+                    cluster_values[str(value)] = cluster_plan(rows, len(questions))
         result["segments"][attribute] = values
+        result["clusters"]["segments"][attribute] = cluster_values
     return result
 
 

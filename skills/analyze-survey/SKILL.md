@@ -73,6 +73,14 @@ axes in small regular-weight text, make color intensity increase with
 relationship strength, and hide significance and empty detail/highlight
 regions by default.
 
+Cluster the relationship matrix with deterministic average-linkage
+hierarchical clustering using positive-correlation distance (`1 - r`). Select
+the recommended count using the highest average silhouette score from 3
+through 15, capped below the item count. Show a concise recommendation blurb
+and a dropdown from 3 through 10 clusters, extending through the recommendation
+when it is higher. Reorder both axes and show cluster labels/boundaries.
+Describe clusters as exploratory rather than validated survey constructs.
+
 ## Primary workflow
 
 Use the direct export runner:

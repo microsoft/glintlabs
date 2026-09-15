@@ -86,3 +86,7 @@ add/remove question highlights, summary counts, and click-through cell details
 in the golden report. Keep the matrix visually compact: full question names on
 both axes in small regular-weight text, subtle-to-strong blue intensity,
 significance hidden by default, and no empty highlight or detail panels.
+Use deterministic average-linkage clustering over positive-correlation
+distance. Show the silhouette-based recommendation in a short blurb, default
+to it, and allow selection from 3 through 10 clusters or through the
+recommendation when it is higher.

@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption is
-`5d75c898851b98ea487cddd7dcf65df55acdd15a04e8af28c4ceffb0e8d7d011`.
+`d3ca0466194e4c7cc3a12c930a07793852f9c1c185e0660da4abcbe05a55ab6d`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -118,6 +118,18 @@ Place one report-level attribute/value filter above the tabs.
   unrelated cells and emphasize selected row/column headers and cells.
 - Show full question names on both axes. Use compact regular-weight text, with
   vertical column labels and horizontal row labels.
+- Cluster questions with deterministic average-linkage hierarchical clustering
+  using positive-correlation distance (`1 - r`).
+- Recommend the cluster count with the highest average silhouette score among
+  3 through 15 clusters, capped below the number of questions. Treat ties as a
+  reason to prefer the smaller cluster count.
+- Show the recommendation in a short blurb above the matrix.
+- Provide every cluster-count option from 3 through 10. If the recommendation
+  is greater than 10, extend the dropdown through the recommended count.
+- Default the dropdown to the recommendation. Reorder both axes by cluster and
+  show labeled cluster boundaries without replacing relationship-strength
+  colors.
+- Treat clusters as exploratory groupings, not validated survey constructs.
 - Keep the legend and summary compact, hide empty highlight/detail regions, and
   reveal relationship details only after a cell is selected.
 - Clicking a cell shows `r`, p-value, N, and significance status.

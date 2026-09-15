@@ -62,6 +62,9 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "strength-color visibility" in skill
     assert "statistical-significance visibility" in skill
     assert "multiple highlighted questions" in skill
+    assert "positive-correlation distance (`1 - r`)" in skill
+    assert "highest average silhouette score" in skill
+    assert "dropdown from 3 through 10 clusters" in skill
     assert "<output-directory-name>-report.html" in skill
     assert "<output-directory-name>-share.zip" in skill
 
@@ -87,6 +90,9 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "turn strength colors on or off" in report_contract
     assert "show or hide statistical-significance markers" in report_contract
     assert "individually remove multiple highlighted questions" in report_contract
+    assert "average-linkage hierarchical clustering" in report_contract
+    assert "3 through 15 clusters" in report_contract
+    assert "extend the dropdown through the recommended count" in report_contract
     assert (ROOT / "scripts/build_interactive_report.py").exists()
     golden = ROOT / "references/skills/analyze-survey/golden-report.html"
     assert golden.exists()
@@ -294,6 +300,8 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         ">Significance</label>",
         ">Clear</button>",
         "Very high",
+        "Recommended:",
+        "Clusters",
     ):
         assert heading in report_text
     assert "--rel-low:#f5f5f5" in report_text
@@ -301,14 +309,40 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert "--rel-high:#7ea4fc" in report_text
     assert "--rel-very-high:#335ccc" in report_text
     assert "id=relSignificance type=checkbox>" in report_text
-    assert "title=\"${x}\">${x}</th>" in report_text
+    assert "title=\"${names[i]}\">${names[i]}</th>" in report_text
     assert "font-size:10px;font-weight:400" in report_text
     assert "font-size:11px" in report_text
+    assert "id=relClusters" in report_text
+    assert "cluster-start-col" in report_text
+    assert "cluster-start-row" in report_text
     with zipfile.ZipFile(share_zip) as archive:
         names = set(archive.namelist())
     assert "OPEN_REPORT.html" in names
     assert survey.name not in names
     assert attributes.name not in names
+
+
+def test_relationship_cluster_plan_is_deterministic():
+    script_path = ROOT / "scripts/build_interactive_report.py"
+    spec = importlib.util.spec_from_file_location("build_interactive_report", script_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+
+    groups = ({0, 1, 2}, {3, 4, 5}, {6, 7, 8})
+    rows = []
+    for first in range(9):
+        for second in range(first + 1, 9):
+            same_group = any(first in group and second in group for group in groups)
+            rows.append([first, second, 0.9 if same_group else 0.1, 0.01, 100])
+
+    first = module.cluster_plan(rows, 9)
+    second = module.cluster_plan(rows, 9)
+
+    assert first == second
+    assert first["recommended"] == 3
+    assert sorted(first["assignments"]) == ["3", "4", "5", "6", "7", "8"]
+    assert len(set(first["assignments"]["3"])) == 3
 
 
 def test_numeric_attribute_bucketing_handles_missing_values():
