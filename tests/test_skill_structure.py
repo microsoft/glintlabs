@@ -301,7 +301,9 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert "--rel-high:#7ea4fc" in report_text
     assert "--rel-very-high:#335ccc" in report_text
     assert "id=relSignificance type=checkbox>" in report_text
-    assert "title=\"${x}\">${i+1}</th>" in report_text
+    assert "title=\"${x}\">${x}</th>" in report_text
+    assert "font-size:10px;font-weight:400" in report_text
+    assert "font-size:11px" in report_text
     with zipfile.ZipFile(share_zip) as archive:
         names = set(archive.namelist())
     assert "OPEN_REPORT.html" in names

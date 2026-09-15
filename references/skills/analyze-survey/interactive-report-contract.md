@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption is
-`98b404fe56be49d48c99493c4d631b3d3d257a28b3123d7a08d736fdde0bc3cf`.
+`5d75c898851b98ea487cddd7dcf65df55acdd15a04e8af28c4ceffb0e8d7d011`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -116,8 +116,8 @@ Place one report-level attribute/value filter above the tabs.
 - Keep significance markers off by default to reduce visual noise.
 - Let users add and individually remove multiple highlighted questions. Dim
   unrelated cells and emphasize selected row/column headers and cells.
-- Use compact numbered column headers with full question names in row headers
-  and hover text.
+- Show full question names on both axes. Use compact regular-weight text, with
+  vertical column labels and horizontal row labels.
 - Keep the legend and summary compact, hide empty highlight/detail regions, and
   reveal relationship details only after a cell is selected.
 - Clicking a cell shows `r`, p-value, N, and significance status.

@@ -68,9 +68,10 @@ Low (`|r| < .30`), Medium (`.30-.49`), High (`.50-.69`), or Very high
 statistical-significance visibility, and adding/removing multiple highlighted
 questions. The report must support multiple highlighted questions at once.
 Clicking a matrix cell must show `r`, p-value, N, strength, and
-significance status. Keep the matrix compact with numbered columns, make color
-intensity increase with relationship strength, and hide significance and empty
-detail/highlight regions by default.
+significance status. Keep the matrix compact with full question names on both
+axes in small regular-weight text, make color intensity increase with
+relationship strength, and hide significance and empty detail/highlight
+regions by default.
 
 ## Primary workflow
 
