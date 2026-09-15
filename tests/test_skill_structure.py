@@ -57,6 +57,9 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "interactive-report-contract.md" in skill
     assert "golden-report.html" in skill
     assert "scores-change-format.png" in skill
+    assert "strength-color visibility" in skill
+    assert "statistical-significance visibility" in skill
+    assert "multiple highlighted questions" in skill
     assert "<output-directory-name>-report.html" in skill
     assert "<output-directory-name>-share.zip" in skill
 
@@ -78,6 +81,10 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "Do not embed or recalculate from" in report_contract
     assert "Exclude\nraw respondent data" in report_contract
     assert "scripts/build_interactive_report.py" in report_contract
+    assert "Low (`|r| < .30`)" in report_contract
+    assert "turn strength colors on or off" in report_contract
+    assert "show or hide statistical-significance markers" in report_contract
+    assert "individually remove multiple highlighted questions" in report_contract
     assert (ROOT / "scripts/build_interactive_report.py").exists()
     golden = ROOT / "references/skills/analyze-survey/golden-report.html"
     assert golden.exists()
@@ -273,6 +280,13 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         "Stddev",
         "P-Value",
         "Score Difference (New - Old)",
+        "Relationship display",
+        "Minimum strength",
+        "Show strength colors",
+        "Show statistical significance",
+        "Highlight a question",
+        "Clear highlights",
+        "Very high",
     ):
         assert heading in report_text
     with zipfile.ZipFile(share_zip) as archive:

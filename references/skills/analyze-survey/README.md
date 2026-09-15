@@ -74,3 +74,9 @@ indicator, alternating rows, and proportional score-difference bars.
 Include a Respondent population control with All respondents and Repeat
 respondents. Repeat-only values must be precomputed from employee IDs present
 in both selected cycles and remain subject to minimum-N suppression.
+
+The Relationships matrix classifies absolute Pearson `r` as Low (`< .30`),
+Medium (`.30-.49`), High (`.50-.69`), or Very high (`>= .70`). Preserve the
+minimum-strength filter, strength-color toggle, significance toggle,
+add/remove question highlights, summary counts, and click-through cell details
+in the golden report.

@@ -58,6 +58,14 @@ All respondents and Repeat respondents. Repeat respondents are employees with
 responses in both selected cycles; never infer repeat status from aggregate
 counts.
 
+The Relationships tab must classify absolute Pearson relationship strength as
+Low (`|r| < .30`), Medium (`.30-.49`), High (`.50-.69`), or Very high
+(`>= .70`). Preserve controls for minimum strength, strength-color visibility,
+statistical-significance visibility, and adding/removing multiple highlighted
+questions. The report must support multiple highlighted questions at once.
+Clicking a matrix cell must show `r`, p-value, N, strength, and
+significance status.
+
 ## Primary workflow
 
 Use the direct export runner:

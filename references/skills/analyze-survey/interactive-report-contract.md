@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption is
-`ffb91d748c0b6983fb2b1dd661b685ccdf9e15efdd22622bf548f4b18b880644`.
+`929c2b01e2836eb9d2d275565623dd56d856da1f041e8b0844bbc8ca54daa835`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -104,7 +104,16 @@ Place one report-level attribute/value filter above the tabs.
 
 - Run the full Pearson correlation analysis and show the complete item-by-item
   matrix.
-- Include magnitude threshold, significance, and focused-item filters.
+- Classify absolute relationship strength as Low (`|r| < .30`), Medium
+  (`.30-.49`), High (`.50-.69`), or Very high (`>= .70`) and give each band a
+  distinct, labeled matrix color.
+- Include a control to turn strength colors on or off without changing the
+  displayed values.
+- Include a minimum-strength filter for All, Medium or higher, High or higher,
+  and Very high only.
+- Include a control to show or hide statistical-significance markers.
+- Let users add and individually remove multiple highlighted questions. Dim
+  unrelated cells and emphasize selected row/column headers and cells.
 - Clicking a cell shows `r`, p-value, N, and significance status.
 - State how many unique relationships are significant and nonsignificant.
 - Emphasize practical magnitude when large N makes most results significant.
