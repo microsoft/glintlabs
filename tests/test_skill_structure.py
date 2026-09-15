@@ -1,6 +1,7 @@
 import csv
 import importlib.util
 import json
+import re
 import subprocess
 import sys
 import zipfile
@@ -54,6 +55,7 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "scripts/analyze_survey_export.py" in skill
     assert "--survey-export" in skill
     assert "interactive-report-contract.md" in skill
+    assert "golden-report.html" in skill
     assert "<output-directory-name>-report.html" in skill
     assert "<output-directory-name>-share.zip" in skill
 
@@ -81,9 +83,13 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "Exclude\nraw respondent data" in report_contract
     assert "scripts/build_interactive_report.py" in report_contract
     assert (ROOT / "scripts/build_interactive_report.py").exists()
+    golden = ROOT / "references/skills/analyze-survey/golden-report.html"
+    assert golden.exists()
     runner = (ROOT / "scripts/run_vivaglint_analysis.py").read_text(encoding="utf-8")
     assert 'with_name("build_interactive_report.py")' in runner
     assert (ROOT / "scripts/analyze_survey_export.py").exists()
+    builder = (ROOT / "scripts/build_interactive_report.py").read_text(encoding="utf-8")
+    assert '"golden-report.html"' in builder
 
 
 def test_direct_export_runner_detects_csv_contract(tmp_path):
@@ -243,6 +249,13 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     report = tmp_path / f"{tmp_path.name}-report.html"
     share_zip = tmp_path / f"{tmp_path.name}-share.zip"
     report_text = report.read_text(encoding="utf-8")
+    golden_text = (
+        ROOT / "references/skills/analyze-survey/golden-report.html"
+    ).read_text(encoding="utf-8")
+    payload = re.compile(r"(?s)(<script>const D=).*?(;\nconst names=)")
+    assert payload.sub(r"\1__DATA__\2", report_text) == payload.sub(
+        r"\1__DATA__\2", golden_text
+    )
     for tab in (
         "Overview",
         "Item results",

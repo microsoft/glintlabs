@@ -56,6 +56,10 @@ builder runs.
 ## Report
 
 The required behavior and packaging are defined in
-`interactive-report-contract.md`. The example format is the generated
-nine-tab report with Overview, item comparisons, score changes, heatmaps,
-relationships, alerts, factors, attrition status, and aggregate downloads.
+`interactive-report-contract.md`.
+
+`golden-report.html` is the user-approved canonical HTML example. The report
+builder reads that file directly and replaces only the `const D=...` aggregate
+data payload. Do not restyle, restructure, rename, or independently recreate
+the report shell. The aggregate values embedded in the golden file are example
+values and must never be reused for another analysis.

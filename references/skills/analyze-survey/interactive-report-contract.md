@@ -3,10 +3,22 @@
 Every successful `analyze-survey` run must produce an interactive HTML report
 in this format. This contract is required, not an optional example.
 
+The exact golden example is:
+
+```text
+references/skills/analyze-survey/golden-report.html
+```
+
+Its SHA-256 at adoption is
+`4756d2499b5f8e762d241d12573c0ee4e4d6448e7b7a8f054d429adae947776e`.
+Generated reports must match its static HTML shell exactly. The only intended
+substitution is the JSON value assigned to `const D`, which must come from the
+current analysis.
+
 The deterministic implementation is
 `scripts/build_interactive_report.py`. The analysis runner invokes it
 automatically after repeatability passes. Do not rely on an agent to recreate
-the dashboard from prose.
+the dashboard from prose or maintain a second handwritten template.
 
 ## Required package
 

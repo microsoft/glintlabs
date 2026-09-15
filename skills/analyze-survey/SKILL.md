@@ -37,9 +37,14 @@ Read these references in order:
 
 1. `references/skills/analyze-survey/README.md`
 2. `references/skills/analyze-survey/linked-dataset.json`
-3. `references/skills/analyze-survey/interactive-report-contract.md`
-4. `references/general/privacy-and-minimum-n.md`
-5. `references/general/codebook-catalog.md`
+3. `references/skills/analyze-survey/golden-report.html`
+4. `references/skills/analyze-survey/interactive-report-contract.md`
+5. `references/general/privacy-and-minimum-n.md`
+6. `references/general/codebook-catalog.md`
+
+`golden-report.html` is the canonical report shell. Future reports must preserve
+its markup, styling, tab order, labels, and browser interactions exactly while
+replacing its embedded aggregate data payload with the current analysis.
 
 ## Primary workflow
 
@@ -62,6 +67,7 @@ The runner automatically:
 - runs the standard `vivaglint` analyses twice
 - requires SHA-256 repeatability
 - builds the self-contained interactive report and safe share ZIP
+- uses the checked-in golden report as the exact HTML template
 
 Use explicit options only when automatic detection is wrong:
 
