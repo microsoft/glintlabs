@@ -81,6 +81,12 @@ and a dropdown from 3 through 10 clusters, extending through the recommendation
 when it is higher. Reorder both axes and show cluster labels/boundaries.
 Describe clusters as exploratory rather than validated survey constructs.
 
+The Alerts tab must use the triage model in the report contract: Critical,
+Watch, Improving, Stable, and Suppressed counts; raw and company-adjusted
+change; Welch significance; severity/search/threshold filters; sorting; and
+expandable top-five item declines. Keep alert language screening-oriented and
+non-causal.
+
 ## Primary workflow
 
 Use the direct export runner:

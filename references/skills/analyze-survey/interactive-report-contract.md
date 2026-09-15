@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption is
-`d3ca0466194e4c7cc3a12c930a07793852f9c1c185e0660da4abcbe05a55ab6d`.
+`efbc9115cfb9305ae2860908c850717a055b4c9278fb452589da234797ec3130`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -139,13 +139,29 @@ Place one report-level attribute/value filter above the tabs.
 
 ### Alerts
 
-- Rank manager-defined teams by average item-score decrease across two cycles.
-- Show prior/current score, delta, both sample sizes, number of declining
-  items, and the largest item decline.
+- Present manager-defined teams as a triage table with Critical, Watch,
+  Improving, Stable, and Suppressed summary counts.
+- Calculate each team's composite-score change, Welch significance, and
+  company-adjusted change across exactly two cycles.
+- Classify **Critical** when company-adjusted change is at most -3 points,
+  p-value is below .05, and at least 25% of items (minimum 3) decline.
+- Classify **Watch** when company-adjusted change is at most -2 points or raw
+  change is at most -3 points with at least 3 declining items.
+- Classify **Improving** when company-adjusted change is at least 3 points and
+  p-value is below .05. Treat remaining eligible teams as Stable.
+- Show prior/current score, raw and company-adjusted change, both sample sizes,
+  number of declining items, and significance status.
+- Add filters for severity, minimum adjusted decline, minimum declining items,
+  team search, and significant-only results.
+- Allow sorting by severity, adjusted decline, raw change, or declining-item
+  count.
+- Expand each team to show its five largest item declines with old score, new
+  score, and delta.
 - Require at least 10 responses per cycle for company-wide team alerts.
 - For report-filtered team intersections, require at least 5 matching
   responses per cycle and state that threshold.
-- Describe alerts as screening signals, not causal or statistical findings.
+- Explain the classification rules in a compact disclosure. Describe alerts as
+  screening signals, not causal findings.
 
 ### Factors
 

@@ -90,3 +90,9 @@ Use deterministic average-linkage clustering over positive-correlation
 distance. Show the silhouette-based recommendation in a short blurb, default
 to it, and allow selection from 3 through 10 clusters or through the
 recommendation when it is higher.
+
+The Alerts tab is a triage table. Preserve severity summary counts,
+company-adjusted change, Welch significance, compact filters and sorting, and
+expandable top-five item declines. Severity rules and minimum-N behavior are
+defined in `interactive-report-contract.md`; do not replace them with visual
+judgment or causal language.

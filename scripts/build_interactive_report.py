@@ -351,37 +351,121 @@ def alerts(
     cycle_col: str | None,
     team_col: str | None,
     minimum: int,
-) -> list[dict[str, Any]]:
+) -> dict[str, Any]:
     if not cycle_col or not team_col:
-        return []
+        return {"rows": [], "suppressed": 0, "cycles": [], "companyChange": None}
     cycles = sorted(frame[cycle_col].dropna().astype(str).unique())
     if len(cycles) != 2:
-        return []
+        return {"rows": [], "suppressed": 0, "cycles": cycles, "companyChange": None}
+
+    def composite(source: pd.DataFrame) -> pd.Series:
+        return (source[questions].mean(axis=1) - 1) * 25
+
+    def comparison(first: pd.Series, second: pd.Series) -> tuple[float, float]:
+        first = first.dropna()
+        second = second.dropna()
+        change = float(second.mean() - first.mean())
+        if len(first) < 2 or len(second) < 2:
+            return change, 1.0
+        denominator = math.sqrt(
+            first.var(ddof=1) / len(first) + second.var(ddof=1) / len(second)
+        )
+        if not math.isfinite(denominator) or denominator == 0:
+            return change, 1.0
+        statistic = change / denominator
+        first_term = first.var(ddof=1) / len(first)
+        second_term = second.var(ddof=1) / len(second)
+        degrees = (first_term + second_term) ** 2 / (
+            first_term**2 / (len(first) - 1)
+            + second_term**2 / (len(second) - 1)
+        )
+        return change, float(2 * student_t.sf(abs(statistic), degrees))
+
+    company_subsets = [
+        frame[frame[cycle_col].astype(str) == cycle] for cycle in cycles
+    ]
+    company_change, _ = comparison(
+        composite(company_subsets[0]),
+        composite(company_subsets[1]),
+    )
     output = []
+    suppressed = 0
+    decline_threshold = max(3, math.ceil(len(questions) * 0.25))
     for team, group in frame.dropna(subset=[team_col]).groupby(team_col):
         subsets = [group[group[cycle_col].astype(str) == cycle] for cycle in cycles]
         if any(len(item) < minimum for item in subsets):
+            suppressed += 1
             continue
-        first, second = [metrics(item, questions) for item in subsets]
-        first_scores = [item[0] for item in first]
-        second_scores = [item[0] for item in second]
+        first_scores = [
+            round(float((subsets[0][question].mean() - 1) * 25), 1)
+            for question in questions
+        ]
+        second_scores = [
+            round(float((subsets[1][question].mean() - 1) * 25), 1)
+            for question in questions
+        ]
         deltas = [b - a for a, b in zip(first_scores, second_scores)]
-        worst = min(range(len(deltas)), key=deltas.__getitem__)
+        change, p_value = comparison(composite(subsets[0]), composite(subsets[1]))
+        adjusted = change - company_change
+        declining = sum(value < 0 for value in deltas)
+        if adjusted <= -3 and p_value < 0.05 and declining >= decline_threshold:
+            severity = "critical"
+        elif adjusted <= -2 or (change <= -3 and declining >= 3):
+            severity = "watch"
+        elif adjusted >= 3 and p_value < 0.05:
+            severity = "improving"
+        else:
+            severity = "stable"
+        item_changes = sorted(
+            (
+                {
+                    "question": index,
+                    "from": first_scores[index],
+                    "to": second_scores[index],
+                    "delta": round(delta, 1),
+                }
+                for index, delta in enumerate(deltas)
+            ),
+            key=lambda item: item["delta"],
+        )
         output.append(
             {
-                "team": str(team),
-                "from": round(sum(first_scores) / len(first_scores)),
-                "to": round(sum(second_scores) / len(second_scores)),
-                "delta": round(sum(second_scores) / len(second_scores))
-                - round(sum(first_scores) / len(first_scores)),
+                "team": (
+                    str(int(team))
+                    if isinstance(team, (int, float, np.integer, np.floating))
+                    and float(team).is_integer()
+                    else str(team)
+                ),
+                "severity": severity,
+                "from": round(float(composite(subsets[0]).mean()), 1),
+                "to": round(float(composite(subsets[1]).mean()), 1),
+                "delta": round(change, 1),
+                "companyChange": round(company_change, 1),
+                "adjustedDelta": round(adjusted, 1),
+                "pValue": p_value,
+                "significant": p_value < 0.05,
                 "nFrom": len(subsets[0]),
                 "nTo": len(subsets[1]),
-                "declining": sum(value < 0 for value in deltas),
-                "worstQuestion": worst,
-                "worstDelta": deltas[worst],
+                "declining": declining,
+                "topDeclines": item_changes[:5],
             }
         )
-    return sorted(output, key=lambda item: (item["delta"], item["worstDelta"]))
+    rank = {"critical": 0, "watch": 1, "improving": 2, "stable": 3}
+    return {
+        "rows": sorted(
+            output,
+            key=lambda item: (
+                rank[item["severity"]],
+                item["adjustedDelta"],
+                item["delta"],
+            ),
+        ),
+        "suppressed": suppressed,
+        "cycles": cycles,
+        "companyChange": round(company_change, 1),
+        "minimum": minimum,
+        "declineThreshold": decline_threshold,
+    }
 
 
 def alert_cube(
@@ -393,17 +477,20 @@ def alert_cube(
 ) -> dict[str, Any]:
     filtered = {}
     for attribute in attributes:
+        if attribute in {cycle_col, team_col}:
+            filtered[attribute] = {}
+            continue
         values = {}
         for value, group in frame.dropna(subset=[attribute]).groupby(attribute):
-            rows = alerts(
+            result = alerts(
                 group,
                 questions,
                 cycle_col,
                 team_col,
                 FILTERED_ALERT_MIN_N,
             )
-            if rows:
-                values[str(value)] = rows
+            if result["rows"] or result["suppressed"]:
+                values[str(value)] = result
         filtered[attribute] = values
     return {
         "overall": alerts(frame, questions, cycle_col, team_col, ALERT_MIN_N),
@@ -477,12 +564,12 @@ def main() -> int:
         ),
     ]))
     attributes = [column for column in attributes if column in frame.columns]
-    bucket_numeric(frame, {emp_id, "__employee_id", *questions})
     cycle_col = "survey_cycle_title" if "survey_cycle_title" in frame.columns else None
     team_col = next(
         (column for column in ("team_id", "manager_id", "Manager ID") if column in frame.columns),
         None,
     )
+    bucket_numeric(frame, {emp_id, "__employee_id", *questions, team_col})
 
     overall = metrics(frame, questions)
     segments = segment_cube(frame, questions, attributes)

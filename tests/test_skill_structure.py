@@ -65,6 +65,8 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "positive-correlation distance (`1 - r`)" in skill
     assert "highest average silhouette score" in skill
     assert "dropdown from 3 through 10 clusters" in skill
+    assert "company-adjusted" in skill
+    assert "expandable top-five item declines" in skill
     assert "<output-directory-name>-report.html" in skill
     assert "<output-directory-name>-share.zip" in skill
 
@@ -93,6 +95,9 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "average-linkage hierarchical clustering" in report_contract
     assert "3 through 15 clusters" in report_contract
     assert "extend the dropdown through the recommended count" in report_contract
+    assert "Classify **Critical**" in report_contract
+    assert "Welch significance" in report_contract
+    assert "five largest item declines" in report_contract
     assert (ROOT / "scripts/build_interactive_report.py").exists()
     golden = ROOT / "references/skills/analyze-survey/golden-report.html"
     assert golden.exists()
@@ -302,6 +307,13 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         "Very high",
         "Recommended:",
         "Clusters",
+        "How alerts are identified",
+        "Minimum adjusted decline",
+        "Minimum declining items",
+        "Search teams",
+        "Significant only",
+        "Vs. company",
+        "Suppressed",
     ):
         assert heading in report_text
     assert "--rel-low:#f5f5f5" in report_text
@@ -315,6 +327,9 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert "id=relClusters" in report_text
     assert "cluster-start-col" in report_text
     assert "cluster-start-row" in report_text
+    assert "alertSeverity" in report_text
+    assert "alertSearch" in report_text
+    assert "topDeclines" in report_text
     with zipfile.ZipFile(share_zip) as archive:
         names = set(archive.namelist())
     assert "OPEN_REPORT.html" in names
@@ -343,6 +358,51 @@ def test_relationship_cluster_plan_is_deterministic():
     assert first["recommended"] == 3
     assert sorted(first["assignments"]) == ["3", "4", "5", "6", "7", "8"]
     assert len(set(first["assignments"]["3"])) == 3
+
+
+def test_alert_triage_uses_real_team_ids_and_suppression():
+    script_path = ROOT / "scripts/build_interactive_report.py"
+    spec = importlib.util.spec_from_file_location("build_interactive_report", script_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+
+    rows = []
+    for cycle, team, count, score in (
+        ("H1", 101.0, 12, 5),
+        ("H2", 101.0, 12, 3),
+        ("H1", 202.0, 12, 3),
+        ("H2", 202.0, 12, 5),
+        ("H1", 303.0, 3, 3),
+        ("H2", 303.0, 3, 3),
+    ):
+        for index in range(count):
+            rows.append(
+                {
+                    "survey_cycle_title": cycle,
+                    "manager_id": team,
+                    "Q_ONE": score,
+                    "Q_TWO": score,
+                    "Q_THREE": score,
+                    "Q_FOUR": score,
+                }
+            )
+    frame = module.pd.DataFrame(rows)
+    result = module.alerts(
+        frame,
+        ["Q_ONE", "Q_TWO", "Q_THREE", "Q_FOUR"],
+        "survey_cycle_title",
+        "manager_id",
+        10,
+    )
+
+    assert result["cycles"] == ["H1", "H2"]
+    assert result["suppressed"] == 1
+    assert {row["team"] for row in result["rows"]} == {"101", "202"}
+    declining = next(row for row in result["rows"] if row["team"] == "101")
+    assert declining["severity"] == "watch"
+    assert declining["adjustedDelta"] < 0
+    assert len(declining["topDeclines"]) == 4
 
 
 def test_numeric_attribute_bucketing_handles_missing_values():
