@@ -85,7 +85,8 @@ The Alerts tab must use the triage model in the report contract: Critical,
 Watch, Improving, Stable, and Suppressed counts; raw and company-adjusted
 change; Welch significance; severity/search/threshold filters; sorting; and
 expandable top-five item declines. Keep alert language screening-oriented and
-non-causal.
+non-causal. Suppress every alert group unless both compared cycles have at
+least 20 responses; apply the same threshold after report filtering.
 
 ## Primary workflow
 

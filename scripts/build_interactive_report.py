@@ -20,8 +20,8 @@ from scipy.stats import t as student_t
 
 MIN_N = 5
 RELATIONSHIP_MIN_N = 30
-ALERT_MIN_N = 10
-FILTERED_ALERT_MIN_N = 5
+ALERT_MIN_N = 20
+FILTERED_ALERT_MIN_N = 20
 
 
 def args() -> argparse.Namespace:

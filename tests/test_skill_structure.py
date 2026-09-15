@@ -67,6 +67,7 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "dropdown from 3 through 10 clusters" in skill
     assert "company-adjusted" in skill
     assert "expandable top-five item declines" in skill
+    assert "20 responses" in skill
     assert "<output-directory-name>-report.html" in skill
     assert "<output-directory-name>-share.zip" in skill
 
@@ -98,6 +99,7 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "Classify **Critical**" in report_contract
     assert "Welch significance" in report_contract
     assert "five largest item declines" in report_contract
+    assert "at least 20 responses in both compared cycles" in report_contract
     assert (ROOT / "scripts/build_interactive_report.py").exists()
     golden = ROOT / "references/skills/analyze-survey/golden-report.html"
     assert golden.exists()
@@ -393,11 +395,48 @@ def test_alert_triage_uses_real_team_ids_and_suppression():
         ["Q_ONE", "Q_TWO", "Q_THREE", "Q_FOUR"],
         "survey_cycle_title",
         "manager_id",
-        10,
+        20,
     )
 
     assert result["cycles"] == ["H1", "H2"]
-    assert result["suppressed"] == 1
+    assert result["suppressed"] == 3
+    assert result["rows"] == []
+
+
+def test_alert_triage_includes_groups_at_twenty_per_cycle():
+    script_path = ROOT / "scripts/build_interactive_report.py"
+    spec = importlib.util.spec_from_file_location("build_interactive_report", script_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+
+    rows = []
+    for cycle, team, score in (
+        ("H1", 101.0, 5),
+        ("H2", 101.0, 3),
+        ("H1", 202.0, 3),
+        ("H2", 202.0, 5),
+    ):
+        for _ in range(20):
+            rows.append(
+                {
+                    "survey_cycle_title": cycle,
+                    "manager_id": team,
+                    "Q_ONE": score,
+                    "Q_TWO": score,
+                    "Q_THREE": score,
+                    "Q_FOUR": score,
+                }
+            )
+    result = module.alerts(
+        module.pd.DataFrame(rows),
+        ["Q_ONE", "Q_TWO", "Q_THREE", "Q_FOUR"],
+        "survey_cycle_title",
+        "manager_id",
+        20,
+    )
+
+    assert result["suppressed"] == 0
     assert {row["team"] for row in result["rows"]} == {"101", "202"}
     declining = next(row for row in result["rows"] if row["team"] == "101")
     assert declining["severity"] == "watch"

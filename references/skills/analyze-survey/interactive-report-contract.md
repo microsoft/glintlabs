@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption is
-`efbc9115cfb9305ae2860908c850717a055b4c9278fb452589da234797ec3130`.
+`f9f6a9f467cffa746c6e3543a934084a7b16cca939379c1959d78da420dc2342`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -157,9 +157,9 @@ Place one report-level attribute/value filter above the tabs.
   count.
 - Expand each team to show its five largest item declines with old score, new
   score, and delta.
-- Require at least 10 responses per cycle for company-wide team alerts.
-- For report-filtered team intersections, require at least 5 matching
-  responses per cycle and state that threshold.
+- Require at least 20 responses in both compared cycles for every team alert,
+  including report-filtered team intersections. Suppress every smaller group
+  and state the threshold.
 - Explain the classification rules in a compact disclosure. Describe alerts as
   screening signals, not causal findings.
 

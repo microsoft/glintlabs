@@ -95,4 +95,5 @@ The Alerts tab is a triage table. Preserve severity summary counts,
 company-adjusted change, Welch significance, compact filters and sorting, and
 expandable top-five item declines. Severity rules and minimum-N behavior are
 defined in `interactive-report-contract.md`; do not replace them with visual
-judgment or causal language.
+judgment or causal language. Every alert group must have at least 20 responses
+in both compared cycles, including filtered intersections.
