@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import importlib.util
 import json
 import re
@@ -103,6 +104,10 @@ def test_analyze_survey_points_to_linked_dataset():
     assert (ROOT / "scripts/build_interactive_report.py").exists()
     golden = ROOT / "references/skills/analyze-survey/golden-report.html"
     assert golden.exists()
+    golden_sha = hashlib.sha256(
+        golden.read_bytes().replace(b"\r\n", b"\n")
+    ).hexdigest()
+    assert golden_sha in report_contract
     design_reference = ROOT / "references/design/glint-ui-system.md"
     assert design_reference.exists()
     design_text = design_reference.read_text(encoding="utf-8")

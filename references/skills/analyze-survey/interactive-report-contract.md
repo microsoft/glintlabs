@@ -9,8 +9,8 @@ The exact golden example is:
 references/skills/analyze-survey/golden-report.html
 ```
 
-Its SHA-256 at adoption is
-`f9f6a9f467cffa746c6e3543a934084a7b16cca939379c1959d78da420dc2342`.
+Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
+`fd3051b881cfb10148534b4b43c13eb8e8732a92b1db0fad741f5968660acba2`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
