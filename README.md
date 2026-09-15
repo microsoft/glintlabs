@@ -119,7 +119,7 @@ defined in:
 references/skills/analyze-survey/interactive-report-contract.md
 ```
 
-The report uses the fixed nine-tab Glint layout, shared attribute filtering,
+The report uses the fixed six-tab Glint layout, shared attribute filtering,
 precomputed privacy-safe aggregates, and a ZIP containing
 `OPEN_REPORT.html`. Raw respondent and employee-property files are excluded
 from the shareable package.

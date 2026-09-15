@@ -63,10 +63,7 @@ def test_analyze_survey_points_to_linked_dataset():
         ROOT / "references/skills/analyze-survey/interactive-report-contract.md"
     ).read_text(encoding="utf-8")
     required_tabs = (
-        "Overview",
-        "Item results",
         "Scores change",
-        "Heatmap",
         "Relationships",
         "Alerts",
         "Factors",
@@ -77,8 +74,6 @@ def test_analyze_survey_points_to_linked_dataset():
     assert positions == sorted(positions)
     assert "OPEN_REPORT.html" in report_contract
     assert "Force the light Glint report theme" in report_contract
-    assert "questions on the vertical axis" in report_contract
-    assert "attribute values on the horizontal" in report_contract
     assert "Do not embed or recalculate from" in report_contract
     assert "Exclude\nraw respondent data" in report_contract
     assert "scripts/build_interactive_report.py" in report_contract
@@ -257,10 +252,7 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         r"\1__DATA__\2", golden_text
     )
     for tab in (
-        "Overview",
-        "Item results",
         "Scores change",
-        "Heatmap",
         "Relationships",
         "Alerts",
         "Factors",
@@ -268,6 +260,8 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         "Downloads",
     ):
         assert f">{tab}</button>" in report_text
+    for removed_tab in ("Overview", "Item results", "Heatmap"):
+        assert f">{removed_tab}</button>" not in report_text
     with zipfile.ZipFile(share_zip) as archive:
         names = set(archive.namelist())
     assert "OPEN_REPORT.html" in names

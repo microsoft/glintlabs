@@ -45,6 +45,9 @@ Read these references in order:
 `golden-report.html` is the canonical report shell. Future reports must preserve
 its markup, styling, tab order, labels, and browser interactions exactly while
 replacing its embedded aggregate data payload with the current analysis.
+The required tabs are Scores change, Relationships, Alerts, Factors,
+Attrition analysis, and Downloads. Do not add Overview, Item results, or
+Heatmap tabs.
 
 ## Primary workflow
 
@@ -105,7 +108,7 @@ required after repeatability passes. Open the HTML report before finishing.
   columns and rerun with explicit options.
 - If repeatability fails, do not generate or interpret the report.
 - If an analysis fails, preserve the explicit failure in the manifest.
-- If cycle, alert, heatmap, or attrition inputs are unavailable, keep the
+- If cycle, alert, or attrition inputs are unavailable, keep the
   corresponding report tab and explain what is missing.
 - Never substitute synthetic attrition outcomes.
 

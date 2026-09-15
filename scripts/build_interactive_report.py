@@ -363,7 +363,6 @@ def main() -> int:
     segments = segment_cube(frame, questions, attributes)
     cycles = cycle_cube(frame, questions, attributes, cycle_col)
     relationships = relationship_cube(frame, questions, attributes)
-    heat = heatmap_cube(frame, questions, attributes, cycle_col)
     alert_data = alert_cube(frame, questions, attributes, cycle_col, team_col)
     factors_path = output / "factor_analysis_summary.csv"
     factors = pd.read_csv(factors_path).to_dict("records") if factors_path.exists() else []
@@ -402,7 +401,6 @@ def main() -> int:
         "segments": segments,
         "cycles": cycles,
         "relationships": relationships,
-        "heat": heat,
         "alerts": alert_data,
         "factors": factors,
         "attrition": attrition_status,

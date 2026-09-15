@@ -63,3 +63,7 @@ builder reads that file directly and replaces only the `const D=...` aggregate
 data payload. Do not restyle, restructure, rename, or independently recreate
 the report shell. The aggregate values embedded in the golden file are example
 values and must never be reused for another analysis.
+
+The golden report intentionally excludes Overview, Item results, and Heatmap.
+Its six tabs are Scores change, Relationships, Alerts, Factors, Attrition
+analysis, and Downloads.

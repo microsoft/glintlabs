@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption is
-`4756d2499b5f8e762d241d12573c0ee4e4d6448e7b7a8f054d429adae947776e`.
+`16e913831b72e0b3fa37fdbd261dc2fe665abc452969868f7ad41e0ec97782df`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -57,15 +57,12 @@ staging data from the ZIP.
 
 Keep this tab order and naming:
 
-1. **Overview**
-2. **Item results**
-3. **Scores change**
-4. **Heatmap**
-5. **Relationships**
-6. **Alerts**
-7. **Factors**
-8. **Attrition analysis**
-9. **Downloads**
+1. **Scores change**
+2. **Relationships**
+3. **Alerts**
+4. **Factors**
+5. **Attrition analysis**
+6. **Downloads**
 
 If an analysis cannot run, keep its tab and explain exactly which input is
 missing. Never remove the tab or fabricate data.
@@ -74,10 +71,9 @@ missing. Never remove the tab or fabricate data.
 
 Place one report-level attribute/value filter above the tabs.
 
-- Apply it to Overview, Item results, Scores change, Heatmap, Relationships,
-  and Alerts.
-- Treat it as a parent filter. Heatmap and Alerts must calculate their own
-  displayed dimensions within the selected segment.
+- Apply it to Scores change, Relationships, and Alerts.
+- Treat it as a parent filter. Alerts must calculate their displayed
+  dimensions within the selected segment.
 - Use saved aggregate values in the browser. Do not embed or recalculate from
   respondent-level rows.
 - Suppress unavailable intersections explicitly instead of silently reverting
@@ -88,36 +84,12 @@ Place one report-level attribute/value filter above the tabs.
 
 ## Tab behavior
 
-### Overview
-
-- Show response count, employee count, item count, and average item score.
-- Show five highest scores and five focus opportunities.
-- Use favorable/neutral/unfavorable stacked bars.
-
-### Item results
-
-- Compare the selected segment with the overall company for every item.
-- Show segment and company stacked bars, scores, and point difference.
-- Include item search.
-
 ### Scores change
 
 - Compare the two selected/available survey cycles item by item.
 - Show prior score, current score, delta, and both sample sizes.
 - Support largest absolute change, decrease, and increase sorting.
 - Apply the shared report filter only when both cycles meet minimum N.
-
-### Heatmap
-
-- Let the user select one survey cycle and one heatmap attribute.
-- Only offer heatmap attributes with four or five privacy-safe displayed
-  values.
-- Put questions on the vertical axis and attribute values on the horizontal
-  axis.
-- Show Glint Score in each cell and shade it relative to that cycle's overall
-  company score for the item.
-- Clicking a cell shows item, value, score, company score, delta, and N.
-- Apply the shared report filter before the selected heatmap attribute.
 
 ### Relationships
 
@@ -155,13 +127,13 @@ Place one report-level attribute/value filter above the tabs.
 ### Downloads
 
 Link the manifest and every completed aggregate artifact, including derived
-correlation matrices, score-change, heatmap, and alert outputs when available.
+correlation matrices, score-change, and alert outputs when available.
 
 ## Privacy and performance
 
 - Default minimum displayed group size is 5.
 - Keep respondent-level data local and outside the shareable package.
-- Precompute score, distribution, change, heatmap, relationship, and alert
+- Precompute score, distribution, change, relationship, and alert
   aggregates. Browser interactions must select saved values rather than rerun
   analysis over employee rows.
 - Validate all download links and JavaScript syntax before sharing.
