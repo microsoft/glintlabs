@@ -38,9 +38,10 @@ Read these references in order:
 1. `references/skills/analyze-survey/README.md`
 2. `references/skills/analyze-survey/linked-dataset.json`
 3. `references/skills/analyze-survey/golden-report.html`
-4. `references/skills/analyze-survey/interactive-report-contract.md`
-5. `references/general/privacy-and-minimum-n.md`
-6. `references/general/codebook-catalog.md`
+4. `references/skills/analyze-survey/scores-change-format.png`
+5. `references/skills/analyze-survey/interactive-report-contract.md`
+6. `references/general/privacy-and-minimum-n.md`
+7. `references/general/codebook-catalog.md`
 
 `golden-report.html` is the canonical report shell. Future reports must preserve
 its markup, styling, tab order, labels, and browser interactions exactly while
@@ -48,6 +49,14 @@ replacing its embedded aggregate data payload with the current analysis.
 The required tabs are Scores change, Relationships, Alerts, Factors,
 Attrition analysis, and Downloads. Do not add Overview, Item results, or
 Heatmap tabs.
+
+The Scores change tab must follow `scores-change-format.png`: grouped old/new
+cycle columns with Mean, Stddev, and n, followed by P-Value and Score
+Difference (New - Old) with proportional difference bars.
+It must also include a Respondent population sub-heading that switches between
+All respondents and Repeat respondents. Repeat respondents are employees with
+responses in both selected cycles; never infer repeat status from aggregate
+counts.
 
 ## Primary workflow
 

@@ -67,3 +67,10 @@ values and must never be reused for another analysis.
 The golden report intentionally excludes Overview, Item results, and Heatmap.
 Its six tabs are Scores change, Relationships, Alerts, Factors, Attrition
 analysis, and Downloads.
+
+The Scores change table layout is grounded in `scores-change-format.png`.
+Preserve its grouped old/new cycle headers, Mean/Stddev/n columns, p-value
+indicator, alternating rows, and proportional score-difference bars.
+Include a Respondent population control with All respondents and Repeat
+respondents. Repeat-only values must be precomputed from employee IDs present
+in both selected cycles and remain subject to minimum-N suppression.

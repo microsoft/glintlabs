@@ -113,33 +113,90 @@ def cycle_cube(
     cycle_col: str | None,
 ) -> dict[str, Any]:
     if not cycle_col:
-        return {"cycles": [], "overall": {}, "segments": {}}
-    cycles = sorted(frame[cycle_col].dropna().astype(str).unique())
-    if len(cycles) != 2:
-        return {"cycles": cycles, "overall": {}, "segments": {}}
-    overall = {
-        cycle: {
-            "n": int(len(group)),
-            "items": metrics(group, questions),
+        return {
+            "cycles": [],
+            "overall": {},
+            "segments": {},
+            "repeat": {"overall": {}, "segments": {}},
         }
-        for cycle, group in frame.groupby(cycle_col)
-    }
+    cycles = list(dict.fromkeys(frame[cycle_col].dropna().astype(str)))
+
+    def cycle_metrics(source: pd.DataFrame) -> list[list[float | int]]:
+        rows = []
+        for question in questions:
+            values = source[question].dropna()
+            rows.append(
+                [
+                    round(float((values.mean() - 1) * 25), 1),
+                    round(float(values.std(ddof=1) * 25), 1),
+                    int(len(values)),
+                ]
+            )
+        return rows
+
+    def cycle_values(source: pd.DataFrame) -> dict[str, Any]:
+        return {
+            cycle: {
+                "n": int(len(group)),
+                "items": cycle_metrics(group),
+            }
+            for cycle, group in source.groupby(cycle_col, sort=False)
+            if len(group) >= MIN_N
+        }
+
+    def repeat_values(source: pd.DataFrame) -> dict[str, Any]:
+        employee_ids = {
+            cycle: set(
+                source.loc[
+                    source[cycle_col].astype(str) == cycle,
+                    "__employee_id",
+                ].dropna()
+            )
+            for cycle in cycles
+        }
+        pairs = {}
+        for old_index, old_cycle in enumerate(cycles):
+            for new_cycle in cycles[old_index + 1:]:
+                repeat_ids = employee_ids[old_cycle] & employee_ids[new_cycle]
+                if len(repeat_ids) < MIN_N:
+                    continue
+                pair = {}
+                for cycle in (old_cycle, new_cycle):
+                    subset = source[
+                        (source[cycle_col].astype(str) == cycle)
+                        & source["__employee_id"].isin(repeat_ids)
+                    ]
+                    pair[cycle] = {
+                        "n": int(len(subset)),
+                        "items": cycle_metrics(subset),
+                    }
+                pairs[f"{old_cycle}\u241f{new_cycle}"] = pair
+        return pairs
+
+    overall = cycle_values(frame)
     segments = {}
+    repeat_segments = {}
     for attribute in attributes:
         values = {}
-        for value, group in frame.dropna(subset=[attribute]).groupby(attribute):
-            cycle_values = {}
-            for cycle in cycles:
-                subset = group[group[cycle_col].astype(str) == cycle]
-                if len(subset) >= MIN_N:
-                    cycle_values[cycle] = {
-                        "n": int(len(subset)),
-                        "items": metrics(subset, questions),
-                    }
-            if len(cycle_values) == 2:
-                values[str(value)] = cycle_values
+        repeat_attribute_values = {}
+        for value, group in frame.dropna(subset=[attribute]).groupby(attribute, sort=True):
+            group_cycles = cycle_values(group)
+            if len(group_cycles) >= 2:
+                values[str(value)] = group_cycles
+                repeated = repeat_values(group)
+                if repeated:
+                    repeat_attribute_values[str(value)] = repeated
         segments[attribute] = values
-    return {"cycles": cycles, "overall": overall, "segments": segments}
+        repeat_segments[attribute] = repeat_attribute_values
+    return {
+        "cycles": cycles,
+        "overall": overall,
+        "segments": segments,
+        "repeat": {
+            "overall": repeat_values(frame),
+            "segments": repeat_segments,
+        },
+    }
 
 
 def correlation_rows(frame: pd.DataFrame, questions: list[str]) -> list[list[Any]]:

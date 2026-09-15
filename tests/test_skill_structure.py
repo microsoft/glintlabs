@@ -56,6 +56,7 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "--survey-export" in skill
     assert "interactive-report-contract.md" in skill
     assert "golden-report.html" in skill
+    assert "scores-change-format.png" in skill
     assert "<output-directory-name>-report.html" in skill
     assert "<output-directory-name>-share.zip" in skill
 
@@ -80,6 +81,7 @@ def test_analyze_survey_points_to_linked_dataset():
     assert (ROOT / "scripts/build_interactive_report.py").exists()
     golden = ROOT / "references/skills/analyze-survey/golden-report.html"
     assert golden.exists()
+    assert (ROOT / "references/skills/analyze-survey/scores-change-format.png").exists()
     runner = (ROOT / "scripts/run_vivaglint_analysis.py").read_text(encoding="utf-8")
     assert 'with_name("build_interactive_report.py")' in runner
     assert (ROOT / "scripts/analyze_survey_export.py").exists()
@@ -262,6 +264,17 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         assert f">{tab}</button>" in report_text
     for removed_tab in ("Overview", "Item results", "Heatmap"):
         assert f">{removed_tab}</button>" not in report_text
+    for heading in (
+        "Respondent population",
+        "All respondents",
+        "Repeat respondents",
+        "Question Name",
+        "Mean",
+        "Stddev",
+        "P-Value",
+        "Score Difference (New - Old)",
+    ):
+        assert heading in report_text
     with zipfile.ZipFile(share_zip) as archive:
         names = set(archive.namelist())
     assert "OPEN_REPORT.html" in names

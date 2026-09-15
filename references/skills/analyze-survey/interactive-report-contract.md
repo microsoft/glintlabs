@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption is
-`16e913831b72e0b3fa37fdbd261dc2fe665abc452969868f7ad41e0ec97782df`.
+`ffb91d748c0b6983fb2b1dd661b685ccdf9e15efdd22622bf548f4b18b880644`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -86,9 +86,18 @@ Place one report-level attribute/value filter above the tabs.
 
 ### Scores change
 
-- Compare the two selected/available survey cycles item by item.
-- Show prior score, current score, delta, and both sample sizes.
-- Support largest absolute change, decrease, and increase sorting.
+- Follow `scores-change-format.png`.
+- Let the user select old and new cycles when more than two are available.
+- Add a **Respondent population** sub-heading with **All respondents** and
+  **Repeat respondents** options.
+- Define repeat respondents as employees represented in both selected cycles.
+  Precompute these matched populations locally; do not derive them from
+  aggregate counts in the browser.
+- Use grouped cycle headers with Mean, Stddev, and n subcolumns.
+- Show a P-Value column with a visible significance indicator.
+- Show Score Difference (New - Old) with a proportional horizontal data bar
+  and the signed numeric difference.
+- Keep questions in survey order and use alternating row shading.
 - Apply the shared report filter only when both cycles meet minimum N.
 
 ### Relationships
