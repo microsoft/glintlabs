@@ -83,4 +83,6 @@ The Relationships matrix classifies absolute Pearson `r` as Low (`< .30`),
 Medium (`.30-.49`), High (`.50-.69`), or Very high (`>= .70`). Preserve the
 minimum-strength filter, strength-color toggle, significance toggle,
 add/remove question highlights, summary counts, and click-through cell details
-in the golden report.
+in the golden report. Keep the matrix visually compact: numbered columns,
+subtle-to-strong blue intensity, significance hidden by default, and no empty
+highlight or detail panels.

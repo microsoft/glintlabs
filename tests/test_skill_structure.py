@@ -288,15 +288,20 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         "Stddev",
         "P-Value",
         "Score Difference (New - Old)",
-        "Relationship display",
         "Minimum strength",
-        "Show strength colors",
-        "Show statistical significance",
-        "Highlight a question",
-        "Clear highlights",
+        "Highlight question",
+        ">Color</label>",
+        ">Significance</label>",
+        ">Clear</button>",
         "Very high",
     ):
         assert heading in report_text
+    assert "--rel-low:#f5f5f5" in report_text
+    assert "--rel-medium:#e5eeff" in report_text
+    assert "--rel-high:#7ea4fc" in report_text
+    assert "--rel-very-high:#335ccc" in report_text
+    assert "id=relSignificance type=checkbox>" in report_text
+    assert "title=\"${x}\">${i+1}</th>" in report_text
     with zipfile.ZipFile(share_zip) as archive:
         names = set(archive.namelist())
     assert "OPEN_REPORT.html" in names
