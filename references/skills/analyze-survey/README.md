@@ -45,6 +45,11 @@ config under `<output>/_input/`, then calls:
 The analysis must pass the two-run artifact hash comparison before the report
 builder runs.
 
+The runner prints durable progress updates with an ASCII bar, percentage,
+elapsed time, and current phase. Keep progress visible during both analysis
+passes and the interactive-report build, especially relationship clustering
+and alert aggregation, which can take several minutes on large exports.
+
 ## Privacy
 
 - Minimum displayed group size defaults to 5.

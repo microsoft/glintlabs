@@ -100,6 +100,7 @@ python scripts/analyze_survey_export.py \
 
 The runner automatically:
 
+- shows a live percentage, progress bar, elapsed time, and current phase
 - detects standard employee ID columns
 - detects numeric `Q_*` survey items
 - reads `Sheet1` or the first worksheet from Excel workbooks
@@ -110,6 +111,10 @@ The runner automatically:
 - requires SHA-256 repeatability
 - builds the self-contained interactive report and safe share ZIP
 - uses the checked-in golden report as the exact HTML template
+
+Long-running phases must provide visible progress rather than appearing idle.
+Keep updates concise and identify expensive work such as the repeatability
+verification, relationship clustering, alert aggregation, and ZIP packaging.
 
 Use explicit options only when automatic detection is wrong:
 

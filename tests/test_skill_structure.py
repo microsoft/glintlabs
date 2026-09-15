@@ -6,6 +6,7 @@ import re
 import subprocess
 import sys
 import zipfile
+from io import StringIO
 from pathlib import Path
 
 
@@ -69,6 +70,7 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "company-adjusted" in skill
     assert "expandable top-five item declines" in skill
     assert "20 responses" in skill
+    assert "progress bar" in skill
     assert "<output-directory-name>-report.html" in skill
     assert "<output-directory-name>-share.zip" in skill
 
@@ -120,6 +122,27 @@ def test_analyze_survey_points_to_linked_dataset():
     assert (ROOT / "scripts/analyze_survey_export.py").exists()
     builder = (ROOT / "scripts/build_interactive_report.py").read_text(encoding="utf-8")
     assert '"golden-report.html"' in builder
+    assert "relationship matrices and cluster recommendations" in builder.casefold()
+    assert (ROOT / "scripts/progress.py").exists()
+
+
+def test_progress_reporter_shows_bar_percentage_phase_and_elapsed_time():
+    script_path = ROOT / "scripts/progress.py"
+    spec = importlib.util.spec_from_file_location("survey_progress", script_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+
+    stream = StringIO()
+    reporter = module.ProgressReporter(start=10, end=90, stream=stream)
+    reporter.update(50, "Building relationships")
+    output = stream.getvalue()
+
+    assert "[############------------]" in output
+    assert " 50%" in output
+    assert "Building relationships" in output
+    assert re.search(r"\(\d{2}:\d{2}\)", output)
 
 
 def test_direct_export_runner_detects_csv_contract(tmp_path):

@@ -14,12 +14,19 @@ import json
 import shutil
 import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
 import pandas as pd
+
+SCRIPT_DIR = str(Path(__file__).resolve().parent)
+if SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, SCRIPT_DIR)
+
+from progress import ProgressReporter
 
 
 RECOMMENDED_INSTALL = "vivaglint[all]==0.1.1"
@@ -61,6 +68,10 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Run once only. Intended for the internal second pass.",
     )
+    parser.add_argument("--no-progress", action="store_true", help=argparse.SUPPRESS)
+    parser.add_argument("--progress-start", type=int, default=0, help=argparse.SUPPRESS)
+    parser.add_argument("--progress-end", type=int, default=100, help=argparse.SUPPRESS)
+    parser.add_argument("--progress-started-at", type=float, help=argparse.SUPPRESS)
     return parser.parse_args()
 
 
@@ -233,6 +244,7 @@ def compare_repeatability(
         "--output-dir",
         str(verification_dir),
         "--skip-repeatability-check",
+        "--no-progress",
     ]
     completed = subprocess.run(command, capture_output=True, text=True, check=False)
     result: dict[str, Any] = {
@@ -318,11 +330,19 @@ def compare_repeatability(
 
 def main() -> int:
     args = parse_args()
+    progress = ProgressReporter(
+        start=args.progress_start,
+        end=args.progress_end,
+        enabled=not args.no_progress,
+        started_at=args.progress_started_at or time.monotonic(),
+    )
+    progress.update(0, "Loading analysis configuration")
     config_path = Path(args.config).resolve()
     output_dir = Path(args.output_dir).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
 
     config = load_config(config_path)
+    progress.update(3, "Loading the survey analysis engine")
 
     import vivaglint
     from vivaglint import (
@@ -347,6 +367,10 @@ def main() -> int:
 
     survey = load_survey(config, config_path, survey_csv)
     questions = extract_questions(survey)
+    progress.update(
+        8,
+        f"Survey loaded: {len(survey.data):,} responses and {len(questions)} questions",
+    )
 
     artifacts: dict[str, str] = {}
     analyses: list[StepResult] = []
@@ -357,7 +381,23 @@ def main() -> int:
     if min_group_size < 5:
         warnings.append("min_group_size is below the recommended default of 5.")
 
+    requested_steps = [
+        name for name in DEFAULT_ANALYSES if name in requested
+    ]
+    finished_steps = 0
+
+    def start_step(name: str) -> None:
+        percent = 8 + 42 * finished_steps / max(1, len(requested_steps))
+        progress.update(percent, f"Running {name.replace('_', ' ')}")
+
+    def step_progress(name: str) -> None:
+        nonlocal finished_steps
+        finished_steps += 1
+        percent = 8 + 42 * finished_steps / max(1, len(requested_steps))
+        progress.update(percent, f"Completed {name.replace('_', ' ')}")
+
     if "descriptives" in requested:
+        start_step("descriptives")
         def descriptives() -> str:
             frame = summarize_survey(survey, scale_points=scale_points)
             return write_csv(output_dir, "descriptives", frame)
@@ -365,8 +405,10 @@ def main() -> int:
         analyses.append(result)
         if result.artifact:
             artifacts["descriptives"] = result.artifact
+        step_progress("descriptives")
 
     if "response_distribution" in requested:
+        start_step("response_distribution")
         def response_distribution() -> str:
             frame = get_response_dist(survey)
             return write_csv(output_dir, "response_distribution", frame)
@@ -374,8 +416,10 @@ def main() -> int:
         analyses.append(result)
         if result.artifact:
             artifacts["response_distribution"] = result.artifact
+        step_progress("response_distribution")
 
     if "correlations" in requested:
+        start_step("correlations")
         def correlations() -> str:
             frame = get_correlations(survey, method="pearson", format="long")
             return write_csv(output_dir, "correlations", frame)
@@ -383,8 +427,10 @@ def main() -> int:
         analyses.append(result)
         if result.artifact:
             artifacts["correlations"] = result.artifact
+        step_progress("correlations")
 
     if "factor_analysis" in requested:
+        start_step("factor_analysis")
         def factor_analysis() -> str:
             result = extract_survey_factors(survey, rotation="varimax")
             frame = result["factor_summary"]
@@ -393,8 +439,10 @@ def main() -> int:
         analyses.append(result)
         if result.artifact:
             artifacts["factor_analysis"] = result.artifact
+        step_progress("factor_analysis")
 
     if "cycle_comparisons" in requested:
+        start_step("cycle_comparisons")
         cycle_csvs = config.get("cycle_csvs") or []
         if len(cycle_csvs) < 2:
             analyses.append(skip("cycle_comparisons", "At least two cycle_csvs are required."))
@@ -412,8 +460,10 @@ def main() -> int:
             analyses.append(result)
             if result.artifact:
                 artifacts["cycle_comparisons"] = result.artifact
+        step_progress("cycle_comparisons")
 
     if "by_attribute" in requested:
+        start_step("by_attribute")
         attribute_file = resolve_path(config_path, config.get("attribute_file"))
         attribute_cols = config.get("attribute_cols") or []
         attribute_view_mode = config.get("attribute_view_mode", "combined")
@@ -456,8 +506,10 @@ def main() -> int:
             analyses.append(result)
             if result.artifact:
                 artifacts["by_attribute"] = result.artifact
+        step_progress("by_attribute")
 
     if "attrition" in requested:
+        start_step("attrition")
         attrition_file = resolve_path(config_path, config.get("attrition_file"))
         term_date_col = config.get("term_date_col")
         if not attrition_file or not term_date_col:
@@ -512,6 +564,7 @@ def main() -> int:
             analyses.append(result)
             if result.artifact:
                 artifacts["attrition"] = result.artifact
+        step_progress("attrition")
 
     failed = [item for item in analyses if item.status == "failed"]
     completed = [item for item in analyses if item.status == "completed"]
@@ -569,7 +622,12 @@ def main() -> int:
         "mismatches": [],
     }
     if not args.skip_repeatability_check:
+        progress.update(
+            55,
+            "Running the repeatability verification pass; this may take several minutes",
+        )
         repeatability_check = compare_repeatability(config_path, output_dir, artifacts)
+        progress.update(72, "Repeatability verification completed")
         manifest["repeatability_check"] = repeatability_check
         if repeatability_check["status"] != "passed":
             manifest["interpretation_readiness"]["ready"] = False
@@ -582,6 +640,7 @@ def main() -> int:
     with (output_dir / "analysis-manifest.json").open("w", encoding="utf-8") as handle:
         json.dump(manifest, handle, indent=2)
         handle.write("\n")
+    progress.update(75, "Analysis manifest written")
 
     report_status = "skipped"
     report_failed = False
@@ -597,11 +656,15 @@ def main() -> int:
             str(config_path),
             "--output-dir",
             str(output_dir),
+            "--progress-start",
+            str(round(args.progress_start + (args.progress_end - args.progress_start) * 0.75)),
+            "--progress-end",
+            str(round(args.progress_start + (args.progress_end - args.progress_start) * 0.98)),
+            "--progress-started-at",
+            str(progress.started_at),
         ]
         report_process = subprocess.run(
             report_command,
-            capture_output=True,
-            text=True,
             check=False,
         )
         if report_process.returncode == 0:
@@ -609,11 +672,9 @@ def main() -> int:
         else:
             report_status = "failed"
             report_failed = True
-            print(
-                report_process.stderr.strip() or report_process.stdout.strip(),
-                file=sys.stderr,
-            )
+            print("Interactive report generation failed.", file=sys.stderr)
 
+    progress.update(100, "Survey report generation complete")
     print(json.dumps({
         "output_dir": str(output_dir),
         "completed": len(completed),

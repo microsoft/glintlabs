@@ -14,6 +14,12 @@ from typing import Any
 
 import pandas as pd
 
+SCRIPT_DIR = str(Path(__file__).resolve().parent)
+if SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, SCRIPT_DIR)
+
+from progress import ProgressReporter
+
 
 EMPLOYEE_ID_CANDIDATES = (
     "user_id",
@@ -383,9 +389,13 @@ def build_config(options: argparse.Namespace, output: Path) -> Path:
 
 def main() -> int:
     options = parse_args()
+    progress = ProgressReporter()
+    progress.update(0, "Starting survey report generation")
     output = Path(options.output_dir).resolve()
     output.mkdir(parents=True, exist_ok=True)
+    progress.update(3, "Reading the survey export and detecting its structure")
     config_path = build_config(options, output)
+    progress.update(10, "Input prepared; starting the analysis pipeline")
     command = [
         sys.executable,
         str(Path(__file__).with_name("run_vivaglint_analysis.py")),
@@ -393,6 +403,12 @@ def main() -> int:
         str(config_path),
         "--output-dir",
         str(output),
+        "--progress-start",
+        "10",
+        "--progress-end",
+        "100",
+        "--progress-started-at",
+        str(progress.started_at),
     ]
     completed = subprocess.run(command, check=False)
     return completed.returncode

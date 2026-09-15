@@ -7,12 +7,20 @@ import argparse
 import json
 import math
 import re
+import sys
+import time
 import zipfile
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 import pandas as pd
+
+SCRIPT_DIR = str(Path(__file__).resolve().parent)
+if SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, SCRIPT_DIR)
+
+from progress import ProgressReporter
 from scipy.cluster.hierarchy import cut_tree, linkage
 from scipy.spatial.distance import squareform
 from scipy.stats import t as student_t
@@ -28,6 +36,9 @@ def args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", required=True)
     parser.add_argument("--output-dir", required=True)
+    parser.add_argument("--progress-start", type=int, default=0, help=argparse.SUPPRESS)
+    parser.add_argument("--progress-end", type=int, default=100, help=argparse.SUPPRESS)
+    parser.add_argument("--progress-started-at", type=float, help=argparse.SUPPRESS)
     return parser.parse_args()
 
 
@@ -517,6 +528,12 @@ def html_page(data: dict[str, Any]) -> str:
 
 def main() -> int:
     options = args()
+    progress = ProgressReporter(
+        start=options.progress_start,
+        end=options.progress_end,
+        started_at=options.progress_started_at or time.monotonic(),
+    )
+    progress.update(0, "Preparing interactive report data")
     config_path = Path(options.config).resolve()
     output = Path(options.output_dir).resolve()
     config = json.loads(config_path.read_text(encoding="utf-8"))
@@ -530,6 +547,7 @@ def main() -> int:
         "question"
     ].tolist()
     normalize_items(frame, questions, int(config["scale_points"]))
+    progress.update(8, "Survey responses normalized")
     emp_id = config["emp_id_col"]
     frame["__employee_id"] = frame[emp_id]
 
@@ -573,9 +591,16 @@ def main() -> int:
 
     overall = metrics(frame, questions)
     segments = segment_cube(frame, questions, attributes)
+    progress.update(25, "Overall and segment score views prepared")
+    progress.update(28, "Building cycle comparisons and repeat-respondent views")
     cycles = cycle_cube(frame, questions, attributes, cycle_col)
+    progress.update(42, "Cycle comparisons and repeat-respondent views prepared")
+    progress.update(45, "Clustering relationship matrices for each filter view")
     relationships = relationship_cube(frame, questions, attributes)
+    progress.update(68, "Relationship matrices and cluster recommendations prepared")
+    progress.update(72, "Aggregating and classifying alert groups")
     alert_data = alert_cube(frame, questions, attributes, cycle_col, team_col)
+    progress.update(86, "Alert groups classified and privacy thresholds applied")
     factors_path = output / "factor_analysis_summary.csv"
     factors = pd.read_csv(factors_path).to_dict("records") if factors_path.exists() else []
     attrition_status = next(
@@ -620,6 +645,7 @@ def main() -> int:
     }
     report_path = output / report_name
     report_path.write_text(html_page(data), encoding="utf-8")
+    progress.update(94, "Interactive HTML report written")
 
     readme = output / "SHARING_README.txt"
     readme.write_text(
@@ -632,6 +658,7 @@ def main() -> int:
         archive.write(readme, readme.name)
         for name in downloads:
             archive.write(output / name, name)
+    progress.update(100, "Safe share package written")
     print(json.dumps({"report": str(report_path), "share_zip": str(zip_path)}, indent=2))
     return 0
 
