@@ -54,6 +54,8 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "synthetic survey data" in skill
     assert "scripts/analyze_survey_export.py" in skill
     assert "--survey-export" in skill
+    assert "references/design/glint-ui-system.md" in skill
+    assert "Do not invent report colors" in skill
     assert "interactive-report-contract.md" in skill
     assert "golden-report.html" in skill
     assert "scores-change-format.png" in skill
@@ -88,6 +90,12 @@ def test_analyze_survey_points_to_linked_dataset():
     assert (ROOT / "scripts/build_interactive_report.py").exists()
     golden = ROOT / "references/skills/analyze-survey/golden-report.html"
     assert golden.exists()
+    design_reference = ROOT / "references/design/glint-ui-system.md"
+    assert design_reference.exists()
+    design_text = design_reference.read_text(encoding="utf-8")
+    assert "glint-ui-system" in design_text
+    assert "9e67a00125de2fd15130d675af57d190bc8ae294" in design_text
+    assert "--colorBrandForeground1: #335CCC" in design_text
     assert (ROOT / "references/skills/analyze-survey/scores-change-format.png").exists()
     runner = (ROOT / "scripts/run_vivaglint_analysis.py").read_text(encoding="utf-8")
     assert 'with_name("build_interactive_report.py")' in runner

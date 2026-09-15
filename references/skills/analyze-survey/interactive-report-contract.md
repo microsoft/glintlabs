@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption is
-`929c2b01e2836eb9d2d275565623dd56d856da1f041e8b0844bbc8ca54daa835`.
+`3d3eebff9cf1e4e7932b0019b53ce017bae14675a7e394db1a4ef683b4867957`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -44,12 +44,13 @@ staging data from the ZIP.
 
 ## Visual contract
 
-- Use the published Glint UI system.
+- Load and follow `references/design/glint-ui-system.md`, which points to the
+  published `glint-ui-system` skill and canonical upstream reference.
 - Force the light Glint report theme; do not follow operating-system dark mode.
 - Use `#FAFAFA` for the canvas, white cards, `#335CCC` as the primary Glint
   blue, `#E5EEFF` for blue tint, Glint status colors, and the approved
   favorable/unfavorable treatments.
-- Use Segoe UI/Aptos/Calibri typography, restrained 10-16 px radii, subtle
+- Use Segoe UI typography, approved Glint radii, subtle
   borders and shadows, accessible focus states, and responsive layouts.
 - Do not substitute a generic dashboard theme.
 

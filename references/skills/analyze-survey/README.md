@@ -64,6 +64,10 @@ data payload. Do not restyle, restructure, rename, or independently recreate
 the report shell. The aggregate values embedded in the golden file are example
 values and must never be reused for another analysis.
 
+Before changing the golden report or any report colors, load
+`references/design/glint-ui-system.md`. It points to the canonical
+`glint-ui-system` skill and records the required Glint/Fluent design rules.
+
 The golden report intentionally excludes Overview, Item results, and Heatmap.
 Its six tabs are Scores change, Relationships, Alerts, Factors, Attrition
 analysis, and Downloads.

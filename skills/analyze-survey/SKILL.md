@@ -35,13 +35,17 @@ not substitute bundled, generated, or synthetic survey data.
 
 Read these references in order:
 
-1. `references/skills/analyze-survey/README.md`
-2. `references/skills/analyze-survey/linked-dataset.json`
-3. `references/skills/analyze-survey/golden-report.html`
-4. `references/skills/analyze-survey/scores-change-format.png`
-5. `references/skills/analyze-survey/interactive-report-contract.md`
-6. `references/general/privacy-and-minimum-n.md`
-7. `references/general/codebook-catalog.md`
+1. `references/design/glint-ui-system.md`
+2. `references/skills/analyze-survey/README.md`
+3. `references/skills/analyze-survey/linked-dataset.json`
+4. `references/skills/analyze-survey/golden-report.html`
+5. `references/skills/analyze-survey/scores-change-format.png`
+6. `references/skills/analyze-survey/interactive-report-contract.md`
+7. `references/general/privacy-and-minimum-n.md`
+8. `references/general/codebook-catalog.md`
+
+The Glint UI system is mandatory for all color, typography, spacing, component,
+and accessibility decisions. Do not invent report colors or visual patterns.
 
 `golden-report.html` is the canonical report shell. Future reports must preserve
 its markup, styling, tab order, labels, and browser interactions exactly while
