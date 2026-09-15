@@ -1,40 +1,61 @@
-# Analyze Survey references
+# Analyze Survey reference
 
-Place first-priority documents for `analyze-survey` here.
+`analyze-survey` accepts a survey export directly and deterministically creates
+the analysis manifest, aggregate artifacts, interactive HTML report, and safe
+share ZIP.
 
-Use this folder for:
+## Supported input
 
-- input-data requirements
-- codebook runbooks
-- supported Glint export formats
-- analysis configuration examples
-- package-version notes
-- deterministic/repeatability expectations
-- known `vivaglint` edge cases
-- `interactive-report-contract.md`, the required user-facing output format
+- CSV survey exports
+- XLSX/XLSM workbooks
+- Wide item data with one row per respondent and numeric `Q_*` columns
+- Optional employee attributes in the same table or a workbook sheet named
+  `user_properties`, `attributes`, `employee attributes`, or `demographics`
 
-When `analyze-survey` runs, inspect this folder before `references/general/`.
+Automatic employee ID detection recognizes common forms such as `user_id`,
+`employee_id`, and `respondent_id`. Use explicit command options when an export
+uses different names.
 
-## Canonical demo workbook
+## Registered linked source
 
-When a user does not have their own survey data, reference and use:
+The sole registered sample source is `Viva Glint Dataset with Attributes.xlsx`
+at:
 
-- **File:** `Demo Viva Glint Dataset with Attributes.xlsx`
-- **Worksheet:** `Sheet1`
-- **Attributes:** `user_properties`
-- **URL:** https://microsoft.sharepoint-df.com/:x:/t/EVE/cQqUFHaCVNxhR5SuuM1bWSpIEgUCf21SzklCzncCB16W6hH3Kg
-- **Defaults:** `input_format: wide_items`, `emp_id_col: user_id`, scale points
-  `5`
+```text
+https://microsoft.sharepoint-df.com/:x:/t/EVE/cQqUFHaCVNxhR5SuuM1bWSpIEgUCf21SzklCzncCB16W6hH3Kg
+```
 
-Export `Sheet1` to CSV for the current runner and join `user_properties` by
-`user_id`. If authenticated SharePoint access is unavailable, use
-`demo-data/survey/config.json` and `demo-data/survey/glint_demo_data.csv` as
-the disclosed offline fallback.
+Use `Sheet1`, join `user_properties` by `user_id`, and use a 5-point scale.
+Do not replace it with bundled, generated, or synthetic survey data. If access
+is unavailable, report the access problem instead of silently substituting a
+different dataset.
 
-## Required report
+## Deterministic entry point
 
-After the analysis passes repeatability, generate the interactive report and
-shareable ZIP defined in `interactive-report-contract.md`. Use precomputed
-aggregate interactions rather than browser-side employee analysis.
-`scripts/run_vivaglint_analysis.py` invokes
-`scripts/build_interactive_report.py` automatically.
+```text
+scripts/analyze_survey_export.py
+```
+
+This script is the only normal user-facing entry point. It prepares an internal
+config under `<output>/_input/`, then calls:
+
+1. `scripts/run_vivaglint_analysis.py`
+2. `scripts/build_interactive_report.py`
+
+The analysis must pass the two-run artifact hash comparison before the report
+builder runs.
+
+## Privacy
+
+- Minimum displayed group size defaults to 5.
+- Raw survey and attribute files stay outside the share ZIP.
+- Names, email addresses, comments, phone numbers, and addresses are never
+  automatically selected as report attributes.
+- Browser interactions use embedded aggregate data, not respondent rows.
+
+## Report
+
+The required behavior and packaging are defined in
+`interactive-report-contract.md`. The example format is the generated
+nine-tab report with Overview, item comparisons, score changes, heatmaps,
+relationships, alerts, factors, attrition status, and aggregate downloads.

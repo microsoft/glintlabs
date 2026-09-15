@@ -1,4 +1,5 @@
 import csv
+import importlib.util
 import json
 import subprocess
 import sys
@@ -30,30 +31,31 @@ def test_each_skill_has_first_priority_reference_folder():
     assert missing == []
 
 
-def test_analyze_survey_points_to_demo_data():
+def test_analyze_survey_points_to_linked_dataset():
     skill = (ROOT / "skills/analyze-survey/SKILL.md").read_text(encoding="utf-8")
-    source = (ROOT / "demo-data/survey/source.json").read_text(encoding="utf-8")
-    demo_config = ROOT / "demo-data/survey/config.json"
-    demo_csv = ROOT / "demo-data/survey/glint_demo_data.csv"
-    demo_url = (
+    source_path = (
+        ROOT / "references/skills/analyze-survey/linked-dataset.json"
+    )
+    source = json.loads(source_path.read_text(encoding="utf-8"))
+    source_url = (
         "https://microsoft.sharepoint-df.com/:x:/t/EVE/"
         "cQqUFHaCVNxhR5SuuM1bWSpIEgUCf21SzklCzncCB16W6hH3Kg"
     )
 
     assert (
         "Do you have your own survey data you would like to analyze? "
-        "If not, I can use the demo Viva Glint workbook."
+        "If not, I can use the linked Viva Glint workbook."
     ) in skill
-    assert skill.index("The first action") < skill.index("Ask for missing required inputs")
-    assert demo_url in skill
-    assert demo_url in source
-    assert demo_config.exists()
-    assert demo_csv.exists()
-    assert "Run tenure and organization as separate attribute views by default." in skill
-    assert "do not claim attrition analysis completed" in skill
+    assert source["source_url"] == source_url
+    assert source["worksheet"] == "Sheet1"
+    assert source["attribute_worksheet"] == "user_properties"
+    assert source_url in skill
+    assert "synthetic survey data" in skill
+    assert "scripts/analyze_survey_export.py" in skill
+    assert "--survey-export" in skill
     assert "interactive-report-contract.md" in skill
-    assert "<analysis-name>-report.html" in skill
-    assert "<analysis-name>-share.zip" in skill
+    assert "<output-directory-name>-report.html" in skill
+    assert "<output-directory-name>-share.zip" in skill
 
     report_contract = (
         ROOT / "references/skills/analyze-survey/interactive-report-contract.md"
@@ -81,6 +83,44 @@ def test_analyze_survey_points_to_demo_data():
     assert (ROOT / "scripts/build_interactive_report.py").exists()
     runner = (ROOT / "scripts/run_vivaglint_analysis.py").read_text(encoding="utf-8")
     assert 'with_name("build_interactive_report.py")' in runner
+    assert (ROOT / "scripts/analyze_survey_export.py").exists()
+
+
+def test_direct_export_runner_detects_csv_contract(tmp_path):
+    survey = tmp_path / "survey.csv"
+    survey.write_text(
+        "user_id,Q_ONE,Q_TWO,department,email\n"
+        "1,1,2,Sales,a@example.com\n"
+        "2,2,3,Sales,b@example.com\n"
+        "3,3,4,Engineering,c@example.com\n"
+        "4,4,5,Engineering,d@example.com\n"
+        "5,5,1,Finance,e@example.com\n",
+        encoding="utf-8",
+    )
+    script_path = ROOT / "scripts/analyze_survey_export.py"
+    spec = importlib.util.spec_from_file_location("analyze_survey_export", script_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+    options = module.parse_args
+
+    class Args:
+        survey_export = str(survey)
+        output_dir = str(tmp_path / "output")
+        sheet = None
+        attribute_sheet = None
+        emp_id_col = None
+        scale_points = 5
+        question_cols = None
+        attribute_cols = None
+        min_group_size = 5
+
+    config_path = module.build_config(Args(), Path(Args.output_dir))
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    assert config["emp_id_col"] == "user_id"
+    assert config["question_cols"] == ["Q_ONE", "Q_TWO"]
+    assert config["attribute_cols"] == ["department"]
+    assert "email" not in config["attribute_cols"]
 
 
 def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):

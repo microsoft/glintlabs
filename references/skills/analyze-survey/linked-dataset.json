@@ -1,0 +1,11 @@
+{
+  "name": "Viva Glint Dataset with Attributes",
+  "source_url": "https://microsoft.sharepoint-df.com/:x:/t/EVE/cQqUFHaCVNxhR5SuuM1bWSpIEgUCf21SzklCzncCB16W6hH3Kg",
+  "worksheet": "Sheet1",
+  "attribute_worksheet": "user_properties",
+  "input_format": "wide_items",
+  "emp_id_col": "user_id",
+  "scale_points": 5,
+  "description": "The sole registered sample survey source for analyze-survey when the user does not provide another export.",
+  "intake_prompt": "Do you have your own survey data you would like to analyze? If not, I can use the linked Viva Glint workbook."
+}

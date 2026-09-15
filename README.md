@@ -6,9 +6,9 @@ People Science analytics plugin suite for Viva Glint survey data.
 
 This plugin provides a set of focused skills that share a common analysis contract:
 
-1. `analyze-survey` runs a standard set of `vivaglint` codebooks, writes an
-   `analysis-manifest.json`, and packages the required interactive Glint HTML
-   report and privacy-safe shareable ZIP.
+1. `analyze-survey` accepts CSV or Excel survey exports directly, runs a
+   standard set of `vivaglint` codebooks, writes an `analysis-manifest.json`,
+   and packages the required interactive HTML report and privacy-safe ZIP.
 2. `analysis-qa` reviews output validity, privacy thresholds, and interpretation readiness.
 3. `interpret-analysis` turns codebook outputs into People Science findings and caveats.
 4. `people-science-knowledge-vault` finds and synthesizes externally published People Science knowledge using a strict two-tier source hierarchy.
@@ -93,24 +93,22 @@ only to records in the source workbook's `External` worksheet. Future work can a
 generated article catalog, automated refresh, topic aliases, and retrieval-quality
 tests without changing this source hierarchy.
 
-## Demo data
+## Linked survey dataset
 
 Survey-analysis workflows should begin by asking:
 
-> Do you have your own survey data you would like to analyze? If not, I can use the demo Viva Glint workbook.
+> Do you have your own survey data you would like to analyze? If not, I can use the linked Viva Glint workbook.
 
-If the user chooses demo data, use the canonical workbook:
+If the user does not provide another export, use:
 
 ```text
-Demo Viva Glint Dataset with Attributes.xlsx
+Viva Glint Dataset with Attributes.xlsx
 https://microsoft.sharepoint-df.com/:x:/t/EVE/cQqUFHaCVNxhR5SuuM1bWSpIEgUCf21SzklCzncCB16W6hH3Kg
 ```
 
-Export `Sheet1` to CSV and join `user_properties` by `user_id`. If SharePoint
-access is unavailable, use the bundled `demo-data/survey/config.json` and
-`demo-data/survey/glint_demo_data.csv` fallback and disclose that substitution.
-
-The demo source is registered in `demo-data/survey/source.json`.
+Use `Sheet1`, join `user_properties` by `user_id`, and use a 5-point scale.
+This is the only registered sample source. Do not silently substitute bundled,
+generated, or synthetic survey data.
 
 ## Analyze-survey report output
 
@@ -143,7 +141,7 @@ pip install "git+https://github.com/microsoft/vivaglint_py.git@761d847a8c8d38ff4
 ## Local smoke test
 
 ```bash
-python plugins/eve-people-science/scripts/run_vivaglint_analysis.py --config plugins/eve-people-science/examples/sample-survey/config.json --output-dir outputs/sample-survey
+python scripts/analyze_survey_export.py --survey-export C:\path\to\Viva-Glint-Dataset-with-Attributes.xlsx --output-dir outputs\sample-survey
 ```
 
 ## Privacy stance

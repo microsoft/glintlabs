@@ -30,7 +30,7 @@
     "input_format": {
       "enum": ["glint_export", "wide_items"],
       "default": "glint_export",
-      "description": "glint_export expects a raw Viva Glint export. wide_items supports demo-style files with one numeric survey item per column."
+      "description": "glint_export expects a raw Viva Glint export. wide_items supports files with one numeric survey item per column."
     },
     "question_cols": {
       "type": "array",
