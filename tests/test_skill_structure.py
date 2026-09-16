@@ -71,6 +71,10 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "expandable top-five item declines" in skill
     assert "20 responses" in skill
     assert "progress bar" in skill
+    assert "people-science-summary-context.json" in skill
+    assert "people-science-summaries.schema.json" in skill
+    assert "`interpret-analysis`" in skill
+    assert "`people-science-knowledge-vault`" in skill
     assert "<output-directory-name>-report.html" in skill
     assert "<output-directory-name>-share.zip" in skill
 
@@ -103,6 +107,8 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "Welch significance" in report_contract
     assert "five largest item declines" in report_contract
     assert "at least 20 responses in both compared cycles" in report_contract
+    assert "Begin every tab with a compact People Science perspective card" in report_contract
+    assert "explicit fallback disclosure" in report_contract
     assert (ROOT / "scripts/build_interactive_report.py").exists()
     golden = ROOT / "references/skills/analyze-survey/golden-report.html"
     assert golden.exists()
@@ -123,6 +129,20 @@ def test_analyze_survey_points_to_linked_dataset():
     builder = (ROOT / "scripts/build_interactive_report.py").read_text(encoding="utf-8")
     assert '"golden-report.html"' in builder
     assert "relationship matrices and cluster recommendations" in builder.casefold()
+    summary_schema = json.loads(
+        (
+            ROOT
+            / "references/skills/analyze-survey/people-science-summaries.schema.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert summary_schema["properties"]["tabs"]["required"] == [
+        "changes",
+        "relationships",
+        "alerts",
+        "factors",
+        "attrition",
+        "downloads",
+    ]
     assert (ROOT / "scripts/progress.py").exists()
 
 
@@ -285,6 +305,38 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         ),
         encoding="utf-8",
     )
+    sample_summary = {
+        "headline": "A concise headline",
+        "observation": "The aggregate results show a pattern.",
+        "interpretation": "Treat the pattern as a listening hypothesis.",
+        "recommendation": "Discuss the result with employees.",
+        "caveat": "This is not causal evidence.",
+        "sources": [
+            {
+                "title": "Published Viva Glint guidance",
+                "url": "https://example.com/evidence",
+            }
+        ],
+    }
+    (tmp_path / "people-science-summaries.json").write_text(
+        json.dumps(
+            {
+                "schema_version": "1.0.0",
+                "tabs": {
+                    tab: {"overall": sample_summary}
+                    for tab in (
+                        "changes",
+                        "relationships",
+                        "alerts",
+                        "factors",
+                        "attrition",
+                        "downloads",
+                    )
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
 
     subprocess.run(
         [
@@ -360,11 +412,67 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert "alertSeverity" in report_text
     assert "alertSearch" in report_text
     assert "topDeclines" in report_text
+    assert report_text.count("data-summary=") == 6
+    assert '"aiSummaries":{"changes"' in report_text
+    summary_context = json.loads(
+        (tmp_path / "people-science-summary-context.json").read_text(encoding="utf-8")
+    )
+    assert set(summary_context["tabs"]) == {
+        "changes",
+        "relationships",
+        "alerts",
+        "factors",
+        "attrition",
+        "downloads",
+    }
+    assert "Team A" not in json.dumps(summary_context)
     with zipfile.ZipFile(share_zip) as archive:
         names = set(archive.namelist())
     assert "OPEN_REPORT.html" in names
     assert survey.name not in names
     assert attributes.name not in names
+    assert "people-science-summary-context.json" in names
+    assert "people-science-summaries.json" in names
+
+
+def test_people_science_summary_validation_and_script_escaping(tmp_path):
+    script_path = ROOT / "scripts/build_interactive_report.py"
+    spec = importlib.util.spec_from_file_location("summary_report_builder", script_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+
+    summary = {
+        "headline": "</script><script>alert('x')</script>",
+        "observation": "Observed aggregate evidence.",
+        "interpretation": "An exploratory interpretation.",
+        "recommendation": "A practical next step.",
+        "caveat": "Not causal.",
+        "sources": [{"title": "Evidence", "url": "https://example.com/evidence"}],
+    }
+    document = {
+        "schema_version": "1.0.0",
+        "tabs": {tab: {"overall": summary} for tab in module.SUMMARY_TABS},
+    }
+    (tmp_path / "people-science-summaries.json").write_text(
+        json.dumps(document), encoding="utf-8"
+    )
+    loaded = module.load_ai_summaries(tmp_path)
+    rendered = module.html_page({"aiSummaries": loaded})
+
+    assert "</script><script>alert('x')</script>" not in rendered
+    assert "\\u003c/script\\u003e" in rendered
+
+    del document["tabs"]["downloads"]
+    (tmp_path / "people-science-summaries.json").write_text(
+        json.dumps(document), encoding="utf-8"
+    )
+    try:
+        module.load_ai_summaries(tmp_path)
+    except ValueError as error:
+        assert "missing tab summaries: downloads" in str(error)
+    else:
+        raise AssertionError("Missing summaries must be rejected")
 
 
 def test_relationship_cluster_plan_is_deterministic():

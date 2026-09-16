@@ -50,6 +50,15 @@ elapsed time, and current phase. Keep progress visible during both analysis
 passes and the interactive-report build, especially relationship clustering
 and alert aggregation, which can take several minutes on large exports.
 
+The first report build also writes
+`people-science-summary-context.json`, a compact aggregate-only input for AI
+interpretation. Use `interpret-analysis` for statistical guardrails and
+`people-science-knowledge-vault` for externally published knowledge grounding.
+Write all six tab narratives to `people-science-summaries.json` using
+`people-science-summaries.schema.json`, then rerun the report builder. The
+summary file and context are safe aggregate artifacts and are included in the
+share ZIP.
+
 ## Privacy
 
 - Minimum displayed group size defaults to 5.
@@ -62,6 +71,12 @@ and alert aggregation, which can take several minutes on large exports.
 
 The required behavior and packaging are defined in
 `interactive-report-contract.md`.
+
+Each tab begins with a concise AI-generated People Science perspective. It
+separates observation from interpretation, recommends a next step, states a
+caveat, and links relevant published evidence. The report uses a matching
+filtered summary when one exists; otherwise it clearly states that the
+company-wide narrative is shown.
 
 `golden-report.html` is the user-approved canonical HTML example. The report
 builder reads that file directly and replaces only the `const D=...` aggregate

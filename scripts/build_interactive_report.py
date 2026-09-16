@@ -30,6 +30,14 @@ MIN_N = 5
 RELATIONSHIP_MIN_N = 30
 ALERT_MIN_N = 20
 FILTERED_ALERT_MIN_N = 20
+SUMMARY_TABS = (
+    "changes",
+    "relationships",
+    "alerts",
+    "factors",
+    "attrition",
+    "downloads",
+)
 
 
 def args() -> argparse.Namespace:
@@ -511,7 +519,14 @@ def alert_cube(
 
 
 def html_page(data: dict[str, Any]) -> str:
-    encoded = json.dumps(data, separators=(",", ":")).replace("<", "\\u003c")
+    encoded = (
+        json.dumps(data, separators=(",", ":"))
+        .replace("&", "\\u0026")
+        .replace("<", "\\u003c")
+        .replace(">", "\\u003e")
+        .replace("\u2028", "\\u2028")
+        .replace("\u2029", "\\u2029")
+    )
     template_path = (
         Path(__file__).resolve().parents[1]
         / "references"
@@ -524,6 +539,175 @@ def html_page(data: dict[str, Any]) -> str:
     payload_start = template.index(marker) + len(marker)
     payload_end = template.index(";\nconst names=", payload_start)
     return template[:payload_start] + encoded + template[payload_end:]
+
+
+def summary_context(
+    questions: list[str],
+    cycles: dict[str, Any],
+    relationships: dict[str, Any],
+    alerts_data: dict[str, Any],
+    factors: list[dict[str, Any]],
+    attrition: str,
+    downloads: list[str],
+) -> dict[str, Any]:
+    labels = {question: label(question) for question in questions}
+    cycle_names = cycles.get("cycles", [])
+    changes: dict[str, Any] = {"cycles": cycle_names, "largest_changes": []}
+    if len(cycle_names) >= 2:
+        old_cycle, new_cycle = cycle_names[0], cycle_names[-1]
+        old = cycles.get("overall", {}).get(old_cycle, {}).get("items", [])
+        new = cycles.get("overall", {}).get(new_cycle, {}).get("items", [])
+        change_rows = [
+            {
+                "question": labels[question],
+                "old_score": old[index][0],
+                "new_score": new[index][0],
+                "change": round(new[index][0] - old[index][0], 1),
+                "n_old": old[index][2],
+                "n_new": new[index][2],
+            }
+            for index, question in enumerate(questions)
+            if index < len(old) and index < len(new)
+        ]
+        changes.update(
+            {
+                "old_cycle": old_cycle,
+                "new_cycle": new_cycle,
+                "largest_changes": sorted(
+                    change_rows,
+                    key=lambda row: abs(row["change"]),
+                    reverse=True,
+                )[:8],
+            }
+        )
+
+    strongest = sorted(
+        relationships.get("overall", []),
+        key=lambda row: abs(row[2]),
+        reverse=True,
+    )[:8]
+    relationship_context = {
+        "strongest_relationships": [
+            {
+                "question_1": labels[questions[row[0]]],
+                "question_2": labels[questions[row[1]]],
+                "correlation": row[2],
+                "p_value": row[3],
+                "n": row[4],
+            }
+            for row in strongest
+        ],
+        "cluster_recommendation": relationships.get("clusters", {}).get(
+            "overall", {}
+        ),
+    }
+
+    overall_alerts = alerts_data.get("overall", {})
+    alert_rows = overall_alerts.get("rows", [])
+    alert_context = {
+        "available": alerts_data.get("available", False),
+        "minimum_n": overall_alerts.get("minimum"),
+        "suppressed": overall_alerts.get("suppressed", 0),
+        "severity_counts": {
+            severity: sum(row["severity"] == severity for row in alert_rows)
+            for severity in ("critical", "watch", "improving", "stable")
+        },
+        "highest_priority_patterns": [
+            {
+                "severity": row["severity"],
+                "change": row["delta"],
+                "company_adjusted_change": row["adjustedDelta"],
+                "p_value": row["pValue"],
+                "declining_items": row["declining"],
+                "n_old": row["nFrom"],
+                "n_new": row["nTo"],
+                "top_item_declines": row["topDeclines"],
+            }
+            for row in alert_rows[:8]
+        ],
+    }
+    return {
+        "schema_version": "1.0.0",
+        "privacy": (
+            "Aggregate context only. Do not add employee identifiers, raw comments, "
+            "or suppressed group details to summaries."
+        ),
+        "tabs": {
+            "changes": changes,
+            "relationships": relationship_context,
+            "alerts": alert_context,
+            "factors": {"factor_rows": factors[:30]},
+            "attrition": {"status": attrition},
+            "downloads": {"artifacts": downloads},
+        },
+    }
+
+
+def load_ai_summaries(output: Path) -> dict[str, Any]:
+    path = output / "people-science-summaries.json"
+    if not path.exists():
+        return {}
+    summaries = json.loads(path.read_text(encoding="utf-8"))
+    if summaries.get("schema_version") != "1.0.0":
+        raise ValueError(
+            "people-science-summaries.json must use schema_version 1.0.0."
+        )
+    tabs = summaries.get("tabs")
+    if not isinstance(tabs, dict):
+        raise ValueError("people-science-summaries.json must contain a tabs object.")
+    missing = [tab for tab in SUMMARY_TABS if tab not in tabs]
+    if missing:
+        raise ValueError(
+            "people-science-summaries.json is missing tab summaries: "
+            + ", ".join(missing)
+        )
+
+    def validate_summary(summary: Any, location: str) -> None:
+        if not isinstance(summary, dict):
+            raise ValueError(f"{location} must be an object.")
+        for field in (
+            "headline",
+            "observation",
+            "interpretation",
+            "recommendation",
+            "caveat",
+        ):
+            if not isinstance(summary.get(field), str) or not summary[field].strip():
+                raise ValueError(f"{location}.{field} must be a non-empty string.")
+        sources = summary.get("sources")
+        if not isinstance(sources, list):
+            raise ValueError(f"{location}.sources must be an array.")
+        for index, source in enumerate(sources):
+            if (
+                not isinstance(source, dict)
+                or not isinstance(source.get("title"), str)
+                or not source["title"].strip()
+                or not isinstance(source.get("url"), str)
+                or not source["url"].startswith("https://")
+            ):
+                raise ValueError(
+                    f"{location}.sources[{index}] must have a title and HTTPS URL."
+                )
+
+    for tab in SUMMARY_TABS:
+        tab_document = tabs[tab]
+        if not isinstance(tab_document, dict) or "overall" not in tab_document:
+            raise ValueError(f"tabs.{tab}.overall is required.")
+        validate_summary(tab_document["overall"], f"tabs.{tab}.overall")
+        segments = tab_document.get("segments", {})
+        if not isinstance(segments, dict):
+            raise ValueError(f"tabs.{tab}.segments must be an object.")
+        for attribute, values in segments.items():
+            if not isinstance(values, dict):
+                raise ValueError(
+                    f"tabs.{tab}.segments.{attribute} must be an object."
+                )
+            for value, summary in values.items():
+                validate_summary(
+                    summary,
+                    f"tabs.{tab}.segments.{attribute}.{value}",
+                )
+    return tabs
 
 
 def main() -> int:
@@ -631,7 +815,25 @@ def main() -> int:
         if path.is_file() and path.suffix.lower() in {".csv", ".json"}
         and path.name not in excluded_downloads
     )
+    context = summary_context(
+        questions,
+        cycles,
+        relationships,
+        alert_data,
+        factors,
+        attrition_status,
+        downloads,
+    )
+    context_path = output / "people-science-summary-context.json"
+    context_path.write_text(
+        json.dumps(context, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    if context_path.name not in downloads:
+        downloads.append(context_path.name)
+        downloads.sort()
     data = {
+        "aiSummaries": load_ai_summaries(output),
         "questions": questions,
         "labels": {question: label(question) for question in questions},
         "overall": overall,

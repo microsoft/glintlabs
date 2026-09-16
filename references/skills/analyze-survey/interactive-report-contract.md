@@ -10,10 +10,28 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`fd3051b881cfb10148534b4b43c13eb8e8732a92b1db0fad741f5968660acba2`.
+`511bf774c779b51afef0f0955d76d2974cc2176f89773b7c60757bb283695ede`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
+
+## AI-generated People Science summaries
+
+- Begin every tab with a compact People Science perspective card.
+- Require six summaries: Scores change, Relationships, Alerts, Factors,
+  Attrition analysis, and Downloads.
+- Each summary must contain a headline, observed evidence, professional
+  interpretation, recommended next step, caveat, and published-source links
+  when relevant.
+- Generate narratives from `people-science-summary-context.json`, never raw
+  respondent rows. Conform to `people-science-summaries.schema.json`.
+- Use `interpret-analysis` guardrails and
+  `people-science-knowledge-vault` source priority. Do not present correlation,
+  factors, alerts, or attrition associations as causal.
+- When a report filter has a matching summary, display it. Otherwise display
+  the company-wide summary with an explicit fallback disclosure.
+- If summaries have not been generated, show an honest unavailable state
+  rather than invented or deterministic text labeled as AI-generated.
 
 The deterministic implementation is
 `scripts/build_interactive_report.py`. The analysis runner invokes it

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "People Science tab summaries",
+  "type": "object",
+  "required": ["schema_version", "tabs"],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "tabs": {
+      "type": "object",
+      "required": [
+        "changes",
+        "relationships",
+        "alerts",
+        "factors",
+        "attrition",
+        "downloads"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "changes": {"$ref": "#/$defs/tab"},
+        "relationships": {"$ref": "#/$defs/tab"},
+        "alerts": {"$ref": "#/$defs/tab"},
+        "factors": {"$ref": "#/$defs/tab"},
+        "attrition": {"$ref": "#/$defs/tab"},
+        "downloads": {"$ref": "#/$defs/tab"}
+      }
+    }
+  },
+  "$defs": {
+    "tab": {
+      "type": "object",
+      "required": ["overall"],
+      "properties": {
+        "overall": {"$ref": "#/$defs/summary"},
+        "segments": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": {"$ref": "#/$defs/summary"}
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "headline",
+        "observation",
+        "interpretation",
+        "recommendation",
+        "caveat",
+        "sources"
+      ],
+      "properties": {
+        "headline": {"type": "string"},
+        "observation": {"type": "string"},
+        "interpretation": {"type": "string"},
+        "recommendation": {"type": "string"},
+        "caveat": {"type": "string"},
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title", "url"],
+            "properties": {
+              "title": {"type": "string"},
+              "url": {"type": "string", "format": "uri"}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
