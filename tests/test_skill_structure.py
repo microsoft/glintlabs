@@ -112,6 +112,7 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "Begin every tab with a compact People Science perspective card" in report_contract
     assert "Recalculate the summary whenever the report attribute or value changes" in report_contract
     assert "filtered headline, observation, interpretation, recommendation" in report_contract
+    assert "state the selected scope once in the headline" in report_contract
     assert (ROOT / "scripts/build_interactive_report.py").exists()
     golden = ROOT / "references/skills/analyze-survey/golden-report.html"
     assert golden.exists()
@@ -449,7 +450,7 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert "summary.recommendation=" in report_text
     assert "summary.caveat=" in report_text
     assert "Factor solutions are exploratory working hypotheses" in report_text
-    assert "factor numbers can rotate or reorder" in report_text
+    assert "Factor numbers can rotate or reorder" in report_text
     assert len(json.loads(
         report_text[
             report_text.index("<script>const D=") + len("<script>const D="):

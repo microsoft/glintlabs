@@ -81,6 +81,10 @@ filter's aggregate results. Authored segment narratives take precedence. Tabs
 without filter-specific analysis state that limitation instead of presenting
 company-wide evidence as filtered evidence.
 
+Live summaries remain compact by stating the selected scope once in the
+headline and avoiding repeated metrics or findings across the observation,
+interpretation, recommendation, and caveat.
+
 `people-science-source-index.json` is the fast retrieval layer for report
 grounding. It contains reviewed public sources, concept terms, and three
 defaults per tab. The browser ranks sources against key terms across the

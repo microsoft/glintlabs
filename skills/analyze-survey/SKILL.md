@@ -147,6 +147,11 @@ solution or its explicit suppression reason. For tabs without filter-specific
 analysis, explicitly state that the displayed evidence remains company-wide or
 unavailable.
 
+Keep live summaries compact. State the selected scope once in the headline,
+avoid repeating the same metric or finding across fields, and make the
+observation, interpretation, recommendation, and caveat add distinct
+information.
+
 For Factors, use the company solution's factor count and varimax rotation to
 re-estimate loadings for every eligible attribute/value cut. Require at least
 the greater of 100 complete responses or five complete responses per survey

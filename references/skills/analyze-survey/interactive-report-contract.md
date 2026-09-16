@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`29d53da89bc5342421b202b4e5dd92956a99c189151d443b98660cbcac62b217`.
+`7724e89f3b49ba28c02e95776ecef94cabb3b044bd9fc69cac68e1ede3004b76`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -32,6 +32,9 @@ current analysis.
   Derive the filtered headline, observation, interpretation, recommendation,
   caveat, and references from the same aggregate source currently rendered by
   that tab. Authored segment narratives take precedence.
+- Keep the card compact: state the selected scope once in the headline, avoid
+  repeating the same metric or finding across fields, and ensure each field
+  adds distinct decision-relevant information.
 - For tabs without filter-specific analysis, update the scope statement and
   explicitly say that the evidence remains company-wide or unavailable.
 - Select three public references for each rendered summary by matching key
