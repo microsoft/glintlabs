@@ -442,7 +442,7 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert "data-loading-label=" in report_text
     assert "ticks=[0,.3,.5,.7,1]" in report_text
     assert "strongest(b)-strongest(a)" in report_text
-    assert 'stroke="var(--border-strong)"' in report_text
+    assert ".factor-bar{stroke:var(--muted);stroke-width:1.5px" in report_text
     assert 'paint-order="stroke"' in report_text
     assert "var(--rel-very-high)" in report_text
     assert "summary.interpretation=" in report_text

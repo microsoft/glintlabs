@@ -156,7 +156,7 @@ the loading axis for each dimension and show the shared vertical question
 labels once. Plot positive loading magnitudes from 0 to 1 and reuse the
 Relationships Low, Medium, High, and Very high thresholds and colors. State
 Sort questions high to low by their strongest displayed loading, and add a
-clear outline to every bar plus a contrasting outline around each two-decimal
+high-contrast outline to every bar plus a contrasting outline around each two-decimal
 data label. State that factor labels are exploratory working hypotheses,
 dimensions can rotate or reorder across cuts, and this is not evidence of
 measurement invariance.

@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`b9aca64e1abdd32cb8f81e1dc2de1a8e1004f6c62209fb1235717e111ec6b611`.
+`c606cd34c4d4e583f76532431ed82c6c64ccb4bf06a8514ab48371780b02428c`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -206,7 +206,7 @@ Place one report-level attribute/value filter above the tabs.
   strength bands and colors as Relationships: Low (`< .30`), Medium
   (`.30-.49`), High (`.50-.69`), and Very high (`>= .70`).
 - Sort the shared question axis from high to low by each item's strongest
-  loading across the displayed dimensions. Give every bar a clear outline and
+  loading across the displayed dimensions. Give every bar a high-contrast outline and
   every two-decimal loading label a contrasting outline for readability.
 - Explain that factor labels are working hypotheses, factor numbers can rotate
   or reorder across cuts, and filtered solutions do not establish measurement
