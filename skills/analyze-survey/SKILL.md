@@ -153,9 +153,10 @@ the greater of 100 complete responses or five complete responses per survey
 item. Suppress smaller or failed cuts. Show the selected cut's complete N,
 loading-dimension cards, and clustered horizontal bar small multiples. Repeat
 the loading axis for each dimension and show the shared vertical question
-labels once. State that factor labels are exploratory working hypotheses,
-dimensions can rotate or reorder across cuts, and this is not evidence of
-measurement invariance.
+labels once. Plot positive loading magnitudes from 0 to 1 and reuse the
+Relationships Low, Medium, High, and Very high thresholds and colors. State
+that factor labels are exploratory working hypotheses, dimensions can rotate
+or reorder across cuts, and this is not evidence of measurement invariance.
 
 Use the checked-in People Science source index to select references from key
 terms across the current headline, observation, interpretation,

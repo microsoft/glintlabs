@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`1c63abd05cd76c8244a2cfdc1717bdd5c4654e84a26a63801ffc5fc3ab73e63d`.
+`199971471fc338fc0c9a1191ddb5b8c49df653896c1d5fdba41575ebd1eb9365`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -202,6 +202,9 @@ Place one report-level attribute/value filter above the tabs.
   item loadings, and clustered horizontal loading bars. Use one small-multiple
   panel per loading dimension, repeat the horizontal loading axis in every
   panel, and show the shared vertical question labels only once.
+- Plot loading magnitudes on a positive `0` to `1` axis. Apply the same
+  strength bands and colors as Relationships: Low (`< .30`), Medium
+  (`.30-.49`), High (`.50-.69`), and Very high (`>= .70`).
 - Explain that factor labels are working hypotheses, factor numbers can rotate
   or reorder across cuts, and filtered solutions do not establish measurement
   invariance.

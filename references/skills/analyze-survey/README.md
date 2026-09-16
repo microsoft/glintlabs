@@ -135,6 +135,7 @@ company solution. A cut requires at least the greater of 100 complete responses
 or five complete responses per item; otherwise the report displays the
 suppression reason. The tab includes loading-dimension cards and filter-aware
 clustered horizontal bar small multiples. Each dimension repeats the loading
-axis while sharing one vertical set of question labels. Treat labels as working
-hypotheses and never interpret matching factor numbers across cuts as proof of
-equivalent constructs or measurement invariance.
+axis from 0 to 1 while sharing one vertical set of question labels. Bar colors
+reuse the Relationships Low, Medium, High, and Very high strength bands. Treat
+labels as working hypotheses and never interpret matching factor numbers
+across cuts as proof of equivalent constructs or measurement invariance.

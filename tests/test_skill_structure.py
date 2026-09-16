@@ -411,7 +411,7 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         "Significant only",
         "Vs. company",
         "Suppressed",
-        "Factor loading",
+        "Loading magnitude",
         "extracted dimension",
     ):
         assert heading in report_text
@@ -436,8 +436,11 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert "AI-generated · live filter" in report_text
     assert "function factorSource()" in report_text
     assert "function renderFactors()" in report_text
-    assert "Clustered horizontal factor loading bars" in report_text
+    assert "Clustered horizontal factor loading magnitude bars" in report_text
     assert "data-loading=" in report_text
+    assert "data-strength=" in report_text
+    assert "ticks=[0,.3,.5,.7,1]" in report_text
+    assert "var(--rel-very-high)" in report_text
     assert "summary.interpretation=" in report_text
     assert "summary.recommendation=" in report_text
     assert "summary.caveat=" in report_text
