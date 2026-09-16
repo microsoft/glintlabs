@@ -137,5 +137,8 @@ suppression reason. The tab includes loading-dimension cards and filter-aware
 clustered horizontal bar small multiples. Each dimension repeats the loading
 axis from 0 to 1 while sharing one vertical set of question labels. Bar colors
 reuse the Relationships Low, Medium, High, and Very high strength bands. Treat
-labels as working hypotheses and never interpret matching factor numbers
-across cuts as proof of equivalent constructs or measurement invariance.
+questions as a shared low-to-high ordering based on their strongest displayed
+loading, and show a subtle outline plus a two-decimal value on every bar.
+Treat labels as working hypotheses and never interpret matching factor
+numbers across cuts as proof of equivalent constructs or measurement
+invariance.
