@@ -80,6 +80,13 @@ observation from that filter's aggregate results. Authored segment narratives
 take precedence. Tabs without filter-specific analysis state that limitation
 instead of presenting company-wide evidence as filtered evidence.
 
+`people-science-source-index.json` is the fast retrieval layer for report
+grounding. It contains reviewed public sources, concept terms, and three
+defaults per tab. The browser ranks sources against key terms in the current
+headline and observation, so filtered findings about topics such as belonging,
+action taking, work-life, confidentiality, or attrition receive different
+references. Every rendered summary shows three sources.
+
 `golden-report.html` is the user-approved canonical HTML example. The report
 builder reads that file directly and replaces only the `const D=...` aggregate
 data payload. Do not restyle, restructure, rename, or independently recreate

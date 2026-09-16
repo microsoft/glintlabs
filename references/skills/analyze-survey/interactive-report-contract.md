@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`2ba2590675da12ee7eb45d950f4e9faa37983a713235bdf3d3787f89de603491`.
+`94abd69a1135d5de0346508227868df6b3ad5014450129c4e1e1e95ce1f12c07`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -33,6 +33,10 @@ current analysis.
   currently rendered by that tab. Authored segment narratives take precedence.
 - For tabs without filter-specific analysis, update the scope statement and
   explicitly say that the evidence remains company-wide or unavailable.
+- Select three public references for each rendered summary by matching key
+  terms in its current headline and observation against
+  `people-science-source-index.json`. Prefer specific analytical and item-theme
+  matches; use the tab defaults only to fill unmatched positions.
 - If summaries have not been generated, show an honest unavailable state
   rather than invented or deterministic text labeled as AI-generated.
 

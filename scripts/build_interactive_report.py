@@ -834,6 +834,15 @@ def main() -> int:
         downloads.sort()
     data = {
         "aiSummaries": load_ai_summaries(output),
+        "knowledgeSources": json.loads(
+            (
+                Path(__file__).resolve().parents[1]
+                / "references"
+                / "skills"
+                / "analyze-survey"
+                / "people-science-source-index.json"
+            ).read_text(encoding="utf-8")
+        ),
         "questions": questions,
         "labels": {question: label(question) for question in questions},
         "overall": overall,

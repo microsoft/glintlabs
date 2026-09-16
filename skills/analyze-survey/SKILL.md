@@ -43,10 +43,11 @@ Read these references in order:
 5. `references/skills/analyze-survey/scores-change-format.png`
 6. `references/skills/analyze-survey/interactive-report-contract.md`
 7. `references/skills/analyze-survey/people-science-summaries.schema.json`
-8. `references/skills/people-science-knowledge-vault/`
-9. `references/general/interpretation-guardrails.md`
-10. `references/general/privacy-and-minimum-n.md`
-11. `references/general/codebook-catalog.md`
+8. `references/skills/analyze-survey/people-science-source-index.json`
+9. `references/skills/people-science-knowledge-vault/`
+10. `references/general/interpretation-guardrails.md`
+11. `references/general/privacy-and-minimum-n.md`
+12. `references/general/codebook-catalog.md`
 
 The Glint UI system is mandatory for all color, typography, spacing, component,
 and accessibility decisions. Do not invent report colors or visual patterns.
@@ -143,6 +144,12 @@ cycle, relationship, and alert results. Preserve the grounded interpretation,
 recommendation, caveat, and source links unless an authored filter-specific
 narrative is available. For tabs without filter-specific analysis, explicitly
 state that the displayed evidence remains company-wide or unavailable.
+
+Use the checked-in People Science source index to select references from key
+terms in the current headline and observation. Show three distinct references
+for every summary. Prefer exact analytical or item-theme matches over generic
+survey resources, and never reuse a source merely because it is broadly about
+employee surveys.
 
 Use explicit options only when automatic detection is wrong:
 

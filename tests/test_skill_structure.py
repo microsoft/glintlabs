@@ -143,6 +143,18 @@ def test_analyze_survey_points_to_linked_dataset():
         "attrition",
         "downloads",
     ]
+    source_index = json.loads(
+        (
+            ROOT
+            / "references/skills/analyze-survey/people-science-source-index.json"
+        ).read_text(encoding="utf-8")
+    )
+    assert len(source_index["sources"]) >= 10
+    assert all(
+        len(source_index["defaults"][tab]) == 3
+        for tab in summary_schema["properties"]["tabs"]["required"]
+    )
+    assert all(source["url"].startswith("https://") for source in source_index["sources"])
     assert (ROOT / "scripts/progress.py").exists()
 
 
@@ -415,8 +427,15 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert report_text.count("data-summary=") == 6
     assert '"aiSummaries":{"changes"' in report_text
     assert "function liveFilterSummary(tab,base)" in report_text
+    assert "function knowledgeSourcesFor(tab,summary)" in report_text
     assert "AI-generated · live filter" in report_text
     assert "Factor analysis was calculated for the full analysis population" in report_text
+    assert len(json.loads(
+        report_text[
+            report_text.index("<script>const D=") + len("<script>const D="):
+            report_text.index(";\nconst names=")
+        ]
+    )["knowledgeSources"]["sources"]) >= 10
     summary_context = json.loads(
         (tmp_path / "people-science-summary-context.json").read_text(encoding="utf-8")
     )
