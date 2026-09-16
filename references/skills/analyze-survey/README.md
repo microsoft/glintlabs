@@ -74,9 +74,11 @@ The required behavior and packaging are defined in
 
 Each tab begins with a concise AI-generated People Science perspective. It
 separates observation from interpretation, recommends a next step, states a
-caveat, and links relevant published evidence. The report uses a matching
-filtered summary when one exists; otherwise it clearly states that the
-company-wide narrative is shown.
+caveat, and links relevant published evidence. Whenever the report attribute
+or value changes, the summary immediately recalculates its headline and
+observation from that filter's aggregate results. Authored segment narratives
+take precedence. Tabs without filter-specific analysis state that limitation
+instead of presenting company-wide evidence as filtered evidence.
 
 `golden-report.html` is the user-approved canonical HTML example. The report
 builder reads that file directly and replaces only the `const D=...` aggregate

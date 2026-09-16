@@ -108,7 +108,7 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "five largest item declines" in report_contract
     assert "at least 20 responses in both compared cycles" in report_contract
     assert "Begin every tab with a compact People Science perspective card" in report_contract
-    assert "explicit fallback disclosure" in report_contract
+    assert "Recalculate the summary whenever the report attribute or value changes" in report_contract
     assert (ROOT / "scripts/build_interactive_report.py").exists()
     golden = ROOT / "references/skills/analyze-survey/golden-report.html"
     assert golden.exists()
@@ -414,6 +414,9 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert "topDeclines" in report_text
     assert report_text.count("data-summary=") == 6
     assert '"aiSummaries":{"changes"' in report_text
+    assert "function liveFilterSummary(tab,base)" in report_text
+    assert "AI-generated · live filter" in report_text
+    assert "Factor analysis was calculated for the full analysis population" in report_text
     summary_context = json.loads(
         (tmp_path / "people-science-summary-context.json").read_text(encoding="utf-8")
     )

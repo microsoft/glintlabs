@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`511bf774c779b51afef0f0955d76d2974cc2176f89773b7c60757bb283695ede`.
+`2ba2590675da12ee7eb45d950f4e9faa37983a713235bdf3d3787f89de603491`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -28,8 +28,11 @@ current analysis.
 - Use `interpret-analysis` guardrails and
   `people-science-knowledge-vault` source priority. Do not present correlation,
   factors, alerts, or attrition associations as causal.
-- When a report filter has a matching summary, display it. Otherwise display
-  the company-wide summary with an explicit fallback disclosure.
+- Recalculate the summary whenever the report attribute or value changes.
+  Derive the filtered headline and observation from the same aggregate source
+  currently rendered by that tab. Authored segment narratives take precedence.
+- For tabs without filter-specific analysis, update the scope statement and
+  explicitly say that the evidence remains company-wide or unavailable.
 - If summaries have not been generated, show an honest unavailable state
   rather than invented or deterministic text labeled as AI-generated.
 

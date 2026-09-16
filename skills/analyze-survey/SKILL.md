@@ -137,8 +137,12 @@ Every tab must begin with an AI-generated People Science perspective containing
 a headline, what the results show, a professional interpretation, a recommended
 next step, a caveat, and relevant published-source links. Keep the narrative
 concise, non-causal, privacy-safe, and explicit when evidence is unavailable.
-Generate filtered summaries when they add decision value; otherwise the report
-must disclose that the company-wide narrative is being shown for the filter.
+The summary must recalculate whenever the report attribute or value changes.
+Recompute its headline and observation from the selected filter's aggregate
+cycle, relationship, and alert results. Preserve the grounded interpretation,
+recommendation, caveat, and source links unless an authored filter-specific
+narrative is available. For tabs without filter-specific analysis, explicitly
+state that the displayed evidence remains company-wide or unavailable.
 
 Use explicit options only when automatic detection is wrong:
 
