@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`7a3da07369138390e6db0afe6fa458ed837c392635c84a0bf7291092dd884070`.
+`1c63abd05cd76c8244a2cfdc1717bdd5c4654e84a26a63801ffc5fc3ab73e63d`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -29,12 +29,14 @@ current analysis.
   `people-science-knowledge-vault` source priority. Do not present correlation,
   factors, alerts, or attrition associations as causal.
 - Recalculate the summary whenever the report attribute or value changes.
-  Derive the filtered headline and observation from the same aggregate source
-  currently rendered by that tab. Authored segment narratives take precedence.
+  Derive the filtered headline, observation, interpretation, recommendation,
+  caveat, and references from the same aggregate source currently rendered by
+  that tab. Authored segment narratives take precedence.
 - For tabs without filter-specific analysis, update the scope statement and
   explicitly say that the evidence remains company-wide or unavailable.
 - Select three public references for each rendered summary by matching key
-  terms in its current headline and observation against
+  terms across its current headline, observation, interpretation,
+  recommendation, and caveat against
   `people-science-source-index.json`. Prefer specific analytical and item-theme
   matches; use the tab defaults only to fill unmatched positions.
 - If summaries have not been generated, show an honest unavailable state
@@ -197,8 +199,9 @@ Place one report-level attribute/value filter above the tabs.
   responses per survey item. Show an explicit suppression or estimation
   failure reason when a cut is not eligible.
 - Show the selected cut, complete-response N, factor count, rotation, leading
-  item loadings, and a loading-profile line chart. Group chart lines and cards
-  by loading dimension and label every survey item.
+  item loadings, and clustered horizontal loading bars. Use one small-multiple
+  panel per loading dimension, repeat the horizontal loading axis in every
+  panel, and show the shared vertical question labels only once.
 - Explain that factor labels are working hypotheses, factor numbers can rotate
   or reorder across cuts, and filtered solutions do not establish measurement
   invariance.

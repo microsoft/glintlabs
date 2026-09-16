@@ -557,18 +557,21 @@ def factor_cube(
         status: str,
         reason: str,
     ) -> dict[str, Any]:
+        complete = source.dropna(subset=questions)
         return {
             "status": status,
             "reason": reason,
-            "n": int(len(source)),
-            "completeN": int(source[questions].dropna().shape[0]),
+            "n": int(source["__employee_id"].nunique()),
+            "completeN": int(complete["__employee_id"].nunique()),
+            "responseRows": int(len(source)),
             "minimumN": minimum,
             "factorCount": factor_count,
             "rows": [],
         }
 
     def fit(source: pd.DataFrame) -> dict[str, Any]:
-        complete_n = int(source[questions].dropna().shape[0])
+        complete = source.dropna(subset=questions)
+        complete_n = int(complete["__employee_id"].nunique())
         if complete_n < minimum:
             return unavailable(
                 source,
@@ -632,8 +635,9 @@ def factor_cube(
         return {
             "status": "available",
             "reason": "",
-            "n": int(len(source)),
+            "n": int(source["__employee_id"].nunique()),
             "completeN": complete_n,
+            "responseRows": int(len(source)),
             "minimumN": minimum,
             "factorCount": factor_count,
             "rows": rows,
@@ -644,8 +648,11 @@ def factor_cube(
     overall = {
         "status": "available" if overall_clean else "unavailable",
         "reason": "" if overall_clean else "Factor analysis was not completed.",
-        "n": int(len(frame)),
-        "completeN": int(frame[questions].dropna().shape[0]),
+        "n": int(frame["__employee_id"].nunique()),
+        "completeN": int(
+            frame.dropna(subset=questions)["__employee_id"].nunique()
+        ),
+        "responseRows": int(len(frame)),
         "minimumN": minimum,
         "factorCount": factor_count,
         "rows": overall_clean,

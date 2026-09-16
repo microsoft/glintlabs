@@ -71,7 +71,7 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "expandable top-five item declines" in skill
     assert "20 responses" in skill
     assert "greater of 100 complete responses or five complete responses" in skill
-    assert "item-by-dimension line plot" in skill
+    assert "clustered horizontal bar small multiples" in skill
     assert "progress bar" in skill
     assert "people-science-summary-context.json" in skill
     assert "people-science-summaries.schema.json" in skill
@@ -111,6 +111,7 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "at least 20 responses in both compared cycles" in report_contract
     assert "Begin every tab with a compact People Science perspective card" in report_contract
     assert "Recalculate the summary whenever the report attribute or value changes" in report_contract
+    assert "filtered headline, observation, interpretation, recommendation" in report_contract
     assert (ROOT / "scripts/build_interactive_report.py").exists()
     golden = ROOT / "references/skills/analyze-survey/golden-report.html"
     assert golden.exists()
@@ -411,7 +412,7 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         "Vs. company",
         "Suppressed",
         "Factor loading",
-        "loading dimension",
+        "extracted dimension",
     ):
         assert heading in report_text
     assert "--rel-low:#f5f5f5" in report_text
@@ -435,8 +436,13 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert "AI-generated · live filter" in report_text
     assert "function factorSource()" in report_text
     assert "function renderFactors()" in report_text
+    assert "Clustered horizontal factor loading bars" in report_text
+    assert "data-loading=" in report_text
+    assert "summary.interpretation=" in report_text
+    assert "summary.recommendation=" in report_text
+    assert "summary.caveat=" in report_text
     assert "Factor solutions are exploratory working hypotheses" in report_text
-    assert "Dimension numbers may rotate or reorder across cuts" in report_text
+    assert "factor numbers can rotate or reorder" in report_text
     assert len(json.loads(
         report_text[
             report_text.index("<script>const D=") + len("<script>const D="):
@@ -474,16 +480,17 @@ def test_factor_cube_reestimates_eligible_cuts_and_suppresses_small_ones(monkeyp
     questions = ["Q_ONE", "Q_TWO", "Q_THREE", "Q_FOUR"]
     rows = []
     for index in range(140):
-        rows.append(
-            {
-                "segment": "Eligible" if index < 120 else "Small",
-                "__employee_id": index + 1,
-                **{
-                    question: ((index * (question_index + 1) + question_index) % 5) + 1
-                    for question_index, question in enumerate(questions)
-                },
-            }
-        )
+        row = {
+            "segment": "Eligible" if index < 120 else "Small",
+            "__employee_id": index + 1,
+            **{
+                question: ((index * (question_index + 1) + question_index) % 5) + 1
+                for question_index, question in enumerate(questions)
+            },
+        }
+        rows.append(row)
+        if index < 120:
+            rows.append(row.copy())
     overall_rows = [
         {
             "question": question,
@@ -498,7 +505,7 @@ def test_factor_cube_reestimates_eligible_cuts_and_suppresses_small_ones(monkeyp
     ]
 
     def fake_extract(source, n_factors, rotation, min_loading):
-        assert len(source.data) == 120
+        assert len(source.data) == 240
         assert n_factors == 2
         assert rotation == "varimax"
         assert min_loading == 0
@@ -528,7 +535,9 @@ def test_factor_cube_reestimates_eligible_cuts_and_suppresses_small_ones(monkeyp
     suppressed = result["segments"]["segment"]["Small"]
     assert result["minimumN"] == 100
     assert eligible["status"] == "available"
+    assert eligible["n"] == 120
     assert eligible["completeN"] == 120
+    assert eligible["responseRows"] == 240
     assert len(eligible["rows"]) == 8
     assert eligible["rows"][0]["loading"] == 0.6
     assert suppressed["status"] == "suppressed"

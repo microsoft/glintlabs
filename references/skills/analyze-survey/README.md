@@ -75,17 +75,19 @@ The required behavior and packaging are defined in
 Each tab begins with a concise AI-generated People Science perspective. It
 separates observation from interpretation, recommends a next step, states a
 caveat, and links relevant published evidence. Whenever the report attribute
-or value changes, the summary immediately recalculates its headline and
-observation from that filter's aggregate results. Authored segment narratives
-take precedence. Tabs without filter-specific analysis state that limitation
-instead of presenting company-wide evidence as filtered evidence.
+or value changes, the summary immediately recalculates its headline,
+observation, interpretation, recommendation, caveat, and references from that
+filter's aggregate results. Authored segment narratives take precedence. Tabs
+without filter-specific analysis state that limitation instead of presenting
+company-wide evidence as filtered evidence.
 
 `people-science-source-index.json` is the fast retrieval layer for report
 grounding. It contains reviewed public sources, concept terms, and three
-defaults per tab. The browser ranks sources against key terms in the current
-headline and observation, so filtered findings about topics such as belonging,
-action taking, work-life, confidentiality, or attrition receive different
-references. Every rendered summary shows three sources.
+defaults per tab. The browser ranks sources against key terms across the
+current headline, observation, interpretation, recommendation, and caveat, so
+filtered findings about topics such as belonging, action taking, work-life,
+confidentiality, or attrition receive different references. Every rendered
+summary shows three sources.
 
 `golden-report.html` is the user-approved canonical HTML example. The report
 builder reads that file directly and replaces only the `const D=...` aggregate
@@ -131,7 +133,8 @@ The Factors tab re-estimates item loadings for each eligible report
 attribute/value cut with the same factor count and varimax rotation as the
 company solution. A cut requires at least the greater of 100 complete responses
 or five complete responses per item; otherwise the report displays the
-suppression reason. The tab includes loading-dimension cards and a filter-aware
-line plot of every item loading. Treat labels as working hypotheses and never
-interpret matching factor numbers across cuts as proof of equivalent
-constructs or measurement invariance.
+suppression reason. The tab includes loading-dimension cards and filter-aware
+clustered horizontal bar small multiples. Each dimension repeats the loading
+axis while sharing one vertical set of question labels. Treat labels as working
+hypotheses and never interpret matching factor numbers across cuts as proof of
+equivalent constructs or measurement invariance.
