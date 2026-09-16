@@ -70,6 +70,8 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "company-adjusted" in skill
     assert "expandable top-five item declines" in skill
     assert "20 responses" in skill
+    assert "greater of 100 complete responses or five complete responses" in skill
+    assert "item-by-dimension line plot" in skill
     assert "progress bar" in skill
     assert "people-science-summary-context.json" in skill
     assert "people-science-summaries.schema.json" in skill
@@ -408,6 +410,8 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         "Significant only",
         "Vs. company",
         "Suppressed",
+        "Factor loading",
+        "loading dimension",
     ):
         assert heading in report_text
     assert "--rel-low:#f5f5f5" in report_text
@@ -429,7 +433,10 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert "function liveFilterSummary(tab,base)" in report_text
     assert "function knowledgeSourcesFor(tab,summary)" in report_text
     assert "AI-generated · live filter" in report_text
-    assert "Factor analysis was calculated for the full analysis population" in report_text
+    assert "function factorSource()" in report_text
+    assert "function renderFactors()" in report_text
+    assert "Factor solutions are exploratory working hypotheses" in report_text
+    assert "Dimension numbers may rotate or reorder across cuts" in report_text
     assert len(json.loads(
         report_text[
             report_text.index("<script>const D=") + len("<script>const D="):
@@ -455,6 +462,78 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert attributes.name not in names
     assert "people-science-summary-context.json" in names
     assert "people-science-summaries.json" in names
+
+
+def test_factor_cube_reestimates_eligible_cuts_and_suppresses_small_ones(monkeypatch):
+    script_path = ROOT / "scripts/build_interactive_report.py"
+    spec = importlib.util.spec_from_file_location("factor_report_builder", script_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+
+    questions = ["Q_ONE", "Q_TWO", "Q_THREE", "Q_FOUR"]
+    rows = []
+    for index in range(140):
+        rows.append(
+            {
+                "segment": "Eligible" if index < 120 else "Small",
+                "__employee_id": index + 1,
+                **{
+                    question: ((index * (question_index + 1) + question_index) % 5) + 1
+                    for question_index, question in enumerate(questions)
+                },
+            }
+        )
+    overall_rows = [
+        {
+            "question": question,
+            "factor": factor,
+            "loading": 0.5,
+            "loading_label": "Weak",
+            "communality": 0.5,
+            "factor_variance_pct": 25.0,
+        }
+        for question in questions
+        for factor in ("MR1", "MR2")
+    ]
+
+    def fake_extract(source, n_factors, rotation, min_loading):
+        assert len(source.data) == 120
+        assert n_factors == 2
+        assert rotation == "varimax"
+        assert min_loading == 0
+        return {
+            "factor_summary": module.pd.DataFrame(
+                [
+                    {
+                        **row,
+                        "loading": row["loading"] + 0.1,
+                    }
+                    for row in overall_rows
+                ]
+            )
+        }
+
+    import vivaglint
+
+    monkeypatch.setattr(vivaglint, "extract_survey_factors", fake_extract)
+    result = module.factor_cube(
+        module.pd.DataFrame(rows),
+        questions,
+        ["segment"],
+        overall_rows,
+    )
+
+    eligible = result["segments"]["segment"]["Eligible"]
+    suppressed = result["segments"]["segment"]["Small"]
+    assert result["minimumN"] == 100
+    assert eligible["status"] == "available"
+    assert eligible["completeN"] == 120
+    assert len(eligible["rows"]) == 8
+    assert eligible["rows"][0]["loading"] == 0.6
+    assert suppressed["status"] == "suppressed"
+    assert suppressed["completeN"] == 20
+    assert "At least 100 complete responses" in suppressed["reason"]
 
 
 def test_people_science_summary_validation_and_script_escaping(tmp_path):

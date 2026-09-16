@@ -126,3 +126,12 @@ expandable top-five item declines. Severity rules and minimum-N behavior are
 defined in `interactive-report-contract.md`; do not replace them with visual
 judgment or causal language. Every alert group must have at least 20 responses
 in both compared cycles, including filtered intersections.
+
+The Factors tab re-estimates item loadings for each eligible report
+attribute/value cut with the same factor count and varimax rotation as the
+company solution. A cut requires at least the greater of 100 complete responses
+or five complete responses per item; otherwise the report displays the
+suppression reason. The tab includes loading-dimension cards and a filter-aware
+line plot of every item loading. Treat labels as working hypotheses and never
+interpret matching factor numbers across cuts as proof of equivalent
+constructs or measurement invariance.

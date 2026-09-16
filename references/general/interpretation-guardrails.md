@@ -52,6 +52,11 @@ Check:
 - weak loadings
 - whether factors are interpretable
 
+For filtered solutions, require at least the greater of 100 complete responses
+or five complete responses per item. Factor numbers can rotate or reorder
+between cuts, so do not compare identically numbered factors as though
+measurement invariance has been established.
+
 ## Cycle comparisons
 
 Before interpreting change:

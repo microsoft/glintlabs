@@ -432,7 +432,11 @@ def main() -> int:
     if "factor_analysis" in requested:
         start_step("factor_analysis")
         def factor_analysis() -> str:
-            result = extract_survey_factors(survey, rotation="varimax")
+            result = extract_survey_factors(
+                survey,
+                rotation="varimax",
+                min_loading=0,
+            )
             frame = result["factor_summary"]
             return write_csv(output_dir, "factor_analysis_summary", frame)
         result = run_step("factor_analysis", factor_analysis)

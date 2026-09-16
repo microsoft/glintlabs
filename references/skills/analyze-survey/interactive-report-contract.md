@@ -10,7 +10,7 @@ references/skills/analyze-survey/golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`94abd69a1135d5de0346508227868df6b3ad5014450129c4e1e1e95ce1f12c07`.
+`7a3da07369138390e6db0afe6fa458ed837c392635c84a0bf7291092dd884070`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.
@@ -190,9 +190,18 @@ Place one report-level attribute/value filter above the tabs.
 
 ### Factors
 
-- Show the company-wide rotated factor solution and leading item loadings.
-- Do not automatically substitute segment factor models. Explain that
-  stability and measurement-invariance review is required first.
+- Re-estimate the rotated factor loadings whenever the report attribute or
+  value changes, using the company solution's factor count and the same
+  extraction method and rotation.
+- Require at least the greater of 100 complete responses or five complete
+  responses per survey item. Show an explicit suppression or estimation
+  failure reason when a cut is not eligible.
+- Show the selected cut, complete-response N, factor count, rotation, leading
+  item loadings, and a loading-profile line chart. Group chart lines and cards
+  by loading dimension and label every survey item.
+- Explain that factor labels are working hypotheses, factor numbers can rotate
+  or reorder across cuts, and filtered solutions do not establish measurement
+  invariance.
 
 ### Attrition analysis
 

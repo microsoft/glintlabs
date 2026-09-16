@@ -30,6 +30,8 @@ MIN_N = 5
 RELATIONSHIP_MIN_N = 30
 ALERT_MIN_N = 20
 FILTERED_ALERT_MIN_N = 20
+FACTOR_MIN_N = 100
+FACTOR_RESPONDENTS_PER_ITEM = 5
 SUMMARY_TABS = (
     "changes",
     "relationships",
@@ -518,6 +520,173 @@ def alert_cube(
     }
 
 
+def factor_cube(
+    frame: pd.DataFrame,
+    questions: list[str],
+    attributes: list[str],
+    overall_rows: list[dict[str, Any]],
+    progress: ProgressReporter | None = None,
+    progress_start: float = 0,
+    progress_end: float = 100,
+) -> dict[str, Any]:
+    minimum = max(FACTOR_MIN_N, FACTOR_RESPONDENTS_PER_ITEM * len(questions))
+    factor_names = sorted(
+        {str(row.get("factor")) for row in overall_rows if row.get("factor")},
+        key=lambda value: int(re.sub(r"\D", "", value) or 0),
+    )
+    factor_count = len(factor_names)
+
+    def clean_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        return [
+            {
+                "question": str(row["question"]),
+                "factor": str(row["factor"]),
+                "loading": round(float(row["loading"]), 6),
+                "loading_label": str(row["loading_label"]),
+                "communality": round(float(row["communality"]), 6),
+                "factor_variance_pct": round(
+                    float(row["factor_variance_pct"]), 6
+                ),
+            }
+            for row in rows
+            if math.isfinite(float(row["loading"]))
+        ]
+
+    def unavailable(
+        source: pd.DataFrame,
+        status: str,
+        reason: str,
+    ) -> dict[str, Any]:
+        return {
+            "status": status,
+            "reason": reason,
+            "n": int(len(source)),
+            "completeN": int(source[questions].dropna().shape[0]),
+            "minimumN": minimum,
+            "factorCount": factor_count,
+            "rows": [],
+        }
+
+    def fit(source: pd.DataFrame) -> dict[str, Any]:
+        complete_n = int(source[questions].dropna().shape[0])
+        if complete_n < minimum:
+            return unavailable(
+                source,
+                "suppressed",
+                (
+                    f"At least {minimum} complete responses are required "
+                    f"({FACTOR_RESPONDENTS_PER_ITEM} per item, minimum "
+                    f"{FACTOR_MIN_N})."
+                ),
+            )
+        if not factor_count:
+            return unavailable(
+                source,
+                "unavailable",
+                "The company factor solution did not provide a factor count.",
+            )
+        varying = [
+            question
+            for question in questions
+            if source[question].dropna().nunique() > 1
+        ]
+        if len(varying) != len(questions):
+            return unavailable(
+                source,
+                "unavailable",
+                "One or more survey items have no response variation in this cut.",
+            )
+        try:
+            from vivaglint import extract_survey_factors
+            from vivaglint.import_ import build_glint_survey
+
+            survey_frame = source[["__employee_id", *questions]].copy()
+            for question in questions:
+                survey_frame[f"{question}_COMMENT"] = ""
+                survey_frame[f"{question}_COMMENT_TOPICS"] = ""
+                survey_frame[f"{question}_SENSITIVE_COMMENT_FLAG"] = ""
+            survey = build_glint_survey(
+                survey_frame,
+                emp_id_col="__employee_id",
+                first_name_col=None,
+                last_name_col=None,
+                email_col=None,
+                status_col=None,
+                completion_date_col=None,
+                sent_date_col=None,
+                manager_id_col=None,
+            )
+            result = extract_survey_factors(
+                survey,
+                n_factors=factor_count,
+                rotation="varimax",
+                min_loading=0,
+            )
+            rows = clean_rows(result["factor_summary"].to_dict("records"))
+        except (ValueError, np.linalg.LinAlgError) as error:
+            return unavailable(
+                source,
+                "unavailable",
+                f"The factor model could not be estimated: {error}",
+            )
+        return {
+            "status": "available",
+            "reason": "",
+            "n": int(len(source)),
+            "completeN": complete_n,
+            "minimumN": minimum,
+            "factorCount": factor_count,
+            "rows": rows,
+        }
+
+    overall_clean = clean_rows(overall_rows)
+    expected_rows = len(questions) * factor_count
+    overall = {
+        "status": "available" if overall_clean else "unavailable",
+        "reason": "" if overall_clean else "Factor analysis was not completed.",
+        "n": int(len(frame)),
+        "completeN": int(frame[questions].dropna().shape[0]),
+        "minimumN": minimum,
+        "factorCount": factor_count,
+        "rows": overall_clean,
+    }
+    if overall_clean and len(overall_clean) < expected_rows:
+        overall = fit(frame)
+
+    total = sum(frame[attribute].nunique(dropna=True) for attribute in attributes)
+    completed = 0
+    last_percent = -1
+    segments: dict[str, Any] = {}
+    for attribute in attributes:
+        values = {}
+        for value, group in frame.dropna(subset=[attribute]).groupby(
+            attribute, sort=True
+        ):
+            values[str(value)] = fit(group)
+            completed += 1
+            percent = int(
+                progress_start
+                + (progress_end - progress_start) * completed / max(1, total)
+            )
+            if progress is not None and percent != last_percent:
+                progress.update(
+                    percent,
+                    (
+                        "Estimating filter-specific factor models "
+                        f"({completed:,}/{total:,} cuts)"
+                    ),
+                )
+                last_percent = percent
+        segments[attribute] = values
+    return {
+        "overall": overall,
+        "segments": segments,
+        "minimumN": minimum,
+        "respondentsPerItem": FACTOR_RESPONDENTS_PER_ITEM,
+        "rotation": "varimax",
+    }
+
+
 def html_page(data: dict[str, Any]) -> str:
     encoded = (
         json.dumps(data, separators=(",", ":"))
@@ -546,7 +715,7 @@ def summary_context(
     cycles: dict[str, Any],
     relationships: dict[str, Any],
     alerts_data: dict[str, Any],
-    factors: list[dict[str, Any]],
+    factors: dict[str, Any],
     attrition: str,
     downloads: list[str],
 ) -> dict[str, Any]:
@@ -636,7 +805,14 @@ def summary_context(
             "changes": changes,
             "relationships": relationship_context,
             "alerts": alert_context,
-            "factors": {"factor_rows": factors[:30]},
+            "factors": {
+                "overall": {
+                    **factors.get("overall", {}),
+                    "rows": factors.get("overall", {}).get("rows", [])[:60],
+                },
+                "minimum_n": factors.get("minimumN"),
+                "rotation": factors.get("rotation"),
+            },
             "attrition": {"status": attrition},
             "downloads": {"artifacts": downloads},
         },
@@ -781,12 +957,25 @@ def main() -> int:
     progress.update(42, "Cycle comparisons and repeat-respondent views prepared")
     progress.update(45, "Clustering relationship matrices for each filter view")
     relationships = relationship_cube(frame, questions, attributes)
-    progress.update(68, "Relationship matrices and cluster recommendations prepared")
-    progress.update(72, "Aggregating and classifying alert groups")
+    progress.update(60, "Relationship matrices and cluster recommendations prepared")
+    progress.update(62, "Aggregating and classifying alert groups")
     alert_data = alert_cube(frame, questions, attributes, cycle_col, team_col)
-    progress.update(86, "Alert groups classified and privacy thresholds applied")
+    progress.update(72, "Alert groups classified and privacy thresholds applied")
     factors_path = output / "factor_analysis_summary.csv"
-    factors = pd.read_csv(factors_path).to_dict("records") if factors_path.exists() else []
+    overall_factor_rows = (
+        pd.read_csv(factors_path).to_dict("records") if factors_path.exists() else []
+    )
+    progress.update(74, "Preparing filter-specific factor models")
+    factors = factor_cube(
+        frame,
+        questions,
+        attributes,
+        overall_factor_rows,
+        progress,
+        74,
+        90,
+    )
+    progress.update(90, "Filter-specific factor models prepared")
     attrition_status = next(
         (
             item.get("message", item["status"])
@@ -856,7 +1045,7 @@ def main() -> int:
     }
     report_path = output / report_name
     report_path.write_text(html_page(data), encoding="utf-8")
-    progress.update(94, "Interactive HTML report written")
+    progress.update(96, "Interactive HTML report written")
 
     readme = output / "SHARING_README.txt"
     readme.write_text(
