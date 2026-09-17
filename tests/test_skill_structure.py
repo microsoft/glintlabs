@@ -395,6 +395,14 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     assert "<option value=1 selected>180 days (6 months)</option>" in report
     assert "ATTRITION_DATA" in report
     assert "attr.addEventListener(\"change\"" in report
+    assert "<th>Item text</th><th>Attrition multiplier</th>" in report
+    assert "attrition-bar-track" in report
+    assert "attrition-baseline" in report
+    assert "marker = 1.00x" in report
+    assert "<th>Favorable n</th>" not in report
+    assert "<th>Favorable attrition</th>" not in report
+    assert "<th>Unfavorable n</th>" not in report
+    assert "<th>Unfavorable attrition</th>" not in report
     assert "fewer than 5 favorable or unfavorable respondents" in report
     assert "2025-12-15" in report
 

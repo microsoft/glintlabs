@@ -220,6 +220,11 @@ Place one report-level attribute/value filter above the tabs.
 
 - When valid outcome and date inputs exist, show overall, tenure, and
   organization views first.
+- Rank eligible items by multiplier and display each item text with a
+  horizontal bar and labeled multiplier. Mark 1.00x as the reference point.
+- Do not display favorable or unfavorable counts or percentages in the report.
+  Retain them only in the privacy-safe aggregate artifact for auditability and
+  suppression enforcement.
 - Otherwise show **Not run** and list the missing inputs.
 - Never generate synthetic attrition outcomes.
 

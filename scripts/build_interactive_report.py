@@ -878,9 +878,7 @@ def inject_attrition_report(
         '<div class=notice id=attritionStatus></div>'
         '<p class=muted id=attritionFilterNote></p>'
         '<div class=scroll><table class=attrition-table><thead><tr>'
-        '<th>Rank</th><th>Question</th><th>Favorable n</th>'
-        '<th>Favorable attrition</th><th>Unfavorable n</th>'
-        '<th>Unfavorable attrition</th><th>Multiplier</th></tr></thead>'
+        '<th>Rank</th><th>Item text</th><th>Attrition multiplier</th></tr></thead>'
         '<tbody id=attritionTableBody></tbody></table></div>'
         '<p class="muted attrition-method">Multiplier = unfavorable attrition rate '
         '÷ favorable attrition rate. The table responds to the shared report filter. '
@@ -892,10 +890,14 @@ def inject_attrition_report(
 /* attrition-live-table */
 .attrition-heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:16px}
 .attrition-heading p{margin:4px 0 0}.attrition-heading label{min-width:210px}
-.attrition-table{min-width:920px;font-size:12px}.attrition-table th,.attrition-table td{padding:10px 12px}
-.attrition-table th:nth-child(n+3),.attrition-table td:nth-child(n+3){text-align:right}
-.attrition-rank{color:var(--muted);font-weight:600}.attrition-question{font-weight:600}
-.attrition-multiplier{font-size:18px;font-weight:700;color:var(--blue)}
+.attrition-table{min-width:760px;font-size:12px}.attrition-table th,.attrition-table td{padding:12px}
+.attrition-table th:last-child{width:48%}.attrition-rank{color:var(--muted);font-weight:600}
+.attrition-question{font-size:14px;font-weight:600}.attrition-question-id{font-size:11px}
+.attrition-bar-cell{display:grid;grid-template-columns:minmax(240px,1fr) 64px;align-items:center;gap:12px}
+.attrition-bar-track{position:relative;height:22px;border-radius:3px;background:var(--soft);overflow:hidden}
+.attrition-bar{display:block;height:100%;width:var(--bar-width);min-width:2px;background:var(--blue);border-radius:3px}
+.attrition-baseline{position:absolute;top:0;bottom:0;left:var(--baseline);width:2px;background:var(--text);opacity:.65}
+.attrition-multiplier{font-size:18px;font-weight:700;color:var(--blue);text-align:right}
 .attrition-method{margin:12px 0 0}.attrition-empty{text-align:center!important;padding:28px!important}
 .attrition-suppressed{color:var(--muted);font-style:italic}
 @media(max-width:800px){.attrition-heading{display:block}.attrition-heading label{margin-top:12px}}
@@ -931,7 +933,7 @@ function renderAttritionTable(){
   const scope=attr.value?`${D.segments[attr.value].label}: ${val.value}`:"Company overall";
   note.textContent=`${scope} · all ${ATTRITION_DATA.questions.length} items · ${days}-day outcome window`;
   if(!rows.length){
-    body.innerHTML='<tr><td class=attrition-empty colspan=7>No privacy-eligible attrition aggregate is available for this filter selection.</td></tr>';
+    body.innerHTML='<tr><td class=attrition-empty colspan=3>No privacy-eligible attrition aggregate is available for this filter selection.</td></tr>';
     return;
   }
   rows.sort((a,b)=>{
@@ -939,15 +941,18 @@ function renderAttritionTable(){
     if(a[8]!==null&&b[8]!==null&&b[8]!==a[8])return b[8]-a[8];
     return ATTRITION_DATA.labels[a[2]].localeCompare(ATTRITION_DATA.labels[b[2]]);
   });
-  const pct=value=>`${(value*100).toFixed(1)}%`;
+  const visible=rows.filter(row=>row[9]!==1&&row[8]!==null);
+  const scaleMax=Math.max(2,...visible.map(row=>row[8]));
+  note.textContent+=` · bars use a 0–${scaleMax.toFixed(1)}x scale; marker = 1.00x`;
   body.innerHTML=rows.map((row,index)=>{
     const suppressed=row[9]===1;
     const multiplier=suppressed?"Suppressed":row[8]===null?"—":`${row[8].toFixed(2)}x`;
+    const barWidth=row[8]===null?0:Math.min(100,row[8]/scaleMax*100);
+    const baseline=Math.min(100,1/scaleMax*100);
     return`<tr><td class=attrition-rank>${index+1}</td>
-      <td><span class=attrition-question>${ATTRITION_DATA.labels[row[2]]}</span><br><span class=muted>${ATTRITION_DATA.questions[row[2]]}</span></td>
-      <td>${suppressed?"—":row[4].toLocaleString()}</td><td>${suppressed?"—":pct(row[5])}</td>
-      <td>${suppressed?"—":row[6].toLocaleString()}</td><td>${suppressed?"—":pct(row[7])}</td>
-      <td class="${suppressed?"attrition-suppressed":"attrition-multiplier"}">${multiplier}</td></tr>`;
+      <td><span class=attrition-question>${ATTRITION_DATA.labels[row[2]]}</span><br><span class="muted attrition-question-id">${ATTRITION_DATA.questions[row[2]]}</span></td>
+      <td>${suppressed?`<span class=attrition-suppressed>${multiplier}</span>`:
+        `<div class=attrition-bar-cell><div class=attrition-bar-track style="--baseline:${baseline}%"><span class=attrition-bar style="--bar-width:${barWidth}%"></span><i class=attrition-baseline aria-hidden=true></i></div><strong class=attrition-multiplier>${multiplier}</strong></div>`}</td></tr>`;
   }).join("");
 }
 document.querySelector("#attritionDays").addEventListener("change",renderAttritionTable);

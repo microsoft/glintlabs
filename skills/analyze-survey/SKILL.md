@@ -178,10 +178,12 @@ measurement invariance.
 
 For Attrition, rank all eligible items by the unfavorable-to-favorable
 attrition-rate multiplier. Default to 180 days and allow 90-, 180-, and
-365-day windows. Apply the shared report filter, suppress cells with fewer
-than five favorable or unfavorable respondents, and describe associations as
-screening signals rather than causal estimates. Never report individual
-flight-risk predictions.
+365-day windows. Show the item text and a horizontal multiplier bar with a
+clearly marked 1.00x reference line; do not display favorable or unfavorable
+counts or percentages in the report. Apply the shared report filter, suppress
+cells with fewer than five favorable or unfavorable respondents, and describe
+associations as screening signals rather than causal estimates. Never report
+individual flight-risk predictions.
 
 Use the checked-in People Science source index to select references from key
 terms across the current headline, observation, interpretation,
