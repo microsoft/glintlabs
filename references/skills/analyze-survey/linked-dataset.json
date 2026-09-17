@@ -1,11 +1,20 @@
 {
-  "name": "Viva Glint Dataset with Attributes",
-  "source_url": "https://microsoft.sharepoint-df.com/:x:/t/EVE/cQqUFHaCVNxhR5SuuM1bWSpIEgUCf21SzklCzncCB16W6hH3Kg",
+  "name": "Demo Viva Glint Dataset with Attributes - Exit survey research guided",
+  "source_url": "https://microsoft.sharepoint-df.com/:x:/t/EVE/cQqHblj5v7HPSLyUK88GtXJ8EgUCiNQuV5Sunz9fysTlpgCt9Q",
   "worksheet": "Sheet1",
   "attribute_worksheet": "user_properties",
   "input_format": "wide_items",
   "emp_id_col": "user_id",
   "scale_points": 5,
+  "attrition": {
+    "cycle_column": "survey_cycle_id",
+    "predictor_cycle": 1002,
+    "outcome_cycle": 1003,
+    "termination_date_column": "attrition date",
+    "predictor_completion_date": "2025-12-15",
+    "time_periods": [90, 180, 365],
+    "minimum_category_n": 5
+  },
   "description": "The sole registered sample survey source for analyze-survey when the user does not provide another export.",
   "intake_prompt": "Do you have your own survey data you would like to analyze? If not, I can use the linked Viva Glint workbook."
 }

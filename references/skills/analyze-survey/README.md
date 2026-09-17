@@ -9,6 +9,8 @@ share ZIP.
 - CSV survey exports
 - XLSX/XLSM workbooks
 - Wide item data with one row per respondent and numeric `Q_*` columns
+- Outcome-style `Q_*` fields that do not match the configured response scale
+  are excluded from automatic item detection.
 - Optional employee attributes in the same table or a workbook sheet named
   `user_properties`, `attributes`, `employee attributes`, or `demographics`
 
@@ -18,14 +20,19 @@ uses different names.
 
 ## Registered linked source
 
-The sole registered sample source is `Viva Glint Dataset with Attributes.xlsx`
+The sole registered sample source is
+`Demo Viva Glint Dataset with Attributes - Exit survey research guided.xlsx`
 at:
 
 ```text
-https://microsoft.sharepoint-df.com/:x:/t/EVE/cQqUFHaCVNxhR5SuuM1bWSpIEgUCf21SzklCzncCB16W6hH3Kg
+https://microsoft.sharepoint-df.com/:x:/t/EVE/cQqHblj5v7HPSLyUK88GtXJ8EgUCiNQuV5Sunz9fysTlpgCt9Q
 ```
 
 Use `Sheet1`, join `user_properties` by `user_id`, and use a 5-point scale.
+The registered sample also defines an H2-to-Exit attrition analysis: cycle
+`1002` is the predictor survey, cycle `1003` is the Exit cohort,
+`attrition date` is the outcome date, and December 15, 2025 is the registered
+H2 completion date. The deterministic windows are 90, 180, and 365 days.
 Do not replace it with bundled, generated, or synthetic survey data. If access
 is unavailable, report the access problem instead of silently substituting a
 different dataset.
@@ -65,6 +72,9 @@ share ZIP.
 - Raw survey and attribute files stay outside the share ZIP.
 - Names, email addresses, comments, phone numbers, and addresses are never
   automatically selected as report attributes.
+- Identifier-like employee, manager, team, client, UUID, and GUID fields are
+  excluded from report filters and aggregate downloads. Manager-defined alert
+  groups receive deterministic generic team labels before entering the report.
 - Browser interactions use embedded aggregate data, not respondent rows.
 
 ## Report

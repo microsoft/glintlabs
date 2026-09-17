@@ -232,6 +232,10 @@ correlation matrices, score-change, and alert outputs when available.
 
 - Default minimum displayed group size is 5.
 - Keep respondent-level data local and outside the shareable package.
+- Exclude identifier-like employee, respondent, manager, team, client, UUID,
+  and GUID columns from report filters and aggregate downloads. Replace
+  manager-defined alert identifiers with deterministic generic team labels
+  before creating the browser payload.
 - Precompute score, distribution, change, relationship, and alert
   aggregates. Browser interactions must select saved values rather than rerun
   analysis over employee rows.

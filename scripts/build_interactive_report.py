@@ -40,6 +40,16 @@ SUMMARY_TABS = (
     "attrition",
     "downloads",
 )
+IDENTIFIER_ATTRIBUTE_NAMES = {
+    "userid",
+    "employeeid",
+    "respondentid",
+    "personid",
+    "managerid",
+    "teamid",
+    "clientuuid",
+    "surveycycleid",
+}
 
 
 def args() -> argparse.Namespace:
@@ -61,6 +71,29 @@ def resolve(base: Path, value: str | None) -> Path | None:
 
 def label(value: str) -> str:
     return re.sub(r"\s+", " ", value.removeprefix("Q_").replace("_", " ")).title()
+
+
+def identifier_column(value: str) -> bool:
+    compact = re.sub(r"[^a-z0-9]+", "", value.casefold())
+    return compact in IDENTIFIER_ATTRIBUTE_NAMES or bool(
+        re.search(r"(?:^|[^a-z0-9])(id|uuid|guid)$", value.casefold())
+    )
+
+
+def privacy_safe_team_frame(
+    frame: pd.DataFrame, team_col: str | None
+) -> tuple[pd.DataFrame, str | None]:
+    if not team_col or not identifier_column(team_col):
+        return frame, team_col
+    safe = frame.copy()
+    values = sorted(safe[team_col].dropna().unique(), key=lambda value: str(value))
+    width = max(3, len(str(len(values))))
+    mapping = {
+        value: f"Team {index:0{width}d}"
+        for index, value in enumerate(values, start=1)
+    }
+    safe["__team_label"] = safe[team_col].map(mapping)
+    return safe, "__team_label"
 
 
 def normalize_items(frame: pd.DataFrame, questions: list[str], scale: int) -> None:
@@ -111,6 +144,12 @@ def metrics(frame: pd.DataFrame, questions: list[str]) -> list[list[float | int]
             ]
         )
     return rows
+
+
+def survey_response_rows(
+    frame: pd.DataFrame, questions: list[str]
+) -> pd.DataFrame:
+    return frame.loc[frame[questions].notna().any(axis=1)].copy()
 
 
 def segment_cube(
@@ -717,6 +756,213 @@ def html_page(data: dict[str, Any]) -> str:
     return template[:payload_start] + encoded + template[payload_end:]
 
 
+def attrition_payload(
+    path: Path,
+    questions: list[str],
+    segments: dict[str, Any],
+    minimum_category_n: int,
+) -> dict[str, Any]:
+    frame = pd.read_csv(
+        path,
+        dtype={"attribute_name": str, "attribute_value": str},
+        low_memory=False,
+    )
+    attributes = list(segments)
+    attribute_values = [
+        list(segments[attribute]["values"]) for attribute in attributes
+    ]
+    attribute_index = {name: index for index, name in enumerate(attributes)}
+    value_index = {
+        name: {value: index for index, value in enumerate(attribute_values[index])}
+        for index, name in enumerate(attributes)
+    }
+    question_index = {question: index for index, question in enumerate(questions)}
+    days = sorted(int(value) for value in frame["days"].dropna().unique())
+    day_index = {value: index for index, value in enumerate(days)}
+    rows = []
+    for record in frame.to_dict("records"):
+        question = record["question"]
+        if question not in question_index:
+            continue
+        if record["analysis_scope"] == "overall":
+            attr_i = value_i = -1
+        else:
+            attribute = record["attribute_name"]
+            value = record["attribute_value"]
+            if (
+                attribute not in attribute_index
+                or value not in value_index.get(attribute, {})
+            ):
+                continue
+            attr_i = attribute_index[attribute]
+            value_i = value_index[attribute][value]
+        favorable_n = int(record["favorable_n"])
+        unfavorable_n = int(record["unfavorable_n"])
+        suppressed = (
+            favorable_n < minimum_category_n
+            or unfavorable_n < minimum_category_n
+        )
+        multiplier = record["attrition_ratio"]
+        rows.append(
+            [
+                attr_i,
+                value_i,
+                question_index[question],
+                day_index[int(record["days"])],
+                None if suppressed else favorable_n,
+                (
+                    None
+                    if suppressed or pd.isna(record["favorable_attrition"])
+                    else round(float(record["favorable_attrition"]), 4)
+                ),
+                None if suppressed else unfavorable_n,
+                (
+                    None
+                    if suppressed or pd.isna(record["unfavorable_attrition"])
+                    else round(float(record["unfavorable_attrition"]), 4)
+                ),
+                (
+                    None
+                    if suppressed
+                    or pd.isna(multiplier)
+                    or not math.isfinite(float(multiplier))
+                    else round(float(multiplier), 2)
+                ),
+                1 if suppressed else 0,
+            ]
+        )
+    return {
+        "questions": questions,
+        "labels": [label(question) for question in questions],
+        "attributes": attributes,
+        "values": attribute_values,
+        "days": days,
+        "rows": rows,
+        "minimumCategoryN": minimum_category_n,
+    }
+
+
+def inject_attrition_report(
+    html: str,
+    payload: dict[str, Any],
+    completion_date: str | None,
+) -> str:
+    old_section = (
+        "<section class=panel id=attrition role=tabpanel hidden><h2>Attrition analysis</h2>"
+        "<div class=ai-summary data-summary=attrition></div>"
+        "<div class=notice id=attritionStatus></div></section>"
+    )
+    if old_section not in html:
+        raise ValueError("The canonical attrition section was not found.")
+    completion_text = (
+        f" Predictor-cycle completion is registered as {completion_date}."
+        if completion_date
+        else ""
+    )
+    new_section = (
+        '<section class=panel id=attrition role=tabpanel hidden>'
+        '<div class=attrition-heading><div><h2>Attrition analysis</h2>'
+        '<p class=muted>Survey item multipliers linked to subsequent Exit outcomes.</p>'
+        '</div><label>Outcome window<select id=attritionDays>'
+        + "".join(
+            (
+                f'<option value={index}'
+                + (" selected" if days == 180 else "")
+                + f'>{days} days'
+                + (" (6 months)" if days == 180 else "")
+                + "</option>"
+            )
+            for index, days in enumerate(payload["days"])
+        )
+        + '</select></label></div><div class=ai-summary data-summary=attrition></div>'
+        '<div class=notice id=attritionStatus></div>'
+        '<p class=muted id=attritionFilterNote></p>'
+        '<div class=scroll><table class=attrition-table><thead><tr>'
+        '<th>Rank</th><th>Question</th><th>Favorable n</th>'
+        '<th>Favorable attrition</th><th>Unfavorable n</th>'
+        '<th>Unfavorable attrition</th><th>Multiplier</th></tr></thead>'
+        '<tbody id=attritionTableBody></tbody></table></div>'
+        '<p class="muted attrition-method">Multiplier = unfavorable attrition rate '
+        '÷ favorable attrition rate. The table responds to the shared report filter. '
+        f'Cells with fewer than {payload["minimumCategoryN"]} favorable or unfavorable '
+        'respondents are suppressed. These are screening associations, not causal '
+        f'estimates.{completion_text}</p></section>'
+    )
+    css = """
+/* attrition-live-table */
+.attrition-heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:16px}
+.attrition-heading p{margin:4px 0 0}.attrition-heading label{min-width:210px}
+.attrition-table{min-width:920px;font-size:12px}.attrition-table th,.attrition-table td{padding:10px 12px}
+.attrition-table th:nth-child(n+3),.attrition-table td:nth-child(n+3){text-align:right}
+.attrition-rank{color:var(--muted);font-weight:600}.attrition-question{font-weight:600}
+.attrition-multiplier{font-size:18px;font-weight:700;color:var(--blue)}
+.attrition-method{margin:12px 0 0}.attrition-empty{text-align:center!important;padding:28px!important}
+.attrition-suppressed{color:var(--muted);font-style:italic}
+@media(max-width:800px){.attrition-heading{display:block}.attrition-heading label{margin-top:12px}}
+"""
+    encoded = (
+        json.dumps(payload, separators=(",", ":"))
+        .replace("&", "\\u0026")
+        .replace("<", "\\u003c")
+        .replace(">", "\\u003e")
+    )
+    script = """
+<script>
+const ATTRITION_DATA=__PAYLOAD__;
+const attritionIndex=new Map();
+for(const row of ATTRITION_DATA.rows){
+  const key=`${row[0]}|${row[1]}|${row[3]}`;
+  if(!attritionIndex.has(key))attritionIndex.set(key,[]);
+  attritionIndex.get(key).push(row);
+}
+function attritionFilterKey(){
+  const day=Number(document.querySelector("#attritionDays").value);
+  if(!attr.value)return`-1|-1|${day}`;
+  const attrIndex=ATTRITION_DATA.attributes.indexOf(attr.value);
+  const valueIndex=attrIndex<0?-1:ATTRITION_DATA.values[attrIndex].indexOf(val.value);
+  return`${attrIndex}|${valueIndex}|${day}`;
+}
+function renderAttritionTable(){
+  const body=document.querySelector("#attritionTableBody");
+  const note=document.querySelector("#attritionFilterNote");
+  const dayIndex=Number(document.querySelector("#attritionDays").value);
+  const days=ATTRITION_DATA.days[dayIndex];
+  const rows=[...(attritionIndex.get(attritionFilterKey())||[])];
+  const scope=attr.value?`${D.segments[attr.value].label}: ${val.value}`:"Company overall";
+  note.textContent=`${scope} · all ${ATTRITION_DATA.questions.length} items · ${days}-day outcome window`;
+  if(!rows.length){
+    body.innerHTML='<tr><td class=attrition-empty colspan=7>No privacy-eligible attrition aggregate is available for this filter selection.</td></tr>';
+    return;
+  }
+  rows.sort((a,b)=>{
+    if(a[8]===null&&b[8]!==null)return 1;if(a[8]!==null&&b[8]===null)return-1;
+    if(a[8]!==null&&b[8]!==null&&b[8]!==a[8])return b[8]-a[8];
+    return ATTRITION_DATA.labels[a[2]].localeCompare(ATTRITION_DATA.labels[b[2]]);
+  });
+  const pct=value=>`${(value*100).toFixed(1)}%`;
+  body.innerHTML=rows.map((row,index)=>{
+    const suppressed=row[9]===1;
+    const multiplier=suppressed?"Suppressed":row[8]===null?"—":`${row[8].toFixed(2)}x`;
+    return`<tr><td class=attrition-rank>${index+1}</td>
+      <td><span class=attrition-question>${ATTRITION_DATA.labels[row[2]]}</span><br><span class=muted>${ATTRITION_DATA.questions[row[2]]}</span></td>
+      <td>${suppressed?"—":row[4].toLocaleString()}</td><td>${suppressed?"—":pct(row[5])}</td>
+      <td>${suppressed?"—":row[6].toLocaleString()}</td><td>${suppressed?"—":pct(row[7])}</td>
+      <td class="${suppressed?"attrition-suppressed":"attrition-multiplier"}">${multiplier}</td></tr>`;
+  }).join("");
+}
+document.querySelector("#attritionDays").addEventListener("change",renderAttritionTable);
+attr.addEventListener("change",()=>setTimeout(renderAttritionTable,0));
+val.addEventListener("change",renderAttritionTable);
+renderAttritionTable();
+</script>
+""".replace("__PAYLOAD__", encoded)
+    return (
+        html.replace(old_section, new_section, 1)
+        .replace("</style>", css + "</style>", 1)
+        .replace("</body>", script + "</body>", 1)
+    )
+
+
 def summary_context(
     questions: list[str],
     cycles: dict[str, Any],
@@ -919,23 +1165,19 @@ def main() -> int:
     frame["__employee_id"] = frame[emp_id]
 
     attribute_file = resolve(config_path.parent, config.get("attribute_file"))
-    joined_attribute_cols: list[str] = []
     if attribute_file:
         attribute_frame = pd.read_csv(attribute_file)
-        joined_attribute_cols = [
-            column for column in attribute_frame.columns if column != emp_id
-        ]
         frame = frame.merge(
             attribute_frame,
             on=emp_id,
             how="left",
             validate="many_to_one",
         )
+    frame = survey_response_rows(frame, questions)
 
     configured = config.get("attribute_cols") or []
     attributes = list(dict.fromkeys([
         *configured,
-        *joined_attribute_cols,
         *(
             column
             for column in (
@@ -948,13 +1190,18 @@ def main() -> int:
             if column in frame.columns
         ),
     ]))
-    attributes = [column for column in attributes if column in frame.columns]
+    attributes = [
+        column
+        for column in attributes
+        if column in frame.columns and not identifier_column(column)
+    ]
     cycle_col = "survey_cycle_title" if "survey_cycle_title" in frame.columns else None
     team_col = next(
         (column for column in ("team_id", "manager_id", "Manager ID") if column in frame.columns),
         None,
     )
     bucket_numeric(frame, {emp_id, "__employee_id", *questions, team_col})
+    alert_frame, alert_team_col = privacy_safe_team_frame(frame, team_col)
 
     overall = metrics(frame, questions)
     segments = segment_cube(frame, questions, attributes)
@@ -966,7 +1213,13 @@ def main() -> int:
     relationships = relationship_cube(frame, questions, attributes)
     progress.update(60, "Relationship matrices and cluster recommendations prepared")
     progress.update(62, "Aggregating and classifying alert groups")
-    alert_data = alert_cube(frame, questions, attributes, cycle_col, team_col)
+    alert_data = alert_cube(
+        alert_frame,
+        questions,
+        attributes,
+        cycle_col,
+        alert_team_col,
+    )
     progress.update(72, "Alert groups classified and privacy thresholds applied")
     factors_path = output / "factor_analysis_summary.csv"
     overall_factor_rows = (
@@ -991,6 +1244,10 @@ def main() -> int:
         ),
         "Attrition analysis was not requested.",
     )
+    attrition_path = output / "attrition.csv"
+    attrition_settings = config.get("embedded_attrition") or {}
+    if attrition_path.exists():
+        attrition_status = "H2-to-Exit attrition analysis completed."
     report_name = f"{output.name}-report.html"
     zip_name = f"{output.name}-share.zip"
     manifest["report_generation"] = {
@@ -1051,7 +1308,37 @@ def main() -> int:
         "downloads": downloads,
     }
     report_path = output / report_name
-    report_path.write_text(html_page(data), encoding="utf-8")
+    report_html = html_page(data)
+    if attrition_path.exists():
+        minimum_category_n = int(
+            attrition_settings.get("minimum_category_n", MIN_N)
+        )
+        payload = attrition_payload(
+            attrition_path,
+            questions,
+            segments,
+            minimum_category_n,
+        )
+        report_html = inject_attrition_report(
+            report_html,
+            payload,
+            attrition_settings.get("predictor_completion_date"),
+        )
+        manifest["attrition_report"] = {
+            "format": "live_multiplier_table",
+            "default_window_days": 180,
+            "available_windows_days": payload["days"],
+            "items": len(payload["questions"]),
+            "uses_shared_report_filter": True,
+            "embedded_aggregate_rows": len(payload["rows"]),
+            "minimum_category_n": minimum_category_n,
+            "source_artifact": attrition_path.name,
+        }
+        (output / "analysis-manifest.json").write_text(
+            json.dumps(manifest, indent=2) + "\n",
+            encoding="utf-8",
+        )
+    report_path.write_text(report_html, encoding="utf-8")
     progress.update(96, "Interactive HTML report written")
 
     readme = output / "SHARING_README.txt"

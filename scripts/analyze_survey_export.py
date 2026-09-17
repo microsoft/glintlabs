@@ -49,6 +49,11 @@ SENSITIVE_ATTRIBUTE_TOKENS = (
     "address",
     "phone",
 )
+OUTCOME_ATTRIBUTE_TOKENS = (
+    "attrition",
+    "termination",
+    "exit date",
+)
 PREFERRED_ATTRIBUTES = (
     "survey_cycle_title",
     "survey_cycle",
@@ -58,9 +63,27 @@ PREFERRED_ATTRIBUTES = (
     "job_title",
     "location",
     "tenure",
-    "team_id",
-    "manager_id",
 )
+IDENTIFIER_ATTRIBUTE_NAMES = {
+    normalized
+    for normalized in (
+        "user_id",
+        "employee_id",
+        "employeeid",
+        "respondent_id",
+        "respondentid",
+        "person_id",
+        "personid",
+        "manager_id",
+        "managerid",
+        "team_id",
+        "teamid",
+        "client_uuid",
+        "clientuuid",
+        "survey_cycle_id",
+        "surveycycleid",
+    )
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -132,6 +155,7 @@ def detect_questions(
     configured: list[str] | None,
     scale_points: int,
 ) -> list[str]:
+    auto_detected = configured is None
     if configured:
         missing = [column for column in configured if column not in frame.columns]
         if missing:
@@ -148,6 +172,7 @@ def detect_questions(
         raise ValueError(
             "No numeric Q_* survey items were found. Pass --question-cols explicitly."
         )
+    valid_questions = []
     invalid = []
     for question in questions:
         numeric = numeric_series(frame, question)
@@ -158,20 +183,28 @@ def detect_questions(
             continue
         if values.min() >= 1 and values.max() <= scale_points:
             frame[question] = numeric
+            valid_questions.append(question)
             continue
         if len(unique) == scale_points:
             mapping = {value: index + 1 for index, value in enumerate(unique)}
             frame[question] = numeric.map(mapping)
+            valid_questions.append(question)
             continue
-        invalid.append(question)
+        if not auto_detected:
+            invalid.append(question)
     if invalid:
         raise ValueError(
             f"Question values must be between 1 and {scale_points}: "
             + ", ".join(invalid)
         )
-    if emp_id_col in questions:
+    if not valid_questions:
+        raise ValueError(
+            "No numeric Q_* survey items matched the configured scale. "
+            "Pass --question-cols explicitly."
+        )
+    if emp_id_col in valid_questions:
         raise ValueError("The employee ID column cannot also be a survey item.")
-    return questions
+    return valid_questions
 
 
 def safe_attribute(column: str) -> bool:
@@ -179,9 +212,11 @@ def safe_attribute(column: str) -> bool:
     compact = normalized_name(column)
     if any(token in normalized for token in SENSITIVE_ATTRIBUTE_TOKENS):
         return False
-    if compact.endswith("id") and compact not in {
-        normalized_name(item) for item in PREFERRED_ATTRIBUTES
-    }:
+    if any(token in normalized for token in OUTCOME_ATTRIBUTE_TOKENS):
+        return False
+    if compact in IDENTIFIER_ATTRIBUTE_NAMES:
+        return False
+    if re.search(r"(?:^|[^a-z0-9])(id|uuid|guid)$", normalized):
         return False
     return True
 
@@ -205,9 +240,9 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def linked_source_url(source: Path) -> str | None:
+def linked_source_registry(source: Path) -> dict[str, Any]:
     if "viva glint dataset with attributes" not in source.name.casefold():
-        return None
+        return {}
     registry = (
         Path(__file__).resolve().parents[1]
         / "references"
@@ -216,8 +251,12 @@ def linked_source_url(source: Path) -> str | None:
         / "linked-dataset.json"
     )
     if not registry.exists():
-        return None
-    return json.loads(registry.read_text(encoding="utf-8")).get("source_url")
+        return {}
+    return json.loads(registry.read_text(encoding="utf-8"))
+
+
+def linked_source_url(source: Path) -> str | None:
+    return linked_source_registry(source).get("source_url")
 
 
 def detect_attributes(
@@ -229,6 +268,12 @@ def detect_attributes(
         missing = [column for column in configured if column not in frame.columns]
         if missing:
             raise ValueError("Attribute columns not found: " + ", ".join(missing))
+        unsafe = [column for column in configured if not safe_attribute(column)]
+        if unsafe:
+            raise ValueError(
+                "Attribute columns cannot contain identifiers or sensitive data: "
+                + ", ".join(unsafe)
+            )
         return configured
 
     candidates = []
@@ -361,6 +406,15 @@ def build_config(options: argparse.Namespace, output: Path) -> Path:
     ]
     if attribute_cols:
         analyses.append("by_attribute")
+    linked_source = linked_source_registry(source)
+    attrition = linked_source.get("attrition")
+    if attrition:
+        required = {
+            attrition["cycle_column"],
+            attrition["termination_date_column"],
+        }
+        if required.issubset(survey.columns):
+            analyses.append("attrition")
 
     config: dict[str, Any] = {
         "survey_csv": str(survey_path),
@@ -377,6 +431,9 @@ def build_config(options: argparse.Namespace, output: Path) -> Path:
         "source_survey_sheet": workbook_source["survey_sheet"],
         "source_attribute_sheet": workbook_source["attribute_sheet"],
     }
+    if attrition and "attrition" in analyses:
+        config["embedded_attrition"] = attrition
+        config["attrition_attribute_cols"] = attribute_cols
     if attribute_cols:
         config["attribute_view_mode"] = "separate"
     if attribute_path:

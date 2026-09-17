@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import shutil
 import subprocess
 import sys
@@ -128,6 +129,163 @@ def dataframe_to_jsonable_summary(frame: pd.DataFrame) -> dict[str, Any]:
         "rows": int(frame.shape[0]),
         "columns": list(frame.columns),
     }
+
+
+def parse_termination_dates(values: pd.Series) -> pd.Series:
+    numeric = pd.to_numeric(values, errors="coerce")
+    if numeric.notna().sum() == values.notna().sum() and numeric.notna().any():
+        return pd.to_datetime(
+            numeric,
+            unit="D",
+            origin="1899-12-30",
+            errors="coerce",
+        )
+    return pd.to_datetime(values, errors="coerce")
+
+
+def bucket_numeric_attributes(
+    frame: pd.DataFrame,
+    attributes: list[str],
+) -> None:
+    def bucket_label(item: Any) -> str | None:
+        if not hasattr(item, "left"):
+            return None
+        return f"{math.floor(item.left) + 1}-{math.floor(item.right)}"
+
+    for column in attributes:
+        if column not in frame or not pd.api.types.is_numeric_dtype(frame[column]):
+            continue
+        if frame[column].nunique(dropna=True) <= 10:
+            continue
+        values = frame[column]
+        if values.min() == 0 and float((values == 0).mean()) >= 0.2:
+            positive = values[values > 0]
+            cuts = pd.qcut(positive, 4, duplicates="drop")
+            mapped = pd.Series("0", index=frame.index, dtype="object")
+            mapped.loc[positive.index] = cuts.map(bucket_label).astype("object")
+        else:
+            cuts = pd.qcut(values, 5, duplicates="drop")
+            mapped = cuts.map(bucket_label).astype("object")
+        frame[column] = mapped
+
+
+def embedded_exit_attrition(
+    config: dict[str, Any],
+    config_path: Path,
+    survey_csv: Path,
+    questions: list[str],
+    emp_id_col: str,
+    min_group_size: int,
+) -> pd.DataFrame:
+    settings = config["embedded_attrition"]
+    raw = pd.read_csv(survey_csv, low_memory=False)
+    attribute_file = resolve_path(config_path, config.get("attribute_file"))
+    if attribute_file:
+        attributes = pd.read_csv(attribute_file, low_memory=False)
+        raw = raw.merge(attributes, on=emp_id_col, how="left", validate="many_to_one")
+
+    cycle_col = settings["cycle_column"]
+    term_col = settings["termination_date_column"]
+    missing = [
+        column
+        for column in (cycle_col, term_col, emp_id_col, *questions)
+        if column not in raw.columns
+    ]
+    if missing:
+        raise ValueError(
+            "Embedded attrition columns not found: " + ", ".join(missing)
+        )
+
+    predictor = raw.loc[raw[cycle_col] == settings["predictor_cycle"]].copy()
+    outcomes = raw.loc[raw[cycle_col] == settings["outcome_cycle"], [emp_id_col, term_col]].copy()
+    if predictor.empty or outcomes.empty:
+        raise ValueError("Configured predictor or Exit survey cycle has no rows.")
+    if outcomes[emp_id_col].duplicated().any():
+        raise ValueError("Exit survey outcomes must contain one row per employee.")
+
+    outcomes[term_col] = parse_termination_dates(outcomes[term_col])
+    if outcomes[term_col].isna().any():
+        raise ValueError("Exit survey termination dates contain invalid values.")
+    outcome_map = outcomes.set_index(emp_id_col)[term_col]
+    predictor["_term_date"] = predictor[emp_id_col].map(outcome_map)
+    completion = pd.Timestamp(settings["predictor_completion_date"])
+    predictor["_days_to_term"] = (predictor["_term_date"] - completion).dt.days
+
+    attribute_cols = [
+        column
+        for column in config.get("attrition_attribute_cols", [])
+        if column in predictor.columns
+    ]
+    bucket_numeric_attributes(predictor, attribute_cols)
+    periods = [int(value) for value in settings.get("time_periods", [90, 180, 365])]
+
+    def summarize(
+        group: pd.DataFrame,
+        question: str,
+        days: int,
+        attribute_name: str = "",
+        attribute_value: str = "",
+    ) -> dict[str, Any]:
+        responses = group[question]
+        favorable = responses.isin([4, 5])
+        unfavorable = responses.isin([1, 2])
+        departed = (
+            group["_days_to_term"].notna()
+            & (group["_days_to_term"] > 0)
+            & (group["_days_to_term"] <= days)
+        )
+        favorable_n = int(favorable.sum())
+        unfavorable_n = int(unfavorable.sum())
+        favorable_rate = (
+            round(float((departed & favorable).sum()) / favorable_n, 4)
+            if favorable_n
+            else math.nan
+        )
+        unfavorable_rate = (
+            round(float((departed & unfavorable).sum()) / unfavorable_n, 4)
+            if unfavorable_n
+            else math.nan
+        )
+        ratio = (
+            math.nan
+            if pd.isna(favorable_rate) or pd.isna(unfavorable_rate)
+            else math.inf
+            if favorable_rate == 0 and unfavorable_rate > 0
+            else math.nan
+            if favorable_rate == 0
+            else round(unfavorable_rate / favorable_rate, 2)
+        )
+        return {
+            "analysis_scope": "overall" if not attribute_name else "attribute",
+            "attribute_name": attribute_name,
+            "attribute_value": attribute_value,
+            "question": question,
+            "days": days,
+            "favorable_n": favorable_n,
+            "favorable_attrition": favorable_rate,
+            "unfavorable_n": unfavorable_n,
+            "unfavorable_attrition": unfavorable_rate,
+            "attrition_ratio": ratio,
+            "group_size": int(group[emp_id_col].nunique()),
+        }
+
+    rows = [
+        summarize(predictor, question, days)
+        for question in questions
+        for days in periods
+    ]
+    for attribute in attribute_cols:
+        eligible = predictor.dropna(subset=[attribute]).copy()
+        eligible["_attribute_value"] = eligible[attribute].astype(str)
+        for value, group in eligible.groupby("_attribute_value", sort=True):
+            if group[emp_id_col].nunique() < min_group_size:
+                continue
+            rows.extend(
+                summarize(group, question, days, attribute, value)
+                for question in questions
+                for days in periods
+            )
+    return pd.DataFrame(rows)
 
 
 def detect_wide_item_columns(
@@ -514,9 +672,30 @@ def main() -> int:
 
     if "attrition" in requested:
         start_step("attrition")
+        embedded_attrition = config.get("embedded_attrition")
         attrition_file = resolve_path(config_path, config.get("attrition_file"))
         term_date_col = config.get("term_date_col")
-        if not attrition_file or not term_date_col:
+        if embedded_attrition:
+            def attrition() -> str:
+                frame = embedded_exit_attrition(
+                    config,
+                    config_path,
+                    survey_csv,
+                    config.get("question_cols") or detect_wide_item_columns(
+                        pd.read_csv(survey_csv, nrows=100),
+                        emp_id_col,
+                        config.get("attribute_cols") or [],
+                        None,
+                    ),
+                    emp_id_col,
+                    min_group_size,
+                )
+                return write_csv(output_dir, "attrition", frame)
+            result = run_step("attrition", attrition)
+            analyses.append(result)
+            if result.artifact:
+                artifacts["attrition"] = result.artifact
+        elif not attrition_file or not term_date_col:
             analyses.append(skip("attrition", "attrition_file and term_date_col are required."))
         else:
             def attrition() -> str:
