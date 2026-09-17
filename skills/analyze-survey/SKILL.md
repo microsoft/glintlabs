@@ -37,14 +37,14 @@ not substitute bundled, generated, or synthetic survey data.
 Read these references in order:
 
 1. `references/design/glint-ui-system.md`
-2. `references/skills/analyze-survey/README.md`
-3. `references/skills/analyze-survey/linked-dataset.json`
-4. `references/skills/analyze-survey/golden-report.html`
-5. `references/skills/analyze-survey/scores-change-format.png`
-6. `references/skills/analyze-survey/interactive-report-contract.md`
-7. `references/skills/analyze-survey/people-science-summaries.schema.json`
-8. `references/skills/analyze-survey/people-science-source-index.json`
-9. `references/skills/people-science-knowledge-vault/`
+2. `skills/analyze-survey/references/README.md`
+3. `skills/analyze-survey/references/linked-dataset.json`
+4. `skills/analyze-survey/references/golden-report.html`
+5. `skills/analyze-survey/references/scores-change-format.png`
+6. `skills/analyze-survey/references/interactive-report-contract.md`
+7. `skills/analyze-survey/references/people-science-summaries.schema.json`
+8. `skills/analyze-survey/references/people-science-source-index.json`
+9. `skills/people-science-knowledge-vault/references/`
 10. `references/general/interpretation-guardrails.md`
 11. `references/general/privacy-and-minimum-n.md`
 12. `references/general/codebook-catalog.md`

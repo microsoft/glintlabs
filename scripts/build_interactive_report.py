@@ -744,9 +744,9 @@ def html_page(data: dict[str, Any]) -> str:
     )
     template_path = (
         Path(__file__).resolve().parents[1]
-        / "references"
         / "skills"
         / "analyze-survey"
+        / "references"
         / "golden-report.html"
     )
     template = template_path.read_text(encoding="utf-8")
@@ -1259,7 +1259,7 @@ def main() -> int:
         "status": "completed",
         "report": report_name,
         "share_zip": zip_name,
-        "format_contract": "references/skills/analyze-survey/interactive-report-contract.md",
+        "format_contract": "skills/analyze-survey/references/interactive-report-contract.md",
     }
     (output / "analysis-manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
@@ -1295,9 +1295,9 @@ def main() -> int:
         "knowledgeSources": json.loads(
             (
                 Path(__file__).resolve().parents[1]
-                / "references"
                 / "skills"
                 / "analyze-survey"
+                / "references"
                 / "people-science-source-index.json"
             ).read_text(encoding="utf-8")
         ),

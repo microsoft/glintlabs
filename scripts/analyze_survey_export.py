@@ -245,9 +245,9 @@ def linked_source_registry(source: Path) -> dict[str, Any]:
         return {}
     registry = (
         Path(__file__).resolve().parents[1]
-        / "references"
         / "skills"
         / "analyze-survey"
+        / "references"
         / "linked-dataset.json"
     )
     if not registry.exists():

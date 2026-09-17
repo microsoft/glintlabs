@@ -4,10 +4,10 @@ Reference material is organized by priority. Load the smallest relevant set.
 
 ## Priority 1: skill-specific references
 
-Each skill has its own reference collection:
+Each skill keeps its own reference collection beside its instructions:
 
 ```text
-references/skills/<skill-name>/
+skills/<skill-name>/references/
 ```
 
 When a skill runs, inspect its skill-specific folder first. These documents are the highest-priority domain context for that skill.

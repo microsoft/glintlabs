@@ -23,7 +23,7 @@ Do not use this skill for raw survey analysis, analysis QA, or interpretation of
 
 ## Required source priority
 
-Inspect `references/skills/people-science-knowledge-vault/` first, especially
+Inspect `skills/people-science-knowledge-vault/references/` first, especially
 `source-priority.md`.
 
 Use sources in this strict order:

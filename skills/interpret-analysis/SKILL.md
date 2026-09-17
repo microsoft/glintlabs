@@ -22,7 +22,7 @@ Use this skill when the user asks:
 
 Before interpreting, inspect references in this order:
 
-1. `references/skills/interpret-analysis/`
+1. `skills/interpret-analysis/references/`
 2. `references/general/`
 
 Then load:

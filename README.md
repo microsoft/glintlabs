@@ -46,7 +46,7 @@ appropriate skill. Examples:
 Each skill has a first-priority reference collection at:
 
 ```text
-references/skills/<skill-name>/
+skills/<skill-name>/references/
 ```
 
 Shared, second-priority context lives at:
@@ -55,7 +55,9 @@ Shared, second-priority context lives at:
 references/general/
 ```
 
-When a skill runs, inspect its own reference folder first, then inspect `references/general/`. Skill-specific references take precedence for that skill unless they violate privacy, safety, or the manifest contract.
+When a skill runs, inspect its colocated `references/` folder first, then
+inspect `references/general/`. Skill-specific references take precedence for
+that skill unless they violate privacy, safety, or the manifest contract.
 
 ## Shared contract
 
@@ -116,7 +118,7 @@ Every successful, repeatable survey analysis produces the standardized report
 defined in:
 
 ```text
-references/skills/analyze-survey/interactive-report-contract.md
+skills/analyze-survey/references/interactive-report-contract.md
 ```
 
 The report uses the fixed six-tab Glint layout, shared attribute filtering,

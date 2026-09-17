@@ -12,7 +12,7 @@ The core separation is:
 | `eve-people-science` scripts | Thin orchestration, config parsing, artifact writing, manifest generation. |
 | `analysis-manifest.json` | Stable contract between analysis execution and interpretation skills. |
 | Skills | User-facing workflows: run, QA, and interpret. |
-| Skill references | First-priority context in `references/skills/<skill-name>/`. |
+| Skill references | First-priority context in `skills/<skill-name>/references/`. |
 | General references | Second-priority shared People Science context in `references/general/`. |
 
 ## Why not one giant skill
@@ -29,7 +29,7 @@ Each skill should know its job, the shared contract, and which references to loa
 
 Every skill should load references in this order:
 
-1. `references/skills/<skill-name>/`
+1. `skills/<skill-name>/references/`
 2. `references/general/`
 
 Skill-specific documents are the first place to inspect because they encode job-specific examples, runbooks, and interpretation patterns. General documents are optional shared context for the task, not a required second read every time.

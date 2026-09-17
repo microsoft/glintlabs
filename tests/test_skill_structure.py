@@ -15,7 +15,6 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_each_skill_has_first_priority_reference_folder():
     skills_dir = ROOT / "skills"
-    refs_dir = ROOT / "references/skills"
     skill_names = sorted(path.name for path in skills_dir.iterdir() if path.is_dir())
 
     assert skill_names == [
@@ -28,16 +27,17 @@ def test_each_skill_has_first_priority_reference_folder():
     missing = [
         name
         for name in skill_names
-        if not (refs_dir / name / "README.md").exists()
+        if not (skills_dir / name / "references/README.md").exists()
     ]
 
     assert missing == []
+    assert not (ROOT / "references/skills").exists()
 
 
 def test_analyze_survey_points_to_linked_dataset():
     skill = (ROOT / "skills/analyze-survey/SKILL.md").read_text(encoding="utf-8")
     source_path = (
-        ROOT / "references/skills/analyze-survey/linked-dataset.json"
+        ROOT / "skills/analyze-survey/references/linked-dataset.json"
     )
     source = json.loads(source_path.read_text(encoding="utf-8"))
     source_url = (
@@ -81,7 +81,7 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "<output-directory-name>-share.zip" in skill
 
     report_contract = (
-        ROOT / "references/skills/analyze-survey/interactive-report-contract.md"
+        ROOT / "skills/analyze-survey/references/interactive-report-contract.md"
     ).read_text(encoding="utf-8")
     required_tabs = (
         "Scores change",
@@ -114,7 +114,7 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "filtered headline, observation, interpretation, recommendation" in report_contract
     assert "state the selected scope once in the headline" in report_contract
     assert (ROOT / "scripts/build_interactive_report.py").exists()
-    golden = ROOT / "references/skills/analyze-survey/golden-report.html"
+    golden = ROOT / "skills/analyze-survey/references/golden-report.html"
     assert golden.exists()
     golden_sha = hashlib.sha256(
         golden.read_bytes().replace(b"\r\n", b"\n")
@@ -126,7 +126,7 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "glint-ui-system" in design_text
     assert "9e67a00125de2fd15130d675af57d190bc8ae294" in design_text
     assert "--colorBrandForeground1: #335CCC" in design_text
-    assert (ROOT / "references/skills/analyze-survey/scores-change-format.png").exists()
+    assert (ROOT / "skills/analyze-survey/references/scores-change-format.png").exists()
     runner = (ROOT / "scripts/run_vivaglint_analysis.py").read_text(encoding="utf-8")
     assert 'with_name("build_interactive_report.py")' in runner
     assert (ROOT / "scripts/analyze_survey_export.py").exists()
@@ -136,7 +136,7 @@ def test_analyze_survey_points_to_linked_dataset():
     summary_schema = json.loads(
         (
             ROOT
-            / "references/skills/analyze-survey/people-science-summaries.schema.json"
+            / "skills/analyze-survey/references/people-science-summaries.schema.json"
         ).read_text(encoding="utf-8")
     )
     assert summary_schema["properties"]["tabs"]["required"] == [
@@ -150,7 +150,7 @@ def test_analyze_survey_points_to_linked_dataset():
     source_index = json.loads(
         (
             ROOT
-            / "references/skills/analyze-survey/people-science-source-index.json"
+            / "skills/analyze-survey/references/people-science-source-index.json"
         ).read_text(encoding="utf-8")
     )
     assert len(source_index["sources"]) >= 10
@@ -385,7 +385,7 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     ).to_csv(attrition, index=False)
     payload = module.attrition_payload(attrition, ["Q_ONE"], {}, 5)
     golden = (
-        ROOT / "references/skills/analyze-survey/golden-report.html"
+        ROOT / "skills/analyze-survey/references/golden-report.html"
     ).read_text(encoding="utf-8")
     report = module.inject_attrition_report(golden, payload, "2025-12-15")
 
@@ -631,7 +631,7 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     share_zip = tmp_path / f"{tmp_path.name}-share.zip"
     report_text = report.read_text(encoding="utf-8")
     golden_text = (
-        ROOT / "references/skills/analyze-survey/golden-report.html"
+        ROOT / "skills/analyze-survey/references/golden-report.html"
     ).read_text(encoding="utf-8")
     payload = re.compile(r"(?s)(<script>const D=).*?(;\nconst names=)")
     assert payload.sub(r"\1__DATA__\2", report_text) == payload.sub(
@@ -977,7 +977,7 @@ def test_knowledge_vault_source_priority():
         encoding="utf-8"
     )
     sources = (
-        ROOT / "references/skills/people-science-knowledge-vault/source-priority.md"
+        ROOT / "skills/people-science-knowledge-vault/references/source-priority.md"
     ).read_text(encoding="utf-8")
 
     assert "Microsoft Viva Blog" in skill
