@@ -32,6 +32,29 @@ def test_each_skill_has_first_priority_reference_folder():
 
     assert missing == []
     assert not (ROOT / "references/skills").exists()
+    for name in skill_names:
+        skill = (skills_dir / name / "SKILL.md").read_text(encoding="utf-8")
+        assert f"skills/{name}/references" not in skill
+
+
+def test_analyze_survey_required_grounding_paths_are_skill_relative():
+    skill_dir = ROOT / "skills/analyze-survey"
+    required = [
+        "../../references/design/glint-ui-system.md",
+        "references/README.md",
+        "references/linked-dataset.json",
+        "references/golden-report.html",
+        "references/scores-change-format.png",
+        "references/interactive-report-contract.md",
+        "references/people-science-summaries.schema.json",
+        "references/people-science-source-index.json",
+        "../people-science-knowledge-vault/references",
+        "../../references/general/interpretation-guardrails.md",
+        "../../references/general/privacy-and-minimum-n.md",
+        "../../references/general/codebook-catalog.md",
+    ]
+
+    assert all((skill_dir / path).resolve().exists() for path in required)
 
 
 def test_analyze_survey_points_to_linked_dataset():

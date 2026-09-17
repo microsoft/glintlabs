@@ -24,8 +24,8 @@ Start from `analysis-manifest.json`. If missing, ask for the output folder and i
 
 Before scoring, inspect references in this order:
 
-1. `skills/analysis-qa/references/`
-2. `references/general/`
+1. `references/`
+2. `../../references/general/`
 
 Useful artifacts:
 

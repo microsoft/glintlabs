@@ -6,7 +6,7 @@ in this format. This contract is required, not an optional example.
 The exact golden example is:
 
 ```text
-skills/analyze-survey/references/golden-report.html
+golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is

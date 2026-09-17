@@ -22,15 +22,15 @@ Use this skill when the user asks:
 
 Before interpreting, inspect references in this order:
 
-1. `skills/interpret-analysis/references/`
-2. `references/general/`
+1. `references/`
+2. `../../references/general/`
 
 Then load:
 
 - `analysis-manifest.json`
-- `references/general/codebook-catalog.md`
-- `references/general/interpretation-guardrails.md`
-- `references/general/privacy-and-minimum-n.md`
+- `../../references/general/codebook-catalog.md`
+- `../../references/general/interpretation-guardrails.md`
+- `../../references/general/privacy-and-minimum-n.md`
 
 ## Interpretation process
 

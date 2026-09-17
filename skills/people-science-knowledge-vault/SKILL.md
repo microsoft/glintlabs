@@ -23,7 +23,7 @@ Do not use this skill for raw survey analysis, analysis QA, or interpretation of
 
 ## Required source priority
 
-Inspect `skills/people-science-knowledge-vault/references/` first, especially
+Inspect `references/` first, especially
 `source-priority.md`.
 
 Use sources in this strict order:
@@ -33,7 +33,7 @@ Use sources in this strict order:
    `https://techcommunity.microsoft.com/category/microsoft-viva/blog/microsoftvivablog`.
 2. **Second priority:** only article records from the `External` worksheet in the
    People Science content workbook identified in `source-priority.md`.
-3. **Tertiary context:** `references/general/`, only when it does not conflict with
+3. **Tertiary context:** `../../references/general/`, only when it does not conflict with
    the published sources above.
 
 First-priority sources outrank second-priority sources when they overlap or disagree.
