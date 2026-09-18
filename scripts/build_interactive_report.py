@@ -1251,8 +1251,15 @@ def main() -> int:
     )
     attrition_path = output / "attrition.csv"
     attrition_settings = config.get("embedded_attrition") or {}
+    attrition_data: dict[str, Any] | None = None
     if attrition_path.exists():
         attrition_status = "H2-to-Exit attrition analysis completed."
+        attrition_data = attrition_payload(
+            attrition_path,
+            questions,
+            segments,
+            int(attrition_settings.get("minimum_category_n", MIN_N)),
+        )
     report_name = f"{output.name}-report.html"
     zip_name = f"{output.name}-share.zip"
     manifest["report_generation"] = {
@@ -1310,32 +1317,27 @@ def main() -> int:
         "alerts": alert_data,
         "factors": factors,
         "attrition": attrition_status,
+        "attritionData": attrition_data,
         "downloads": downloads,
     }
     report_path = output / report_name
     report_html = html_page(data)
-    if attrition_path.exists():
+    if attrition_data is not None:
         minimum_category_n = int(
             attrition_settings.get("minimum_category_n", MIN_N)
         )
-        payload = attrition_payload(
-            attrition_path,
-            questions,
-            segments,
-            minimum_category_n,
-        )
         report_html = inject_attrition_report(
             report_html,
-            payload,
+            attrition_data,
             attrition_settings.get("predictor_completion_date"),
         )
         manifest["attrition_report"] = {
             "format": "live_multiplier_table",
             "default_window_days": 180,
-            "available_windows_days": payload["days"],
-            "items": len(payload["questions"]),
+            "available_windows_days": attrition_data["days"],
+            "items": len(attrition_data["questions"]),
             "uses_shared_report_filter": True,
-            "embedded_aggregate_rows": len(payload["rows"]),
+            "embedded_aggregate_rows": len(attrition_data["rows"]),
             "minimum_category_n": minimum_category_n,
             "source_artifact": attrition_path.name,
         }

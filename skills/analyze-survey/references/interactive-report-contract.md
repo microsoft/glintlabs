@@ -10,7 +10,7 @@ golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`7724e89f3b49ba28c02e95776ecef94cabb3b044bd9fc69cac68e1ede3004b76`.
+`d641445b17209f41ee0bf1e8ad30d9139d19d011fb09f21fdba8bfff85455f64`.
 Generated reports must match its static HTML shell exactly. The only intended
 substitution is the JSON value assigned to `const D`, which must come from the
 current analysis.

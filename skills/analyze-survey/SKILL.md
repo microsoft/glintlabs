@@ -95,6 +95,11 @@ least 20 responses; apply the same threshold after report filtering.
 
 ## Primary workflow
 
+Before starting the runner, give the user a concise estimated completion time.
+Base the estimate on the export size and prior runs when available, and state
+that relationship clustering, alert aggregation, and repeatability are the
+most variable phases. Do this in the first response that starts the run.
+
 Use the direct export runner:
 
 ```bash

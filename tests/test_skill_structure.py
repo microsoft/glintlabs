@@ -96,6 +96,8 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "greater of 100 complete responses or five complete responses" in skill
     assert "clustered horizontal bar small multiples" in skill
     assert "progress bar" in skill
+    assert "estimated completion time" in skill
+    assert "first response that starts the run" in skill
     assert "people-science-summary-context.json" in skill
     assert "people-science-summaries.schema.json" in skill
     assert "`interpret-analysis`" in skill
@@ -297,16 +299,21 @@ def test_registered_demo_requests_embedded_attrition(tmp_path):
         {
             "user_id": [1, 2, 1],
             "survey_cycle_id": [1002, 1002, 1003],
-            "attrition date": [None, None, 46113],
             "Q_ONE": [4, 2, None],
+        }
+    )
+    attributes = module.pd.DataFrame(
+        {
+            "user_id": [1, 2],
+            "attrition date": [46113, None],
         }
     )
     module.read_export = lambda *args: (
         frame,
         survey,
-        None,
-        None,
-        {"survey_sheet": "Sheet1", "attribute_sheet": None},
+        attributes,
+        tmp_path / "attributes.csv",
+        {"survey_sheet": "Sheet1", "attribute_sheet": "user_properties"},
     )
 
     class Args:
@@ -716,6 +723,8 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert report_text.count("data-summary=") == 6
     assert '"aiSummaries":{"changes"' in report_text
     assert "function liveFilterSummary(tab,base)" in report_text
+    assert "function attritionSummaryRows()" in report_text
+    assert "highest visible attrition multiplier" in report_text
     assert "function knowledgeSourcesFor(tab,summary)" in report_text
     assert "AI-generated · live filter" in report_text
     assert "function factorSource()" in report_text

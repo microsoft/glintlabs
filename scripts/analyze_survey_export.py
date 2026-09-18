@@ -413,7 +413,10 @@ def build_config(options: argparse.Namespace, output: Path) -> Path:
             attrition["cycle_column"],
             attrition["termination_date_column"],
         }
-        if required.issubset(survey.columns):
+        available_columns = set(survey.columns)
+        if attribute_frame is not None:
+            available_columns.update(attribute_frame.columns)
+        if required.issubset(available_columns):
             analyses.append("attrition")
 
     config: dict[str, Any] = {

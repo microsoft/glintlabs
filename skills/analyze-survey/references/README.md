@@ -56,6 +56,8 @@ The runner prints durable progress updates with an ASCII bar, percentage,
 elapsed time, and current phase. Keep progress visible during both analysis
 passes and the interactive-report build, especially relationship clustering
 and alert aggregation, which can take several minutes on large exports.
+Before launching it, give the user a concise completion-time estimate based on
+the export size and prior observed runs when available.
 
 The first report build also writes
 `people-science-summary-context.json`, a compact aggregate-only input for AI
