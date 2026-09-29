@@ -1,6 +1,7 @@
 {
   "name": "Demo Viva Glint Dataset with Attributes - Exit survey research guided",
-  "source_url": "https://microsoft.sharepoint-df.com/:x:/t/EVE/cQqHblj5v7HPSLyUK88GtXJ8EgUCiNQuV5Sunz9fysTlpgCt9Q",
+  "source_url": "https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/analyze-survey/references/sample-data/Demo%20Viva%20Glint%20Dataset%20with%20Attributes%20-%20Exit%20survey%20research%20guided.xlsx",
+  "source_path": "skills/analyze-survey/references/sample-data/Demo Viva Glint Dataset with Attributes - Exit survey research guided.xlsx",
   "worksheet": "Sheet1",
   "attribute_worksheet": "user_properties",
   "input_format": "wide_items",

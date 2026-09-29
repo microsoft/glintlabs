@@ -21,15 +21,17 @@ Ask:
 Accept `.csv`, `.xlsx`, and `.xlsm` exports. Keep respondent-level data local
 and never paste employee rows into chat.
 
-If the user does not provide another export, use this workbook:
+If the user does not provide another export, use this workbook, which is
+checked directly into this repository so any user can access it without
+additional permissions:
 
 ```text
 Demo Viva Glint Dataset with Attributes - Exit survey research guided.xlsx
-https://microsoft.sharepoint-df.com/:x:/t/EVE/cQqHblj5v7HPSLyUK88GtXJ8EgUCiNQuV5Sunz9fysTlpgCt9Q
+references/sample-data/Demo Viva Glint Dataset with Attributes - Exit survey research guided.xlsx
 ```
 
 Use worksheet `Sheet1`, join worksheet `user_properties` by `user_id`, and use
-a 5-point scale. The linked workbook is the only registered sample source. Do
+a 5-point scale. The checked-in workbook is the only registered sample source. Do
 not substitute bundled, generated, or synthetic survey data.
 
 ## Required grounding

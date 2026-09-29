@@ -21,11 +21,12 @@ uses different names.
 ## Registered linked source
 
 The sole registered sample source is
-`Demo Viva Glint Dataset with Attributes - Exit survey research guided.xlsx`
-at:
+`Demo Viva Glint Dataset with Attributes - Exit survey research guided.xlsx`,
+checked directly into this repository so any user can access it without
+additional permissions, at:
 
 ```text
-https://microsoft.sharepoint-df.com/:x:/t/EVE/cQqHblj5v7HPSLyUK88GtXJ8EgUCiNQuV5Sunz9fysTlpgCt9Q
+references/sample-data/Demo Viva Glint Dataset with Attributes - Exit survey research guided.xlsx
 ```
 
 Use `Sheet1`, join `user_properties` by `user_id`, and use a 5-point scale.
