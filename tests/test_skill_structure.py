@@ -65,8 +65,14 @@ def test_analyze_survey_points_to_linked_dataset():
     )
     source = json.loads(source_path.read_text(encoding="utf-8"))
     source_url = (
-        "https://microsoft.sharepoint-df.com/:x:/t/EVE/"
-        "cQqHblj5v7HPSLyUK88GtXJ8EgUCiNQuV5Sunz9fysTlpgCt9Q"
+        "https://raw.githubusercontent.com/microsoft/glintlabs/main/"
+        "skills/analyze-survey/references/sample-data/"
+        "Demo%20Viva%20Glint%20Dataset%20with%20Attributes%20-%20Exit"
+        "%20survey%20research%20guided.xlsx"
+    )
+    source_file_path = (
+        "skills/analyze-survey/references/sample-data/"
+        "Demo Viva Glint Dataset with Attributes - Exit survey research guided.xlsx"
     )
 
     assert (
@@ -74,9 +80,10 @@ def test_analyze_survey_points_to_linked_dataset():
         "If not, I can use the linked Viva Glint workbook."
     ) in skill
     assert source["source_url"] == source_url
+    assert source["source_path"] == source_file_path
     assert source["worksheet"] == "Sheet1"
     assert source["attribute_worksheet"] == "user_properties"
-    assert source_url in skill
+    assert "references/sample-data/" in skill
     assert "synthetic survey data" in skill
     assert "scripts/analyze_survey_export.py" in skill
     assert "--survey-export" in skill
