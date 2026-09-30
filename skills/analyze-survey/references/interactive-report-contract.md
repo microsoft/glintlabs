@@ -10,7 +10,7 @@ golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`66ef1f05c6053c111dd246519712a78a3de84fb7ea5ddc9af39ec5435a9d3ad6`.
+`757ac19f5f68956fe8c81b758d2de4d06748ac7ff4d7a838991bd4806fd791a9`.
 Generated reports in `required` mode must match its static HTML shell exactly.
 The intended substitution is the JSON value assigned to `const D`. In `off`
 mode, the six empty AI summary containers are also removed from the generated
@@ -111,6 +111,13 @@ staging data from the ZIP.
 - Keep analytical tables and charts dense enough for comparison; apply the
   editorial treatment around them rather than weakening statistical encodings.
 - Do not substitute a generic dashboard theme.
+- Give every primary visual (Scores change table, Correlation matrix, theme
+  and item comparison rows, theme favorability profile, Alerts table, and the
+  Factors chart/card group) a top-right toolbar with two icon buttons: export
+  the visual's aggregated data as CSV, and copy the visual as an image to the
+  clipboard (falling back to a PNG download when clipboard image write is
+  unavailable). Toolbars must remain accessible (labeled, focus-visible) and
+  must not alter the underlying data encodings.
 
 ## Required navigation
 
