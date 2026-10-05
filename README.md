@@ -93,11 +93,12 @@ Schema: `schemas/analysis-manifest.schema.json`
 
 ### Knowledge vault status
 
-`people-science-knowledge-vault` is an initial scaffold. It gives first priority to
-all articles discoverable from the Microsoft Viva Blog category and second priority
-only to records in the source workbook's `External` worksheet. Future work can add a
-generated article catalog, automated refresh, topic aliases, and retrieval-quality
-tests without changing this source hierarchy.
+`people-science-knowledge-vault` gives first priority to all articles discoverable
+from the Microsoft Viva Blog category and second priority only to records in the
+source workbook's `External` worksheet. It is backed by a generated discovery
+catalog and dedup/dead-link tool (`scripts/knowledge_vault_catalog.py`) and a
+`topic-aliases.md` reference, without changing this source hierarchy. Live article
+retrieval remains required before citing any source.
 
 ## Linked survey dataset
 

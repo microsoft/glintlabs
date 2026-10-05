@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "People Science Knowledge Vault catalog",
+  "description": "Generated discovery index for people-science-knowledge-vault. A catalog entry is a discovery aid only; agents must still retrieve the full published article body before citing it as evidence.",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "record_count", "articles"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "last_link_check": { "type": "string", "format": "date-time" },
+    "record_count": { "type": "integer", "minimum": 0 },
+    "articles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["title", "url", "canonical_url", "source_tier"],
+        "properties": {
+          "title": { "type": "string" },
+          "url": { "type": "string" },
+          "canonical_url": { "type": "string" },
+          "source_tier": { "enum": ["viva_blog", "external_workbook"] },
+          "theme": { "type": ["string", "null"] },
+          "description": { "type": ["string", "null"] },
+          "retrieved_at": { "type": ["string", "null"] },
+          "also_listed_in": {
+            "type": "array",
+            "items": { "enum": ["viva_blog", "external_workbook"] }
+          },
+          "last_checked": { "type": ["string", "null"], "format": "date-time" },
+          "status": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}

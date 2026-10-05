@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-10-05T15:19:16.112370+00:00",
+  "record_count": 1,
+  "articles": [
+    {
+      "title": "October 2025 – Transforming organizational data ingestion in Microsoft 365",
+      "url": "https://techcommunity.microsoft.com/blog/microsoftvivablog/october-2025-transforming-organizational-data-ingestion-in-microsoft-365--micros/4464748",
+      "canonical_url": "https://techcommunity.microsoft.com/blog/microsoftvivablog/october-2025-transforming-organizational-data-ingestion-in-microsoft-365--micros/4464748",
+      "source_tier": "viva_blog",
+      "theme": "Organizational data",
+      "description": "Organizational Data in Microsoft 365 streamlines how admins and data custodians bring HR data into Microsoft 365, Copilot, and Viva through a single, secure ingestion point.",
+      "retrieved_at": "2026-10-05",
+      "also_listed_in": [],
+      "last_checked": null,
+      "status": null
+    }
+  ]
+}

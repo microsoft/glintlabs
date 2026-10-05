@@ -76,7 +76,11 @@ The workbook may change over time. The rule is based on the worksheet name
 ## Precedence and deduplication
 
 1. Canonicalize URLs by removing tracking parameters and normalizing host/path.
+   `scripts/knowledge_vault_catalog.py` implements this as `canonicalize_url()`.
 2. Deduplicate identical articles across the two source tiers.
 3. When an article appears in both tiers, classify it as first priority.
 4. When sources disagree, prefer the first-priority published article and describe
    meaningful differences rather than silently blending them.
+
+See `catalog.json` and `catalog.schema.json` in this folder for the generated,
+deduplicated index these rules produce.
