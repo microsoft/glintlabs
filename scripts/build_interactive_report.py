@@ -10,6 +10,7 @@ import re
 import sys
 import time
 import zipfile
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 from typing import Any
 
@@ -29,6 +30,29 @@ from scipy.stats import t as student_t
 
 MIN_N = 5
 RELATIONSHIP_MIN_N = 30
+ROUND_HALF_UP_NEAREST_WHOLE = Decimal("1")
+
+
+def round_half_up(value: float) -> int:
+    """Round to the nearest whole number, rounding ties up (never banker's rounding).
+
+    Matches the Glint primary-metric methodology: "rounds to the nearest
+    integer, rounding up on ties" (e.g. 67.5 -> 68, not 68 or 67 depending on
+    even/odd parity). Python's built-in ``round()`` uses round-half-to-even,
+    which does not satisfy this rule, so scores must go through this helper.
+    """
+    return int(Decimal(str(value)).quantize(ROUND_HALF_UP_NEAREST_WHOLE, rounding=ROUND_HALF_UP))
+
+
+def glint_score(mean: float, scale: int) -> int:
+    """Scale a raw item mean onto a 0-100 score per the Glint primary metric formula.
+
+    Glint Score = 100 x (mean - scale_min) / (scale_max - scale_min), rounded to
+    the nearest whole number with ties rounding up. Items are normalized to a
+    1..scale range upstream, so scale_min is always 1.
+    """
+    return round_half_up(100 * (mean - 1) / (scale - 1))
+
 FACTOR_MIN_N = 100
 FACTOR_RESPONDENTS_PER_ITEM = 5
 SUMMARY_TABS = (
@@ -248,16 +272,18 @@ def bucket_numeric(frame: pd.DataFrame, protected: set[str]) -> dict[str, list[s
     return bucketed
 
 
-def metrics(frame: pd.DataFrame, questions: list[str]) -> list[list[float | int]]:
+def metrics(
+    frame: pd.DataFrame, questions: list[str], scale: int
+) -> list[list[float | int]]:
     rows = []
     for question in questions:
         values = frame[question].dropna()
         rows.append(
             [
-                int(round((values.mean() - 1) * 25)),
-                round(float((values <= 2).mean() * 100), 1),
-                round(float((values == 3).mean() * 100), 1),
-                round(float((values >= 4).mean() * 100), 1),
+                glint_score(float(values.mean()), scale),
+                round_half_up(float((values <= 2).mean() * 100)),
+                round_half_up(float((values == 3).mean() * 100)),
+                round_half_up(float((values >= 4).mean() * 100)),
                 int(len(values)),
             ]
         )
@@ -271,7 +297,7 @@ def survey_response_rows(
 
 
 def segment_cube(
-    frame: pd.DataFrame, questions: list[str], attributes: list[str]
+    frame: pd.DataFrame, questions: list[str], attributes: list[str], scale: int
 ) -> dict[str, Any]:
     result = {}
     for attribute in attributes:
@@ -281,7 +307,7 @@ def segment_cube(
             if employees >= MIN_N:
                 values[str(value)] = {
                     "n": int(employees),
-                    "items": metrics(group, questions),
+                    "items": metrics(group, questions, scale),
                 }
         result[attribute] = {"label": label(attribute), "values": values}
     return result
@@ -448,6 +474,7 @@ def cycle_cube(
     questions: list[str],
     attributes: list[str],
     cycle_col: str | None,
+    scale: int,
 ) -> dict[str, Any]:
     if not cycle_col:
         return {
@@ -464,8 +491,8 @@ def cycle_cube(
             values = source[question].dropna()
             rows.append(
                 [
-                    round(float((values.mean() - 1) * 25), 1),
-                    round(float(values.std(ddof=1) * 25), 1),
+                    glint_score(float(values.mean()), scale),
+                    round_half_up(float(values.std(ddof=1) * (100 / (scale - 1)))),
                     int(len(values)),
                 ]
             )
@@ -687,6 +714,7 @@ def heatmap_cube(
     questions: list[str],
     attributes: list[str],
     cycle_col: str | None,
+    scale: int,
 ) -> dict[str, Any]:
     if not cycle_col:
         return {"cycles": [], "attributes": [], "overall": {}, "filtered": {}}
@@ -710,7 +738,7 @@ def heatmap_cube(
                             {
                                 "value": str(value),
                                 "n": int(len(group)),
-                                "items": metrics(group, questions),
+                                "items": metrics(group, questions, scale),
                             }
                         )
                 if 4 <= len(values) <= 5:
@@ -1165,7 +1193,7 @@ def attrition_alert_payload(
                             item_index,
                             group_score,
                             company_score,
-                            round(group_score - company_score, 1),
+                            int(round_half_up(group_score - company_score)),
                             int(segment["items"][item_index][4]),
                             round(float(record["attrition_ratio"]), 2),
                             round(priority_multiplier, 2),
@@ -1208,7 +1236,7 @@ def remove_legacy_alert_script(html: str) -> str:
     if start >= 0 and end >= 0:
         html = (
             html[:start]
-            + 'function signed(value){return`${value>0?"+":""}${Number(value).toFixed(1)}`}'
+            + 'function signed(value){const n=Math.round(Number(value));return`${n>0?"+":""}${n}`}'
             + html[end + len(end_marker):]
         )
     return html.replace("renderAlerts();", "")
@@ -1230,19 +1258,19 @@ def replace_live_alert_summary(html: str) -> str:
     start = html.index('else if(tab==="alerts"){')
     end_marker = '}else if(tab==="factors"){'
     end = html.index(end_marker, start)
-    replacement = r'''else if(tab==="alerts"){const days=D.alerts.defaultDays,source=D.alerts.byDay?.[String(days)]||{},attribute=attr.value?source[attr.value]:null;let rows=[];if(attribute&&val.value){rows=attribute.rows.filter(row=>row[0]===val.value).map(row=>({label:attribute.label,row}))}else{for(const item of Object.values(source)){for(const [itemIndex] of item.topItems){const candidates=item.rows.filter(row=>row[1]===itemIndex).sort((a,b)=>a[4]-b[4]||a[0].localeCompare(b[0]));if(candidates[0])rows.push({label:item.label,row:candidates[0]})}}}rows.sort((a,b)=>a.row[4]-b.row[4]);const top=rows[0];if(top){summary.headline=`${scope}: ${D.labels[D.alerts.questions[top.row[1]]]} has the largest visible score gap`;summary.observation=`At ${days} days, ${top.label}: ${top.row[0]} scores ${Math.abs(top.row[4]).toFixed(1)} points ${top.row[4]<0?"below":"above"} company overall on ${D.labels[D.alerts.questions[top.row[1]]]}, with a ${top.row[6].toFixed(2)}x attrition multiplier.`;summary.interpretation=`This combines an aggregate attrition association with a group score gap to prioritize follow-up, not to predict individual departures.`;summary.recommendation=`Validate the experience behind the item with the selected group and review related lifecycle context before choosing an action.`;summary.caveat=`Items are selected from the top five median eligible attrition multipliers for the attribute; group results remain descriptive and non-causal.`}else{summary.headline=`${scope}: attrition alerts are unavailable`;summary.observation=`No privacy-eligible group comparison is available for the selected population.`;summary.interpretation=`Unavailable alerts do not imply low attrition risk or a strong employee experience.`;summary.recommendation=`Use a broader population or improve outcome coverage before interpreting this view.`;summary.caveat=`Do not bypass minimum-category thresholds or infer individual risk.`}}else if(tab==="factors"){'''
+    replacement = r'''else if(tab==="alerts"){const days=D.alerts.defaultDays,source=D.alerts.byDay?.[String(days)]||{},attribute=attr.value?source[attr.value]:null;let rows=[];if(attribute&&val.value){rows=attribute.rows.filter(row=>row[0]===val.value).map(row=>({label:attribute.label,row}))}else{for(const item of Object.values(source)){for(const [itemIndex] of item.topItems){const candidates=item.rows.filter(row=>row[1]===itemIndex).sort((a,b)=>a[4]-b[4]||a[0].localeCompare(b[0]));if(candidates[0])rows.push({label:item.label,row:candidates[0]})}}}rows.sort((a,b)=>a.row[4]-b.row[4]);const top=rows[0];if(top){summary.headline=`${scope}: ${D.labels[D.alerts.questions[top.row[1]]]} has the largest visible score gap`;summary.observation=`At ${days} days, ${top.label}: ${top.row[0]} scores ${Math.abs(top.row[4])} points ${top.row[4]<0?"below":"above"} company overall on ${D.labels[D.alerts.questions[top.row[1]]]}, with a ${top.row[6].toFixed(2)}x attrition multiplier.`;summary.interpretation=`This combines an aggregate attrition association with a group score gap to prioritize follow-up, not to predict individual departures.`;summary.recommendation=`Validate the experience behind the item with the selected group and review related lifecycle context before choosing an action.`;summary.caveat=`Items are selected from the top five median eligible attrition multipliers for the attribute; group results remain descriptive and non-causal.`}else{summary.headline=`${scope}: attrition alerts are unavailable`;summary.observation=`No privacy-eligible group comparison is available for the selected population.`;summary.interpretation=`Unavailable alerts do not imply low attrition risk or a strong employee experience.`;summary.recommendation=`Use a broader population or improve outcome coverage before interpreting this view.`;summary.caveat=`Do not bypass minimum-category thresholds or infer individual risk.`}}else if(tab==="factors"){'''
     return html[:start] + replacement + html[end + len(end_marker):]
 
 
 def prepare_report_shell(html: str, has_attrition: bool) -> str:
     html = html.replace(
-        'data-id="relationships" aria-selected="false">Relationships</button>',
-        'data-id="relationships" aria-selected="false">Correlation</button>',
+        'data-id="relationships" aria-selected="true">Relationships</button>',
+        'data-id="relationships" aria-selected="true">Correlation</button>',
         1,
     ).replace("<h2>Relationships</h2>", "<h2>Correlation</h2>", 1)
     html = remove_legacy_alert_script(html)
     html = replace_live_alert_summary(html)
-    html = remove_section(html, "alerts", "factors")
+    html = remove_section(html, "alerts", "attrition")
     html = html.replace(
         '<button class="tab" data-id="alerts" aria-selected="false">Attrition alerts</button>',
         "",
@@ -1251,6 +1279,10 @@ def prepare_report_shell(html: str, has_attrition: bool) -> str:
     if has_attrition:
         html = html.replace("<!-- methodology-attrition-start -->", "").replace(
             "<!-- methodology-attrition-end -->",
+            "",
+        )
+        html = html.replace("<!-- methodology-attrition-nav-start -->", "").replace(
+            "<!-- methodology-attrition-nav-end -->",
             "",
         )
         old_navigation = (
@@ -1275,12 +1307,22 @@ def prepare_report_shell(html: str, has_attrition: bool) -> str:
     )
     html = remove_between_markers(
         html,
+        "<!-- methodology-attrition-nav-start -->",
+        "<!-- methodology-attrition-nav-end -->",
+    )
+    html = remove_between_markers(
+        html,
         "<!-- methodology-attrition-start -->",
         "<!-- methodology-attrition-end -->",
     )
     attrition_start = html.index("<section class=panel id=attrition")
-    downloads_start = html.index("<section class=panel id=downloads", attrition_start)
-    html = html[:attrition_start] + html[downloads_start:]
+    next_section_match = re.search(
+        r"<section class=panel id=\w+", html[attrition_start + 1 :]
+    )
+    if not next_section_match:
+        raise ValueError("No section follows the attrition section to anchor removal.")
+    next_section_start = attrition_start + 1 + next_section_match.start()
+    html = html[:attrition_start] + html[next_section_start:]
     return html.replace(
         'function renderStatic(){document.querySelector("#attritionStatus").textContent='
         'D.attrition;document.querySelector("#downloadList").innerHTML=',
@@ -1540,7 +1582,7 @@ def summary_context(
                 "question": labels[question],
                 "old_score": old[index][0],
                 "new_score": new[index][0],
-                "change": round(new[index][0] - old[index][0], 1),
+                "change": int(round_half_up(new[index][0] - old[index][0])),
                 "n_old": old[index][2],
                 "n_new": new[index][2],
             }
@@ -1747,7 +1789,8 @@ def main() -> int:
     questions = config.get("question_cols") or pd.read_csv(output / "descriptives.csv")[
         "question"
     ].tolist()
-    normalize_items(frame, questions, int(config["scale_points"]))
+    scale = int(config["scale_points"])
+    normalize_items(frame, questions, scale)
     frame = frame.loc[frame[questions].notna().any(axis=1)].copy()
     if frame.empty:
         raise ValueError("No respondents have a value for any selected survey item.")
@@ -1790,11 +1833,11 @@ def main() -> int:
     cycle_col = "survey_cycle_title" if "survey_cycle_title" in frame.columns else None
     bucket_numeric(frame, {emp_id, "__employee_id", *questions})
 
-    overall = metrics(frame, questions)
-    segments = segment_cube(frame, questions, attributes)
+    overall = metrics(frame, questions, scale)
+    segments = segment_cube(frame, questions, attributes, scale)
     progress.update(25, "Overall and segment score views prepared")
     progress.update(28, "Building cycle comparisons and repeat-respondent views")
-    cycles = cycle_cube(frame, questions, attributes, cycle_col)
+    cycles = cycle_cube(frame, questions, attributes, cycle_col, scale)
     progress.update(42, "Cycle comparisons and repeat-respondent views prepared")
     comment_themes = comment_theme_payload(
         resolve(config_path.parent, config.get("comments_file")),

@@ -44,8 +44,9 @@ appropriate skill. Examples:
 - "Interpret the strongest findings and caveats in these survey results."
 - "What published People Science guidance exists on this topic?"
 
-See `references/general/recommended-prompts.md` for a fuller list of
-recommended prompts, grouped by skill, that you can suggest to end users.
+For example prompts users can type into the native **Copilot in Viva Glint**
+sidecar (the in-product chat pane on Glint dashboards/reports, not this
+plugin), see `references/general/recommended-prompts.md`.
 
 ## Reference priority
 

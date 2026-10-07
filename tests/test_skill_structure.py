@@ -131,11 +131,11 @@ def test_analyze_survey_points_to_linked_dataset():
         ROOT / "skills/analyze-survey/references/interactive-report-contract.md"
     ).read_text(encoding="utf-8")
     required_tabs = (
-        "Scores change",
         "Correlation",
         "Factors",
         "Attrition analysis",
         "Attrition alerts",
+        "Scores change",
         "Downloads",
         "Methodology",
     )

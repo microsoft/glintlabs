@@ -89,9 +89,9 @@ and accessibility decisions. Do not invent report colors or visual patterns.
 `golden-report.html` is the canonical report shell. Future reports must preserve
 its markup, styling, tab order, labels, and browser interactions exactly while
 replacing its embedded aggregate data payload with the current analysis.
-The required base tabs are Scores change, Correlation, Factors, Downloads, and
-Methodology. When attrition analysis completes, add Attrition analysis
-followed immediately by Attrition alerts between Factors and Downloads. If
+The required base tab order is Correlation, Factors, Scores change, Downloads,
+and Methodology. When attrition analysis completes, add Attrition analysis
+followed immediately by Attrition alerts between Factors and Scores change. If
 attrition is unavailable, omit both attrition tabs, but keep Methodology and
 omit its attrition subsections. The Methodology tab is the final tab and
 documents, for analysts, how each visible analysis is computed and should be
