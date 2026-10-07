@@ -25,20 +25,24 @@ corpus as complete if pagination or article retrieval is incomplete.
 ### Curated externally facing Microsoft resources
 
 These resources are also first-priority sources. The SharePoint and OneDrive links
-were confirmed by the content owner as externally facing; sensitivity labels on
-stored copies must not be treated as evidence that publication is prohibited.
+in `catalog.json`'s `internal_record` field were confirmed by the content owner as
+externally facing; sensitivity labels on those stored copies must not be treated
+as evidence that publication is prohibited. However, an automated retrieval agent
+generally cannot authenticate into SharePoint/OneDrive, so **cite and retrieve the
+public link below, not the internal record.**
 
-- [Research Readout - Agentic Teaming & Trust Research](https://microsoft.sharepoint-df.com/:p:/t/EVE/cQo8rhtwEQp7SZ1mDH29q9d-EgUCp5GF8S9cyVEiRqtmuWvNjg)
-- [The state of AI change readiness - SharePoint edition](https://microsoft.sharepoint-df.com/:b:/r/teams/EVE/Shared%20Documents/Forms/AllItems.aspx?id=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FAI%20Adoption%20Research%2FFinalized%20Materials%20%2D%20AI%20Readiness%20Research%2FThe%20state%20of%20AI%20change%20readiness%20%28eBook%20%2D%20Aug%202024%29%20Viva%20People%20Science%2Epdf&parent=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FAI%20Adoption%20Research%2FFinalized%20Materials%20%2D%20AI%20Readiness%20Research&p=true&share=cQoOYaEpcMkwRopK9Sr1h%2Dj2EgUCA2ISCikX62Zs3GD5xwsKZw)
-- [Building a holistic employee listening ecosystem - SharePoint edition](https://microsoft.sharepoint-df.com/:b:/r/teams/EVE/Shared%20Documents/Forms/AllItems.aspx?id=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FFY24%2FHolistic%20listening%20eBook%2FHolistic%2DEmployee%2DListening%2Debook%2Dfinal%2D2023%2Epdf&parent=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FFY24%2FHolistic%20listening%20eBook&p=true&share=cQr6pCSULloPSoqGk0enM6JhEgUCfsekVZauuEfc5iD8Xa8R0w)
-- [Redefining High Performance in the New Era of Work - OneDrive edition](https://microsoft-my.sharepoint-df.com/:b:/r/personal/meganbenzing_microsoft_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fmeganbenzing%5Fmicrosoft%5Fcom%2FDocuments%2FAttachments%2FMicrosoft%2DHPO%2DGuide%2DOct%2D2023%2Epdf&parent=%2Fpersonal%2Fmeganbenzing%5Fmicrosoft%5Fcom%2FDocuments%2FAttachments&share=cQrVmWzwLaEAR42Fk6tTP22nEgUC0qh9WCk8ob9yHoELNnWn4A)
-
-Publicly accessible counterparts are retained for retrieval resilience:
-
-- [2025 Agentic Teaming & Trust Research Report - Chapter 4](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/1027.2/2/2025%20Agentic%20Teaming%20%26%20Trust%20Research%20Report%20-%20Chapter%204.pdf)
+- [Research Readout - Agentic Teaming & Trust Research](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/1027.2/2/2025%20Agentic%20Teaming%20%26%20Trust%20Research%20Report%20-%20Chapter%204.pdf)
 - [The state of AI change readiness](https://adoption.microsoft.com/files/viva/The-state-of-AI-change-readiness-eBook.pdf)
 - [Building a holistic listening ecosystem](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/894/1/Holistic%20Listening%20Infographic_09292023%201.pdf)
 - [Redefining High Performance in the New Era of Work](https://www.microsoft.com/content/dam/microsoft/final/en-us/microsoft-brand/documents/Microsoft-HPO-Guide-Oct-2023.pdf)
+
+The gated SharePoint/OneDrive originals are retained as the internal record of
+ownership and approval, not for retrieval:
+
+- [Research Readout - Agentic Teaming & Trust Research - SharePoint edition](https://microsoft.sharepoint-df.com/:p:/t/EVE/cQo8rhtwEQp7SZ1mDH29q9d-EgUCp5GF8S9cyVEiRqtmuWvNjg)
+- [The state of AI change readiness - SharePoint edition](https://microsoft.sharepoint-df.com/:b:/r/teams/EVE/Shared%20Documents/Forms/AllItems.aspx?id=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FAI%20Adoption%20Research%2FFinalized%20Materials%20%2D%20AI%20Readiness%20Research%2FThe%20state%20of%20AI%20change%20readiness%20%28eBook%20%2D%20Aug%202024%29%20Viva%20People%20Science%2Epdf&parent=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FAI%20Adoption%20Research%2FFinalized%20Materials%20%2D%20AI%20Readiness%20Research&p=true&share=cQoOYaEpcMkwRopK9Sr1h%2Dj2EgUCA2ISCikX62Zs3GD5xwsKZw)
+- [Building a holistic employee listening ecosystem - SharePoint edition](https://microsoft.sharepoint-df.com/:b:/r/teams/EVE/Shared%20Documents/Forms/AllItems.aspx?id=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FFY24%2FHolistic%20listening%20eBook%2FHolistic%2DEmployee%2DListening%2Debook%2Dfinal%2D2023%2Epdf&parent=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FFY24%2FHolistic%20listening%20eBook&p=true&share=cQr6pCSULloPSoqGk0enM6JhEgUCfsekVZauuEfc5iD8Xa8R0w)
+- [Redefining High Performance in the New Era of Work - OneDrive edition](https://microsoft-my.sharepoint-df.com/:b:/r/personal/meganbenzing_microsoft_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fmeganbenzing%5Fmicrosoft%5Fcom%2FDocuments%2FAttachments%2FMicrosoft%2DHPO%2DGuide%2DOct%2D2023%2Epdf&parent=%2Fpersonal%2Fmeganbenzing%5Fmicrosoft%5Fcom%2FDocuments%2FAttachments&share=cQrVmWzwLaEAR42Fk6tTP22nEgUC0qh9WCk8ob9yHoELNnWn4A)
 
 ## Second priority: Microsoft Learn & Adoption Center documentation
 

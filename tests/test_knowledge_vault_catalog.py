@@ -77,17 +77,29 @@ def test_catalog_matches_analyze_survey_source_index():
         assert catalog_entry["url"] == source["url"]
 
 
-def test_curated_external_entries_have_public_counterparts():
+def test_curated_external_entries_cite_publicly_retrievable_links():
     """The curated externally facing resources section was previously dropped
-    upstream; this guards against losing it again without a public fallback.
+    upstream; this guards against losing it again. It also guards the
+    retrievability rework: `url` (the citable, retrieval-contract link) must be
+    a publicly fetchable host, never a gated SharePoint/OneDrive link, and
+    `internal_record` must retain the original gated link for provenance only.
     """
+    gated_hosts = ("sharepoint-df.com", "sharepoint.com", "onedrive")
     catalog = load_catalog()
     curated = [e for e in catalog["entries"] if e["tier"] == "curated-external"]
     assert curated, "catalog.json must keep at least one curated-external entry"
     for entry in curated:
         assert entry.get(
-            "public_counterpart"
-        ), f"curated-external entry '{entry['id']}' is missing a public_counterpart"
+            "internal_record"
+        ), f"curated-external entry '{entry['id']}' is missing an internal_record"
+        assert any(host in entry["internal_record"] for host in gated_hosts), (
+            f"curated-external entry '{entry['id']}' internal_record should be the "
+            "gated SharePoint/OneDrive link"
+        )
+        assert not any(host in entry["url"] for host in gated_hosts), (
+            f"curated-external entry '{entry['id']}' url must be the publicly "
+            "retrievable link, not the gated internal record"
+        )
 
 
 def test_workbook_schema_matches_source_priority_prose():
