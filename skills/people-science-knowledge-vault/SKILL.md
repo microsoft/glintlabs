@@ -211,6 +211,13 @@ When in speculative-extrapolation mode, use this collaborative format instead
   customer-identifiable information, or employee-identifiable information.
 - Distinguish research findings from recommendations and author commentary.
 - Do not convert correlation or descriptive evidence into causal claims.
+- When synthesizing against a user's own retrospective survey/dashboard data (e.g.,
+  attrition multipliers), describe it as an association ("employees who responded
+  unfavorably show a higher observed exit rate than those who responded favorably")
+  rather than predictive/forecasting language ("predicts attrition," "predictor of
+  who will leave"). This distinction is about how *we* characterize the user's data;
+  preserve a source article's own wording (e.g., "top predictor of voluntary
+  attrition") when quoting or citing that article directly.
 - Preserve the population, date, product context, and limitations of each article.
 - Do not fabricate article text, statistics, quotations, authors, or publication
   dates.
