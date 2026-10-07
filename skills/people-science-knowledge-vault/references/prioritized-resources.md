@@ -4,43 +4,75 @@
 # Prioritized resources (human-readable)
 
 This is a quick-scan, human-friendly view of the knowledge vault's known
-resources, ranked by priority tier. It is **not** the retrieval contract:
-agents must still follow `source-priority.md` and re-enumerate the Microsoft
-Viva Blog category live, since that source changes over time. Use this list
-for a fast overview of what already-known resources exist and why they matter.
+resources, ranked by `priority_tier` (sourced from the workbook's column J,
+'Priority to add to context library'): Top5 > High > Medium > Low, with
+Curated entries (not present in the External worksheet snapshot) treated as
+Top5-equivalent. It is **not** the retrieval contract: agents must still
+follow `source-priority.md`, which also covers the supplementary live checks
+(Microsoft Viva Blog category page, Microsoft Learn, Adoption Center) useful
+for material newer than the saved `external-tab-snapshot.json`.
 
-## First priority - Microsoft Viva Blog
+## Top5 - highest priority
 
 | Title | Theme | Link |
 | --- | --- | --- |
-| 3 Steps to Build Psychological Safety on Your Team | Trust and inclusion | [source](https://techcommunity.microsoft.com/blog/microsoftvivablog/3-steps-to-build-psychological-safety-on-your-team/4297916) |
-| Harness Viva Glint and Viva Pulse to drive continuous improvements | Continuous improvement | [source](https://techcommunity.microsoft.com/blog/viva_glint_blog/harness-the-power-of-viva-glint-and-viva-pulse-to-drive-continuous-improvements/4428922) |
-| People Science Explained - Benchmark Documentation | Benchmarking | [source](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/Viva_Glint_Blog/131/2/PSE_2025_Benchmark%20Documentation_Public.pdf) |
-| Reimagining People Success in the age of AI | Employee lifecycle | [source](https://techcommunity.microsoft.com/blog/microsoftvivablog/it%E2%80%99s-a-brave-new-work-world-reimagining-people-success-in-the-age-of-ai/4428208) |
-| Understanding and interpreting your survey data | Interpretation | [source](https://techcommunity.microsoft.com/blog/viva_glint_blog/think-like-a-people-scientist-understanding-and-interpreting-your-survey-data/4063620) |
+| People Science Explained - Benchmark Documentation | Measurement & Benchmarks | [source](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/Viva_Glint_Blog/131/2/PSE_2025_Benchmark%20Documentation_Public.pdf) |
+| Research Readout - Agentic Teaming & Trust Research | AI and trust | [source](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/1027.2/2/2025%20Agentic%20Teaming%20%26%20Trust%20Research%20Report%20-%20Chapter%204.pdf) |
+| The state of AI change readiness | AI and trust | [source](https://adoption.microsoft.com/files/viva/The-state-of-AI-change-readiness-eBook.pdf) |
+| Think Like a People Scientist — series hub | Adoption & Enablement | [source](https://adoption.microsoft.com/en-us/viva/think-like-a-people-scientist/) |
+| Think like a People Scientist: Bridging HR & IT for AI Success | AI Transformation & Adoption | [source](https://techcommunity.microsoft.com/blog/microsoftvivablog/think-like-a-people-scientist-bridging-hr--it-for-ai-success/4404470) |
+| Think like a People Scientist: Leading AI Change with Employee Sentiment | AI Transformation & Adoption | [source](https://techcommunity.microsoft.com/blog/microsoftvivablog/think-like-a-people-scientist-leading-ai-change-with-employee-sentiment/4412911) |
+| Understanding and interpreting your survey data | Survey Design & Methodology | [source](https://techcommunity.microsoft.com/blog/viva_glint_blog/think-like-a-people-scientist-understanding-and-interpreting-your-survey-data/4063620) |
+| What’s New with Viva Glint Benchmarks? | Measurement & Benchmarks | [source](https://techcommunity.microsoft.com/blog/viva_glint_blog/what%E2%80%99s-new-with-viva-glint-benchmarks/4448380) |
 
-## First priority - Curated externally facing Microsoft resources
+## Curated - high value, not present in the workbook snapshot
 
 | Title | Theme | Link |
 | --- | --- | --- |
 | Building a holistic employee listening ecosystem | Employee listening | [source](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/894/1/Holistic%20Listening%20Infographic_09292023%201.pdf) |
 | Redefining High Performance in the New Era of Work | High performance | [source](https://www.microsoft.com/content/dam/microsoft/final/en-us/microsoft-brand/documents/Microsoft-HPO-Guide-Oct-2023.pdf) |
-| Research Readout - Agentic Teaming & Trust Research | AI and trust | [source](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/1027.2/2/2025%20Agentic%20Teaming%20%26%20Trust%20Research%20Report%20-%20Chapter%204.pdf) |
-| The state of AI change readiness | AI and trust | [source](https://adoption.microsoft.com/files/viva/The-state-of-AI-change-readiness-eBook.pdf) |
 
-## Second priority - Microsoft Learn & Adoption Center documentation
+## High priority
 
 | Title | Theme | Link |
 | --- | --- | --- |
-| Create Focus Areas in Viva Glint | Action-taking | [source](https://learn.microsoft.com/en-us/viva/glint/setup/focus-areas-managers-creating) |
-| Design an effective Microsoft Viva Glint survey program | Survey design | [source](https://learn.microsoft.com/en-us/viva/glint/setup/customize-program) |
-| How Microsoft People Science drives Viva Glint programs | Validated factors | [source](https://learn.microsoft.com/en-us/viva/glint/setup/template-research) |
-| Propel action-taking through conversations with Viva Glint | Action-taking | [source](https://adoption.microsoft.com/files/viva/glint/Propel-action-taking-through-conversations-with-Microsoft-Viva-Glint.pdf) |
-| Review and test Viva Glint surveys before launch | Quality assurance | [source](https://learn.microsoft.com/en-us/viva/glint/setup/survey-qa) |
-| Viva Glint programs, survey types, and templates | Employee lifecycle | [source](https://learn.microsoft.com/en-us/viva/glint/start/program-types-templates) |
-| Viva Pulse privacy and data protection | Privacy | [source](https://learn.microsoft.com/en-us/viva/pulse/get-started/privacy-and-data-protection) |
+| Deck — Bridging HR & IT for AI Success | Adoption & Enablement | [source](https://adoption.microsoft.com/files/viva/Microsoft-Viva_Think-like-a-People-Scientist_Apr2025.pdf) |
+| Deck — Understanding employee reactions to AI | Adoption & Enablement | [source](https://adoption.microsoft.com/files/viva/Microsoft-Viva_Think-like-a-People-Scientist_Mar2025.pdf) |
+| Harness Viva Glint and Viva Pulse to drive continuous improvements | Glint ↔ Pulse Integration & Templates | [source](https://techcommunity.microsoft.com/blog/viva_glint_blog/harness-the-power-of-viva-glint-and-viva-pulse-to-drive-continuous-improvements/4428922) |
+| Introduction to Microsoft Viva Pulse | Microsoft Learn (Pulse) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/pulse/introduction-to-viva-pulse) |
+| Microsoft Viva Glint 360 feedback email templates | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/setup/360-email-templates) |
+| Propel action-taking through conversations with Viva Glint | Adoption & Enablement | [source](https://adoption.microsoft.com/files/viva/glint/Propel-action-taking-through-conversations-with-Microsoft-Viva-Glint.pdf) |
+| Reimagining People Success in the age of AI | AI Transformation & Adoption | [source](https://techcommunity.microsoft.com/blog/microsoftvivablog/it%E2%80%99s-a-brave-new-work-world-reimagining-people-success-in-the-age-of-ai/4428208) |
 
-## Third priority - external workbook articles (not pre-listed)
+## Medium priority
 
-The `External` worksheet of the People Science content workbook (see `source-priority.md` and `workbook-schema.json`) is access-gated and can change between retrievals, so its ~35 article records are intentionally not duplicated here. Resolve it live and apply the same precedence rules.
+| Title | Theme | Link |
+| --- | --- | --- |
+| 3 Steps to Build Psychological Safety on Your Team | Psychological Safety & Manager Enablement | [source](https://techcommunity.microsoft.com/blog/microsoftvivablog/3-steps-to-build-psychological-safety-on-your-team/4297916) |
+| Design an effective Microsoft Viva Glint survey program | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/setup/customize-program) |
+| How users access Viva Pulse (Teams & web) | Microsoft Learn (Pulse) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/pulse/setup-admin-access/access-pulse-via-teams-or-web) |
+| Use the Viva Glint Culture Survey template | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/setup/culture-template) |
+| User roles in Viva Pulse | Microsoft Learn (Pulse) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/pulse/setup-admin-access/roles-viva-pulse) |
+| Viva Glint 360 feedback program overview | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/setup/360-overview) |
+| Viva Glint programs, survey types, and templates | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/start/program-types-templates) |
+| Viva Glint survey templates — introduction & terminology | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/setup/templates-intro) |
+
+## Low priority
+
+| Title | Theme | Link |
+| --- | --- | --- |
+| Create Focus Areas in Viva Glint | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/setup/focus-areas-managers-creating) |
+| Customize Suggested Action templates in Viva Glint | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/setup/customize-action-plans) |
+| How Microsoft People Science drives Viva Glint programs | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/setup/template-research) |
+| How Viva People Science supports Viva Glint | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/start/people-science-viva-glint) |
+| Introduction to Microsoft Viva Glint | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/introduction-viva-glint) |
+| People Science Predictions: The impact of AI on the employee experience | AI Transformation & Adoption | [source](https://techcommunity.microsoft.com/blog/microsoftvivablog/people-science-predictions-the-impact-of-ai-on-the-employee-experience/4009288) |
+| People Science Researchers Reflect on SIOP 2025 Learnings | AI Transformation & Adoption | [source](https://techcommunity.microsoft.com/blog/microsoftvivablog/people-science-researchers-reflect-on-siop-2025-learnings/4403530) |
+| Review and test Viva Glint surveys before launch | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/setup/survey-qa) |
+| Set up a Microsoft Viva Glint Recurring survey | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/setup/program-summary-overview) |
+| Understand Viva Glint programs and cycles | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/setup/program-cycle-edits) |
+| Viva Glint Questions setup | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/setup/questions-setup) |
+| Viva Glint learning paths & modules | Microsoft Learn (Glint) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/glint/start/viva-glint-learning-paths-and-modules) |
+| Viva Pulse privacy and data protection | Microsoft Learn (Pulse) Set-up, Deployment | [source](https://learn.microsoft.com/en-us/viva/pulse/get-started/privacy-and-data-protection) |
+| What is People Science? | Frameworks & Definitions | [source](https://techcommunity.microsoft.com/blog/microsoftvivablog/what-is-people-science/3946621) |
 

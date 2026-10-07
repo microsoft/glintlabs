@@ -25,8 +25,18 @@ SOURCE_INDEX_PATH = (
 )
 BUILD_SCRIPT = ROOT / "scripts/build_knowledge_vault_resources.py"
 
-REQUIRED_ENTRY_FIELDS = ("id", "title", "url", "tier", "theme", "description")
+REQUIRED_ENTRY_FIELDS = (
+    "id",
+    "title",
+    "url",
+    "tier",
+    "priority_tier",
+    "theme",
+    "description",
+    "research_questions",
+)
 KNOWN_TIERS = {"viva-blog", "curated-external", "microsoft-learn", "adoption-center"}
+KNOWN_PRIORITY_TIERS = {"top5", "high", "medium", "low", "curated"}
 
 
 def load_catalog() -> dict:
@@ -52,6 +62,14 @@ def test_catalog_entries_have_required_fields_and_are_unique():
         for field in REQUIRED_ENTRY_FIELDS:
             assert entry.get(field), f"entry '{entry.get('id')}' missing '{field}'"
         assert entry["tier"] in KNOWN_TIERS, f"unknown tier '{entry['tier']}'"
+        assert (
+            entry["priority_tier"] in KNOWN_PRIORITY_TIERS
+        ), f"unknown priority_tier '{entry['priority_tier']}'"
+        assert isinstance(
+            entry["research_questions"], list
+        ) and entry["research_questions"], (
+            f"entry '{entry['id']}' research_questions must be a non-empty list"
+        )
         ids.append(entry["id"])
         urls.append(entry["url"])
 
@@ -152,3 +170,18 @@ def test_prioritized_resources_notes_the_live_workbook_tier():
     content = PRIORITIZED_RESOURCES_PATH.read_text(encoding="utf-8")
     assert "External" in content
     assert "source-priority.md" in content
+
+
+def test_external_tab_snapshot_matches_workbook_schema():
+    """The saved snapshot is the local copy of the gated workbook's `External`
+    worksheet; keep its row count and worksheet name honest against the
+    machine-readable facts in workbook-schema.json.
+    """
+    snapshot_path = VAULT_DIR / "external-tab-snapshot.json"
+    assert snapshot_path.exists(), "external-tab-snapshot.json is missing"
+    snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    schema = load_workbook_schema()
+
+    assert snapshot["worksheet"] == schema["required_worksheet"]
+    assert snapshot["row_count"] == schema["observed_record_count"]
+    assert snapshot["row_count"] == len(snapshot["rows"])

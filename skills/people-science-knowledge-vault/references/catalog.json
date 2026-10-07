@@ -1,116 +1,520 @@
 {
-  "schema_version": "1.0.0",
-  "generated_at": "2026-10-07",
+  "schema_version": "2.0.0",
+  "generated_at": "2026-10-08",
   "generated_by": "scripts/build_knowledge_vault_resources.py",
-  "refresh_notes": "Regenerate prioritized-resources.md from this file after any edit. Re-validate entries against source-priority.md tiers at least every 90 days or when analyze-survey/references/people-science-source-index.json changes.",
+  "refresh_notes": "priority_tier is sourced from column J ('Priority to add to context library') of the External worksheet snapshot in external-tab-snapshot.json: top5 > high > medium > low. The 'curated' priority_tier marks entries that are not present in that worksheet snapshot at all. Regenerate prioritized-resources.md after any edit. Re-pull external-tab-snapshot.json at least every 90 days, and re-validate ids/titles/urls used by skills/analyze-survey/references/people-science-source-index.json whenever this file changes.",
   "entries": [
-    {
-      "id": "interpret-survey-data",
-      "title": "Understanding and interpreting your survey data",
-      "url": "https://techcommunity.microsoft.com/blog/viva_glint_blog/think-like-a-people-scientist-understanding-and-interpreting-your-survey-data/4063620",
-      "tier": "viva-blog",
-      "theme": "Interpretation",
-      "description": "How to read survey score movement, context, and relationships before drawing conclusions.",
-      "used_by": ["analyze-survey"]
-    },
-    {
-      "id": "benchmark-documentation",
-      "title": "People Science Explained - Benchmark Documentation",
-      "url": "https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/Viva_Glint_Blog/131/2/PSE_2025_Benchmark%20Documentation_Public.pdf",
-      "tier": "viva-blog",
-      "theme": "Benchmarking",
-      "description": "Methodology notes for comparing scores against historical and external benchmarks.",
-      "used_by": ["analyze-survey"]
-    },
-    {
-      "id": "continuous-improvement",
-      "title": "Harness Viva Glint and Viva Pulse to drive continuous improvements",
-      "url": "https://techcommunity.microsoft.com/blog/viva_glint_blog/harness-the-power-of-viva-glint-and-viva-pulse-to-drive-continuous-improvements/4428922",
-      "tier": "viva-blog",
-      "theme": "Continuous improvement",
-      "description": "Using Pulse follow-ups to keep momentum on actions identified from Glint results.",
-      "used_by": ["analyze-survey"]
-    },
-    {
-      "id": "survey-program-design",
-      "title": "Design an effective Microsoft Viva Glint survey program",
-      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/customize-program",
-      "tier": "microsoft-learn",
-      "theme": "Survey design",
-      "description": "Official guidance on structuring constructs, cadence, and strategic priorities in a survey program.",
-      "used_by": ["analyze-survey"]
-    },
-    {
-      "id": "template-research",
-      "title": "How Microsoft People Science drives Viva Glint programs",
-      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/template-research",
-      "tier": "microsoft-learn",
-      "theme": "Validated factors",
-      "description": "The research basis for validated drivers such as purpose, clarity, growth, and connection.",
-      "used_by": ["analyze-survey"]
-    },
     {
       "id": "people-success",
       "title": "Reimagining People Success in the age of AI",
       "url": "https://techcommunity.microsoft.com/blog/microsoftvivablog/it%E2%80%99s-a-brave-new-work-world-reimagining-people-success-in-the-age-of-ai/4428208",
       "tier": "viva-blog",
-      "theme": "Employee lifecycle",
+      "theme": "AI Transformation & Adoption",
       "description": "How purpose, growth, and belonging connect to retention and attrition risk.",
-      "used_by": ["analyze-survey"]
+      "used_by": [
+        "analyze-survey"
+      ],
+      "priority_tier": "high",
+      "research_questions": [
+        "Is AI good for the organization, and what does 'good' mean here (productivity, trust, wellbeing)?",
+        "How does employee sentiment shift across AI rollout phases?",
+        "How should HR and IT collaborate on an AI transformation?"
+      ],
+      "notes": "Focused on AI transformation"
     },
     {
-      "id": "propel-action-taking",
-      "title": "Propel action-taking through conversations with Viva Glint",
-      "url": "https://adoption.microsoft.com/files/viva/glint/Propel-action-taking-through-conversations-with-Microsoft-Viva-Glint.pdf",
-      "tier": "adoption-center",
-      "theme": "Action-taking",
-      "description": "Manager conversation guidance for turning survey alerts into focus-area follow-ups.",
-      "used_by": ["analyze-survey"]
+      "id": "people-science-researchers-reflect-on-siop-2025-learnings",
+      "title": "People Science Researchers Reflect on SIOP 2025 Learnings",
+      "url": "https://techcommunity.microsoft.com/blog/microsoftvivablog/people-science-researchers-reflect-on-siop-2025-learnings/4403530",
+      "tier": "viva-blog",
+      "priority_tier": "low",
+      "theme": "AI Transformation & Adoption",
+      "description": "Conference insights on human-in-the-loop AI, agents, action-taking.",
+      "research_questions": [
+        "Is AI good for the organization, and what does 'good' mean here (productivity, trust, wellbeing)?",
+        "How does employee sentiment shift across AI rollout phases?",
+        "How should HR and IT collaborate on an AI transformation?"
+      ],
+      "notes": "Only SIOP learnings focused"
     },
     {
-      "id": "focus-areas",
-      "title": "Create Focus Areas in Viva Glint",
-      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/focus-areas-managers-creating",
-      "tier": "microsoft-learn",
-      "theme": "Action-taking",
-      "description": "Steps for managers to turn survey results into accountable team priorities.",
-      "used_by": ["analyze-survey"]
+      "id": "think-like-a-people-scientist-bridging-hr-and-it-for-ai-success",
+      "title": "Think like a People Scientist: Bridging HR & IT for AI Success",
+      "url": "https://techcommunity.microsoft.com/blog/microsoftvivablog/think-like-a-people-scientist-bridging-hr--it-for-ai-success/4404470",
+      "tier": "viva-blog",
+      "priority_tier": "top5",
+      "theme": "AI Transformation & Adoption",
+      "description": "Research-backed HR–IT collaboration guidance for AI transformation.",
+      "research_questions": [
+        "Is AI good for the organization, and what does 'good' mean here (productivity, trust, wellbeing)?",
+        "How does employee sentiment shift across AI rollout phases?",
+        "How should HR and IT collaborate on an AI transformation?"
+      ],
+      "notes": "Webinar on how HR and IT view AI differently. Need to parse video for full value"
+    },
+    {
+      "id": "think-like-a-people-scientist-leading-ai-change-with-employee-sentiment",
+      "title": "Think like a People Scientist: Leading AI Change with Employee Sentiment",
+      "url": "https://techcommunity.microsoft.com/blog/microsoftvivablog/think-like-a-people-scientist-leading-ai-change-with-employee-sentiment/4412911",
+      "tier": "viva-blog",
+      "priority_tier": "top5",
+      "theme": "AI Transformation & Adoption",
+      "description": "How Glint & Pulse measure sentiment during AI transformation.",
+      "research_questions": [
+        "Is AI good for the organization, and what does 'good' mean here (productivity, trust, wellbeing)?",
+        "How does employee sentiment shift across AI rollout phases?",
+        "How should HR and IT collaborate on an AI transformation?"
+      ],
+      "notes": "Strong insights on how AI should be actioned by both HR and IT. Video to be interpreted"
+    },
+    {
+      "id": "what-s-new-with-viva-glint-benchmarks",
+      "title": "What’s New with Viva Glint Benchmarks?",
+      "url": "https://techcommunity.microsoft.com/blog/viva_glint_blog/what%E2%80%99s-new-with-viva-glint-benchmarks/4448380",
+      "tier": "viva-blog",
+      "priority_tier": "top5",
+      "theme": "Measurement & Benchmarks",
+      "description": "Explains 2025 benchmark generation and methodology.",
+      "research_questions": [
+        "How do our scores compare to benchmarks, and how were those benchmarks built?",
+        "How should we interpret year-over-year or cycle-over-cycle score movement?"
+      ],
+      "notes": "Recent, public benchmark description"
+    },
+    {
+      "id": "what-is-people-science",
+      "title": "What is People Science?",
+      "url": "https://techcommunity.microsoft.com/blog/microsoftvivablog/what-is-people-science/3946621",
+      "tier": "viva-blog",
+      "priority_tier": "low",
+      "theme": "Frameworks & Definitions",
+      "description": "Defines Microsoft’s People Science discipline and value.",
+      "research_questions": [
+        "What is People Science and what value/methodology does it bring to a question?"
+      ],
+      "notes": "What is people science"
     },
     {
       "id": "psychological-safety",
       "title": "3 Steps to Build Psychological Safety on Your Team",
       "url": "https://techcommunity.microsoft.com/blog/microsoftvivablog/3-steps-to-build-psychological-safety-on-your-team/4297916",
       "tier": "viva-blog",
-      "theme": "Trust and inclusion",
+      "theme": "Psychological Safety & Manager Enablement",
       "description": "Practical steps for managers to build trust, inclusion, and open feedback on a team.",
-      "used_by": ["analyze-survey"]
+      "used_by": [
+        "analyze-survey"
+      ],
+      "priority_tier": "medium",
+      "research_questions": [
+        "How can a manager build psychological safety and trust on their team?"
+      ],
+      "notes": "Webinar on building psychological safety and supporting facts. Will need to transform to more AI readable, but will be very valuable"
+    },
+    {
+      "id": "continuous-improvement",
+      "title": "Harness Viva Glint and Viva Pulse to drive continuous improvements",
+      "url": "https://techcommunity.microsoft.com/blog/viva_glint_blog/harness-the-power-of-viva-glint-and-viva-pulse-to-drive-continuous-improvements/4428922",
+      "tier": "viva-blog",
+      "theme": "Glint ↔ Pulse Integration & Templates",
+      "description": "Using Pulse follow-ups to keep momentum on actions identified from Glint results.",
+      "used_by": [
+        "analyze-survey"
+      ],
+      "priority_tier": "high",
+      "research_questions": [
+        "How should Pulse follow-ups be used after a Glint survey to sustain action-taking?"
+      ],
+      "notes": "How to take action with Pulse"
+    },
+    {
+      "id": "benchmark-documentation",
+      "title": "People Science Explained - Benchmark Documentation",
+      "url": "https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/Viva_Glint_Blog/131/2/PSE_2025_Benchmark%20Documentation_Public.pdf",
+      "tier": "viva-blog",
+      "theme": "Measurement & Benchmarks",
+      "description": "Methodology notes for comparing scores against historical and external benchmarks.",
+      "used_by": [
+        "analyze-survey"
+      ],
+      "priority_tier": "top5",
+      "research_questions": [
+        "How do our scores compare to benchmarks, and how were those benchmarks built?",
+        "How should we interpret year-over-year or cycle-over-cycle score movement?"
+      ],
+      "notes": "We will need some way to parse benchmark comparison"
+    },
+    {
+      "id": "interpret-survey-data",
+      "title": "Understanding and interpreting your survey data",
+      "url": "https://techcommunity.microsoft.com/blog/viva_glint_blog/think-like-a-people-scientist-understanding-and-interpreting-your-survey-data/4063620",
+      "tier": "viva-blog",
+      "theme": "Survey Design & Methodology",
+      "description": "How to read survey score movement, context, and relationships before drawing conclusions.",
+      "used_by": [
+        "analyze-survey"
+      ],
+      "priority_tier": "top5",
+      "research_questions": [
+        "How should we interpret and contextualize survey results before drawing conclusions?",
+        "How should a survey program (cadence, constructs) be designed?"
+      ],
+      "notes": "Really good video on how to interpret glint results. Maybe we can change it to a more AI-readable form"
+    },
+    {
+      "id": "people-science-predictions-the-impact-of-ai-on-the-employee-experience",
+      "title": "People Science Predictions: The impact of AI on the employee experience",
+      "url": "https://techcommunity.microsoft.com/blog/microsoftvivablog/people-science-predictions-the-impact-of-ai-on-the-employee-experience/4009288",
+      "tier": "viva-blog",
+      "priority_tier": "low",
+      "theme": "AI Transformation & Adoption",
+      "description": "Prediction set on AI’s EX impact.",
+      "research_questions": [
+        "Is AI good for the organization, and what does 'good' mean here (productivity, trust, wellbeing)?",
+        "How does employee sentiment shift across AI rollout phases?",
+        "How should HR and IT collaborate on an AI transformation?"
+      ],
+      "notes": "AI predictions from 2023"
+    },
+    {
+      "id": "think-like-a-people-scientist-series-hub",
+      "title": "Think Like a People Scientist — series hub",
+      "url": "https://adoption.microsoft.com/en-us/viva/think-like-a-people-scientist/",
+      "tier": "adoption-center",
+      "priority_tier": "top5",
+      "theme": "Adoption & Enablement",
+      "description": "Webinar series index with recordings and downloadable decks.",
+      "research_questions": [
+        "How are HR and IT reacting to AI differently, and how should they align?",
+        "What does the research say about organizational AI change-readiness?",
+        "How can managers propel action-taking from survey feedback?"
+      ],
+      "notes": "State of AI change ebook, introduces RIVA and lots of data"
+    },
+    {
+      "id": "deck-understanding-employee-reactions-to-ai",
+      "title": "Deck — Understanding employee reactions to AI",
+      "url": "https://adoption.microsoft.com/files/viva/Microsoft-Viva_Think-like-a-People-Scientist_Mar2025.pdf",
+      "tier": "adoption-center",
+      "priority_tier": "high",
+      "theme": "Adoption & Enablement",
+      "description": "Slides summarizing AI readiness research and transformation profiles.",
+      "research_questions": [
+        "How are HR and IT reacting to AI differently, and how should they align?",
+        "What does the research say about organizational AI change-readiness?",
+        "How can managers propel action-taking from survey feedback?"
+      ],
+      "notes": "Understanding AI and how employees react to it"
+    },
+    {
+      "id": "deck-bridging-hr-and-it-for-ai-success",
+      "title": "Deck — Bridging HR & IT for AI Success",
+      "url": "https://adoption.microsoft.com/files/viva/Microsoft-Viva_Think-like-a-People-Scientist_Apr2025.pdf",
+      "tier": "adoption-center",
+      "priority_tier": "high",
+      "theme": "Adoption & Enablement",
+      "description": "Customer-facing deck for HR–IT collaboration grounded in People Science.",
+      "research_questions": [
+        "How are HR and IT reacting to AI differently, and how should they align?",
+        "What does the research say about organizational AI change-readiness?",
+        "How can managers propel action-taking from survey feedback?"
+      ],
+      "notes": "How HR and IT view AI differently"
+    },
+    {
+      "id": "propel-action-taking",
+      "title": "Propel action-taking through conversations with Viva Glint",
+      "url": "https://adoption.microsoft.com/files/viva/glint/Propel-action-taking-through-conversations-with-Microsoft-Viva-Glint.pdf",
+      "tier": "adoption-center",
+      "theme": "Adoption & Enablement",
+      "description": "Manager conversation guidance for turning survey alerts into focus-area follow-ups.",
+      "used_by": [
+        "analyze-survey"
+      ],
+      "priority_tier": "high",
+      "research_questions": [
+        "How are HR and IT reacting to AI differently, and how should they align?",
+        "What does the research say about organizational AI change-readiness?",
+        "How can managers propel action-taking from survey feedback?"
+      ],
+      "notes": "Some good agent-readable resources on ACT framework and import of action taking"
+    },
+    {
+      "id": "introduction-to-microsoft-viva-glint",
+      "title": "Introduction to Microsoft Viva Glint",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/introduction-viva-glint",
+      "tier": "microsoft-learn",
+      "priority_tier": "low",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "Overview page linking setup, deployment, learning paths; frames PS-based measurement strategy.",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "Intro to VG"
     },
     {
       "id": "program-types",
       "title": "Viva Glint programs, survey types, and templates",
       "url": "https://learn.microsoft.com/en-us/viva/glint/start/program-types-templates",
       "tier": "microsoft-learn",
-      "theme": "Employee lifecycle",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
       "description": "Overview of onboarding, exit, and lifecycle survey templates, including attrition context.",
-      "used_by": ["analyze-survey"]
+      "used_by": [
+        "analyze-survey"
+      ],
+      "priority_tier": "medium",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "Tactical but does have some info on different survey types"
     },
     {
-      "id": "privacy-protection",
-      "title": "Viva Pulse privacy and data protection",
-      "url": "https://learn.microsoft.com/en-us/viva/pulse/get-started/privacy-and-data-protection",
+      "id": "template-research",
+      "title": "How Microsoft People Science drives Viva Glint programs",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/template-research",
       "tier": "microsoft-learn",
-      "theme": "Privacy",
-      "description": "Anonymity, aggregation, and minimum-threshold rules that protect respondent privacy.",
-      "used_by": ["analyze-survey"]
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "The research basis for validated drivers such as purpose, clarity, growth, and connection.",
+      "used_by": [
+        "analyze-survey"
+      ],
+      "priority_tier": "low",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "People success elements but presented better elsewhere"
+    },
+    {
+      "id": "how-viva-people-science-supports-viva-glint",
+      "title": "How Viva People Science supports Viva Glint",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/start/people-science-viva-glint",
+      "tier": "microsoft-learn",
+      "priority_tier": "low",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "Introduces PS experts and how Elements are embedded across programs, guidance, training.",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "What PS does"
+    },
+    {
+      "id": "survey-program-design",
+      "title": "Design an effective Microsoft Viva Glint survey program",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/customize-program",
+      "tier": "microsoft-learn",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "Official guidance on structuring constructs, cadence, and strategic priorities in a survey program.",
+      "used_by": [
+        "analyze-survey"
+      ],
+      "priority_tier": "medium",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "Some decent how-to design video but probably better documented elsewhere"
+    },
+    {
+      "id": "viva-glint-survey-templates-introduction-and-terminology",
+      "title": "Viva Glint survey templates — introduction & terminology",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/templates-intro",
+      "tier": "microsoft-learn",
+      "priority_tier": "medium",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "Question Library, taxonomy, referents, item types; validated items.",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "General Glint terminology"
+    },
+    {
+      "id": "set-up-a-microsoft-viva-glint-recurring-survey",
+      "title": "Set up a Microsoft Viva Glint Recurring survey",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/program-summary-overview",
+      "tier": "microsoft-learn",
+      "priority_tier": "low",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "Program Summary sections and recurring setup flow.",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "How to set up a survey"
+    },
+    {
+      "id": "understand-viva-glint-programs-and-cycles",
+      "title": "Understand Viva Glint programs and cycles",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/program-cycle-edits",
+      "tier": "microsoft-learn",
+      "priority_tier": "low",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "Explains program-level vs cycle-level edits and unlinking behavior.",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "Tactical how to edit a survey"
     },
     {
       "id": "survey-qa",
       "title": "Review and test Viva Glint surveys before launch",
       "url": "https://learn.microsoft.com/en-us/viva/glint/setup/survey-qa",
       "tier": "microsoft-learn",
-      "theme": "Quality assurance",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
       "description": "Pre-launch checks for survey quality, confidentiality, and data protection compliance.",
-      "used_by": ["analyze-survey"]
+      "used_by": [
+        "analyze-survey"
+      ],
+      "priority_tier": "low",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "Tactical program setup"
+    },
+    {
+      "id": "customize-suggested-action-templates-in-viva-glint",
+      "title": "Customize Suggested Action templates in Viva Glint",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/customize-action-plans",
+      "tier": "microsoft-learn",
+      "priority_tier": "low",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "Focus Areas, Suggested Action templates, and Content Resources for manager action plans.",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "Tactical how-to-customize action plan"
+    },
+    {
+      "id": "focus-areas",
+      "title": "Create Focus Areas in Viva Glint",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/focus-areas-managers-creating",
+      "tier": "microsoft-learn",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "Steps for managers to turn survey results into accountable team priorities.",
+      "used_by": [
+        "analyze-survey"
+      ],
+      "priority_tier": "low",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "Tactical \"how to create FA\""
+    },
+    {
+      "id": "viva-glint-questions-setup",
+      "title": "Viva Glint Questions setup",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/questions-setup",
+      "tier": "microsoft-learn",
+      "priority_tier": "low",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "Admin guidance for intro/thank you messages, adding items, targeting, display logic.",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "How to set up questions and intro/thankyou messages"
+    },
+    {
+      "id": "use-the-viva-glint-culture-survey-template",
+      "title": "Use the Viva Glint Culture Survey template",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/culture-template",
+      "tier": "microsoft-learn",
+      "priority_tier": "medium",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "Culture survey constructs, outcomes, items, and PS predictors; when to use.",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "Culture survey description"
+    },
+    {
+      "id": "viva-glint-360-feedback-program-overview",
+      "title": "Viva Glint 360 feedback program overview",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/360-overview",
+      "tier": "microsoft-learn",
+      "priority_tier": "medium",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "360 methodology, terminology, program flow, report readiness and confidentiality.",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "360 terms and definitions"
+    },
+    {
+      "id": "microsoft-viva-glint-360-feedback-email-templates",
+      "title": "Microsoft Viva Glint 360 feedback email templates",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/setup/360-email-templates",
+      "tier": "microsoft-learn",
+      "priority_tier": "high",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "Stakeholder communications templates for 360 program.",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "Great AI readable templates for 360 feedback surveys"
+    },
+    {
+      "id": "viva-glint-learning-paths-and-modules",
+      "title": "Viva Glint learning paths & modules",
+      "url": "https://learn.microsoft.com/en-us/viva/glint/start/viva-glint-learning-paths-and-modules",
+      "tier": "microsoft-learn",
+      "priority_tier": "low",
+      "theme": "Microsoft Learn (Glint) Set-up, Deployment",
+      "description": "Learning curriculum (admins/managers) with PS methodology and psychological safety modules.",
+      "research_questions": [
+        "How do I configure, launch, or administer a Viva Glint survey program (tactical how-to)?"
+      ],
+      "notes": "Learning resources for managers"
+    },
+    {
+      "id": "introduction-to-microsoft-viva-pulse",
+      "title": "Introduction to Microsoft Viva Pulse",
+      "url": "https://learn.microsoft.com/en-us/viva/pulse/introduction-to-viva-pulse",
+      "tier": "microsoft-learn",
+      "priority_tier": "high",
+      "theme": "Microsoft Learn (Pulse) Set-up, Deployment",
+      "description": "Intro to Pulse research-backed templates, reporting, and setup links.",
+      "research_questions": [
+        "How do I set up, access, or administer Viva Pulse (roles, privacy, access)?"
+      ],
+      "notes": "Pulse intro"
+    },
+    {
+      "id": "user-roles-in-viva-pulse",
+      "title": "User roles in Viva Pulse",
+      "url": "https://learn.microsoft.com/en-us/viva/pulse/setup-admin-access/roles-viva-pulse",
+      "tier": "microsoft-learn",
+      "priority_tier": "medium",
+      "theme": "Microsoft Learn (Pulse) Set-up, Deployment",
+      "description": "Defines author, provider, admin roles; licensing and permissions.",
+      "research_questions": [
+        "How do I set up, access, or administer Viva Pulse (roles, privacy, access)?"
+      ],
+      "notes": "Different user roles in pulse"
+    },
+    {
+      "id": "privacy-protection",
+      "title": "Viva Pulse privacy and data protection",
+      "url": "https://learn.microsoft.com/en-us/viva/pulse/get-started/privacy-and-data-protection",
+      "tier": "microsoft-learn",
+      "theme": "Microsoft Learn (Pulse) Set-up, Deployment",
+      "description": "Anonymity, aggregation, and minimum-threshold rules that protect respondent privacy.",
+      "used_by": [
+        "analyze-survey"
+      ],
+      "priority_tier": "low",
+      "research_questions": [
+        "How do I set up, access, or administer Viva Pulse (roles, privacy, access)?"
+      ],
+      "notes": "Pulse privacy"
+    },
+    {
+      "id": "how-users-access-viva-pulse-teams-and-web",
+      "title": "How users access Viva Pulse (Teams & web)",
+      "url": "https://learn.microsoft.com/en-us/viva/pulse/setup-admin-access/access-pulse-via-teams-or-web",
+      "tier": "microsoft-learn",
+      "priority_tier": "medium",
+      "theme": "Microsoft Learn (Pulse) Set-up, Deployment",
+      "description": "Access guidance for Teams app and web app, pinning, supported browsers.",
+      "research_questions": [
+        "How do I set up, access, or administer Viva Pulse (roles, privacy, access)?"
+      ],
+      "notes": "How to access MSFT pulse"
     },
     {
       "id": "agentic-teaming-trust-research",
@@ -119,7 +523,11 @@
       "tier": "curated-external",
       "theme": "AI and trust",
       "description": "Readout on how teams build trust with agentic AI collaborators.",
-      "internal_record": "https://microsoft.sharepoint-df.com/:p:/t/EVE/cQo8rhtwEQp7SZ1mDH29q9d-EgUCp5GF8S9cyVEiRqtmuWvNjg"
+      "internal_record": "https://microsoft.sharepoint-df.com/:p:/t/EVE/cQo8rhtwEQp7SZ1mDH29q9d-EgUCp5GF8S9cyVEiRqtmuWvNjg",
+      "priority_tier": "top5",
+      "research_questions": [
+        "How do teams build trust when collaborating with agentic AI systems?"
+      ]
     },
     {
       "id": "ai-change-readiness",
@@ -128,7 +536,11 @@
       "tier": "curated-external",
       "theme": "AI and trust",
       "description": "eBook on organizational readiness for AI-driven change.",
-      "internal_record": "https://microsoft.sharepoint-df.com/:b:/r/teams/EVE/Shared%20Documents/Forms/AllItems.aspx?id=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FAI%20Adoption%20Research%2FFinalized%20Materials%20%2D%20AI%20Readiness%20Research%2FThe%20state%20of%20AI%20change%20readiness%20%28eBook%20%2D%20Aug%202024%29%20Viva%20People%20Science%2Epdf&parent=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FAI%20Adoption%20Research%2FFinalized%20Materials%20%2D%20AI%20Readiness%20Research&p=true&share=cQoOYaEpcMkwRopK9Sr1h%2Dj2EgUCA2ISCikX62Zs3GD5xwsKZw"
+      "internal_record": "https://microsoft.sharepoint-df.com/:b:/r/teams/EVE/Shared%20Documents/Forms/AllItems.aspx?id=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FAI%20Adoption%20Research%2FFinalized%20Materials%20%2D%20AI%20Readiness%20Research%2FThe%20state%20of%20AI%20change%20readiness%20%28eBook%20%2D%20Aug%202024%29%20Viva%20People%20Science%2Epdf&parent=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FAI%20Adoption%20Research%2FFinalized%20Materials%20%2D%20AI%20Readiness%20Research&p=true&share=cQoOYaEpcMkwRopK9Sr1h%2Dj2EgUCA2ISCikX62Zs3GD5xwsKZw",
+      "priority_tier": "top5",
+      "research_questions": [
+        "How ready is the organization for AI-driven change, and what predicts readiness?"
+      ]
     },
     {
       "id": "holistic-listening-ecosystem",
@@ -137,7 +549,11 @@
       "tier": "curated-external",
       "theme": "Employee listening",
       "description": "eBook on designing a continuous, multi-channel employee listening strategy.",
-      "internal_record": "https://microsoft.sharepoint-df.com/:b:/r/teams/EVE/Shared%20Documents/Forms/AllItems.aspx?id=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FFY24%2FHolistic%20listening%20eBook%2FHolistic%2DEmployee%2DListening%2Debook%2Dfinal%2D2023%2Epdf&parent=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FFY24%2FHolistic%20listening%20eBook&p=true&share=cQr6pCSULloPSoqGk0enM6JhEgUCfsekVZauuEfc5iD8Xa8R0w"
+      "internal_record": "https://microsoft.sharepoint-df.com/:b:/r/teams/EVE/Shared%20Documents/Forms/AllItems.aspx?id=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FFY24%2FHolistic%20listening%20eBook%2FHolistic%2DEmployee%2DListening%2Debook%2Dfinal%2D2023%2Epdf&parent=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FFY24%2FHolistic%20listening%20eBook&p=true&share=cQr6pCSULloPSoqGk0enM6JhEgUCfsekVZauuEfc5iD8Xa8R0w",
+      "priority_tier": "curated",
+      "research_questions": [
+        "How should we design a continuous, multi-channel employee listening ecosystem?"
+      ]
     },
     {
       "id": "redefining-high-performance",
@@ -146,7 +562,11 @@
       "tier": "curated-external",
       "theme": "High performance",
       "description": "Guide on building high-performing organizations in the current era of work.",
-      "internal_record": "https://microsoft-my.sharepoint-df.com/:b:/r/personal/meganbenzing_microsoft_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fmeganbenzing%5Fmicrosoft%5Fcom%2FDocuments%2FAttachments%2FMicrosoft%2DHPO%2DGuide%2DOct%2D2023%2Epdf&parent=%2Fpersonal%2Fmeganbenzing%5Fmicrosoft%5Fcom%2FDocuments%2FAttachments&share=cQrVmWzwLaEAR42Fk6tTP22nEgUC0qh9WCk8ob9yHoELNnWn4A"
+      "internal_record": "https://microsoft-my.sharepoint-df.com/:b:/r/personal/meganbenzing_microsoft_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fmeganbenzing%5Fmicrosoft%5Fcom%2FDocuments%2FAttachments%2FMicrosoft%2DHPO%2DGuide%2DOct%2D2023%2Epdf&parent=%2Fpersonal%2Fmeganbenzing%5Fmicrosoft%5Fcom%2FDocuments%2FAttachments&share=cQrVmWzwLaEAR42Fk6tTP22nEgUC0qh9WCk8ob9yHoELNnWn4A",
+      "priority_tier": "curated",
+      "research_questions": [
+        "What defines a high-performing organization in the current era of work?"
+      ]
     }
   ]
 }

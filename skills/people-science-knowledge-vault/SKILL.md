@@ -7,11 +7,14 @@ allowed-tools: Read, Glob, Grep, WebFetch
 # People Science Knowledge Vault
 
 Find relevant published knowledge, synthesize it with appropriate caution, and cite
-the source articles directly. The skill defines the source hierarchy and answer
-contract, and ships a generated catalog of already-known resources
+the source articles directly. For complex or ambiguous research questions, act as a
+researcher/consultant and work the scope out with the user before answering (see
+Step 0 below). The skill defines the source hierarchy and answer contract, and
+ships a generated catalog of already-known resources
 (`references/catalog.json`, rendered for humans in
-`references/prioritized-resources.md`) alongside the live-retrieval rules in
-`references/source-priority.md`.
+`references/prioritized-resources.md`), a saved copy of the live workbook's
+`External` worksheet (`references/external-tab-snapshot.json`), and the
+retrieval rules in `references/source-priority.md`.
 
 ## Use when
 
@@ -25,55 +28,103 @@ Do not use this skill for raw survey analysis, analysis QA, or interpretation of
 
 ## Required source priority
 
-Inspect `references/` first, especially
-`source-priority.md`. Use `references/prioritized-resources.md` for a quick,
-human-readable view of already-known resources, and `references/catalog.json` if you
-need the same list in a structured form; neither file replaces live retrieval.
+Inspect `references/` first, especially `source-priority.md`. Use
+`references/prioritized-resources.md` for a quick, human-readable view of
+already-known resources, and `references/catalog.json` if you need the same
+list in a structured form with `priority_tier` and `research_questions`
+fields. `references/external-tab-snapshot.json` is the saved, raw copy of the
+workbook's `External` worksheet that `catalog.json` is derived from.
 
-Use sources in this strict order:
+Resources are ranked by a single scale, taken from the workbook's
+`Priority to add to context library` column (column J) and carried in
+`catalog.json` as `priority_tier`:
 
-1. **First priority:** every article discoverable from the Microsoft Viva Blog
-   category page at
-   `https://techcommunity.microsoft.com/category/microsoft-viva/blog/microsoftvivablog`,
-   plus the curated externally facing Microsoft resources listed in
-   `source-priority.md`.
-2. **Second priority:** official Microsoft Learn and Adoption Center documentation
-   (`learn.microsoft.com/viva/*` and `adoption.microsoft.com/*`), per
-   `source-priority.md`.
-3. **Third priority:** only article records from the `External` worksheet in the
-   People Science content workbook identified in `source-priority.md`. The expected
-   worksheet name, columns, and staleness rule are also captured in
-   `references/workbook-schema.json`.
-4. **Tertiary context:** `../../references/general/`, only when it does not conflict with
-   the published sources above.
+1. **`top5`** - the small set of resources judged most essential.
+2. **`high`**
+3. **`medium`**
+4. **`low`**
+5. **`curated`** - hand-selected resources confirmed by the content owner as
+   high-value that are not present in the workbook snapshot at all; treat
+   these as roughly `top5`-equivalent in authority.
 
-Higher-priority sources outrank lower-priority sources when they overlap or disagree.
+Prefer the higher `priority_tier` resource whenever more than one could answer
+the question. See `source-priority.md` for the full routing table of which
+`theme` to reach for given a research question, the supplementary curated
+resources, and the secondary live-retrieval checks (Microsoft Viva Blog
+category page, Microsoft Learn, Adoption Center) that are useful for material
+published after the snapshot was taken, but are not re-ranked by column J.
+
 Do not use workbook rows from any worksheet other than `External`.
 
 ## Retrieval process
 
-1. Translate the question into a small set of specific concepts and close variants.
-2. Enumerate Microsoft Viva Blog article links from the category page, following
-   pagination until no new article links are found, and check the curated externally
-   facing resources in `source-priority.md`.
-3. Keep article URLs under the Microsoft Viva Blog path (or the curated resource
-   list) and retrieve the full article body for relevant candidates.
-4. Check official Microsoft Learn and Adoption Center documentation for relevant
-   second-priority candidates.
-5. Resolve the workbook and inspect only its `External` worksheet.
-6. Use the workbook's `Title`, `URL`, `Theme`, `Description`, `Skills`, and knowledge
-   priority fields to identify relevant third-priority candidates.
-7. Retrieve the full published article body from each selected workbook URL. Workbook
-   metadata helps route retrieval but is not a substitute for article evidence.
-8. Deduplicate by canonical article URL. If an article appears in more than one
-   tier, treat it as the highest tier in which it appears.
-9. Synthesize only claims supported by retrieved article bodies and attach citations
-   directly to those claims.
+### Step 0: sense intent before answering
 
-If pagination, authentication, or connector limits prevent complete source retrieval,
-state the coverage gap. Never claim the full vault was searched when it was not.
+Many questions this skill receives look simple but are not. Before
+retrieving anything, check whether the question:
+
+- Uses a value-laden or ambiguous term (e.g., "good", "effective", "ready")
+  whose meaning the user hasn't defined yet.
+- Spans a process with distinct phases or stakeholders (e.g., an AI rollout
+  has very different implications pre-launch vs. post-adoption; HR and IT may
+  want different evidence).
+- Could reasonably be answered several different, mutually exclusive ways
+  depending on unstated context (audience, timeframe, desired outcome).
+
+If so, **do not retrieve-and-answer in one pass.** Act like a researcher and
+consultant: name the ambiguity you see, propose how you'd disambiguate it,
+and ask 1-3 concrete clarifying questions, treating the user as a thought
+partner working toward the answer together. Only proceed straight to
+retrieval for narrow, well-scoped factual questions (e.g., "What does the
+Glint benchmark documentation say about sample size thresholds?").
+
+Once the question's scope is clear (either because it was narrow to begin
+with, or after the user has answered your clarifying questions), continue
+with the steps below.
+
+### Steps 1+: retrieve and synthesize
+
+1. Translate the (now-scoped) question into a small set of specific concepts
+   and close variants.
+2. Use `source-priority.md`'s routing table to identify which `theme`(s) in
+   `catalog.json` are in scope, then filter and sort candidate entries by
+   `priority_tier` (`top5` > `high` > `medium` > `low`, `curated` treated as
+   `top5`-equivalent).
+3. Retrieve the full published article body for each relevant candidate
+   URL. Catalog/snapshot metadata helps route retrieval but is not a
+   substitute for article evidence.
+4. If the snapshot plainly lacks coverage, or the question needs material
+   newer than the snapshot's `retrieved_at` date, run the secondary live
+   checks described in `source-priority.md` (Viva Blog category page,
+   Microsoft Learn, Adoption Center) and say explicitly that you did so.
+5. Deduplicate by canonical article URL. If a resource appears in more than
+   one place, treat it at its highest `priority_tier`.
+6. Synthesize only claims supported by retrieved article bodies and attach
+   citations directly to those claims.
+
+If pagination, authentication, or connector limits prevent complete source
+retrieval, state the coverage gap. Never claim the full vault was searched
+when it was not.
 
 ## Output format
+
+When Step 0 determined the question needs disambiguation first, respond as a
+thought partner instead of a finished report:
+
+```markdown
+## Let's scope this together
+
+<Name the ambiguity you see and why it matters for the answer.>
+
+1. <Clarifying question 1>
+2. <Clarifying question 2>
+3. <Clarifying question 3 (optional)>
+
+<Optional: a tentative framing or starting hypothesis to react to.>
+```
+
+Once the question is scoped (narrow to begin with, or clarified by the
+user), use the full evidence-backed summary format:
 
 ```markdown
 ## People Science knowledge summary
@@ -92,14 +143,17 @@ state the coverage gap. Never claim the full vault was searched when it was not.
 
 **Sources:** [Article title](URL)
 
-**Coverage:** <Sources searched and any material retrieval limitations.>
+**Coverage:** <Sources searched, priority tiers used, and any material retrieval limitations.>
 ```
 
 ## Guardrails
 
 - Use only externally published article bodies for substantive evidence.
 - Never use rows from `All Items`, `Internal PSEs & POVs`, or any other workbook
-  worksheet as third-priority evidence.
+  worksheet; the vault treats only article records from the `External` worksheet
+  as eligible evidence.
+- Do not skip Step 0 on complex or value-laden questions just to answer faster;
+  a wrong-scope answer is worse than a short clarifying detour.
 - Do not expose unpublished drafts, internal-only links, participant identities,
   customer-identifiable information, or employee-identifiable information.
 - Distinguish research findings from recommendations and author commentary.

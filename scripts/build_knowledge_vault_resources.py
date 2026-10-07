@@ -24,28 +24,36 @@ VAULT_DIR = ROOT / "skills/people-science-knowledge-vault/references"
 CATALOG_PATH = VAULT_DIR / "catalog.json"
 WORKBOOK_SCHEMA_PATH = VAULT_DIR / "workbook-schema.json"
 OUTPUT_PATH = VAULT_DIR / "prioritized-resources.md"
+SNAPSHOT_PATH = VAULT_DIR / "external-tab-snapshot.json"
 SOURCE_INDEX_PATH = (
     ROOT / "skills/analyze-survey/references/people-science-source-index.json"
 )
 
-# (rank, group heading) per catalog tier. Lower rank sorts first.
-TIER_GROUPS: dict[str, tuple[int, str]] = {
-    "viva-blog": (1, "First priority - Microsoft Viva Blog"),
-    "curated-external": (
+# (rank, group heading) per priority_tier, the column-J-derived ranking.
+# Lower rank sorts first.
+PRIORITY_TIER_GROUPS: dict[str, tuple[int, str]] = {
+    "top5": (1, "Top5 - highest priority"),
+    "curated": (
         1,
-        "First priority - Curated externally facing Microsoft resources",
+        "Curated - high value, not present in the workbook snapshot",
     ),
-    "microsoft-learn": (
-        2,
-        "Second priority - Microsoft Learn & Adoption Center documentation",
-    ),
-    "adoption-center": (
-        2,
-        "Second priority - Microsoft Learn & Adoption Center documentation",
-    ),
+    "high": (2, "High priority"),
+    "medium": (3, "Medium priority"),
+    "low": (4, "Low priority"),
 }
 
-REQUIRED_ENTRY_FIELDS = ("id", "title", "url", "tier", "theme", "description")
+KNOWN_TIERS = {"viva-blog", "curated-external", "microsoft-learn", "adoption-center"}
+
+REQUIRED_ENTRY_FIELDS = (
+    "id",
+    "title",
+    "url",
+    "tier",
+    "priority_tier",
+    "theme",
+    "description",
+    "research_questions",
+)
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -66,9 +74,14 @@ def validate_catalog(catalog: dict[str, Any]) -> list[str]:
         for field in REQUIRED_ENTRY_FIELDS:
             if not entry.get(field):
                 issues.append(f"entry '{entry_id}' is missing required field '{field}'")
-        if entry.get("tier") not in TIER_GROUPS:
+        if entry.get("tier") not in KNOWN_TIERS:
             issues.append(
                 f"entry '{entry_id}' has unknown tier '{entry.get('tier')}'"
+            )
+        if entry.get("priority_tier") not in PRIORITY_TIER_GROUPS:
+            issues.append(
+                f"entry '{entry_id}' has unknown priority_tier "
+                f"'{entry.get('priority_tier')}'"
             )
         if entry_id in seen_ids:
             issues.append(f"duplicate entry id '{entry_id}'")
@@ -152,13 +165,13 @@ def render_prioritized_markdown(catalog: dict[str, Any]) -> str:
     entries = catalog.get("entries", [])
     grouped: dict[str, list[dict[str, Any]]] = {}
     for entry in entries:
-        _, heading = TIER_GROUPS[entry["tier"]]
+        _, heading = PRIORITY_TIER_GROUPS[entry["priority_tier"]]
         grouped.setdefault(heading, []).append(entry)
 
     ordered_headings = sorted(
         grouped,
         key=lambda heading: next(
-            rank for rank, label in TIER_GROUPS.values() if label == heading
+            rank for rank, label in PRIORITY_TIER_GROUPS.values() if label == heading
         ),
     )
 
@@ -169,10 +182,13 @@ def render_prioritized_markdown(catalog: dict[str, Any]) -> str:
         "# Prioritized resources (human-readable)",
         "",
         "This is a quick-scan, human-friendly view of the knowledge vault's known",
-        "resources, ranked by priority tier. It is **not** the retrieval contract:",
-        "agents must still follow `source-priority.md` and re-enumerate the Microsoft",
-        "Viva Blog category live, since that source changes over time. Use this list",
-        "for a fast overview of what already-known resources exist and why they matter.",
+        "resources, ranked by `priority_tier` (sourced from the workbook's column J,",
+        "'Priority to add to context library'): Top5 > High > Medium > Low, with",
+        "Curated entries (not present in the External worksheet snapshot) treated as",
+        "Top5-equivalent. It is **not** the retrieval contract: agents must still",
+        "follow `source-priority.md`, which also covers the supplementary live checks",
+        "(Microsoft Viva Blog category page, Microsoft Learn, Adoption Center) useful",
+        "for material newer than the saved `external-tab-snapshot.json`.",
         "",
     ]
 
@@ -186,16 +202,6 @@ def render_prioritized_markdown(catalog: dict[str, Any]) -> str:
                 f"| {entry['title']} | {entry['theme']} | [source]({entry['url']}) |"
             )
         lines.append("")
-
-    lines.append("## Third priority - external workbook articles (not pre-listed)")
-    lines.append("")
-    lines.append(
-        "The `External` worksheet of the People Science content workbook (see "
-        "`source-priority.md` and `workbook-schema.json`) is access-gated and can "
-        "change between retrievals, so its ~35 article records are intentionally "
-        "not duplicated here. Resolve it live and apply the same precedence rules."
-    )
-    lines.append("")
 
     return "\n".join(lines)
 

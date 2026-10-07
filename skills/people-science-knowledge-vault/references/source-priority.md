@@ -1,105 +1,114 @@
 # Source priority
 
-See `catalog.json` for the machine-readable list of already-known resources
-and `prioritized-resources.md` for a human-readable, ranked view of the same
-data. This file is the authoritative retrieval contract; the other two files
-are generated or curated views that must never override it.
+See `catalog.json` for the machine-readable list of resources and
+`prioritized-resources.md` for a human-readable, ranked view of the same data.
+This file is the authoritative retrieval contract; the other two files are
+generated or curated views that must never override it.
 
-## First priority: Microsoft Viva Blog
+## Primary source: the saved External-tab snapshot
 
-Category URL:
-
-```text
-https://techcommunity.microsoft.com/category/microsoft-viva/blog/microsoftvivablog
-```
-
-Treat every article discoverable through this category and its pagination as eligible
-first-priority knowledge. Retrieve the full published article body before using it as
-evidence. Category cards, search snippets, titles, and metadata are discovery aids,
-not sufficient evidence by themselves.
-
-The category is a live source. Re-enumerate it for each substantive retrieval or use a
-future generated catalog that records when it was refreshed. Do not describe the
-corpus as complete if pagination or article retrieval is incomplete.
-
-### Curated externally facing Microsoft resources
-
-These resources are also first-priority sources. The SharePoint and OneDrive links
-in `catalog.json`'s `internal_record` field were confirmed by the content owner as
-externally facing; sensitivity labels on those stored copies must not be treated
-as evidence that publication is prohibited. However, an automated retrieval agent
-generally cannot authenticate into SharePoint/OneDrive, so **cite and retrieve the
-public link below, not the internal record.**
-
-- [Research Readout - Agentic Teaming & Trust Research](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/1027.2/2/2025%20Agentic%20Teaming%20%26%20Trust%20Research%20Report%20-%20Chapter%204.pdf)
-- [The state of AI change readiness](https://adoption.microsoft.com/files/viva/The-state-of-AI-change-readiness-eBook.pdf)
-- [Building a holistic listening ecosystem](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/894/1/Holistic%20Listening%20Infographic_09292023%201.pdf)
-- [Redefining High Performance in the New Era of Work](https://www.microsoft.com/content/dam/microsoft/final/en-us/microsoft-brand/documents/Microsoft-HPO-Guide-Oct-2023.pdf)
-
-The gated SharePoint/OneDrive originals are retained as the internal record of
-ownership and approval, not for retrieval:
-
-- [Research Readout - Agentic Teaming & Trust Research - SharePoint edition](https://microsoft.sharepoint-df.com/:p:/t/EVE/cQo8rhtwEQp7SZ1mDH29q9d-EgUCp5GF8S9cyVEiRqtmuWvNjg)
-- [The state of AI change readiness - SharePoint edition](https://microsoft.sharepoint-df.com/:b:/r/teams/EVE/Shared%20Documents/Forms/AllItems.aspx?id=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FAI%20Adoption%20Research%2FFinalized%20Materials%20%2D%20AI%20Readiness%20Research%2FThe%20state%20of%20AI%20change%20readiness%20%28eBook%20%2D%20Aug%202024%29%20Viva%20People%20Science%2Epdf&parent=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FAI%20Adoption%20Research%2FFinalized%20Materials%20%2D%20AI%20Readiness%20Research&p=true&share=cQoOYaEpcMkwRopK9Sr1h%2Dj2EgUCA2ISCikX62Zs3GD5xwsKZw)
-- [Building a holistic employee listening ecosystem - SharePoint edition](https://microsoft.sharepoint-df.com/:b:/r/teams/EVE/Shared%20Documents/Forms/AllItems.aspx?id=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FFY24%2FHolistic%20listening%20eBook%2FHolistic%2DEmployee%2DListening%2Debook%2Dfinal%2D2023%2Epdf&parent=%2Fteams%2FEVE%2FShared%20Documents%2FPeople%20Science%20%F0%9F%A7%91%E2%80%8D%F0%9F%94%AC%2FPS%20Product%20and%20TL%2FFY24%2FHolistic%20listening%20eBook&p=true&share=cQr6pCSULloPSoqGk0enM6JhEgUCfsekVZauuEfc5iD8Xa8R0w)
-- [Redefining High Performance in the New Era of Work - OneDrive edition](https://microsoft-my.sharepoint-df.com/:b:/r/personal/meganbenzing_microsoft_com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fmeganbenzing%5Fmicrosoft%5Fcom%2FDocuments%2FAttachments%2FMicrosoft%2DHPO%2DGuide%2DOct%2D2023%2Epdf&parent=%2Fpersonal%2Fmeganbenzing%5Fmicrosoft%5Fcom%2FDocuments%2FAttachments&share=cQrVmWzwLaEAR42Fk6tTP22nEgUC0qh9WCk8ob9yHoELNnWn4A)
-
-## Second priority: Microsoft Learn & Adoption Center documentation
-
-Official Microsoft product documentation under these hosts is directly citable
-second-priority evidence:
-
-- `https://learn.microsoft.com/en-us/viva/glint/*`
-- `https://learn.microsoft.com/en-us/viva/pulse/*`
-- `https://adoption.microsoft.com/*`
-
-This tier formalizes a practice other skills in this repository already rely on
-(see `../../analyze-survey/references/people-science-source-index.json`, which
-cites several `learn.microsoft.com` and `adoption.microsoft.com` pages). It is
-ranked above the workbook because it is public, durable, and does not depend on
-internal access, while still being official rather than crawled blog content.
-
-## Third priority: external workbook articles
-
-Workbook URL:
+The workbook that backs this vault is:
 
 ```text
 https://microsoft.sharepoint-df.com/:x:/t/EVE/cQpI5FMS_jROSLEqT1-GT-KsEgUClfK5_gr5DhPyL0MFgifvGw
 ```
 
-Workbook observed on 2026-09-10:
+Observed workbook name: `People_Science_Content_full_index.xlsx`. Use **only**
+the worksheet named `External`. This workbook is IRM/RMS-protected, so it
+cannot be fetched with a plain unauthenticated request; see
+`workbook-schema.json`'s `access_notes` for how to refresh it.
 
-```text
-People_Science_Content_full_index.xlsx
-```
+Rather than re-fetching the live workbook on every retrieval, this skill keeps
+a point-in-time copy of every `External` row in
+`references/external-tab-snapshot.json`, and a curated, enriched view of the
+same rows (plus a few supplementary entries) in `references/catalog.json`.
+**Prefer the local snapshot and catalog for normal retrieval.** Only re-open
+the live workbook when the snapshot is stale (see `workbook-schema.json`'s
+`staleness_check`) or a question needs material published after the
+snapshot's `retrieved_at` date.
 
-Use **only** the worksheet named:
+### Ranking: column J drives priority, not channel
 
-```text
-External
-```
+Column J, `Priority to add to context library`, is the authoritative ranking
+signal. It has four levels, from highest to lowest:
 
-The observed range was `External!A1:N36`, containing one header row and 35 article
-records. Expected columns include:
+1. `top5` - the small set of resources judged most essential; always check
+   these first and lean on them most heavily.
+2. `high`
+3. `medium`
+4. `low`
 
-- `Theme`
-- `Title`
-- `URL`
-- `Channel`
-- `Author`
-- `PublicationDate`
-- `Description`
-- `ModernizeNote`
-- `Skills`
-- `Priority to add to context library`
-- `Notes / Rational`
-- `Knowledge Priority`
-- `Knowledge Priority Basis`
-- `Knowledge Priority Reason`
+`catalog.json` carries this as each entry's `priority_tier` field. When two
+resources could both answer a question, prefer the higher `priority_tier`.
+A fifth value, `curated`, marks resources that are **not** present in the
+External-tab snapshot at all (see "Supplementary curated resources" below) -
+treat `curated` as roughly `top5`-equivalent in authority, since these were
+hand-selected by the content owner, but note they fall outside the workbook's
+own ranking.
 
-Use workbook metadata to select relevant candidates, then retrieve the full article
-from `URL` before citing or interpreting it. Skip rows without a valid externally
-reachable article URL.
+### Supplementary curated resources (not in the workbook snapshot)
+
+Two resources predate/sit outside the External-tab snapshot but were
+confirmed by the content owner as externally shareable and high-value:
+
+- [Building a holistic employee listening ecosystem](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/894/1/Holistic%20Listening%20Infographic_09292023%201.pdf)
+- [Redefining High Performance in the New Era of Work](https://www.microsoft.com/content/dam/microsoft/final/en-us/microsoft-brand/documents/Microsoft-HPO-Guide-Oct-2023.pdf)
+
+The SharePoint/OneDrive originals in `catalog.json`'s `internal_record` field
+for these entries (and for the two workbook-sourced `top5` entries below) are
+the internal record of ownership/approval, not for retrieval. An automated
+retrieval agent generally cannot authenticate into SharePoint/OneDrive, so
+**cite and retrieve the public link, not the internal record.**
+
+Two further resources appear in the workbook as `top5` rows whose `URL`
+column only holds an internal `.pptx` filename (no public link); their public
+PDF substitutes are already catalogued:
+
+- [Research Readout - Agentic Teaming & Trust Research](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/1027.2/2/2025%20Agentic%20Teaming%20%26%20Trust%20Research%20Report%20-%20Chapter%204.pdf)
+- [The state of AI change readiness](https://adoption.microsoft.com/files/viva/The-state-of-AI-change-readiness-eBook.pdf)
+
+## Secondary, supplementary check: live Microsoft sources
+
+These live sources are useful **in addition to** the snapshot, mainly to catch
+material published after `retrieved_at`, or when the snapshot plainly lacks
+coverage of the question:
+
+- Microsoft Viva Blog category page:
+  `https://techcommunity.microsoft.com/category/microsoft-viva/blog/microsoftvivablog`
+  - Treat every article discoverable through this category and its
+    pagination as eligible evidence. Retrieve the full published article body
+    before using it; category cards, search snippets, titles, and metadata
+    are discovery aids, not sufficient evidence by themselves.
+- Official Microsoft Learn and Adoption Center documentation:
+  `learn.microsoft.com/en-us/viva/glint/*`, `learn.microsoft.com/en-us/viva/pulse/*`,
+  `adoption.microsoft.com/*`.
+
+Do not present a live-only check as if it were the full vault; when you use
+one, say so explicitly in the coverage note, since it is not re-ranked by
+column J.
+
+## When to use which resource: research-question routing
+
+Each `catalog.json` entry's `theme` and `research_questions` fields capture
+*when* that resource is the right one to reach for. The themes group like
+this:
+
+| Theme | Reach for this when the user is asking about... |
+| --- | --- |
+| AI Transformation & Adoption | Whether/how AI helps or harms the organization, what "good" outcomes mean, how sentiment shifts across rollout phases, HR/IT collaboration on AI change |
+| Measurement & Benchmarks | How scores compare to benchmarks, benchmark methodology, interpreting score movement |
+| Frameworks & Definitions | What People Science is and the methodology behind its claims |
+| Psychological Safety & Manager Enablement | How managers build trust and psychological safety on a team |
+| Glint <-> Pulse Integration & Templates | Sustaining action-taking with Pulse follow-ups after a Glint survey |
+| Survey Design & Methodology | Interpreting survey results in context, designing a survey program's cadence/constructs |
+| Adoption & Enablement | HR/IT reactions to AI, organizational AI change-readiness, manager action-taking |
+| Microsoft Learn (Glint) Set-up, Deployment | Tactical how-to for configuring, launching, or administering a Glint survey program |
+| Microsoft Learn (Pulse) Set-up, Deployment | Tactical how-to for Pulse roles, privacy, or access |
+| AI and trust / High performance / Employee listening (supplementary) | Agentic AI trust-building, organizational AI readiness, holistic listening ecosystem design, high-performance org design |
+
+Before searching, use this table (and the complex-question judgment call in
+`SKILL.md`'s retrieval process) to decide which themes are in scope, then
+filter `catalog.json` entries by theme and sort by `priority_tier`.
 
 ## Explicit exclusions
 
@@ -118,7 +127,10 @@ The workbook may change over time. The rule is based on the worksheet name
 ## Precedence and deduplication
 
 1. Canonicalize URLs by removing tracking parameters and normalizing host/path.
-2. Deduplicate identical articles across the two source tiers.
-3. When an article appears in both tiers, classify it as first priority.
-4. When sources disagree, prefer the first-priority published article and describe
-   meaningful differences rather than silently blending them.
+2. Deduplicate identical articles across the snapshot, catalog, and any live
+   checks.
+3. Rank by `priority_tier` first (`top5` > `high` > `medium` > `low`, with
+   `curated` treated as `top5`-equivalent), then by relevance to the theme(s)
+   in scope.
+4. When sources disagree, prefer the higher `priority_tier` resource and
+   describe meaningful differences rather than silently blending them.

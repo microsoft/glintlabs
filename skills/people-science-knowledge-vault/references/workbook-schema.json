@@ -2,11 +2,14 @@
   "schema_version": "1.0.0",
   "workbook_url": "https://microsoft.sharepoint-df.com/:x:/t/EVE/cQpI5FMS_jROSLEqT1-GT-KsEgUClfK5_gr5DhPyL0MFgifvGw",
   "observed_workbook_name": "People_Science_Content_full_index.xlsx",
-  "observed_date": "2026-09-10",
+  "observed_date": "2026-10-08",
   "required_worksheet": "External",
-  "observed_range": "External!A1:N36",
+  "observed_range": "External!A1:N38",
   "observed_header_row_count": 1,
-  "observed_record_count": 35,
+  "observed_record_count": 37,
+  "local_snapshot": "references/external-tab-snapshot.json",
+  "local_snapshot_notes": "A point-in-time copy of every External-tab row (all 14 columns) is saved in external-tab-snapshot.json. Prefer this local snapshot for normal retrieval instead of re-fetching the live workbook; only re-fetch when the snapshot is stale (see staleness_check) or a question needs material newer than the snapshot's retrieved_at date.",
+  "access_notes": "This workbook is IRM/RMS-protected (Azure Information Protection), not just link-gated. A plain HTTP fetch of the sharing URL returns 401, and downloading the raw bytes and parsing them with a local library (e.g. openpyxl) fails because the content is cryptographically sealed. The only way to read it is through a Microsoft 365 service that can honor the user's RMS license (e.g. Copilot/workiq acting under the signed-in user's identity). Resolve the sharing link to a direct item webUrl first if needed, then ask that service to read the 'External' worksheet in small batches (~10 rows at a time) to avoid truncation.",
   "expected_columns": [
     "Theme",
     "Title",
@@ -34,6 +37,6 @@
   "staleness_check": {
     "field": "observed_date",
     "max_age_days": 90,
-    "on_expiry": "Re-open the workbook, confirm the `External` worksheet name/columns are unchanged, and update observed_date, observed_range, and observed_record_count here and in source-priority.md."
+    "on_expiry": "Re-run the workiq-retrieve + workiq-ask extraction against workbook_url (External worksheet only), rewrite external-tab-snapshot.json with the new rows, and update observed_date/observed_range/observed_record_count here and in source-priority.md. Then re-derive catalog.json priority_tier/research_questions fields from the refreshed snapshot."
   }
 }
