@@ -101,10 +101,41 @@ with the steps below.
    one place, treat it at its highest `priority_tier`.
 6. Synthesize only claims supported by retrieved article bodies and attach
    citations directly to those claims.
+7. Label each finding as **corroborated** (supported by two or more retrieved
+   articles) or **single-source evidence** (supported by only one). Lead the
+   summary with the strongest corroborated pattern when one exists; state
+   plainly when the retrieved evidence does not yet converge. When only one
+   article supports the entire answer, state that once in the summary line
+   and do not restate the same claim again under a separate finding heading.
 
 If pagination, authentication, or connector limits prevent complete source
 retrieval, state the coverage gap. Never claim the full vault was searched
 when it was not.
+
+### Optional mode: speculative extrapolation, worked out together
+
+If the user explicitly asks to extrapolate, speculate, brainstorm, or
+"be creative" beyond what the retrieved articles directly state (for
+example, applying published findings to the user's own situation when no
+article covers that specific case), you may enter this mode instead of, or
+after, the standard evidence-backed summary. This mode trades source
+coverage for exploratory reasoning, so it carries its own rules:
+
+1. Clearly separate what the vault's articles actually say (cited,
+   evidence-backed) from what you are extrapolating (uncited, speculative).
+   Never attach a `**Sources:**` line to an extrapolated hypothesis.
+2. Hedge every extrapolated claim explicitly — use language such as "this is
+   one potential explanation" or "speculative, not an established finding."
+   Do not state extrapolated hypotheses declaratively.
+3. Offer multiple plausible hypotheses rather than converging on one, unless
+   the user's answers have clearly narrowed it to a single best fit.
+4. Treat this as a multi-turn, collaborative dialogue, not a one-shot
+   answer: end your response with 1-3 targeted clarifying questions that
+   would help confirm, rule out, or further narrow the hypotheses, and
+   revise the working hypothesis as the user answers each one.
+5. If the user's answers point strongly toward one hypothesis, say so
+   plainly, but keep the overall framing hedged (e.g., "the working
+   hypothesis forming here, still speculative, not a confirmed finding...").
 
 ## Output format
 
@@ -127,23 +158,45 @@ Once the question is scoped (narrow to begin with, or clarified by the
 user), use the full evidence-backed summary format:
 
 ```markdown
-## People Science knowledge summary
+## Cross-source summary
 
-<Direct answer in two or three sentences.>
+<If 2+ articles support the answer: two or three declarative sentences
+stating the strongest corroborated pattern, noting the support count (e.g.
+"Two of three retrieved articles indicate...") and any material
+disagreement or coverage gap.
+If only 1 article is available: a single sentence giving the direct answer
+and noting this is single-source evidence — do not restate it below.>
 
-### <Finding>
+### <Declarative finding>
 
-<Concise synthesis with appropriate context and limitations.>
+<Concise synthesis with appropriate context and limitations. Mark as
+corroborated or single-source evidence per step 7 above.>
 
 **Sources:** [Article title](URL); [Article title](URL)
 
-### <Finding>
+### <Declarative finding (omit if only one finding/source total)>
 
 <Concise synthesis.>
 
 **Sources:** [Article title](URL)
 
-**Coverage:** <Sources searched, priority tiers used, and any material retrieval limitations.>
+**Evidence base:** Reviewed N articles across M priority tiers. <One short
+sentence on coverage, disagreement, or retrieval limitations when material.>
+```
+
+When in speculative-extrapolation mode, use this collaborative format instead
+(repeat across turns as the dialogue narrows):
+
+```markdown
+<Optional one-line pivot noting what the user's last answer ruled in/out.>
+
+**Potential explanation N — <short label>**
+<Hedged, speculative explanation. No Sources line. Explicitly flagged as
+"this is one potential explanation" / not an established finding.>
+
+<Repeat for 2-3 hypotheses, or fewer once the dialogue has narrowed things.>
+
+<1-3 targeted clarifying questions to narrow the hypotheses further.>
 ```
 
 ## Guardrails
@@ -162,6 +215,11 @@ user), use the full evidence-backed summary format:
 - Do not fabricate article text, statistics, quotations, authors, or publication
   dates.
 - Keep quotations short and link to the complete published article.
+- Only enter speculative-extrapolation mode when the user explicitly asks for
+  it; never blend unhedged speculation into the standard evidence-backed
+  summary format.
+- Never cite a source for an extrapolated/speculative claim; citations are
+  reserved for claims directly supported by retrieved article bodies.
 
 ## Future extension points
 
