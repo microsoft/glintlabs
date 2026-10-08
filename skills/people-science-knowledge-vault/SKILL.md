@@ -24,7 +24,8 @@ retrieval rules in `references/source-priority.md`.
 - the user asks for source material that can be shared outside Microsoft
 
 Do not use this skill for raw survey analysis, analysis QA, or interpretation of an
-`analysis-manifest.json`. Use the dedicated analysis skills for those jobs.
+`analysis-manifest.json`. If the user wants to create an analysis or deep-dive a
+topic in their own survey data, use the `analyze-survey` skill instead.
 
 ## Required source priority
 
@@ -220,6 +221,12 @@ When in speculative-extrapolation mode, use this collaborative format instead
   customer-identifiable information, or employee-identifiable information.
 - Distinguish research findings from recommendations and author commentary.
 - Do not convert correlation or descriptive evidence into causal claims.
+- Never recommend advanced causal-analysis methods (e.g., logistic regression,
+  mediation analysis, dominance/Shapley variance partitioning) against a user's
+  survey or attrition data. Survey datasets are rarely complete enough to support
+  these methods reliably, and recommending them risks a misleading analysis.
+  Prefer descriptive comparisons (correlations, favorability cuts, comment
+  themes) instead, and route deeper data work to the `analyze-survey` skill.
 - When synthesizing against a user's own retrospective survey/dashboard data (e.g.,
   attrition multipliers), describe it as an association ("employees who responded
   unfavorably show a higher observed exit rate than those who responded favorably")
