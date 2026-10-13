@@ -220,7 +220,11 @@ automatically practically meaningful without considering the full loading
 pattern, item content, and cross-loadings.
 
 For Attrition, rank all eligible items by the unfavorable-to-favorable
-attrition-rate multiplier. Default to 180 days and allow 90-, 180-, and
+attrition-rate multiplier. Default to 180 days when company-overall results
+contain an unsuppressed finite multiplier; otherwise prefer 365 days, then
+another populated window. Apply the same preference order to eligible
+Attrition alerts. If no window has usable results, retain an explicit
+unavailable state at the first configured window. Allow 90-, 180-, and
 365-day windows. Show the item text and a horizontal multiplier bar with a
 clearly marked 1.00x reference line; do not display favorable or unfavorable
 counts or percentages in the report. Apply the shared report filter, suppress
@@ -271,6 +275,12 @@ attrition.csv
 Only completed analysis CSVs are required. The HTML report and ZIP are always
 required after repeatability passes. The standard report contains no AI summary
 cards. Open the HTML report before finishing.
+
+CSV means, standard deviations, and score differences use 0-100 score points,
+regardless of the original response scale. Response-distribution labels use
+equivalent 0-100 values. Preserve native units for non-score metrics.
+The manifest's `export_profile` records output units separately from
+`input_profile.scale_points`, which describes the model's input scale.
 
 ## Failure handling
 

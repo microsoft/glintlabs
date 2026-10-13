@@ -10,7 +10,7 @@ golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`cde9f23f9d02ebf64d6686572ba8421f7a5aff4ac29e1a7cee767e635f96e552`.
+`1dfa4e5567eec8ee630c0e6c29493d1a835b7d7a1fc18c835b911f9760b7f14d`.
 Generated reports in `required` mode must match its static HTML shell exactly.
 The intended substitution is the JSON value assigned to `const D`. In `off`
 mode, the seven empty AI summary containers are also removed from the generated
@@ -18,8 +18,9 @@ report.
 
 The live Attrition analysis section reuses its introduction from the golden
 template instead of maintaining separate runtime wording. Its suppression
-threshold text follows the configured minimum category size. Preserve single
-line breaks between the introduction's passages.
+threshold text follows the configured minimum category size. Separate all
+multi-passage tab introductions with blank lines (`<br><br>`), matching the
+Correlation introduction.
 
 ## AI-generated People Science summary modes
 
@@ -249,8 +250,13 @@ exploratory, and attrition results are not individual predictions.
   is below the configured minimum. Continue applying normal report minimum-N
   suppression to the displayed group score.
 - Provide 90-, 180-, and 365-day controls when those outcome windows exist.
-  Default to 180 days when it has eligible alerts; otherwise default to the
-  first outcome window with eligible alerts.
+  Default to 180 days when it has eligible alerts; otherwise prefer 365 days,
+  then the first remaining outcome window with eligible alerts.
+  Attrition analysis uses the same preference order based on unsuppressed,
+  finite company-overall multipliers; zero is a usable multiplier.
+  If no window has usable results, select the first configured window and
+  preserve the explicit unavailable/suppressed state. Defaults apply only on
+  initial load; filter changes must not override a manually selected window.
 - Describe alerts as aggregate screening signals. Do not present multipliers as
   individual predictions or group score gaps as causal explanations.
 
@@ -287,6 +293,21 @@ exploratory, and attrition results are not individual predictions.
   organization views first.
 - Rank eligible items by multiplier and display each item text with a
   horizontal bar and labeled multiplier. Mark 1.00x as the reference point.
+- Use the same compact icon buttons and top-right visual toolbar as the other
+  visuals: download first, clipboard second. Reuse the shared CSV and clipboard
+  SVGs, `.visual-btn` styling, and `.visual-wrap` placement. Supply accessible
+  labels and hover titles for Export CSV and Copy image.
+  These controls use the currently displayed rows, in their visible order.
+  Include population and outcome-window
+  context, item identifiers, multipliers, and displayed significance text.
+  Preserve suppressed values and never include hidden category counts or rates.
+  Copy the complete displayed visual as a PNG image, including population and
+  outcome-window context, bars, the 1.00x reference markers, and all displayed
+  rows (not just the scroll viewport). Reuse the shared image-copy helper and
+  its PNG-download fallback when image clipboard writing is unavailable.
+  Never copy CSV or tab-separated text from the clipboard button. Export
+  comma-separated text with spreadsheet-safe cells from the download button.
+  Report clipboard and export failures explicitly.
 - Do not display favorable or unfavorable counts or percentages in the report.
   Retain them only in the privacy-safe aggregate artifact for auditability and
   suppression enforcement.
@@ -301,50 +322,79 @@ exploratory, and attrition results are not individual predictions.
 Link the manifest and every completed aggregate artifact, including derived
 correlation matrices, score-change, and alert outputs when available.
 
+Explain that survey means, standard deviations, and score changes are exported
+in 0-100 score points. Response-distribution column labels use equivalent
+0-100 response values. Counts, percentages, correlations, factor loadings,
+p-values, and attrition multipliers retain their own units. Separate the
+Downloads introduction's passages with blank lines, matching Correlation.
+
+CSV exports must use these units in standalone files and in the share ZIP,
+without transforming model inputs or double-converting existing Glint scores.
+The manifest must declare `export_profile` separately from the original
+`input_profile.scale_points`. See the shared codebook catalog for formulas
+and cycle-percentage-change semantics.
+
 ### Methodology
 
 - Always include a final **Methodology** tab after Downloads. It is reference
   documentation for analysts, not a filter-reactive data tab.
 - Begin the tab with one short sentence explaining that it documents how the
   report's analyses work so analysts can interpret and explain results.
-- Render one subsection for every analysis present in the report: Scores
-  change, Correlation, Factors, Attrition analysis, and Attrition alerts.
+- Render one subsection for every analysis present in the report, in the same
+  order as the report tabs: Correlation, Factors, Attrition analysis,
+  Attrition alerts, and Scores change. Match the jump-link order to the
+  subsection order. Do not number subsection headings. Use 22px subsection
+  headings, larger than the previous 20px headings but below the 32px
+  Methodology title.
   Omit the two attrition methodology subsections when attrition tabs are not
   present in that report instance.
-- Each subsection must contain exactly these three labeled parts:
-  **Method**, **Example interpretation**, and **Example action**.
-- Keep the prose concise but analyst-depth: a few sentences for Method and one
+- Begin each subsection with an unlabeled explanation of its method, followed
+  by labeled **Example interpretation** and **Example action** callouts.
+  Do not display a redundant **Method** subheader.
+- Keep the prose concise but analyst-depth: a few sentences for the method and one
   realistic sentence each for the interpretation and action example.
-- Ground every Method description in the real implementation from
+- Explain the statistics behind each tab: what is compared or estimated,
+  what the displayed numbers mean, assumptions, and interpretation limits.
+  Avoid an AI/build-process lens, saved-file descriptions, function calls, or
+  browser-side implementation details. Preserve the interpretation and action
+  examples when revising the explanations.
+- Ground every statistical explanation in the real implementation from
   `scripts/run_vivaglint_analysis.py` and
   `scripts/build_interactive_report.py`, including the actual thresholds,
   formulas, suppression rules, and defaults used in the shipped report.
-- For Scores change, document the stored mean/stddev/n values, client-side
-  p-value calculation, difference bars, repeat-respondent logic based on
-  matched employee IDs across cycles, and minimum-N suppression.
+- For Scores change, explain means, sample standard deviations, item-level
+  response counts, point differences, and the two-sided normal approximation.
+  Explain that the approximation uses rounded displayed statistics and is not
+  a paired test, including in the matched repeat-respondent view. Retain
+  minimum-N suppression.
 - For Correlation, document Pearson `r`, the strength bands, the optional
   significance markers at `p < .05`, deterministic average-linkage
   hierarchical clustering over positive-correlation distance (`1 - r`), the
   silhouette-based recommendation search from 3 through 15 clusters capped
-  below the item count, and the exploratory nature of clusters.
+  below the item count, and the exploratory nature of clusters. Disclose that
+  significance uses total population response N rather than complete-pair N.
 - For Factors, document the reuse of the company factor count, varimax
   re-estimation for each eligible cut, the minimum complete-response rule
   (greater of 100 or 5 per item), communality/loadings on the 0-1 display
-  scale, MR1-based question sorting, and the cautions about factor labels and
+  scale, factor variance explained, MR1-based question sorting, and the cautions about factor labels and
   cross-cut factor-number matching.
 - For Attrition analysis, document the unfavorable-to-favorable attrition-rate
-  multiplier, the standard 90/180/365-day windows and 180-day default when
-  present, the 1.00x reference line, minimum-category suppression, the
+  multiplier, the standard 90/180/365-day windows and data-aware default
+  preference (180, then 365, then another populated window), the 1.00x
+  reference line, minimum-category suppression, the
   two-sided Fisher exact test at `p < .05`, and the non-causal, non-predictive
   framing.
 - For Attrition alerts, document ranking by the median privacy-eligible
   attrition multiplier across groups per attribute and window, retention of the
   top five items per attribute, the company view's lowest-scoring group logic,
   the filtered view's selected-group logic, and the same non-causal framing.
-- Present each subsection as a numbered card with a small-caps label above
-  each of the three parts (not inline bold text run into the paragraph), and
-  render **Example interpretation** and **Example action** as distinct tinted
-  callouts so they are visually separable from **Method**. Render inline
+  Clarify that the median is unweighted, the displayed group is chosen by its
+  item score rather than the highest multiplier, and ranking does not require
+  statistical significance.
+- Present each subsection as an unnumbered card. Render
+  **Example interpretation** and **Example action** as distinct tinted callouts
+  with small-caps labels above the text, visually separate from the unlabeled
+  method explanation. Render inline
   formulas and code-like expressions with `<code>` styling rather than raw
   backticks. Precede the subsections with a compact jump-to-section nav, kept
   in sync with whichever subsections are present in that report instance.
