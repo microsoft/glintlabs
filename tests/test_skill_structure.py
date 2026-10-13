@@ -608,7 +608,32 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     assert "marker = 1.00x" in report
     assert "Statistically significant" in report
     assert "Fisher exact test" in report
-    assert "Compare later exit rates for respondents" in report
+    assert "This analysis compares later recorded exit rates" in report
+    assert "Start with 180 days, the report's default" in report
+    assert "not three independent confirmations" in report
+    assert "not individual employment decisions" in report
+    canonical_intro = re.search(
+        r"<section class=panel id=attrition\b.*?(<p class=tab-intro>.*?</p>)",
+        golden,
+        re.DOTALL,
+    )
+    rendered_intro = re.search(
+        r"<section class=panel id=attrition\b.*?(<p class=tab-intro>.*?</p>)",
+        report,
+        re.DOTALL,
+    )
+    assert canonical_intro is not None and rendered_intro is not None
+    assert rendered_intro.group(1) == canonical_intro.group(1)
+    assert rendered_intro.group(1).count("<br>") == 3
+    assert "<br><br>" not in rendered_intro.group(1)
+    higher_minimum_report = module.inject_attrition_report(
+        module.prepare_report_shell(golden, True),
+        {**payload, "minimumCategoryN": 10},
+        alerts_payload,
+        "2025-12-15",
+    )
+    assert "fewer than 10 favorable or unfavorable respondents" in higher_minimum_report
+    assert "fewer than five favorable or unfavorable respondents" not in higher_minimum_report
     assert "Start with the largest score gaps" in report
     assert "<th>Favorable n</th>" not in report
     assert "<th>Favorable attrition</th>" not in report
@@ -1003,10 +1028,23 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     for guidance in (
         "Differences with a high p-value or a small n are unconfirmed",
         "not a labeled construct",
-        "using only one item reintroduces that item's own noise",
+        "shortening the survey requires separate checks of content coverage, reliability, and stability",
+        "Correlation shows how pairs of items move together",
+        "without showing whether the underlying loading is positive or negative",
+        "compare their item patterns rather than matching factor numbers",
         "Any number cited without its matching file is unverified",
     ):
         assert guidance in report_text
+    factor_intro = re.search(
+        r"<section class=panel id=factors\b.*?<p class=tab-intro>(.*?)</p>",
+        report_text,
+        re.DOTALL,
+    )
+    assert factor_intro is not None
+    assert factor_intro.group(1).count("<br>") == 4
+    assert "<br><br>" not in factor_intro.group(1)
+    assert "stable, pre-built" not in factor_intro.group(1)
+    assert "near-pure indicator" not in factor_intro.group(1)
     for removed in (
         "id=themeCycle",
         "id=themeQuestion",

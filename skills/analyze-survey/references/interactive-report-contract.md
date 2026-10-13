@@ -10,11 +10,16 @@ golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`5ec86ba84dccacd38f1a843956ed35b7246b573a7cbea9854db657fd3de6d691`.
+`cde9f23f9d02ebf64d6686572ba8421f7a5aff4ac29e1a7cee767e635f96e552`.
 Generated reports in `required` mode must match its static HTML shell exactly.
 The intended substitution is the JSON value assigned to `const D`. In `off`
 mode, the seven empty AI summary containers are also removed from the generated
 report.
+
+The live Attrition analysis section reuses its introduction from the golden
+template instead of maintaining separate runtime wording. Its suppression
+threshold text follows the configured minimum category size. Preserve single
+line breaks between the introduction's passages.
 
 ## AI-generated People Science summary modes
 
