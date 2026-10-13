@@ -33,6 +33,18 @@
         }
       }
     },
+    "export_profile": {
+      "type": "object",
+      "required": ["score_min", "score_max", "score_units", "response_distribution_labels", "non_score_metrics"],
+      "properties": {
+        "score_min": { "const": 0 },
+        "score_max": { "const": 100 },
+        "score_units": { "const": "points" },
+        "response_distribution_labels": { "const": "0-100" },
+        "non_score_metrics": { "const": "native" }
+      },
+      "additionalProperties": false
+    },
     "analyses": {
       "type": "array",
       "items": {

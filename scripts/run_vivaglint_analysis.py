@@ -95,9 +95,36 @@ def load_config(path: Path) -> dict[str, Any]:
     return config
 
 
-def write_csv(output_dir: Path, name: str, frame: pd.DataFrame) -> str:
+def score_export_frame(name: str, frame: pd.DataFrame, scale_points: int) -> pd.DataFrame:
+    if name not in {"descriptives", "by_attribute", "cycle_comparisons", "response_distribution"}:
+        return frame
+
+    frame = frame.copy()
+    factor = 100 / (scale_points - 1)
+    if name == "response_distribution":
+        columns = {}
+        for column in frame.columns:
+            if column.startswith(("count_", "pct_")):
+                prefix, rating = column.split("_", 1)
+                score = (float(rating) - 1) * factor
+                label = f"{score:.6f}".rstrip("0").rstrip(".")
+                columns[column] = f"{prefix}_{label}"
+        return frame.rename(columns=columns)
+
+    frame["mean"] = (frame["mean"] - 1) * factor
+    frame["sd"] = frame["sd"] * factor
+    if name == "cycle_comparisons":
+        frame["change_from_previous"] = frame["change_from_previous"] * factor
+        previous = frame.groupby("question")["mean"].shift(1)
+        frame["pct_change_from_previous"] = (
+            frame["change_from_previous"] / previous.replace(0, math.nan) * 100
+        )
+    return frame
+
+
+def write_csv(output_dir: Path, name: str, frame: pd.DataFrame, scale_points: int) -> str:
     artifact = f"{name}.csv"
-    frame.to_csv(output_dir / artifact, index=False)
+    score_export_frame(name, frame, scale_points).to_csv(output_dir / artifact, index=False)
     return artifact
 
 
@@ -558,7 +585,7 @@ def main() -> int:
         start_step("descriptives")
         def descriptives() -> str:
             frame = summarize_survey(survey, scale_points=scale_points)
-            return write_csv(output_dir, "descriptives", frame)
+            return write_csv(output_dir, "descriptives", frame, scale_points)
         result = run_step("descriptives", descriptives)
         analyses.append(result)
         if result.artifact:
@@ -569,7 +596,7 @@ def main() -> int:
         start_step("response_distribution")
         def response_distribution() -> str:
             frame = get_response_dist(survey)
-            return write_csv(output_dir, "response_distribution", frame)
+            return write_csv(output_dir, "response_distribution", frame, scale_points)
         result = run_step("response_distribution", response_distribution)
         analyses.append(result)
         if result.artifact:
@@ -580,7 +607,7 @@ def main() -> int:
         start_step("correlations")
         def correlations() -> str:
             frame = get_correlations(survey, method="pearson", format="long")
-            return write_csv(output_dir, "correlations", frame)
+            return write_csv(output_dir, "correlations", frame, scale_points)
         result = run_step("correlations", correlations)
         analyses.append(result)
         if result.artifact:
@@ -596,7 +623,7 @@ def main() -> int:
                 min_loading=0,
             )
             frame = result["factor_summary"]
-            return write_csv(output_dir, "factor_analysis_summary", frame)
+            return write_csv(output_dir, "factor_analysis_summary", frame, scale_points)
         result = run_step("factor_analysis", factor_analysis)
         analyses.append(result)
         if result.artifact:
@@ -617,7 +644,7 @@ def main() -> int:
                 ]
                 cycle_names = [item["name"] for item in cycle_csvs]
                 frame = compare_cycles(*cycle_surveys, scale_points=scale_points, cycle_names=cycle_names)
-                return write_csv(output_dir, "cycle_comparisons", frame)
+                return write_csv(output_dir, "cycle_comparisons", frame, scale_points)
             result = run_step("cycle_comparisons", cycle_comparisons)
             analyses.append(result)
             if result.artifact:
@@ -658,7 +685,7 @@ def main() -> int:
                         attribute_frame.insert(0, "attribute_name", attribute_col)
                         frames.append(attribute_frame)
                     frame = pd.concat(frames, ignore_index=True, sort=False)
-                    return write_csv(output_dir, "by_attribute", frame)
+                    return write_csv(output_dir, "by_attribute", frame, scale_points)
 
                 frame = analyze_by_attributes(
                     survey,
@@ -668,7 +695,7 @@ def main() -> int:
                     emp_id_col=emp_id_col,
                     min_group_size=min_group_size,
                 )
-                return write_csv(output_dir, "by_attribute", frame)
+                return write_csv(output_dir, "by_attribute", frame, scale_points)
             result = run_step("by_attribute", by_attribute)
             analyses.append(result)
             if result.artifact:
@@ -695,7 +722,7 @@ def main() -> int:
                     emp_id_col,
                     min_group_size,
                 )
-                return write_csv(output_dir, "attrition", frame)
+                return write_csv(output_dir, "attrition", frame, scale_points)
             result = run_step("attrition", attrition)
             analyses.append(result)
             if result.artifact:
@@ -747,7 +774,7 @@ def main() -> int:
                     frames.append(segmented)
 
                 frame = pd.concat(frames, ignore_index=True, sort=False)
-                return write_csv(output_dir, "attrition", frame)
+                return write_csv(output_dir, "attrition", frame, scale_points)
             result = run_step("attrition", attrition)
             analyses.append(result)
             if result.artifact:
@@ -788,6 +815,13 @@ def main() -> int:
                 "survey_sheet": config.get("source_survey_sheet"),
                 "attribute_sheet": config.get("source_attribute_sheet"),
             },
+        },
+        "export_profile": {
+            "score_min": 0,
+            "score_max": 100,
+            "score_units": "points",
+            "response_distribution_labels": "0-100",
+            "non_score_metrics": "native",
         },
         "analyses": [item.to_manifest() for item in analyses],
         "artifacts": artifacts,

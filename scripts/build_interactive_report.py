@@ -1014,6 +1014,15 @@ def html_page(data: dict[str, Any]) -> str:
     return template[:payload_start] + encoded + template[payload_end:]
 
 
+def default_attrition_days(
+    days: list[int], populated_days: set[int]
+) -> int | None:
+    return next(
+        (day for day in [180, 365, *days] if day in populated_days),
+        days[0] if days else None,
+    )
+
+
 def attrition_payload(
     path: Path,
     questions: list[str],
@@ -1124,6 +1133,15 @@ def attrition_payload(
         "attributes": attributes,
         "values": attribute_values,
         "days": days,
+        "defaultDays": default_attrition_days(
+            days,
+            {
+                days[row[3]]
+                for row in rows
+                if row[0] == -1 and row[1] == -1
+                and row[9] == 0 and row[8] is not None
+            },
+        ),
         "rows": rows,
         "minimumCategoryN": minimum_category_n,
     }
@@ -1209,13 +1227,8 @@ def attrition_alert_payload(
                     "rows": rows,
                 }
         by_day[str(days_value)] = attributes
-    default_days = next(
-        (
-            candidate
-            for candidate in ([180] + days)
-            if candidate in days and by_day.get(str(candidate))
-        ),
-        180 if 180 in days else (days[0] if days else None),
+    default_days = default_attrition_days(
+        days, {day for day in days if by_day.get(str(day))}
     )
     return {
         "questions": questions,
@@ -1369,7 +1382,7 @@ def inject_attrition_report(
         + "".join(
             (
                 f'<option value={index}'
-                + (" selected" if days == 180 else "")
+                + (" selected" if days == payload["defaultDays"] else "")
                 + f'>{days} days'
                 + (" (6 months)" if days == 180 else "")
                 + "</option>"
@@ -1381,9 +1394,18 @@ def inject_attrition_report(
         + '<div class=ai-summary data-summary=attrition></div>'
         '<div class=notice id=attritionStatus></div>'
         '<p class=muted id=attritionFilterNote></p>'
+        '<div class=visual-wrap id=attritionVisual><div class=visual-toolbar>'
+        '<button type=button class="visual-btn attrition-export-btn" '
+        'id=exportAttritionTable aria-label="Export Attrition analysis data as CSV" '
+        'title="Export data as CSV"></button>'
+        '<button type=button class="visual-btn attrition-export-btn" '
+        'id=copyAttritionTable aria-label="Copy Attrition analysis as image" '
+        'title="Copy image to clipboard"></button></div>'
         '<div class=scroll><table class=attrition-table><thead><tr>'
         '<th>Rank</th><th>Item text</th><th>Attrition multiplier</th></tr></thead>'
-        '<tbody id=attritionTableBody></tbody></table></div>'
+        '<tbody id=attritionTableBody></tbody></table></div></div>'
+        '<div class=muted id=attritionExportStatus role=status '
+        'aria-live=polite></div>'
         '<p class="muted attrition-method">Multiplier = unfavorable attrition rate '
         '÷ favorable attrition rate. The table responds to the shared report filter. '
         f'Cells with fewer than {payload["minimumCategoryN"]} favorable or unfavorable '
@@ -1407,7 +1429,7 @@ def inject_attrition_report(
             for days in alerts_payload["days"]
         )
         + '</select></label></div><p class=tab-intro>Find privacy-eligible groups '
-        'that score lower on the items most associated with later exits. Start '
+        'that score lower on the items most associated with later exits.<br><br>Start '
         'with the largest score gaps, confirm the local context, and use the result '
         'to plan a focused listening conversation—not to rank managers or predict '
         'departures.</p>'
@@ -1429,6 +1451,7 @@ def inject_attrition_report(
 /* attrition-live-table */
 .attrition-heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:16px}
 .attrition-heading p{margin:4px 0 0}.attrition-heading label{min-width:210px}
+.attrition-export-btn:disabled{opacity:.5;cursor:not-allowed}
 .attrition-table{min-width:760px;font-size:12px}.attrition-table th,.attrition-table td{padding:12px}
 .attrition-table th:last-child{width:48%}.attrition-rank{color:var(--muted);font-weight:600}
 .attrition-question{font-size:14px;font-weight:600}.attrition-question-id{font-size:11px}
@@ -1475,12 +1498,86 @@ function attritionFilterKey(){
   const valueIndex=attrIndex<0?-1:ATTRITION_DATA.values[attrIndex].indexOf(val.value);
   return`${attrIndex}|${valueIndex}|${day}`;
 }
+function attritionExportRows(){
+  const body=document.querySelector("#attritionTableBody");
+  const rows=Array.from(body.rows).filter(row=>row.querySelector(".attrition-question"));
+  if(!rows.length)return[];
+  const dayIndex=Number(document.querySelector("#attritionDays").value);
+  const days=ATTRITION_DATA.days[dayIndex];
+  const scope=attr.value?`${D.segments[attr.value].label}: ${val.value}`:"Company overall";
+  return[
+    ["Population","Outcome window (days)","Rank","Item text","Item ID","Attrition multiplier","Significance"],
+    ...rows.map(row=>[
+      scope,days,row.querySelector(".attrition-rank").textContent.trim(),
+      row.querySelector(".attrition-question").textContent.trim(),
+      row.querySelector(".attrition-question-id").textContent.trim(),
+      row.querySelector(".attrition-multiplier, .attrition-suppressed").textContent.trim(),
+      row.querySelector(".attrition-significant, .attrition-not-significant")?.textContent.trim()||""
+    ])
+  ].map(row=>row.map(value=>{
+    const text=String(value??"").replace(/[\\t\\r\\n]+/g," ");
+    return /^[=+\\-@]/.test(text.trimStart())?"'"+text:text;
+  }));
+}
+async function copyAttritionTable(){
+  const status=document.querySelector("#attritionExportStatus");
+  status.textContent="";
+  if(!document.querySelector("#attritionTableBody .attrition-question")){
+    status.textContent="No data to copy.";return;
+  }
+  let capture;
+  try{
+    const visual=document.querySelector("#attritionVisual");
+    const toolbar=visual.querySelector(".visual-toolbar");
+    capture=visual.cloneNode(true);
+    capture.prepend(document.querySelector("#attritionFilterNote").cloneNode(true));
+    capture.removeAttribute("id");
+    capture.querySelectorAll("[id]").forEach(node=>node.removeAttribute("id"));
+    capture.querySelectorAll(".visual-toolbar,.visual-toast").forEach(node=>node.remove());
+    Object.assign(capture.style,{
+      position:"fixed",left:"-100000px",top:"0",
+      width:`${Math.max(visual.getBoundingClientRect().width,visual.querySelector(".scroll").scrollWidth+2)}px`
+    });
+    capture.setAttribute("aria-hidden","true");
+    const scroll=capture.querySelector(".scroll");
+    scroll.style.maxHeight="none";
+    scroll.style.overflow="visible";
+    capture.querySelectorAll("th").forEach(cell=>cell.style.position="static");
+    document.body.appendChild(capture);
+    await copyVisualImage(capture,toolbar);
+  }catch(error){
+    console.error("copyAttritionTable failed",error);
+    status.textContent="Image copy failed. Try again.";
+  }finally{
+    capture?.remove();
+  }
+}
+function exportAttritionTable(){
+  const status=document.querySelector("#attritionExportStatus");
+  const rows=attritionExportRows();
+  if(!rows.length){status.textContent="No data to export.";return}
+  const days=ATTRITION_DATA.days[Number(document.querySelector("#attritionDays").value)];
+  try{
+    downloadCsv(`attrition-analysis-${days}days.csv`,rows);
+    status.textContent="CSV exported.";
+  }catch(error){
+    console.error("exportAttritionTable failed",error);
+    status.textContent="CSV export failed. Try again.";
+  }
+}
+document.querySelector("#copyAttritionTable").innerHTML=IMAGE_ICON;
+document.querySelector("#exportAttritionTable").innerHTML=CSV_ICON;
+document.querySelector("#copyAttritionTable").addEventListener("click",copyAttritionTable);
+document.querySelector("#exportAttritionTable").addEventListener("click",exportAttritionTable);
 function renderAttritionTable(){
   const body=document.querySelector("#attritionTableBody");
   const note=document.querySelector("#attritionFilterNote");
   const dayIndex=Number(document.querySelector("#attritionDays").value);
   const days=ATTRITION_DATA.days[dayIndex];
   const rows=[...(attritionIndex.get(attritionFilterKey())||[])];
+  document.querySelector("#attritionExportStatus").textContent="";
+  document.querySelector("#copyAttritionTable").disabled=!rows.length;
+  document.querySelector("#exportAttritionTable").disabled=!rows.length;
   const scope=attr.value?`${D.segments[attr.value].label}: ${val.value}`:"Company overall";
   note.textContent=`${scope} · all ${ATTRITION_DATA.questions.length} items · ${days}-day outcome window`;
   if(!rows.length){
@@ -1493,6 +1590,7 @@ function renderAttritionTable(){
     return ATTRITION_DATA.labels[a[2]].localeCompare(ATTRITION_DATA.labels[b[2]]);
   });
   const visible=rows.filter(row=>row[9]!==1&&row[8]!==null);
+  if(!visible.length)note.textContent+=" · No usable multipliers are available for this selection.";
   const scaleMax=Math.max(2,...visible.map(row=>row[8]));
   const significantCount=visible.filter(row=>row[11]===1).length;
   note.textContent+=` · bars use a 0–${scaleMax.toFixed(1)}x scale; marker = 1.00x · ${significantCount} statistically significant`;
@@ -1989,7 +2087,7 @@ def main() -> int:
         )
         manifest["attrition_report"] = {
             "format": "live_multiplier_table",
-            "default_window_days": 180,
+            "default_window_days": attrition_data["defaultDays"],
             "available_windows_days": attrition_data["days"],
             "items": len(attrition_data["questions"]),
             "uses_shared_report_filter": True,

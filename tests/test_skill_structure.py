@@ -3,11 +3,14 @@ import hashlib
 import importlib.util
 import json
 import re
+import shutil
 import subprocess
 import sys
 import zipfile
 from io import StringIO
 from pathlib import Path
+
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -159,7 +162,8 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "lowest-scoring privacy-eligible group" in report_contract
     assert "favorable or unfavorable category N" in report_contract
     assert "Always include a final **Methodology** tab after Downloads." in report_contract
-    assert "**Method**, **Example interpretation**, and **Example action**" in report_contract
+    assert "Begin each subsection with an unlabeled explanation" in report_contract
+    assert "**Example interpretation** and **Example action** callouts" in report_contract
     assert "deterministic keyword coding" in report_contract
     assert "Raw comments must never enter HTML" in report_contract
     assert "`off`: render no AI summary cards" in report_contract
@@ -222,6 +226,108 @@ def test_analyze_survey_points_to_linked_dataset():
     )
     assert all(source["url"].startswith("https://") for source in source_index["sources"])
     assert (ROOT / "scripts/progress.py").exists()
+
+
+def test_downloads_intro_explains_export_units_and_share_contents():
+    golden = (ROOT / "skills/analyze-survey/references/golden-report.html").read_text(
+        encoding="utf-8"
+    )
+    intro = re.search(
+        r"<section class=panel id=downloads\b.*?<p class=tab-intro>(.*?)</p>",
+        golden,
+        re.DOTALL,
+    ).group(1)
+    assert "Survey means, standard deviations, and score changes" in intro
+    assert "0-100 score points" in intro
+    assert "Response-distribution labels use the equivalent 0-100 values" in intro
+    assert "attrition multipliers keep their own units" in intro
+    assert "without individual responses or raw comments" in intro
+    assert intro.count("<br><br>") == 2
+    assert "<br><br><br>" not in intro
+    assert "Any number cited without its matching file is unverified" not in intro
+
+
+def test_all_analysis_introductions_match_correlation_paragraph_spacing():
+    golden = (ROOT / "skills/analyze-survey/references/golden-report.html").read_text(
+        encoding="utf-8"
+    )
+    intros = dict(re.findall(
+        r"<section class=panel id=([^ >]+)[^>]*>.*?<p class=tab-intro>(.*?)</p>",
+        golden,
+        re.DOTALL,
+    ))
+    for tab in ("relationships", "factors", "alerts", "attrition", "changes", "downloads"):
+        assert "<br><br>" in intros[tab], tab
+        assert "<br><br><br>" not in intros[tab], tab
+        assert re.search(r"(?<!<br>)<br>(?!<br>)", intros[tab]) is None, tab
+
+
+@pytest.mark.parametrize("has_attrition", [False, True])
+def test_methodology_layout_follows_report_order_without_numbered_headings(has_attrition):
+    script = ROOT / "scripts/build_interactive_report.py"
+    spec = importlib.util.spec_from_file_location("survey_methodology_layout", script)
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    golden = (ROOT / "skills/analyze-survey/references/golden-report.html").read_text(
+        encoding="utf-8"
+    )
+    report = module.prepare_report_shell(golden, has_attrition)
+    expected = ["correlation", "factors"]
+    if has_attrition:
+        expected.extend(["attrition-analysis", "attrition-alerts"])
+    expected.append("scores-change")
+    assert re.findall(r'data-methodology-section="([^"]+)"', report) == expected
+    nav = re.search(r'<nav class="methodology-jump"[^>]*>(.*?)</nav>', report).group(1)
+    assert re.findall(r'href="#methodology-([^"]+)"', nav) == expected
+    assert "methodology-index" not in report
+    labels = re.findall(r"<span class=methodology-label>(.*?)</span>", report)
+    assert labels == ["Example interpretation", "Example action"] * len(expected)
+    section_size = int(re.search(r"\.methodology-card h3\{[^}]*font-size:(\d+)px", report).group(1))
+    title_size = int(re.search(r"section\.panel>h2[^{}]*\{[^}]*font-size:(\d+)px", report).group(1))
+    assert 20 < section_size < title_size
+
+
+def test_methodology_explains_statistics_instead_of_report_building():
+    golden = (
+        ROOT / "skills/analyze-survey/references/golden-report.html"
+    ).read_text(encoding="utf-8")
+    required = {
+        "correlation": [
+            "Pearson correlation", "degrees of freedom", "complete pairs",
+            "silhouette score", "causation",
+        ],
+        "factors": [
+            "Exploratory factor analysis", "Varimax rotation",
+            "total standardized item variance", "communality",
+            "measurement invariance",
+        ],
+        "attrition-analysis": [
+            "recorded exit rate", "Neutral and missing answers",
+            "cumulative windows overlap", "Fisher exact test",
+        ],
+        "attrition-alerts": [
+            "median attrition multiplier", "equal weight", "pooled exit rates",
+            "group score - company score", "does not require statistical significance",
+        ],
+        "scores-change": [
+            "sample standard deviation", "two-sided normal approximation",
+            "displayed rounded means", "not a paired test",
+        ],
+    }
+    for section, phrases in required.items():
+        explanation = re.search(
+            rf'data-methodology-section="{section}".*?</h3></div><p>(.*?)</p>',
+            golden, re.DOTALL,
+        ).group(1)
+        assert all(phrase in explanation for phrase in phrases), section
+        assert explanation.count("<br><br>") == 2
+        for implementation_term in (
+            "builder", "client-side", "extract_survey_factors",
+            "saved aggregate cut", "artifact",
+        ):
+            assert implementation_term not in explanation, section
 
 
 def test_progress_reporter_shows_bar_percentage_phase_and_elapsed_time():
@@ -542,6 +648,114 @@ def test_embedded_exit_attrition_uses_registered_cycles_and_windows(tmp_path):
     assert overall["attrition_ratio"].iloc[1:].tolist() == [0.0, 0.0]
 
 
+@pytest.mark.parametrize(
+    "ratios,suppressed_days,expected",
+    [
+        ({90: 3.0, 180: 2.0, 365: 4.0}, set(), 180),
+        ({90: 3.0, 180: float("nan"), 365: 4.0}, set(), 365),
+        ({90: 3.0, 180: 2.0, 365: 4.0}, {180}, 365),
+        ({90: 3.0, 180: float("inf"), 365: 4.0}, set(), 365),
+        ({180: 0.0, 365: 4.0}, set(), 180),
+        ({90: 3.0, 365: 4.0}, set(), 365),
+        ({90: 3.0, 180: float("nan"), 365: float("nan")}, set(), 90),
+        ({90: float("nan"), 180: float("nan"), 365: float("nan")}, set(), 90),
+    ],
+)
+def test_attrition_defaults_prefer_populated_windows(
+    tmp_path, ratios, suppressed_days, expected
+):
+    spec = importlib.util.spec_from_file_location(
+        "build_interactive_report_defaults",
+        ROOT / "scripts/build_interactive_report.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+    path = tmp_path / "attrition.csv"
+    module.pd.DataFrame(
+        [
+            {
+                "analysis_scope": scope,
+                "attribute_name": "department" if scope == "attribute" else "",
+                "attribute_value": "Engineering" if scope == "attribute" else "",
+                "question": "Q_ONE",
+                "days": day,
+                "favorable_n": 1 if day in suppressed_days else 100,
+                "unfavorable_n": 100,
+                "favorable_attrition": 0.1,
+                "unfavorable_attrition": 0.3,
+                "attrition_ratio": ratio,
+            }
+            for scope in ("overall", "attribute")
+            for day, ratio in ratios.items()
+        ]
+    ).to_csv(path, index=False)
+    overall = [[75, 0, 0, 0, 200]]
+    segments = {
+        "department": {
+            "label": "Department",
+            "values": {"Engineering": {"items": [[65, 0, 0, 0, 200]]}},
+        }
+    }
+    payload = module.attrition_payload(path, ["Q_ONE"], segments, 5)
+    alerts = module.attrition_alert_payload(
+        path, ["Q_ONE"], segments, overall, 5
+    )
+    assert payload["defaultDays"] == expected
+    assert alerts["defaultDays"] == expected
+    golden = (
+        ROOT / "skills/analyze-survey/references/golden-report.html"
+    ).read_text(encoding="utf-8")
+    report = module.inject_attrition_report(
+        module.prepare_report_shell(golden, True), payload, alerts, None
+    )
+    selected_index = payload["days"].index(expected)
+    assert f"<option value={selected_index} selected>{expected} days" in report
+    assert f"<option value={expected} selected>{expected} days" in report
+    if all(module.pd.isna(ratio) for ratio in ratios.values()):
+        assert all(row[8] is None for row in payload["rows"])
+        assert not any(alerts["byDay"].values())
+        assert "No usable multipliers are available for this selection." in report
+
+
+def test_attrition_default_uses_initial_company_view(tmp_path):
+    spec = importlib.util.spec_from_file_location(
+        "build_interactive_report_company_default",
+        ROOT / "scripts/build_interactive_report.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+    path = tmp_path / "attrition.csv"
+    module.pd.DataFrame(
+        [
+            {
+                "analysis_scope": scope,
+                "attribute_name": "department" if scope == "attribute" else "",
+                "attribute_value": "Engineering" if scope == "attribute" else "",
+                "question": "Q_ONE",
+                "days": day,
+                "favorable_n": 100,
+                "unfavorable_n": 100,
+                "favorable_attrition": 0.1,
+                "unfavorable_attrition": 0.3,
+                "attrition_ratio": ratio,
+            }
+            for scope, day, ratio in (
+                ("overall", 180, float("nan")),
+                ("overall", 365, 3.0),
+                ("attribute", 180, 3.0),
+            )
+        ]
+    ).to_csv(path, index=False)
+    segments = {
+        "department": {"values": {"Engineering": {}}}
+    }
+    payload = module.attrition_payload(path, ["Q_ONE"], segments, 5)
+    assert payload["defaultDays"] == 365
+    assert module.default_attrition_days([], set()) is None
+
+
 def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     script_path = ROOT / "scripts/build_interactive_report.py"
     spec = importlib.util.spec_from_file_location(
@@ -594,6 +808,19 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     assert payload["rows"][0][10] < 0.05
     assert payload["rows"][0][11] == 1
     assert "id=attritionTableBody" in report
+    assert 'id=copyAttritionTable aria-label="Copy Attrition analysis as image"' in report
+    assert 'id=exportAttritionTable aria-label="Export Attrition analysis data as CSV"' in report
+    assert 'title="Copy image to clipboard"' in report
+    assert '<div class=visual-wrap id=attritionVisual><div class=visual-toolbar>' in report
+    assert 'document.querySelector("#copyAttritionTable").innerHTML=IMAGE_ICON;' in report
+    assert 'document.querySelector("#exportAttritionTable").innerHTML=CSV_ICON;' in report
+    assert report.index('id=exportAttritionTable') < report.index('id=copyAttritionTable')
+    assert "id=attritionExportStatus role=status" in report
+    assert "function attritionExportRows()" in report
+    assert "await copyVisualImage(capture,toolbar)" in report
+    assert 'scroll.style.maxHeight="none"' in report
+    assert "capture?.remove()" in report
+    assert "downloadCsv(`attrition-analysis-${days}days.csv`,rows)" in report
     assert "id=alertsList" in report
     assert ">Attrition alerts</button>" in report
     assert ">Methodology</button>" in report
@@ -609,7 +836,13 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     assert "Statistically significant" in report
     assert "Fisher exact test" in report
     assert "This analysis compares later recorded exit rates" in report
-    assert "Start with 180 days, the report's default" in report
+    assert (
+        "For example, a 3.2x multiplier on eSat means employees who answered "
+        "unfavorably were 3.2 times as likely to leave within 180 days of survey "
+        "completion as those who answered favorably."
+    ) in report
+    assert "Start with 180 days when results are available" in report
+    assert "defaults to 365 days if that window has no usable results" in report
     assert "not three independent confirmations" in report
     assert "not individual employment decisions" in report
     canonical_intro = re.search(
@@ -624,8 +857,14 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     )
     assert canonical_intro is not None and rendered_intro is not None
     assert rendered_intro.group(1) == canonical_intro.group(1)
-    assert rendered_intro.group(1).count("<br>") == 3
-    assert "<br><br>" not in rendered_intro.group(1)
+    assert rendered_intro.group(1).count("<br><br>") == 3
+    assert "<br><br><br>" not in rendered_intro.group(1)
+    alerts_intro = re.search(
+        r"<section class=panel id=alerts\b.*?<p class=tab-intro>(.*?)</p>",
+        report,
+        re.DOTALL,
+    ).group(1)
+    assert "later exits.<br><br>Start" in alerts_intro
     higher_minimum_report = module.inject_attrition_report(
         module.prepare_report_shell(golden, True),
         {**payload, "minimumCategoryN": 10},
@@ -641,6 +880,147 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     assert "<th>Unfavorable attrition</th>" not in report
     assert "fewer than 5 favorable or unfavorable respondents" in report
     assert "2025-12-15" in report
+
+
+def test_attrition_table_exports_preserve_filters_and_suppression():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is required to exercise the report export helpers.")
+    script_path = ROOT / "scripts/build_interactive_report.py"
+    spec = importlib.util.spec_from_file_location(
+        "build_interactive_report_exports", script_path
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+    golden = (
+        ROOT / "skills/analyze-survey/references/golden-report.html"
+    ).read_text(encoding="utf-8")
+    report = module.inject_attrition_report(
+        module.prepare_report_shell(golden, True),
+        {"days": [90, 180, 365], "defaultDays": 180, "minimumCategoryN": 5},
+        {"days": [90, 180, 365], "defaultDays": 180},
+        None,
+    )
+    helpers = []
+    for name in ("attritionExportRows", "copyAttritionTable", "exportAttritionTable"):
+        match = re.search(
+            rf"(?:async )?function {name}\(\)\{{.*?^\}}",
+            report,
+            re.DOTALL | re.MULTILINE,
+        )
+        assert match is not None
+        if name == "copyAttritionTable":
+            assert "writeText" not in match.group(0)
+            assert "copyVisualImage(capture,toolbar)" in match.group(0)
+        helpers.append(match.group(0))
+    checks = r"""
+const assert=require("node:assert/strict");
+const ATTRITION_DATA={days:[90,180,365]};
+const D={segments:{department:{label:"Department"}}};
+const attr={value:"department"},val={value:"Sales"};
+const windowSelect={value:"1"},status={textContent:""};
+function row(rank,label,item,multiplier,significance){
+  const fields={
+    ".attrition-rank":rank,
+    ".attrition-question":label,
+    ".attrition-question-id":item,
+    ".attrition-multiplier, .attrition-suppressed":multiplier,
+    ".attrition-significant, .attrition-not-significant":significance
+  };
+  return{querySelector(selector){
+    return fields[selector]?{textContent:fields[selector]}:null;
+  }};
+}
+const body={rows:[
+  row("1",'=HYPERLINK("example")',"Q_ONE","3.20x","Statistically significant"),
+  row("2",'Career,\t"growth"\n',"Q_TWO","Suppressed","")
+]};
+const toolbar={},captureScroll={style:{}};
+const capture={
+  style:{},removeAttribute(){},setAttribute(){},
+  querySelectorAll(){return[]},
+  querySelector(selector){assert.equal(selector,".scroll");return captureScroll},
+  prepend(note){assert.equal(note.context,"Department: Sales · 180-day outcome window")},
+  remove(){this.removed=true}
+};
+const visual={
+  querySelector(selector){
+    if(selector===".visual-toolbar")return toolbar;
+    assert.equal(selector,".scroll");return{scrollWidth:1000};
+  },
+  getBoundingClientRect(){return{width:900}},
+  cloneNode(){capture.removed=false;return capture}
+};
+const elements={
+  "#attritionTableBody":body,
+  "#attritionDays":windowSelect,
+  "#attritionExportStatus":status,
+  "#attritionVisual":visual,
+  "#attritionFilterNote":{cloneNode(){return{context:"Department: Sales · 180-day outcome window"}}}
+};
+globalThis.document={body:{appendChild(element){assert.equal(element,capture)}},querySelector(selector){
+  if(selector==="#attritionTableBody .attrition-question"){
+    return body.rows[0]?.querySelector(".attrition-question")||null;
+  }
+  assert.ok(selector in elements);
+  return elements[selector];
+}};
+let copied,downloaded;
+async function copyVisualImage(element,targetToolbar){
+  assert.equal(element,capture);
+  assert.equal(targetToolbar,toolbar);
+  assert.equal(capture.style.width,"1002px");
+  assert.equal(capture.style.position,"fixed");
+  assert.equal(captureScroll.style.maxHeight,"none");
+  assert.equal(captureScroll.style.overflow,"visible");
+  copied=element;
+}
+function downloadCsv(filename,rows){downloaded={filename,rows}}
+const errors=[];
+console.error=(...args)=>errors.push(args);
+(async()=>{
+  const rows=attritionExportRows();
+  assert.deepEqual(rows,[
+    ["Population","Outcome window (days)","Rank","Item text","Item ID","Attrition multiplier","Significance"],
+    ["Department: Sales","180","1",'\'=HYPERLINK("example")',"Q_ONE","3.20x","Statistically significant"],
+    ["Department: Sales","180","2",'Career, "growth"',"Q_TWO","Suppressed",""]
+  ]);
+  await copyAttritionTable();
+  assert.equal(copied,capture);
+  assert.equal(capture.removed,true);
+  assert.equal(status.textContent,"");
+  exportAttritionTable();
+  assert.deepEqual(downloaded,{filename:"attrition-analysis-180days.csv",rows});
+  assert.equal(status.textContent,"CSV exported.");
+  attr.value="";
+  windowSelect.value="0";
+  const overall=attritionExportRows();
+  assert.equal(overall[1][0],"Company overall");
+  assert.equal(overall[1][1],"90");
+  exportAttritionTable();
+  assert.equal(downloaded.filename,"attrition-analysis-90days.csv");
+  copyVisualImage=async()=>{throw new Error("Capture failed")};
+  await copyAttritionTable();
+  assert.equal(status.textContent,"Image copy failed. Try again.");
+  assert.equal(errors[0][0],"copyAttritionTable failed");
+  assert.equal(capture.removed,true);
+  body.rows=[];
+  assert.deepEqual(attritionExportRows(),[]);
+  await copyAttritionTable();
+  assert.equal(status.textContent,"No data to copy.");
+  exportAttritionTable();
+  assert.equal(status.textContent,"No data to export.");
+})().catch(error=>{process.stderr.write(String(error));process.exitCode=1});
+"""
+    subprocess.run(
+        [node, "-e", "\n".join(helpers) + "\n" + checks],
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=30,
+    )
 
 
 def test_direct_export_runner_excludes_identifier_attributes(tmp_path):
@@ -1026,13 +1406,20 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     assert "Comment themes:" in report_text
     assert ".ai-summary{display:none" in report_text
     for guidance in (
-        "Differences with a high p-value or a small n are unconfirmed",
+        "Repeat respondents exclude employees who answered only one cycle",
+        "A higher p-value does not prove that scores stayed the same",
+        "not adjusted for testing multiple items",
+        "not a paired test of each employee's change",
         "not a labeled construct",
         "shortening the survey requires separate checks of content coverage, reliability, and stability",
         "Correlation shows how pairs of items move together",
+        "'x% of item variance' on each card",
+        "total variation across standardized survey-item responses",
+        "40% of that variation in the fitted model",
         "without showing whether the underlying loading is positive or negative",
         "compare their item patterns rather than matching factor numbers",
-        "Any number cited without its matching file is unverified",
+        "Survey means, standard deviations, and score changes are exported in 0-100 score points",
+        "attrition multipliers keep their own units",
     ):
         assert guidance in report_text
     factor_intro = re.search(
@@ -1041,10 +1428,21 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         re.DOTALL,
     )
     assert factor_intro is not None
-    assert factor_intro.group(1).count("<br>") == 4
-    assert "<br><br>" not in factor_intro.group(1)
+    assert factor_intro.group(1).count("<br><br>") == 5
+    assert "<br><br><br>" not in factor_intro.group(1)
     assert "stable, pre-built" not in factor_intro.group(1)
     assert "near-pure indicator" not in factor_intro.group(1)
+    changes_intro = re.search(
+        r"<section class=panel id=changes\b.*?<p class=tab-intro>(.*?)</p>",
+        report_text,
+        re.DOTALL,
+    )
+    assert changes_intro is not None
+    assert changes_intro.group(1).count("<br><br>") == 3
+    assert "<br><br><br>" not in changes_intro.group(1)
+    assert "is a reliable signal" not in changes_intro.group(1)
+    assert "skipping the repeat-respondent check" not in changes_intro.group(1)
+    assert "are unconfirmed" not in changes_intro.group(1)
     for removed in (
         "id=themeCycle",
         "id=themeQuestion",
