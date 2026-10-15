@@ -1,0 +1,176 @@
+--- a/skills/people-science-knowledge-vault/SKILL.md
++++ b/skills/people-science-knowledge-vault/SKILL.md
+@@ -23,9 +23,12 @@
+ - the user wants an evidence-backed summary from externally shareable sources
+ - the user asks for source material that can be shared outside Microsoft
+ 
+-Do not use this skill for raw survey analysis, analysis QA, or interpretation of an
+-`analysis-manifest.json`. If the user wants to create an analysis or deep-dive a
+-topic in their own survey data, use the `analyze-survey` skill instead.
++Use published guidance to help review a questionnaire's purpose, wording, and
++topic coverage, even before response data is available. Ask for the actual items
++before recommending specific removals or additions. Do not use this skill for raw
++survey analysis, analysis QA, or interpretation of an `analysis-manifest.json`.
++Route quantitative analysis of the user's survey data to `analyze-survey` when
++that skill is available; do not imply it has been connected when it has not.
+ 
+ ## Required source priority
+ 
+@@ -72,16 +75,17 @@
+ - Could reasonably be answered several different, mutually exclusive ways
+   depending on unstated context (audience, timeframe, desired outcome).
+ 
+-If so, **do not retrieve-and-answer in one pass.** Act like a researcher and
+-consultant: name the ambiguity you see, propose how you'd disambiguate it,
+-and ask 1-3 concrete clarifying questions, treating the user as a thought
+-partner working toward the answer together. Only proceed straight to
+-retrieval for narrow, well-scoped factual questions (e.g., "What does the
+-Glint benchmark documentation say about sample size thresholds?").
+-
+-Once the question's scope is clear (either because it was narrow to begin
+-with, or after the user has answered your clarifying questions), continue
+-with the steps below.
++If missing context would materially change the answer, explain the uncertainty
++in plain language and ask the focused questions needed to choose a useful path.
++Help the user get started: offer concrete options or a safe first check when
++possible, rather than making them design the whole approach. If they say they do
++not know where to start, help them decide what to look at; do not repeatedly ask
++for the same missing context before offering guidance.
++
++Once the purpose is clear enough to give useful published guidance, retrieve it
++and explain what still depends on missing information. Give practical suggestions
++without assuming a cause or selecting an intervention that requires an unverified
++explanation. Narrow factual questions can proceed directly to retrieval.
+ 
+ ### Steps 1+: retrieve and synthesize
+ 
+@@ -92,8 +96,12 @@
+    `priority_tier` (`top5` > `high` > `medium` > `low`, `curated` treated as
+    `top5`-equivalent).
+ 3. Retrieve the full published article body for each relevant candidate
+-   URL. Catalog/snapshot metadata helps route retrieval but is not a
+-   substitute for article evidence.
++   URL. Confirm that body text was actually returned before citing it or counting
++   it as reviewed. Empty/error pages, titles, and search snippets are discovery
++   results, not reviewed article bodies. Exclude them from claim support and
++   source counts; disclose the gap rather than supplying the article's claims
++   from general knowledge. Catalog/snapshot metadata helps route retrieval but
++   is not a substitute for article evidence.
+ 4. If the snapshot plainly lacks coverage, or the question needs material
+    newer than the snapshot's `retrieved_at` date, run the secondary live
+    checks described in `source-priority.md` (Viva Blog category page,
+@@ -102,12 +110,12 @@
+    one place, treat it at its highest `priority_tier`.
+ 6. Synthesize only claims supported by retrieved article bodies and attach
+    citations directly to those claims.
+-7. Label each finding as **corroborated** (supported by two or more retrieved
+-   articles) or **single-source evidence** (supported by only one). Lead the
+-   summary with the strongest corroborated pattern when one exists; state
+-   plainly when the retrieved evidence does not yet converge. When only one
+-   article supports the entire answer, state that once in the summary line
+-   and do not restate the same claim again under a separate finding heading.
++7. Describe how many retrieved sources support the answer and distinguish
++   research findings from published recommendations and author commentary. Lead
++   with the best-supported pattern and state material disagreement or gaps.
++   Agreement between articles does not by itself establish independent empirical
++   validation. When one source supports the answer, say so plainly once; do not
++   repeat the same finding under another heading.
+ 
+ If pagination, authentication, or connector limits prevent complete source
+ retrieval, state the coverage gap. Never claim the full vault was searched
+@@ -149,65 +157,40 @@
+ 
+ ## Output format
+ 
+-When Step 0 determined the question needs disambiguation first, respond as a
+-thought partner instead of a finished report:
++Use plain, conversational language for an HR partner, analyst, or manager. Match
++the format to the user's need rather than forcing every follow-up into a research
++report. A clarification can be a short explanation, useful starting options, and
++the question needed next; it does not need a "scope" heading.
++
++Once there is enough context, lead with the direct answer. For practical requests,
++give usable steps, choices, or sample wording. Separate what retrieved sources
++say from your suggestions for applying them; published advice is not automatically
++a tested intervention. Keep citations beside the claims they support. When drafting
++scripts or summaries, keep hypothetical situations conditional and use placeholders
++for results that have not been supplied; do not present them as observed team facts.
++
++For a longer evidence summary, a compact format is:
+ 
+ ```markdown
+-## Let's scope this together
+-
+-<Name the ambiguity you see and why it matters for the answer.>
+-
+-1. <Clarifying question 1>
+-2. <Clarifying question 2>
+-3. <Clarifying question 3 (optional)>
+-
+-<Optional: a tentative framing or starting hypothesis to react to.>
++<Direct answer, with the key limitation when it matters.>
++
++<Findings or practical guidance in the format that helps the user.>
++
++**Sources:** [Article title](URL); [Article title](URL)
++
++**Evidence:** <Plain-language note on sources reviewed and material gaps.>
+ ```
+ 
+-Once the question is scoped (narrow to begin with, or clarified by the
+-user), use the full evidence-backed summary format:
+-
+-```markdown
+-## Cross-source summary
+-
+-<If 2+ articles support the answer: two or three declarative sentences
+-stating the strongest corroborated pattern, noting the support count (e.g.
+-"Two of three retrieved articles indicate...") and any material
+-disagreement or coverage gap.
+-If only 1 article is available: a single sentence giving the direct answer
+-and noting this is single-source evidence — do not restate it below.>
+-
+-### <Declarative finding>
+-
+-<Concise synthesis with appropriate context and limitations. Mark as
+-corroborated or single-source evidence per step 7 above.>
+-
+-**Sources:** [Article title](URL); [Article title](URL)
+-
+-### <Declarative finding (omit if only one finding/source total)>
+-
+-<Concise synthesis.>
+-
+-**Sources:** [Article title](URL)
+-
+-**Evidence base:** Reviewed N articles across M priority tiers. <One short
+-sentence on coverage, disagreement, or retrieval limitations when material.>
+-```
+-
+-When in speculative-extrapolation mode, use this collaborative format instead
+-(repeat across turns as the dialogue narrows):
+-
+-```markdown
+-<Optional one-line pivot noting what the user's last answer ruled in/out.>
+-
+-**Potential explanation N — <short label>**
+-<Hedged, speculative explanation. No Sources line. Explicitly flagged as
+-"this is one potential explanation" / not an established finding.>
+-
+-<Repeat for 2-3 hypotheses, or fewer once the dialogue has narrowed things.>
+-
+-<1-3 targeted clarifying questions to narrow the hypotheses further.>
+-```
++Use descriptions such as "This comes from one published guide" or "Two retrieved
++articles describe this pattern." Do not expose catalog priority labels or internal
++routing details unless requested. Keep relevant population, date, product context,
++and retrieval limitations; simplifying the language must not hide uncertainty.
++
++For speculative extrapolation, retain the mode's explicit uncertainty, alternative
++explanations, and questions to narrow them. Do not cite a hypothesis as though it
++were an established finding. Short follow-ups can be concise without repeating a
++full evidence summary, provided their evidence and application boundaries remain
++clear.
+ 
+ ## Guardrails
+ 

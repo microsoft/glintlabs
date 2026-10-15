@@ -1,0 +1,118 @@
+People Science Knowledge Vault - conversational test readout
+October 14, 2026 | GPT | Draft for Teresa and Ben to review
+
+WHAT WAS RUN
+12 original questions and 100 question-and-answer exchanges.
+Questions 1-6 are the human-written inputs in Section 5 of Ben's document.
+Questions 7-12 are the six AI questions with adjacent testing notes in Sections 3A-C.
+This selection is based on annotations, not a separately assigned question list.
+The two worked examples were not added simply to reach an arbitrary count.
+Original question wording was preserved. Each original question started a fresh
+conversation using the unchanged local skill snapshot f8b821ef2449f1b11dc3a90cc1745707e32682a4.
+The first two conversations contain ten exchanges each; the others contain eight.
+Teresa initially approved individual turns, then explicitly authorized automatic
+selection and submission of the suggested follow-ups. The stopped earlier pilot
+is excluded. Follow-up situations are fictional test context, not employee records.
+
+TERESA'S ACTUAL FEEDBACK
+- Language feels academic; give suggestions rather than making the user work out
+  everything needed to get started.
+- Ask from the perspective of an ordinary skill user. Apply I/O expertise when
+  reviewing the replies and proposing edits, rather than making every prompt an
+  expert audit question.
+Other findings below are the assistant's review. They are not Teresa's ratings.
+Early follow-ups in the first conversation were more specialized; subsequent
+follow-ups used ordinary-user wording. Preserve that distinction in interpretation.
+
+FINDINGS TO ADDRESS
+1. Evidence reporting: one source was cited without recorded body retrieval.
+   In question 11, exchange 2, GPT said it reviewed two article bodies. The trace
+   shows the psychological-safety article returned zero lines, followed by a search
+   snippet and an error. Only the Learn page had a recorded readable body. The
+   unsupported source was reused in exchanges 5 and 7. The article's claims may
+   be accurate, but the stated retrieval provenance does not meet the skill's rule.
+   Evidence: retrieval-evidence-issue.txt and question 11's saved events/replies.
+
+2. Formal presentation and internal source labels recur.
+   27 of 100 replies use the Cross-source summary heading; 27 include an internal
+   priority-label phrase. These are observed wording counts, not quality scores.
+   Many practical replies still read like mini research reports. Some later scripts
+   are concise and conversational, showing the model can adapt but not consistently.
+
+3. Practical direction sometimes arrives after repeated clarification.
+   In question 2, the user states that they are a manager and do not know where to
+   start. GPT asks another set of questions before giving a concrete starting plan
+   after the next follow-up. Relevant clarification should remain; the proposed edit
+   helps the user choose a path instead of requiring them to design the approach.
+
+4. Questionnaire review versus data analysis could be clearer upfront.
+   In question 6, the first reply routes own-survey review broadly to analyze-survey.
+   Later it correctly says an initial wording/coverage review can use published
+   guidance without response data. Preserve that useful distinction from the start.
+
+5. Keep example scripts conditional when results were never supplied.
+   Question 10, exchange 7, calls a hypothetical Role fit/Belonging contrast an
+   observation in sample manager wording. It may be intended as illustration, but
+   should use conditional wording or placeholders so it is not copied as a known fact.
+
+BEHAVIORS WORTH PRESERVING
+- Avoided treating attrition multipliers or correlations as proof of intervention
+  effects; did not invent missing team correlations or rankings.
+- Distinguished team aggregates from shared individual experiences, confidentiality
+  reporting thresholds from comparison strength, and respondent count from headcount.
+- Adapted to limits of manager authority, unresolved feedback, different employee
+  aspirations, and the team's preference to keep pay as its only priority.
+- Provided scripts, checklists and plans without calling them validated instruments
+  or tested protocols; often distinguished general guidance from practical application.
+- In the reviewed RTO and growth-ceiling conversations, acknowledged unavailable
+  article bodies or exploratory reasoning rather than inventing source-backed findings.
+These observations do not establish that every reply is accurate or that the skill
+has been validated overall. The provenance issue above remains material.
+
+SOURCE AND DATA LIMITS
+No underlying dashboard, actual employee dataset, full survey, or raw comment export
+was supplied. Dashboard values in Ben's questions are source examples, not verified
+results. Data-dependent questions therefore test missing-data handling and bounded
+interpretation rather than actual computation or retrieval of team findings.
+Article retrieval was uneven. The reference catalog and skill instructions were
+supplied locally; eligible article bodies were retrieved live when available.
+Specific source checks confirmed the large-organization response-rate example and
+Glint default confidentiality descriptions. This is not a sentence-by-sentence
+entailment audit of all replies or a systematic literature review.
+A trace scan found three citations with no recorded successful body open, all
+propagating the one question-11 issue. The scan flags provenance for review; a
+successful open alone does not prove a source supports the associated claim.
+
+PROPOSED EDITS - READY FOR REVIEW, NOT APPLIED
+proposed-skill-edits.diff contains the exact patch. The proposed full SKILL.md is
+in proposed-skill/people-science-knowledge-vault/SKILL.md.
+A. Confirm actual article-body retrieval before citing or counting a source.
+   Exclude empty/error pages and search snippets; disclose gaps instead of using
+   general knowledge to fill in the article's claims.
+B. Offer concrete starting options with focused clarification, using plain language.
+C. Match the output to a practical conversation rather than imposing report headings;
+   keep source links and meaningful evidence limits without internal ranking labels.
+D. Clarify that questionnaire wording/purpose/coverage review can use the vault,
+   while quantitative response-data analysis belongs in the analysis workflow.
+E. Preserve hypothetical context in scripts and avoid equating source agreement
+   with independent empirical validation.
+The source priorities, article-body requirement, privacy constraints and causal
+limits remain in the proposed skill. No actual repository file was edited.
+
+CHECKS AND NEXT STEP
+The proposed copy passes skill-creator's structural validator. git apply --check
+passes against the tested local snapshot. These do not prove behavioral improvement.
+After approval, apply the proposed edit and repeat fresh conversations for vague
+requests, source-retrieval failure and hypothetical result summaries. Keep initial
+questions and follow-up wording matched where possible and record retrieval changes,
+since different page availability can affect the comparison.
+
+REVIEW PACKET
+all-conversations.txt: the complete 100-exchange transcript, with question/source labels.
+completed-run-index.json: original questions, run paths, exchange counts and source version.
+Each conversation folder: exact inputs, replies, approval records, events and review notes.
+source-selection.txt: why these inputs were selected.
+retrieval-evidence-issue.txt: the documented provenance issue.
+proposed-skill-edits.diff: exact proposed repository change.
+No GitHub edit, commit, pull request, publication or skill-version improvement claim
+has been made. The packet and proposal remain local for review.
