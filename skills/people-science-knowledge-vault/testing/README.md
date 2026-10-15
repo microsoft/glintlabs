@@ -1,7 +1,7 @@
 # October 14, 2026 testing references
 
 These files are supporting reference material. The proposed change for review is
-[`SKILL.md`](../../../../skills/people-science-knowledge-vault/SKILL.md).
+[`SKILL.md`](../SKILL.md).
 The reference files themselves are not proposed edits to the skill and are not
 runtime instructions or evidence to use when answering employee questions.
 
