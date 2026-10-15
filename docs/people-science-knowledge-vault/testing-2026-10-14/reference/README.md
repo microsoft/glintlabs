@@ -5,7 +5,7 @@ These files are supporting reference material. The proposed change for review is
 The reference files themselves are not proposed edits to the skill and are not
 runtime instructions or evidence to use when answering employee questions.
 
-- [Readout for Teresa and Ben](Ben-testing-readout.txt): test scope, observations,
+- [Testing readout](testing-readout.txt): test scope, observations,
   limitations, and proposed changes.
 - [Complete transcript](all-conversations.txt): 12 original questions and 100
   question-and-answer exchanges with GPT.
