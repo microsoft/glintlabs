@@ -11,7 +11,7 @@ golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`fb5df7356eb964771800150a24372421827dd37bbf67e5f657a7f5f0cb013536`.
+`4374de2493662e7593e66d2016c07bd5526b77999a0dd1bcb0e4c77f0bd8d721`.
 Generated reports in `required` mode must match its static HTML shell exactly.
 The intended substitution is the JSON value assigned to `const D`. In `off`
 mode, the seven empty AI summary containers are also removed from the generated
@@ -104,10 +104,11 @@ staging data from the ZIP.
   Preserve the Glint UI system as the token and accessibility authority.
 - Use the hero for a deterministic **current survey summary**, not generic
   marketing copy. It must update with the shared report filter and show:
-  latest privacy-eligible cycle and response count, average item score, the
+  latest privacy-eligible cycle and response count, the
   three high-scoring items, the three low-scoring items, privacy-safe aggregate
   comment themes for each item when available, and average/leading movement
-  from the prior cycle when available.
+  from the prior cycle when available. Do not show an overall average-score
+  number in the report header.
 - Prefer score-ranked items with sufficient linked comment coverage when at
   least six are available. Otherwise retain the full score ranking and state
   when an item has no privacy-eligible linked themes. Describe all results as
@@ -134,6 +135,18 @@ staging data from the ZIP.
   clipboard (falling back to a PNG download when clipboard image write is
   unavailable). Toolbars must remain accessible (labeled, focus-visible) and
   must not alter the underlying data encodings.
+- Include the current filter values in every visual export, including default
+  company/all-employee states. CSV exports include context columns; copied
+  images and fallback PNG downloads include a readable filter footnote below
+  the complete visual. Capture all rows and columns, not only the scroll
+  viewport. Read selections when the export is requested, not when the toolbar
+  was created.
+- Export only context relevant to the visual: report attribute/value, Survey
+  cycle for Correlation and Factors, old/new cycles and respondent population
+  for Scores change, and outcome window for attrition views. Correlation also
+  records cluster count, minimum strength, highlighted questions, color, and
+  significance settings. Keep CSV cells spreadsheet-safe and preserve
+  suppression; never export hidden respondent rows or category counts.
 
 ## Required navigation
 
@@ -154,9 +167,17 @@ data. For other analyses, keep the tab and explain why results are unavailable.
 
 ## Shared report filter
 
-Place one report-level attribute/value filter above the tabs, plus a separate
-**Survey cycle** selector for tabs whose underlying data is computed per
-survey cycle.
+Place the interactive report attribute/value controls inside the active
+analysis, directly below its introduction and above its visual/results.
+Use one shared set of controls so selections remain synchronized when users
+switch analysis tabs, rather than independent per-analysis filters. Do not
+leave a filter area above the tabs or show irrelevant controls on Downloads
+or Methodology. Analysis-specific controls, including outcome-window
+selectors, also belong below the introduction at the top of the visuals.
+
+Show the separate **Survey cycle** selector only in Correlation and Factors,
+whose underlying data is computed per survey cycle. Hiding that selector in
+other tabs must not reset its selection.
 
 - Apply the attribute/value filter to Scores change, Correlation, Attrition
   analysis, and Attrition alerts.
@@ -353,8 +374,8 @@ and cycle-percentage-change semantics.
   link. This is not another tab and does not require hypothetical examples.
   Show actual confirmed input exclusions and reasons from the preparation
   audit, using safe column positions rather than respondent values or raw
-  comments. Explain that `-1` means skipped and blank comment companions are
-  normal without a comment. Note lost comparison coverage where relevant.
+  comments. Do not preface recorded exclusions with generic skipped-response
+  or blank-comment guidance. Note lost comparison coverage where relevant.
 - Show at most five limitation entries. When there are more than five, label
   the preview and offer the complete list as `input-limitations.txt`, using
   the same privacy-safe content and ordering. The link must work in the

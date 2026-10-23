@@ -1032,7 +1032,8 @@ def input_limitations(config_path: Path, survey_path: Path, output: Path) -> dic
         positions = record.get("columns")
         if not isinstance(positions, list) or any(type(position) is not int or position < 1 for position in positions):
             raise ValueError("Limitation column positions must be positive integers.")
-        prefix = ("Columns " + ", ".join(str(position) for position in positions) + ": ") if positions else ""
+        column_label = "Column" if len(positions) == 1 else "Columns"
+        prefix = (column_label + " " + ", ".join(str(position) for position in positions) + ": ") if positions else ""
         entries.append(prefix + PREPARATION_REASONS[record["code"]])
     if len(entries) > 5:
         export_path.write_text(
@@ -1431,7 +1432,10 @@ def inject_attrition_report(
         '<section class=panel id=attrition role=tabpanel hidden>'
         '<div class=attrition-heading><div><h2>Attrition analysis</h2>'
         '<p class=muted>Survey item multipliers linked to subsequent Exit outcomes.</p>'
-        '</div><label>Outcome window<select id=attritionDays>'
+        '</div></div>'
+        + attrition_intro
+        + '<div class=ai-summary data-summary=attrition></div>'
+        '<div class=tools><label>Outcome window<select id=attritionDays>'
         + "".join(
             (
                 f'<option value={index}'
@@ -1443,8 +1447,6 @@ def inject_attrition_report(
             for index, days in enumerate(payload["days"])
         )
         + '</select></label></div>'
-        + attrition_intro
-        + '<div class=ai-summary data-summary=attrition></div>'
         '<div class=notice id=attritionStatus></div>'
         '<p class=muted id=attritionFilterNote></p>'
         '<div class=visual-wrap id=attritionVisual><div class=visual-toolbar>'
@@ -1469,7 +1471,14 @@ def inject_attrition_report(
         '<section class=panel id=alerts role=tabpanel hidden>'
         '<div class=alert-heading><div><h2>Attrition alerts</h2>'
         '<p class=muted>Find low-scoring groups on the items most associated '
-        'with later attrition.</p></div><label>Outcome window'
+        'with later attrition.</p></div></div><p class=tab-intro>'
+        'Find privacy-eligible groups '
+        'that score lower on the items most associated with later exits.<br><br>Start '
+        'with the largest score gaps, confirm the local context, and use the result '
+        'to plan a focused listening conversation—not to rank managers or predict '
+        'departures.</p>'
+        '<div class=ai-summary data-summary=alerts></div>'
+        '<div class=tools><label>Outcome window'
         '<select id=alertDays>'
         + "".join(
             (
@@ -1481,12 +1490,7 @@ def inject_attrition_report(
             )
             for days in alerts_payload["days"]
         )
-        + '</select></label></div><p class=tab-intro>Find privacy-eligible groups '
-        'that score lower on the items most associated with later exits.<br><br>Start '
-        'with the largest score gaps, confirm the local context, and use the result '
-        'to plan a focused listening conversation—not to rank managers or predict '
-        'departures.</p>'
-        '<div class=ai-summary data-summary=alerts></div>'
+        + '</select></label></div>'
         '<p class="notice">For each attribute, the five items with the highest '
         'median eligible attrition multipliers are selected. The table compares '
         'group scores on those items with company overall.</p>'
@@ -1583,7 +1587,6 @@ async function copyAttritionTable(){
     const visual=document.querySelector("#attritionVisual");
     const toolbar=visual.querySelector(".visual-toolbar");
     capture=visual.cloneNode(true);
-    capture.prepend(document.querySelector("#attritionFilterNote").cloneNode(true));
     capture.removeAttribute("id");
     capture.querySelectorAll("[id]").forEach(node=>node.removeAttribute("id"));
     capture.querySelectorAll(".visual-toolbar,.visual-toast").forEach(node=>node.remove());
