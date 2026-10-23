@@ -360,13 +360,20 @@ def load_survey(
     if input_format != "wide_items":
         raise ValueError(f"Unsupported input_format: {input_format}")
 
-    raw = pd.read_csv(survey_csv)
+    identity_converters = (
+        {column: str for column in [emp_id_col, *(config.get("attribute_cols") or [])]}
+        if (config_path.parent / "preparation-audit.json").exists()
+        else None
+    )
+    raw = pd.read_csv(survey_csv, converters=identity_converters)
     attribute_cols = config.get("attribute_cols") or []
     attrition_attribute_cols = config.get("attrition_attribute_cols") or []
     all_attribute_cols = list(dict.fromkeys([
         *attribute_cols,
         *attrition_attribute_cols,
     ]))
+    if identity_converters:
+        raw[all_attribute_cols] = raw[all_attribute_cols].replace("", pd.NA)
     question_cols = detect_wide_item_columns(
         raw,
         emp_id_col=emp_id_col,

@@ -30,6 +30,9 @@ Inspect this folder before the shared `references/general/` collection.
 
 - CSV survey exports
 - XLSX/XLSM workbooks
+- Native platform exports: five cycle-metadata columns, repeated score/comment/
+  topics/sensitive-flag groups, then employee attributes. These require
+  inspection and explicit user-confirmed loading decisions.
 - Wide item data with one row per respondent and numeric `Q_*` columns
 - Outcome-style `Q_*` fields that do not match the configured response scale
   are excluded from automatic item detection.
@@ -40,6 +43,45 @@ Inspect this folder before the shared `references/general/` collection.
 Automatic employee ID detection recognizes common forms such as `user_id`,
 `employee_id`, and `respondent_id`. Use explicit command options when an export
 uses different names.
+
+### Native platform preparation
+
+Use `--inspect-only` to write a private `preparation-proposal.json` under
+`<output>/_input/`. Review all assumptions with the user before using
+`--preparation-decisions <confirmed.json>` to execute. The proposal's
+`decisions_template` specifies the source/settings hashes, ID, scale, selected
+questions, oldest-to-newest `cycle_order`, attribute mappings, and clear/sensitive
+flag encodings. UUID order is not evidence of chronology. Keep
+`confirmed: false` until the user has resolved the loading choices.
+
+Every trailing candidate attribute must have an explicit mapping to a meaningful
+name or `null` for confirmed exclusion. For uncertain names such as `attribute 4`,
+ask the user for meaning and record the confirmed mapping/rule in
+`attribute_evidence`. Numeric bands alone do not establish tenure versus age.
+Do not invent labels or silently drop an ambiguous column. Identifying,
+sensitive, overly granular, and conflicting mappings remain prohibited even
+after confirmation.
+
+The adapter reuses `vivaglint.extract_questions`, `split_survey_data`, and
+`pivot_long` from the existing library. Question suffixes, not numeric-column
+guessing, identify groups. Original question text remains the explicit item
+key. Cycle UUID/title and approved attributes are retained separately because
+`split_survey_data` does not retain them. Internal row links keep reshaped
+comments aligned with the correct respondent and cycle; employee IDs retain
+their original strings, including leading zeros.
+
+Scores of `-1` are skipped, and blank score cells remain missing. Blank
+comment/topic/flag cells with no comment are normal. Do not rank-remap unknown
+score values or assume a scale. Confirm incomplete groups, invalid scores,
+ambiguous identities, and flag contradictions with the user. Sensitive and
+unknown-flag comment text/topics never enter interpretation or theme analysis.
+
+`preparation-audit.json` records actual confirmed exclusions using reason codes
+and column positions, without raw rows or sensitive counts. The report derives
+its privacy-safe Limitations list from that record. The preview shows five
+entries; when longer, `input-limitations.txt` contains the complete list and
+is explicitly included in Downloads/the share ZIP. Private proposals, decisions,
+audits, and raw comments stay under `_input` and are never shared.
 
 ## Registered linked source
 

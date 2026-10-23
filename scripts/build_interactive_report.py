@@ -22,6 +22,7 @@ if SCRIPT_DIR not in sys.path:
     sys.path.insert(0, SCRIPT_DIR)
 
 from progress import ProgressReporter
+from analyze_survey_export import PREPARATION_REASONS, file_sha256
 from scipy.cluster.hierarchy import cut_tree, linkage
 from scipy.spatial.distance import squareform
 from scipy.stats import fisher_exact
@@ -322,6 +323,7 @@ def comment_theme_payload(
     cycle_col: str | None,
     question_col: str,
     text_col: str,
+    identity_converters: dict[str, type] | None = None,
 ) -> dict[str, Any]:
     empty = {
         "overall": {},
@@ -330,7 +332,11 @@ def comment_theme_payload(
     }
     if not path or not path.exists():
         return empty
-    comments = pd.read_csv(path, low_memory=False)
+    converters = (
+        {**identity_converters, question_col: str, text_col: str}
+        if identity_converters else None
+    )
+    comments = pd.read_csv(path, low_memory=False, converters=converters)
     if question_col not in comments or text_col not in comments:
         return empty
 
@@ -452,14 +458,19 @@ def comment_theme_payload(
     }
 
 
-def ordered_cycle_names(frame: pd.DataFrame, cycle_col: str) -> list[str]:
+def ordered_cycle_names(
+    frame: pd.DataFrame, cycle_col: str, confirmed_order: list[str] | None = None,
+) -> list[str]:
     """Return cycle titles ordered chronologically, oldest first.
 
-    Prefers the numeric ``survey_cycle_id`` column (lower id = earlier cycle)
-    when present; otherwise falls back to first-appearance order in the
-    export, which is the best available signal without a real date field.
+    Use confirmed chronology for platform exports. Otherwise preserve the
+    legacy cycle-ID ordering and first-appearance fallback.
     """
     names = list(dict.fromkeys(frame[cycle_col].dropna().astype(str)))
+    if confirmed_order is not None:
+        if not set(names) <= set(confirmed_order):
+            raise ValueError("The native export contains a cycle outside the confirmed chronology.")
+        return [name for name in confirmed_order if name in names]
     if "survey_cycle_id" in frame.columns:
         ids = frame[[cycle_col, "survey_cycle_id"]].dropna()
         ids[cycle_col] = ids[cycle_col].astype(str)
@@ -475,6 +486,7 @@ def cycle_cube(
     attributes: list[str],
     cycle_col: str | None,
     scale: int,
+    confirmed_order: list[str] | None = None,
 ) -> dict[str, Any]:
     if not cycle_col:
         return {
@@ -483,7 +495,7 @@ def cycle_cube(
             "segments": {},
             "repeat": {"overall": {}, "segments": {}},
         }
-    cycles = ordered_cycle_names(frame, cycle_col)
+    cycles = ordered_cycle_names(frame, cycle_col, confirmed_order)
 
     def cycle_metrics(source: pd.DataFrame) -> list[list[float | int]]:
         rows = []
@@ -989,6 +1001,47 @@ def factor_cube(
         "respondentsPerItem": FACTOR_RESPONDENTS_PER_ITEM,
         "rotation": "varimax",
     }
+
+
+def input_limitations(config_path: Path, survey_path: Path, output: Path) -> dict[str, Any]:
+    audit_path = config_path.parent / "preparation-audit.json"
+    export_path = output / "input-limitations.txt"
+    if not audit_path.exists():
+        export_path.unlink(missing_ok=True)
+        return {"audited": False, "entries": []}
+    audit = json.loads(audit_path.read_text(encoding="utf-8"))
+    if audit.get("version") != 1 or audit.get("normalized_sha256") != file_sha256(survey_path):
+        raise ValueError("Input preparation audit is unsupported or does not match the normalized survey.")
+    records = audit.get("limitations")
+    if not isinstance(records, list):
+        raise ValueError("Input preparation audit must contain a limitations list.")
+    cycle_order = audit.get("cycle_order")
+    if (
+        not isinstance(cycle_order, list)
+        or any(not isinstance(value, str) or not value for value in cycle_order)
+        or len(cycle_order) != len(set(cycle_order))
+    ):
+        raise ValueError("Input preparation audit needs the confirmed cycle chronology.")
+    entries = []
+    for record in records:
+        if (
+            not isinstance(record, dict) or not isinstance(record.get("code"), str)
+            or record["code"] not in PREPARATION_REASONS
+        ):
+            raise ValueError("Input preparation audit contains an unknown limitation.")
+        positions = record.get("columns")
+        if not isinstance(positions, list) or any(type(position) is not int or position < 1 for position in positions):
+            raise ValueError("Limitation column positions must be positive integers.")
+        prefix = ("Columns " + ", ".join(str(position) for position in positions) + ": ") if positions else ""
+        entries.append(prefix + PREPARATION_REASONS[record["code"]])
+    if len(entries) > 5:
+        export_path.write_text(
+            "Input limitations\n\n" + "\n".join(entries) + "\n",
+            encoding="utf-8", newline="\n",
+        )
+    else:
+        export_path.unlink(missing_ok=True)
+    return {"audited": True, "entries": entries, "cycle_order": cycle_order}
 
 
 def html_page(data: dict[str, Any]) -> str:
@@ -1878,7 +1931,18 @@ def main() -> int:
         raise ValueError("Interactive report requires a passed repeatability check.")
 
     survey_path = resolve(config_path.parent, config["survey_csv"])
-    frame = pd.read_csv(survey_path)
+    limitations = input_limitations(config_path, survey_path, output)
+    identity_converters = (
+        {column: str for column in [
+            config["emp_id_col"], "survey_cycle_id", "survey_cycle_title",
+            *(config.get("attribute_cols") or []),
+        ]}
+        if limitations["audited"] else None
+    )
+    frame = pd.read_csv(survey_path, converters=identity_converters)
+    if identity_converters:
+        attribute_columns = config.get("attribute_cols") or []
+        frame[attribute_columns] = frame[attribute_columns].replace("", pd.NA)
     questions = config.get("question_cols") or pd.read_csv(output / "descriptives.csv")[
         "question"
     ].tolist()
@@ -1893,7 +1957,7 @@ def main() -> int:
 
     attribute_file = resolve(config_path.parent, config.get("attribute_file"))
     if attribute_file:
-        attribute_frame = pd.read_csv(attribute_file)
+        attribute_frame = pd.read_csv(attribute_file, converters=identity_converters)
         frame = frame.merge(
             attribute_frame,
             on=emp_id,
@@ -1930,7 +1994,9 @@ def main() -> int:
     segments = segment_cube(frame, questions, attributes, scale)
     progress.update(25, "Overall and segment score views prepared")
     progress.update(28, "Building cycle comparisons and repeat-respondent views")
-    cycles = cycle_cube(frame, questions, attributes, cycle_col, scale)
+    cycles = cycle_cube(
+        frame, questions, attributes, cycle_col, scale, limitations.get("cycle_order"),
+    )
     progress.update(42, "Cycle comparisons and repeat-respondent views prepared")
     comment_themes = comment_theme_payload(
         resolve(config_path.parent, config.get("comments_file")),
@@ -1941,6 +2007,7 @@ def main() -> int:
         cycle_col,
         config.get("comments_question_col", "question_uuid"),
         config.get("comments_text_col", "comment"),
+        identity_converters,
     )
     progress.update(45, "Clustering relationship matrices for each filter view")
     relationships = relationship_cube(frame, questions, attributes, cycle_col)
@@ -2016,11 +2083,15 @@ def main() -> int:
         "share_zip": zip_name,
         "summary_mode": summary_mode,
         "format_contract": "skills/analyze-survey/references/interactive-report-contract.md",
+        "input_limitations": limitations,
     }
     (output / "analysis-manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
     )
     excluded_downloads = {survey_path.name}
+    excluded_downloads.update({
+        "preparation-proposal.json", "preparation-decisions.json", "preparation-audit.json",
+    })
     if attribute_file:
         excluded_downloads.add(attribute_file.name)
     if summary_mode == "off":
@@ -2031,6 +2102,16 @@ def main() -> int:
         if path.is_file() and path.suffix.lower() in {".csv", ".json"}
         and path.name not in excluded_downloads
     )
+    if limitations["audited"]:
+        allowed = {
+            *manifest.get("artifacts", {}).values(),
+            "analysis-manifest.json", "people-science-summary-context.json",
+            "people-science-summaries.json",
+        }
+        downloads = [name for name in downloads if name in allowed]
+    if len(limitations["entries"]) > 5:
+        downloads.append("input-limitations.txt")
+        downloads.sort()
     context = summary_context(
         questions,
         cycles,
@@ -2040,6 +2121,7 @@ def main() -> int:
         attrition_status,
         downloads,
     )
+    context["input_limitations"] = limitations
     context_path = output / "people-science-summary-context.json"
     context_path.write_text(
         json.dumps(context, indent=2) + "\n",
@@ -2071,6 +2153,7 @@ def main() -> int:
         "attrition": attrition_status,
         "attritionData": attrition_data,
         "downloads": downloads,
+        "inputLimitations": limitations,
     }
     report_path = output / report_name
     report_html = html_page(data)
