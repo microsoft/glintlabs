@@ -11,7 +11,7 @@ golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`1dfa4e5567eec8ee630c0e6c29493d1a835b7d7a1fc18c835b911f9760b7f14d`.
+`fb5df7356eb964771800150a24372421827dd37bbf67e5f657a7f5f0cb013536`.
 Generated reports in `required` mode must match its static HTML shell exactly.
 The intended substitution is the JSON value assigned to `const D`. In `off`
 mode, the seven empty AI summary containers are also removed from the generated
@@ -349,6 +349,25 @@ and cycle-percentage-change semantics.
 
 ### Methodology
 
+- End the Methodology subsections with **Limitations**, with a matching jump
+  link. This is not another tab and does not require hypothetical examples.
+  Show actual confirmed input exclusions and reasons from the preparation
+  audit, using safe column positions rather than respondent values or raw
+  comments. Explain that `-1` means skipped and blank comment companions are
+  normal without a comment. Note lost comparison coverage where relevant.
+- Show at most five limitation entries. When there are more than five, label
+  the preview and offer the complete list as `input-limitations.txt`, using
+  the same privacy-safe content and ordering. The link must work in the
+  self-contained report; include the complete text file in Downloads and the
+  share ZIP. Do not enable downloads of arbitrary private text files.
+- Never expose employee identifiers, individual records, raw comments, private
+  paths, or disclosive small counts in either preview or export. Native
+  preparation exclusions use grouped reason codes without respondent counts.
+  For older reports without an audit, say exclusions were not recorded, not
+  that no exclusions occurred. Keep private proposal/decision/audit files out
+  of downloads and packaging. For prepared native exports, allowlist the
+  manifest's aggregate artifacts and standard report JSON outputs rather than
+  sharing arbitrary CSV/JSON files found in the output folder.
 - Always include a final **Methodology** tab after Downloads. It is reference
   documentation for analysts, not a filter-reactive data tab.
 - Begin the tab with one short sentence explaining that it documents how the

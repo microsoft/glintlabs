@@ -9,11 +9,373 @@ import sys
 import zipfile
 from io import StringIO
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def load_script(name):
+    spec = importlib.util.spec_from_file_location(name, ROOT / "scripts" / f"{name}.py")
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+@pytest.fixture
+def platform_input(tmp_path):
+    module = load_script("analyze_survey_export")
+    first, second = "We have clear goals.", "My manager supports me."
+    frame = module.pd.DataFrame({
+        "Survey Cycle Creation Date": ["2026-01-01"] * 8,
+        "Survey Cycle Completion Date": ["2026-01-31"] * 8,
+        "Survey Cycle Title": ["Cycle A"] * 8,
+        "Survey Cycle UUID": ["0001"] * 8,
+        "Survey Cycle Sent Date": ["2026-01-02"] * 8,
+        first: [1, 2, 3, 4, 5, -1, 2, 5],
+        first + "_COMMENT": ["Clear goals", "PRIVATE_SENSITIVE", "PRIVATE_UNKNOWN", "", "", "", "", ""],
+        first + "_COMMENT_TOPICS": ["goals", "PRIVATE_TOPIC", "PRIVATE_TOPIC", "", "", "", "", ""],
+        first + "_SENSITIVE_COMMENT_FLAG": ["false", "true", "", "", "", "", "", ""],
+        second: [2, 3, 4, 5, 1, 2, -1, 4],
+        second + "_COMMENT": [""] * 8,
+        second + "_COMMENT_TOPICS": [""] * 8,
+        second + "_SENSITIVE_COMMENT_FLAG": [""] * 8,
+        "Employee ID": ["00001", "1", "00003", "00004", "00005", "00006", "00007", "00008"],
+        "Tenure": ["Early", "Early", "Early", "Early", "Late", "Late", "Late", "Late"],
+        "attribute 4": ["A", "B"] * 4,
+        "First Name": ["PRIVATE_NAME"] * 8,
+    })
+    source = tmp_path / "native.csv"
+    frame.to_csv(source, index=False)
+    options = SimpleNamespace(
+        survey_export=str(source), output_dir=str(tmp_path / "output"),
+        sheet=None, attribute_sheet=None, emp_id_col=None, scale_points=5,
+        question_cols=None, attribute_cols=None, min_group_size=5,
+        inspect_only=True, preparation_decisions=None, summary_mode="off",
+    )
+    return module, frame, options
+
+
+def approve_platform(module, options, **overrides):
+    options.inspect_only = True
+    proposal_path = module.build_config(options, Path(options.output_dir))
+    proposal = json.loads(proposal_path.read_text(encoding="utf-8"))
+    decisions = proposal["decisions_template"]
+    decisions.update(confirmed=True, **overrides)
+    decision_path = Path(options.output_dir) / "_input" / "confirmed.json"
+    decision_path.write_text(json.dumps(decisions), encoding="utf-8")
+    options.preparation_decisions = str(decision_path)
+    options.inspect_only = False
+    return module.build_config(options, Path(options.output_dir))
+
+
+@pytest.mark.parametrize("suffix", [".csv", ".xlsx", ".xlsm"])
+def test_platform_preparation_preserves_scores_identity_and_private_comments(platform_input, tmp_path, suffix):
+    module, frame, options = platform_input
+    source = tmp_path / f"native{suffix}"
+    if suffix == ".csv":
+        frame.to_csv(source, index=False)
+    else:
+        frame.to_excel(source, index=False)
+    options.survey_export = str(source)
+    config_path = approve_platform(module, options)
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    normalized = module.pd.read_csv(config["survey_csv"], dtype={"Employee ID": str, "survey_cycle_id": str})
+    first, second = config["question_cols"]
+    assert [first, second] == ["We have clear goals.", "My manager supports me."]
+    assert normalized["Employee ID"].tolist()[:2] == ["00001", "1"]
+    assert normalized["survey_cycle_id"].unique().tolist() == ["0001"]
+    assert module.pd.isna(normalized[first].iloc[5])
+    assert module.pd.isna(normalized[second].iloc[6])
+    assert normalized[first].iloc[0] == 1
+    assert config["attribute_cols"] == ["Tenure"]
+    assert "First Name" not in normalized
+    assert "attribute 4" not in normalized
+    comments = module.pd.read_csv(config["comments_file"], dtype=str)
+    assert comments["Employee ID"].tolist() == ["00001"]
+    assert comments["comment"].tolist() == ["Clear goals"]
+    assert comments["survey_cycle_id"].tolist() == ["0001"]
+    assert comments["question_uuid"].tolist() == [first]
+    audit = config_path.with_name("preparation-audit.json").read_text(encoding="utf-8")
+    assert "PRIVATE_" not in audit
+    codes = [entry["code"] for entry in json.loads(audit)["limitations"]]
+    assert codes == ["attribute_excluded", "private_attribute", "comment_excluded"]
+    runner = load_script("run_vivaglint_analysis")
+    survey = runner.load_survey(config, config_path, Path(config["survey_csv"]))
+    assert survey.data["Employee ID"].tolist()[:2] == ["00001", "1"]
+
+
+def test_platform_requires_current_explicit_user_decisions(platform_input):
+    module, frame, options = platform_input
+    output = Path(options.output_dir)
+    proposal_path = module.build_config(options, output)
+    assert not proposal_path.with_name("survey.csv").exists()
+    options.inspect_only = False
+    with pytest.raises(ValueError, match="User confirmation"):
+        module.build_config(options, output)
+    proposal = json.loads(proposal_path.read_text(encoding="utf-8"))
+    decision_path = proposal_path.with_name("confirmed.json")
+    decision_path.write_text(json.dumps(proposal["decisions_template"]), encoding="utf-8")
+    options.preparation_decisions = str(decision_path)
+    with pytest.raises(ValueError, match="unconfirmed or stale"):
+        module.build_config(options, output)
+    approve_platform(module, options)
+    options.scale_points = 7
+    with pytest.raises(ValueError, match="unconfirmed or stale"):
+        module.build_config(options, output)
+    options.scale_points = 5
+    frame.iloc[0, 5] = 4
+    frame.to_csv(options.survey_export, index=False)
+    with pytest.raises(ValueError, match="unconfirmed or stale"):
+        module.build_config(options, output)
+
+
+def test_wide_items_with_a_completion_date_keep_existing_ingestion(platform_input):
+    module, _, options = platform_input
+    module.pd.DataFrame({
+        "user_id": ["00001", "1", "00003"],
+        "Survey Cycle Completion Date": ["2026-01-31"] * 3,
+        "Q_ONE": [1, 3, 5],
+    }).to_csv(options.survey_export, index=False)
+    options.inspect_only = False
+    config_path = module.build_config(options, Path(options.output_dir))
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    assert config["question_cols"] == ["Q_ONE"]
+    assert not config_path.with_name("preparation-audit.json").exists()
+
+
+def test_platform_ambiguous_attributes_require_confirmed_evidence(platform_input):
+    module, _, options = platform_input
+    mappings = {"Tenure": "Tenure", "attribute 4": "Department", "First Name": None}
+    with pytest.raises(ValueError, match="user-confirmed meaning"):
+        approve_platform(module, options, attribute_mappings=mappings)
+    config_path = approve_platform(
+        module, options, attribute_mappings=mappings,
+        attribute_evidence={"attribute 4": "User confirmed the source data dictionary: attribute 4 means department."},
+    )
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    assert config["attribute_cols"] == ["Tenure", "Department"]
+    assert "Department" in module.pd.read_csv(config["survey_csv"]).columns
+    mappings["First Name"] = "Location"
+    with pytest.raises(ValueError, match="identifying, sensitive"):
+        approve_platform(
+            module, options, attribute_mappings=mappings,
+            attribute_evidence={"attribute 4": "User-confirmed department mapping."},
+        )
+
+
+def test_platform_incomplete_blocks_and_invalid_scores_are_explicit_exclusions(platform_input):
+    module, frame, options = platform_input
+    first, second = list(frame.columns)[5], list(frame.columns)[9]
+    frame = frame.drop(columns=second + "_COMMENT_TOPICS")
+    frame[first] = frame[first].astype(float)
+    frame.loc[0, first] = 99
+    frame.loc[1, first] = 2.5
+    frame.to_csv(options.survey_export, index=False)
+    config_path = approve_platform(module, options)
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    assert config["question_cols"] == [first]
+    normalized = module.pd.read_csv(config["survey_csv"])
+    assert normalized[first].iloc[:2].isna().all()
+    assert normalized[first].iloc[2] == 3
+    audit = json.loads(config_path.with_name("preparation-audit.json").read_text(encoding="utf-8"))
+    assert {"incomplete_question", "invalid_scores"} <= {entry["code"] for entry in audit["limitations"]}
+
+
+def test_platform_cycles_keep_repeat_respondents_distinct(platform_input):
+    module, frame, options = platform_input
+    second_cycle = frame.copy()
+    second_cycle["Survey Cycle UUID"] = "0002"
+    second_cycle["Survey Cycle Title"] = "Cycle B"
+    both = module.pd.concat([frame, second_cycle], ignore_index=True)
+    both.to_csv(options.survey_export, index=False)
+    config_path = approve_platform(module, options)
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    comments = module.pd.read_csv(config["comments_file"], dtype=str)
+    assert comments["Employee ID"].tolist() == ["00001", "00001"]
+    assert comments["survey_cycle_id"].tolist() == ["0001", "0002"]
+    duplicate = module.pd.concat([both, both.iloc[[0]]], ignore_index=True)
+    duplicate.to_csv(options.survey_export, index=False)
+    config_path = approve_platform(module, options)
+    audit = json.loads(config_path.with_name("preparation-audit.json").read_text(encoding="utf-8"))
+    assert any(entry["code"] == "invalid_records" for entry in audit["limitations"])
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    normalized = module.pd.read_csv(config["survey_csv"], dtype=str)
+    assert not ((normalized["Employee ID"] == "00001") & (normalized["survey_cycle_id"] == "0001")).any()
+
+
+@pytest.mark.parametrize("header_problem", ["duplicate", "blank", "metadata"])
+def test_platform_ambiguous_headers_do_not_fall_back_to_wide_items(platform_input, header_problem):
+    module, frame, options = platform_input
+    headers = list(frame.columns)
+    if header_problem == "duplicate":
+        headers[-1] = headers[-2]
+    elif header_problem == "blank":
+        headers[-1] = ""
+    else:
+        headers[0] = "Unexpected metadata"
+    frame.columns = headers
+    frame.to_csv(options.survey_export, index=False)
+    with pytest.raises(ValueError, match="confirm|Confirm|resolve"):
+        module.build_config(options, Path(options.output_dir))
+
+
+@pytest.mark.parametrize("count", [0, 5, 6, 12])
+def test_limitations_projection_exports_complete_safe_text_only_above_five(tmp_path, count):
+    module = load_script("build_interactive_report")
+    input_dir = tmp_path / "_input"
+    input_dir.mkdir()
+    survey = input_dir / "survey.csv"
+    survey.write_text("Employee ID,Q_ONE\n00001,5\n", encoding="utf-8")
+    config = input_dir / "analysis-config.json"
+    assert module.input_limitations(config, survey, tmp_path) == {"audited": False, "entries": []}
+    audit = {
+        "version": 1, "normalized_sha256": hashlib.sha256(survey.read_bytes()).hexdigest(),
+        "cycle_order": ["Cycle A"],
+        "limitations": [{"code": "attribute_excluded", "columns": [position + 10]} for position in range(count)],
+        "private_detail": "</script>PRIVATE_ROW",
+    }
+    audit_path = input_dir / "preparation-audit.json"
+    audit_path.write_text(json.dumps(audit), encoding="utf-8")
+    payload = module.input_limitations(config, survey, tmp_path)
+    assert len(payload["entries"]) == count
+    export = tmp_path / "input-limitations.txt"
+    assert export.exists() == (count > 5)
+    if export.exists():
+        content = export.read_text(encoding="utf-8")
+        assert content == "Input limitations\n\n" + "\n".join(payload["entries"]) + "\n"
+        assert "PRIVATE_ROW" not in content
+    audit["limitations"] = [{"code": "attribute_excluded", "columns": ["<script>"]}]
+    audit_path.write_text(json.dumps(audit), encoding="utf-8")
+    with pytest.raises(ValueError, match="positive integers"):
+        module.input_limitations(config, survey, tmp_path)
+    audit["normalized_sha256"] = "stale"
+    audit_path.write_text(json.dumps(audit), encoding="utf-8")
+    with pytest.raises(ValueError, match="does not match"):
+        module.input_limitations(config, survey, tmp_path)
+
+
+def test_limitations_preview_has_five_entries_and_full_text_download():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is required for report interaction checks.")
+    golden = (ROOT / "skills/analyze-survey/references/golden-report.html").read_text(encoding="utf-8")
+    function = golden.split("function renderInputLimitations(){", 1)[1].split("\nfunction renderStatic", 1)[0]
+    checks = r'''
+const assert=require("node:assert/strict");
+class Element{
+ constructor(tag){this.tag=tag;this.children=[];this.dataset={};}
+ append(...items){this.children.push(...items);}
+}
+let grid, jump, D;
+const document={
+ createElement:tag=>new Element(tag),
+ querySelector:selector=>selector==="#methodology-limitations"?null:selector.endsWith(".methodology-grid")?grid:jump
+};
+for(const count of [0,5,6,12]){
+ grid=new Element("div");jump=new Element("nav");
+ D={inputLimitations:{audited:true,entries:Array.from({length:count},(_,i)=>"Limitation "+i)}};
+ renderInputLimitations();
+ const article=grid.children[0];
+ const list=article.children.find(child=>child.tag==="ul");
+ assert.equal(list?.children.length||0,Math.min(5,count));
+ const link=article.children.find(child=>child.tag==="a");
+ assert.equal(Boolean(link),count>5);
+ if(link){
+  assert.equal(link.download,"input-limitations.txt");
+  const expected="Input limitations\n\n"+D.inputLimitations.entries.join("\n")+"\n";
+  fetch(link.href).then(response=>response.text()).then(text=>assert.equal(text,expected));
+ }
+ assert.equal(jump.children[0].href,"#methodology-limitations");
+}
+'''
+    subprocess.run(
+        [node, "-e", "function renderInputLimitations(){" + function + "\n" + checks],
+        check=True, capture_output=True, text=True,
+    )
+
+
+def test_native_export_end_to_end_repeats_and_packages_full_limitations(platform_input):
+    module, _, options = platform_input
+    import numpy as np
+
+    random = np.random.default_rng(42)
+    size = 280
+    frame = module.pd.DataFrame({
+        "Survey Cycle Creation Date": ["2026-01-01"] * size,
+        "Survey Cycle Completion Date": ["2026-01-31"] * size,
+        "Survey Cycle Title": ["Cycle A"] * 140 + ["Cycle B"] * 140,
+        "Survey Cycle UUID": ["z-first"] * 140 + ["a-second"] * 140,
+        "Survey Cycle Sent Date": ["2026-01-02"] * size,
+    })
+    questions = [
+        "We have clear goals.", "My manager supports me.", "I can learn here.",
+        "We work well together.", "I have the tools I need.", "My work matters.",
+    ]
+    shared = random.normal(size=(size, 2))
+    for index, question in enumerate(questions):
+        scores = np.clip(np.rint(3 + shared[:, index % 2] + random.normal(size=size)), 1, 5)
+        scores[index] = -1
+        frame[question] = scores
+        frame[question + "_COMMENT"] = ""
+        frame[question + "_COMMENT_TOPICS"] = ""
+        frame[question + "_SENSITIVE_COMMENT_FLAG"] = ""
+    frame.loc[:9, questions[0] + "_COMMENT"] = "Our team has clear goals and priorities."
+    frame.loc[:9, questions[0] + "_SENSITIVE_COMMENT_FLAG"] = "false"
+    frame.loc[10, questions[0] + "_COMMENT"] = "RAW_SENSITIVE_SENTINEL"
+    frame.loc[10, questions[0] + "_COMMENT_TOPICS"] = "RAW_TOPIC_SENTINEL"
+    frame.loc[10, questions[0] + "_SENSITIVE_COMMENT_FLAG"] = "true"
+    frame.loc[11, questions[0] + "_COMMENT"] = "RAW_UNKNOWN_SENTINEL"
+    employee_ids = [f"{index:05d}" for index in range(140)]
+    employee_ids[2] = "NA"
+    frame["Employee ID"] = employee_ids * 2
+    frame["Tenure"] = ["Early", "N/A"] * 140
+    for index in range(8):
+        frame[f"attribute {index}"] = ["A", "B"] * 140
+    frame["First Name"] = "RAW_PERSON_SENTINEL"
+    frame.to_csv(options.survey_export, index=False)
+    config_path = approve_platform(module, options)
+    (config_path.parent / "private-notes.txt").write_text("PRIVATE_NOTE_SENTINEL", encoding="utf-8")
+    output = Path(options.output_dir)
+    (output / "private-preparation-copy.json").write_text('{"private":"PRIVATE_ROOT_SENTINEL"}', encoding="utf-8")
+    (output / "raw-snapshot.csv").write_text("PRIVATE_RAW_SENTINEL\n", encoding="utf-8")
+    completed = subprocess.run(
+        [
+            sys.executable, str(ROOT / "scripts/analyze_survey_export.py"),
+            "--survey-export", options.survey_export, "--output-dir", options.output_dir,
+            "--preparation-decisions", options.preparation_decisions,
+        ],
+        capture_output=True, text=True, encoding="utf-8",
+    )
+    assert completed.returncode == 0, completed.stdout + completed.stderr
+    manifest = json.loads((output / "analysis-manifest.json").read_text(encoding="utf-8"))
+    assert manifest["repeatability_check"]["status"] == "passed"
+    assert all(step["status"] == "completed" for step in manifest["analyses"])
+    report = (output / f"{output.name}-report.html").read_text(encoding="utf-8")
+    payload = json.loads(report.split("<script>const D=", 1)[1].split(";\nconst names=", 1)[0])
+    assert len(payload["inputLimitations"]["entries"]) == 10
+    assert payload["cycles"]["cycles"] == ["Cycle A", "Cycle B"]
+    assert next(iter(payload["cycles"]["repeat"]["overall"].values()))["Cycle A"]["n"] == 140
+    assert "N/A" in payload["segments"]["Tenure"]["values"]
+    assert "input-limitations.txt" in payload["downloads"]
+    assert payload["commentThemes"]["overall"]
+    with zipfile.ZipFile(output / f"{output.name}-share.zip") as archive:
+        assert "input-limitations.txt" in archive.namelist()
+        assert "private-preparation-copy.json" not in archive.namelist()
+        assert "raw-snapshot.csv" not in archive.namelist()
+        expected = "Input limitations\n\n" + "\n".join(payload["inputLimitations"]["entries"]) + "\n"
+        assert archive.read("input-limitations.txt").decode() == expected
+        for name in archive.namelist():
+            assert not name.startswith("_input")
+            assert "preparation-" not in name
+            content = archive.read(name).decode("utf-8")
+            assert "RAW_" not in content
+            assert "PRIVATE_NOTE_SENTINEL" not in content
+            assert "Our team has clear goals and priorities." not in content
 
 
 def test_each_skill_has_first_priority_reference_folder():
@@ -588,6 +950,7 @@ def test_registered_demo_requests_embedded_attrition(tmp_path):
     module = importlib.util.module_from_spec(spec)
     assert spec and spec.loader
     spec.loader.exec_module(module)
+    module.read_platform_export = lambda *args: None
 
     frame = module.pd.DataFrame(
         {

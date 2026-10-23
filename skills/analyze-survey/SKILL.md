@@ -55,6 +55,10 @@ Ask for the file path. Accept `.csv`, `.xlsx`, and `.xlsm` exports. Keep
 respondent-level data local and never paste employee rows into chat. Confirm
 the file exists before starting the runner.
 
+For native platform exports, run the inspection-only preparation described
+below before analysis. Confirm loading assumptions with the user; never guess
+an uncertain attribute's meaning or silently exclude it.
+
 #### 2. Glint API
 
 Pull data live via Microsoft Graph using the `vivaglint` MCP tools instead of
@@ -122,7 +126,51 @@ Base the estimate on the export size and prior runs when available, and state
 that correlation clustering, attrition-alert aggregation, and repeatability are the
 most variable phases. Do this in the first response that starts the run.
 
-Use the direct export runner:
+### Native platform export preparation
+
+Native exports have five cycle-metadata columns, repeated four-column question
+blocks (score, comment, comment topics, sensitive flag), then attributes.
+Use the existing vivaglint reshaping helpers through the entrypoint; do not
+edit the library or manually reinterpret arbitrary numeric columns as items.
+
+1. Run `scripts/analyze_survey_export.py` with the chosen source/output and
+   `--inspect-only`. This writes `_input/preparation-proposal.json` and does
+   not run analysis.
+2. Review its structure and decisions template locally. Use `ask_user` to
+   confirm the employee ID, cycle identity and chronological order, response scale, flag encodings,
+   proposed attributes, and exclusions. Show structural summaries, never
+   individual values or raw comments. Ask for a dictionary/mapping where
+   meaning is uncertain. Value-based inference requires a deterministic
+   mapping/rule and the user's confirmation, not a confidence percentage.
+3. If the employee ID or scale needs correction, inspect again with
+   `--emp-id-col` or `--scale-points` before approving. Do not silently choose
+   among competing IDs, cycle interpretations, or score scales.
+4. Copy `decisions_template` to a private JSON file. Only after the user
+   confirms, set `confirmed` to `true`, resolve every `attribute_mappings`
+   entry (approved meaningful name or `null` for confirmed exclusion), and
+   record `attribute_evidence` for uncertain mappings. Never let an approval
+   override privacy restrictions. Keep respondent values out of evidence.
+   Set `cycle_order` to the confirmed oldest-to-newest cycle titles; UUIDs do
+   not establish chronology.
+5. Run the same command without `--inspect-only`, adding
+   `--preparation-decisions <confirmed.json>`. Decisions must match the source
+   hash and inspection settings; re-inspect and ask again when either changes.
+   New contradictions require user review, not a fallback.
+
+A score of `-1` means skipped and becomes missing, not a low score. Blank
+comment, topic, and flag cells are normal when no comment was written.
+Sensitive or unknown-flag comments and their topics are excluded while valid
+scores are retained. Confirm any contradictory nonblank comments with missing
+flags, invalid scores, or incomplete blocks before proceeding.
+
+Confirmed exclusions appear under **Methodology → Limitations**. At most five
+entries are shown; longer lists have a complete privacy-safe text download,
+also included in Downloads and the share ZIP.
+
+### Run the analysis
+
+Use the direct export runner (native exports also require the confirmed
+preparation decisions above):
 
 ```bash
 python scripts/analyze_survey_export.py \
