@@ -9,12 +9,12 @@ This plugin provides a set of focused skills that share a common analysis contra
 1. `analyze-survey` accepts CSV or Excel survey exports directly, runs a
    standard set of `vivaglint` codebooks, writes an `analysis-manifest.json`,
    and packages the required interactive HTML report and privacy-safe ZIP
-   without AI-generated summaries.
+   without embedded AI-generated summaries. It also interprets new or existing
+   codebook outputs into People Science findings and caveats after QA.
 2. `analyze-survey-ai-preview` adds staged, evidence-grounded People Science
    summaries to the same shared report pipeline.
 3. `analysis-qa` reviews output validity, privacy thresholds, and interpretation readiness.
-4. `interpret-analysis` turns codebook outputs into People Science findings and caveats.
-5. `people-science-knowledge-vault` finds and synthesizes externally published People Science knowledge using a strict two-tier source hierarchy.
+4. `people-science-knowledge-vault` finds and synthesizes externally published People Science knowledge using a strict two-tier source hierarchy.
 
 The plugin deliberately does not duplicate the `vivaglint` analysis package. It calls a pinned package version and treats the output manifest as the stable interface between execution and interpretation.
 
@@ -89,10 +89,9 @@ Schema: `schemas/analysis-manifest.schema.json`
 
 | Skill | Use when |
 |---|---|
-| `analyze-survey` | The user has survey data and wants the standard analysis package run. |
+| `analyze-survey` | The user wants the standard survey analysis package or People Science interpretation of existing output files/manifests. |
 | `analyze-survey-ai-preview` | The user explicitly wants the staged AI-summary report experience. |
 | `analysis-qa` | The user needs to know whether outputs are valid and safe to interpret. |
-| `interpret-analysis` | The user has output files/manifests and wants People Science interpretation. |
 | `people-science-knowledge-vault` | The user wants externally shareable People Science articles or an evidence-backed synthesis of published guidance. |
 
 ### Knowledge vault status
@@ -105,13 +104,10 @@ tests without changing this source hierarchy.
 
 ## Linked survey dataset
 
-Survey-analysis workflows should begin by asking:
-
-> Do you have your own survey data you would like to analyze? If not, I can use the linked Viva Glint workbook.
-
-If the user does not provide another export, use this workbook, which is
-checked directly into this repository so any user can access it without
-additional permissions:
+For a new analysis, ask the user to choose an uploaded export, the live Glint
+API, or the demo/sample dataset as specified in
+`skills/analyze-survey/SKILL.md`. Use this checked-in workbook only when the
+user explicitly chooses demo/sample data:
 
 ```text
 Demo Viva Glint Dataset with Attributes - Exit survey research guided.xlsx
@@ -121,6 +117,10 @@ skills/analyze-survey/references/sample-data/Demo Viva Glint Dataset with Attrib
 Use `Sheet1`, join `user_properties` by `user_id`, and use a 5-point scale.
 This is the only registered sample source. Do not silently substitute bundled,
 generated, or synthetic survey data.
+
+Interpretation-only requests start with an existing manifest and its artifacts;
+they do not require data ingestion or a new report. The workflow is defined in
+`skills/analyze-survey/references/interpretation.md`.
 
 ## Analyze-survey report output
 
@@ -135,9 +135,8 @@ The report uses the fixed Glint tab layout, shared attribute filtering,
 precomputed privacy-safe aggregates, and a ZIP containing
 `OPEN_REPORT.html`. Raw respondent and employee-property files are excluded
 from the shareable package.
-Base tabs are Scores change, Correlation, Factors, and Downloads; when
-attrition completes, Attrition analysis and Attrition alerts are inserted
-between Factors and Downloads.
+The contract defines the canonical tab order and when unavailable analyses
+are omitted or shown with an explanation.
 
 ## Analysis engine
 

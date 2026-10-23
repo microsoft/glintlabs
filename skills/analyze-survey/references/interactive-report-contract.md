@@ -1,7 +1,8 @@
 # Interactive survey report contract
 
-Every successful `analyze-survey` run must produce an interactive HTML report
-in this format. This contract is required, not an optional example.
+Every successful new survey analysis must produce an interactive HTML report
+in this format. Interpretation-only requests do not generate a report.
+This contract is required, not an optional example.
 
 The exact golden example is:
 
@@ -28,10 +29,14 @@ The shared report builder supports three explicit modes:
 
 - `off`: render no AI summary cards, ignore any stale summary file, and exclude
   that file from the share ZIP. This is the default for `analyze-survey`.
-- `optional`: render summaries only when a valid summary file exists; otherwise
-  render no summary cards.
+- `optional`: load narrative data only when a valid summary file exists;
+  otherwise omit it.
 - `required`: fail report generation unless a valid summary file exists. This
   is required by `analyze-survey-ai-preview`.
+
+These modes control narrative validation, embedded data, and packaging.
+Tab-level AI summary containers stay hidden in every mode; enabling summaries
+does not make cards visible.
 
 Always create `people-science-summary-context.json` from aggregate results so a
 completed analysis can be reused by the preview workflow without rerunning the
@@ -45,7 +50,7 @@ codebooks. When summaries are enabled:
   interpretation, recommended next step, caveat, and published-source links.
 - Generate narratives from `people-science-summary-context.json`, never raw
   respondent rows, and conform to `people-science-summaries.schema.json`.
-- Use `interpret-analysis` guardrails and
+- Use the `analyze-survey` guardrails in `interpretation.md` and
   `people-science-knowledge-vault` source priority. Do not present correlation,
   factors, alerts, or attrition associations as causal.
 - Recalculate summaries when the report attribute or value changes. Authored
@@ -54,7 +59,13 @@ codebooks. When summaries are enabled:
   remains the primary landing-page narrative, and each tab uses its concise
   static introduction for interpretation guidance.
 - Select three public references for each rendered summary using
-  `people-science-source-index.json`.
+  `people-science-source-index.json`. Rank its reviewed sources against key
+  terms across the headline, observation, interpretation, recommendation, and
+  caveat. Prefer exact analytical or item-theme matches over generic survey
+  resources; never reuse a source merely because it is broadly about surveys.
+- Keep narratives compact: state scope once in the headline, avoid repeated
+  metrics or findings across fields, and use neutral score-based item rankings
+  rather than company-specific classification vocabulary.
 
 The deterministic implementation is
 `scripts/build_interactive_report.py`. The analysis runner invokes it
@@ -135,6 +146,8 @@ Keep this tab order and naming:
 5. **Scores change**
 6. **Downloads**
 7. **Methodology**
+
+Do not add Overview, Item results, or Heatmap tabs.
 
 If attrition cannot run, omit both attrition tabs. Never fabricate attrition
 data. For other analyses, keep the tab and explain why results are unavailable.
@@ -230,7 +243,7 @@ exploratory, and attrition results are not individual predictions.
   and stability across groups and cycles.
 - Keep the legend and summary compact, hide empty highlight/detail regions, and
   reveal relationship details only after a cell is selected.
-- Clicking a cell shows `r`, p-value, N, and significance status.
+- Clicking a cell shows `r`, p-value, N, strength, and significance status.
 - State how many unique relationships are significant and nonsignificant.
 - Emphasize practical magnitude when large N makes most results significant.
 - Save segment matrices only where there are at least 30 response rows.
@@ -264,7 +277,7 @@ exploratory, and attrition results are not individual predictions.
 
 - Re-estimate the rotated factor loadings whenever the report attribute or
   value changes, using the company solution's factor count and the same
-  extraction method and rotation.
+  extraction method and varimax rotation.
 - Require at least the greater of 100 complete responses or five complete
   responses per survey item. Show an explicit suppression or estimation
   failure reason when a cut is not eligible.

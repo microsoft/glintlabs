@@ -1,6 +1,6 @@
 ---
 name: analyze-survey
-description: "Analyze a CSV or Excel employee survey export and create a self-contained interactive HTML report plus a privacy-safe share ZIP. Use when the user asks to analyze survey data, a Viva Glint export, or an employee survey workbook."
+description: "Analyze a CSV or Excel employee survey export into an interactive HTML report and privacy-safe share ZIP, or interpret existing vivaglint outputs. Use for survey analysis, analysis-manifest.json, descriptives, correlations, factors, cycle comparisons, segments, or attrition findings, caveats, hypotheses, and next analysis questions."
 allowed-tools: Bash, Read, Write, Glob, Grep, WebFetch
 ---
 
@@ -8,15 +8,38 @@ allowed-tools: Bash, Read, Write, Glob, Grep, WebFetch
 
 Turn a provided survey export into a repeatable local analysis and the standard
 interactive report. The skill owns export inspection, safe configuration,
-`vivaglint` execution, repeatability validation, HTML generation, and
-packaging. It does not generate AI interpretation, a broader customer readout,
-or a manager action plan.
+`vivaglint` execution, repeatability validation, HTML generation, packaging,
+and People Science interpretation of new or existing analysis outputs.
+Interpretation is a narrative response, not AI summary cards in the standard
+report. A broader customer readout or manager action plan is outside this
+skill's scope.
 
 ## Start here
 
+First distinguish a new analysis from interpretation of existing outputs.
+
+### Existing analysis outputs
+
+When the user asks to interpret survey results, explain codebooks, summarize
+findings, identify themes, or explain correlations, factors, cycle changes,
+segments, or attrition patterns, start with their `analysis-manifest.json`
+and its relevant artifacts. If their location is missing, ask for the output
+folder or manifest.
+
+Follow `references/interpretation.md` for grounding, QA readiness, synthesis,
+output format, and guardrails. Do not ask for a new ingest
+method, rerun codebooks, or require HTML/ZIP generation for an
+interpretation-only request.
+
+For detailed People Science questions or research-backed follow-ups, use the
+knowledge-vault handoff in `references/interpretation.md`. Purely conceptual
+questions do not require a manifest or survey data.
+
+### New survey analysis
+
 This skill never assumes a data source. Always ask the user, with the
 `ask_user` tool when available, which data ingest method to use before doing
-anything else:
+anything else in a new analysis:
 
 > How would you like to bring in survey data?
 > 1. Upload my own CSV/XLSX export
@@ -26,13 +49,13 @@ anything else:
 Do not proceed past this question with an assumed default. Branch on the
 answer:
 
-### 1. CSV/XLSX upload
+#### 1. CSV/XLSX upload
 
 Ask for the file path. Accept `.csv`, `.xlsx`, and `.xlsm` exports. Keep
 respondent-level data local and never paste employee rows into chat. Confirm
 the file exists before starting the runner.
 
-### 2. Glint API
+#### 2. Glint API
 
 Pull data live via Microsoft Graph using the `vivaglint` MCP tools instead of
 a file upload:
@@ -55,13 +78,12 @@ If the API call fails or credentials are missing, report the failure and ask
 the user to re-enter credentials or switch to another ingest method; do not
 silently fall back to the demo dataset.
 
-### 3. Demo/sample dataset
+#### 3. Demo/sample dataset
 
 Use this workbook, which is checked directly into this repository so any user
 can access it without additional permissions:
 
 ```text
-Demo Viva Glint Dataset with Attributes - Exit survey research guided.xlsx
 references/sample-data/Demo Viva Glint Dataset with Attributes - Exit survey research guided.xlsx
 ```
 
@@ -72,7 +94,9 @@ when the user explicitly chose the demo/sample option.
 
 ## Required grounding
 
-Read these references in order:
+For interpretation-only requests, use the grounding order in
+`references/interpretation.md`. For a new analysis, read these references in
+order:
 
 1. `../../references/design/glint-ui-system.md`
 2. `references/README.md`
@@ -86,71 +110,10 @@ Read these references in order:
 The Glint UI system is mandatory for all color, typography, spacing, component,
 and accessibility decisions. Do not invent report colors or visual patterns.
 
-`golden-report.html` is the canonical report shell. Future reports must preserve
-its markup, styling, tab order, labels, and browser interactions exactly while
-replacing its embedded aggregate data payload with the current analysis.
-The required base tab order is Correlation, Factors, Scores change, Downloads,
-and Methodology. When attrition analysis completes, add Attrition analysis
-followed immediately by Attrition alerts between Factors and Scores change. If
-attrition is unavailable, omit both attrition tabs, but keep Methodology and
-omit its attrition subsections. The Methodology tab is the final tab and
-documents, for analysts, how each visible analysis is computed and should be
-interpreted. Do not add Overview, Item results, or Heatmap tabs.
-
-Before the navigation, show a deterministic, filter-aware current-survey
-summary. Use the latest privacy-eligible cycle for the selected population and
-describe its average item score, three high-scoring items, three low-scoring items,
-and movement from the prior cycle when available. Add up to three
-privacy-safe aggregate comment themes for each displayed item when linked
-comments meet the minimum threshold. Prefer score-ranked items with sufficient
-comment coverage when at least six are available; otherwise retain the score
-ranking and state when themes are unavailable. Never include raw comments in
-the report, AI context, share ZIP, or chat. Treat scores and themes as
-descriptive within-survey signals rather than benchmarks or causal findings.
-This summary must render in standard no-AI reports as well as AI-preview
-reports.
-
-Keep all tab-level AI summary cards hidden. Every tab instead begins with one
-concise narrative paragraph that explains what the analysis means and how to
-use it.
-
-The Scores change tab must follow `scores-change-format.png`: grouped old/new
-cycle columns with Mean, Stddev, and n, followed by P-Value and Score
-Difference (New - Old) with proportional difference bars.
-It must also include a Respondent population sub-heading that switches between
-All respondents and Repeat respondents. Repeat respondents are employees with
-responses in both selected cycles; never infer repeat status from aggregate
-counts.
-
-The Correlation tab must classify absolute Pearson relationship strength as
-Low (`|r| < .30`), Medium (`.30-.49`), High (`.50-.69`), or Very high
-(`>= .70`). Preserve controls for minimum strength, strength-color visibility,
-statistical-significance visibility, and adding/removing multiple highlighted
-questions. The report must support multiple highlighted questions at once.
-Clicking a matrix cell must show `r`, p-value, N, strength, and
-significance status. Keep the matrix compact with full question names on both
-axes in small regular-weight text, make color intensity increase with
-relationship strength, and hide significance and empty detail/highlight
-regions by default.
-
-Cluster the relationship matrix with deterministic average-linkage
-hierarchical clustering using positive-correlation distance (`1 - r`). Select
-the recommended count using the highest average silhouette score from 3
-through 15, capped below the item count. Show a concise recommendation blurb
-and a dropdown from 3 through 10 clusters, extending through the recommendation
-when it is higher. Reorder both axes and show cluster labels/boundaries.
-Describe clusters as exploratory rather than validated survey constructs.
-Explain that clustered items share response patterns and may indicate
-overlapping content. Item reduction must preserve content coverage and be
-validated for reliability and stability across groups and cycles.
-
-The Attrition alerts tab must use the attrition-priority model in the report
-contract. For each report attribute and outcome window, rank items by the
-median privacy-eligible attrition multiplier across its groups and retain the
-top five. Compare each eligible group's item score with company overall. At
-company level, show the lowest-scoring group for each top item and attribute;
-under a report filter, show the selected group's top-five results. Keep the
-language screening-oriented and non-causal.
+`references/interactive-report-contract.md` is authoritative for report
+navigation, filters, tab behavior, analytical thresholds, score units,
+privacy, and packaging. Use the checked-in `golden-report.html` through the
+shared builder, not a manually recreated report.
 
 ## Primary workflow
 
@@ -170,27 +133,17 @@ python scripts/analyze_survey_export.py \
 The runner automatically:
 
 - shows a live percentage, progress bar, elapsed time, and current phase
-- detects standard employee ID columns
-- detects numeric `Q_*` survey items
-- excludes outcome-style `Q_*` fields that do not match the configured scale
-- reads `Sheet1` or the first worksheet from Excel workbooks
-- joins a `user_properties` or attributes worksheet when present
-- selects privacy-safe categorical report attributes
-- excludes identifier-like employee, manager, team, client, UUID, and GUID
-  fields from report filters and aggregate downloads
-- runs attrition whenever valid Exit or termination outcomes are present; for
-  the registered demo, H2 (`survey_cycle_id = 1002`) is linked to Exit
-  (`survey_cycle_id = 1003`) using H2's `survey_completion_date`
-  (`2026-06-01`) and 90-, 180-, and 365-day windows
+- detects supported input columns and joins available attributes as described
+  in `references/README.md`
+- runs attrition whenever valid Exit or termination outcomes are present
 - creates an internal `analysis-config.json`
 - runs the standard `vivaglint` analyses twice
 - requires SHA-256 repeatability
 - builds the self-contained interactive report and safe share ZIP
 - uses the checked-in golden report as the exact HTML template
 
-Long-running phases must provide visible progress rather than appearing idle.
-Keep updates concise and identify expensive work such as the repeatability
-verification, correlation clustering, attrition-alert aggregation, and ZIP packaging.
+Keep the runner's progress visible during long-running phases rather than
+appearing idle.
 
 The standard workflow uses `--summary-mode off`, which is also the runner
 default. It still writes `people-science-summary-context.json` so the same
@@ -198,50 +151,6 @@ completed analysis can be used later by the explicitly invoked
 `analyze-survey-ai-preview` skill. A stale `people-science-summaries.json` in
 the output directory must not appear in the report or share ZIP when summary
 mode is off.
-
-For Factors, use the company solution's factor count and varimax rotation to
-re-estimate loadings for every eligible attribute/value cut. Require at least
-the greater of 100 complete responses or five complete responses per survey
-item. Suppress smaller or failed cuts. Show the selected cut's complete N,
-loading-dimension cards, and clustered horizontal bar small multiples. Repeat
-the loading axis for each dimension and show the shared vertical question
-labels once. Plot positive loading magnitudes from 0 to 1 and reuse the
-Correlation Low, Medium, High, and Very high thresholds and colors. State
-Sort questions high to low by MR1 loading only; do not combine loading
-values across dimensions for ordering. Add a high-contrast outline to every
-bar plus a contrasting outline around each two-decimal data label. State that
-factor labels are exploratory working hypotheses,
-dimensions can rotate or reorder across cuts, and this is not evidence of
-measurement invariance.
-
-Explain factor loadings as item-to-dimension alignment on a 0-to-1 scale.
-Clarify that .70 is more closely aligned than .60, but a .10 difference is not
-automatically practically meaningful without considering the full loading
-pattern, item content, and cross-loadings.
-
-For Attrition, rank all eligible items by the unfavorable-to-favorable
-attrition-rate multiplier. Default to 180 days when company-overall results
-contain an unsuppressed finite multiplier; otherwise prefer 365 days, then
-another populated window. Apply the same preference order to eligible
-Attrition alerts. If no window has usable results, retain an explicit
-unavailable state at the first configured window. Allow 90-, 180-, and
-365-day windows. Show the item text and a horizontal multiplier bar with a
-clearly marked 1.00x reference line; do not display favorable or unfavorable
-counts or percentages in the report. Apply the shared report filter, suppress
-cells with fewer than five favorable or unfavorable respondents, and describe
-associations as screening signals rather than causal estimates. Never report
-individual flight-risk predictions.
-Flag multipliers with a two-sided Fisher exact test p-value below .05 as
-statistically significant while retaining the multiplier and non-causal
-interpretation.
-
-Use the checked-in People Science source index to select references from key
-terms across the current headline, observation, interpretation,
-recommendation, and caveat. Show three distinct references for every summary.
-Prefer exact analytical or item-theme matches over generic survey resources,
-and never reuse a source merely because it is broadly about employee surveys.
-Use neutral score-based language for item rankings and avoid company-specific
-classification vocabulary.
 
 Use explicit options only when automatic detection is wrong:
 
@@ -253,34 +162,22 @@ Use explicit options only when automatic detection is wrong:
 --question-cols <item1> <item2> ...
 --attribute-cols <attribute1> <attribute2> ...
 --min-group-size <5-or-higher>
---summary-mode off
 ```
 
-## Successful output
+## Completion
 
-A successful run must contain:
+For a new analysis, require:
 
 ```text
 analysis-manifest.json
-descriptives.csv
-response_distribution.csv
-correlations.csv
-factor_analysis_summary.csv
-by_attribute.csv
-attrition.csv
+completed aggregate artifacts listed in the manifest
 <output-directory-name>-report.html
 <output-directory-name>-share.zip
 ```
 
-Only completed analysis CSVs are required. The HTML report and ZIP are always
-required after repeatability passes. The standard report contains no AI summary
-cards. Open the HTML report before finishing.
-
-CSV means, standard deviations, and score differences use 0-100 score points,
-regardless of the original response scale. Response-distribution labels use
-equivalent 0-100 values. Preserve native units for non-score metrics.
-The manifest's `export_profile` records output units separately from
-`input_profile.scale_points`, which describes the model's input scale.
+After repeatability passes, open the HTML report before finishing. Then follow
+`references/interpretation.md` for QA and People Science findings.
+For interpretation-only requests, return its narrative format instead.
 
 ## Failure handling
 
@@ -288,11 +185,7 @@ The manifest's `export_profile` records output units separately from
   columns and rerun with explicit options.
 - If repeatability fails, do not generate or interpret the report.
 - If an analysis fails, preserve the explicit failure in the manifest.
-- If cycle, alert, or attrition inputs are unavailable, keep the
-  corresponding report tab and explain what is missing.
+- If inputs are unavailable, follow the report contract's navigation rules:
+  omit both attrition tabs when attrition cannot run; keep other tabs with an
+  explicit unavailable explanation.
 - Never substitute synthetic attrition outcomes.
-
-## Boundaries
-
-After generation, recommend `analysis-qa`. Use `interpret-analysis` only after
-QA passes. Do not create manager guidance in this skill.

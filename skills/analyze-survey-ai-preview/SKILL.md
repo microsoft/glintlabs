@@ -21,16 +21,16 @@ builder, golden report, schemas, or source index.
 
 1. If no completed analysis exists, follow `../analyze-survey/SKILL.md` and run
    `scripts/analyze_survey_export.py` with `--summary-mode off`.
-2. Run `analysis-qa` and proceed only when the output is interpretation-ready.
-3. Inspect `analysis-manifest.json` and
-   `people-science-summary-context.json`.
-4. Apply `interpret-analysis` guardrails.
-5. Use `people-science-knowledge-vault` to retrieve relevant externally
+2. Follow `../analyze-survey/references/interpretation.md` to establish QA
+   readiness and apply the interpretation process and guardrails.
+3. Inspect `people-science-summary-context.json` and the AI-summary modes in
+   `../analyze-survey/references/interactive-report-contract.md`.
+4. Use `people-science-knowledge-vault` to retrieve relevant externally
    published article bodies.
-6. Write `people-science-summaries.json` using
+5. Write `people-science-summaries.json` using
    `../analyze-survey/references/people-science-summaries.schema.json`.
    Include all six tabs.
-7. Rebuild the report:
+6. Rebuild the report:
 
 ```bash
 python scripts/build_interactive_report.py \
@@ -39,17 +39,15 @@ python scripts/build_interactive_report.py \
   --summary-mode required
 ```
 
-8. Confirm the report contains six summary cards, the manifest records
+7. Confirm all six narrative objects are embedded, the manifest records
    `summary_mode` as `required`, and the share ZIP contains the summary file.
-9. Open the HTML report before finishing.
+   Tab-level AI cards remain hidden as specified in the report contract.
+8. Open the HTML report before finishing.
 
 ## Summary contract
 
-Every tab summary contains a headline, observation, interpretation,
-recommendation, caveat, and three relevant published-source links. Keep the
-content concise, non-causal, privacy-safe, and explicit when evidence is
-unavailable. Live filtered summaries must use the selected aggregate results;
-they must not expose respondent-level rows.
+Use the shared report contract and narrative schema rather than maintaining a
+second summary specification here.
 
 ## Promotion
 

@@ -17,11 +17,20 @@ The core separation is:
 
 ## Why not one giant skill
 
-A single skill that runs analysis, validates results, interprets findings, and builds customer artifacts would be difficult to route, test, and maintain. The better pattern is composable skills:
+A single skill that also owns independent QA and all customer artifacts would
+be difficult to route, test, and maintain. Analysis execution and interpretation
+share one entry point, with detailed interpretation guidance kept in a
+colocated reference. QA remains a separate composable skill:
 
-1. `analyze-survey` produces outputs.
+1. `analyze-survey` produces outputs or accepts existing manifests and codebooks.
 2. `analysis-qa` determines whether outputs are safe to interpret.
-3. `interpret-analysis` produces People Science findings.
+3. `analyze-survey` produces People Science findings using
+   `skills/analyze-survey/references/interpretation.md` after readiness is
+   established, carrying forward QA caveats.
+
+Interpretation-only requests do not require new ingestion, codebook execution,
+or report packaging. Standard reports remain free of embedded AI summaries;
+`analyze-survey-ai-preview` remains the explicit opt-in for those summaries.
 
 Each skill should know its job, the shared contract, and which references to load.
 
