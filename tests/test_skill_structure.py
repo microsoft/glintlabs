@@ -259,6 +259,26 @@ def test_limitations_projection_exports_complete_safe_text_only_above_five(tmp_p
         module.input_limitations(config, survey, tmp_path)
 
 
+@pytest.mark.parametrize("positions,prefix", [
+    ([10], "Column 10: "),
+    ([10, 11], "Columns 10, 11: "),
+    ([], ""),
+])
+def test_limitations_column_label_matches_number_of_positions(tmp_path, positions, prefix):
+    module = load_script("build_interactive_report")
+    survey = tmp_path / "survey.csv"
+    survey.write_text("Employee ID,Q_ONE\n00001,5\n", encoding="utf-8")
+    audit = {
+        "version": 1,
+        "normalized_sha256": hashlib.sha256(survey.read_bytes()).hexdigest(),
+        "cycle_order": ["Cycle A"],
+        "limitations": [{"code": "attribute_excluded", "columns": positions}],
+    }
+    (tmp_path / "preparation-audit.json").write_text(json.dumps(audit), encoding="utf-8")
+    payload = module.input_limitations(tmp_path / "analysis-config.json", survey, tmp_path)
+    assert payload["entries"] == [prefix + module.PREPARATION_REASONS["attribute_excluded"]]
+
+
 def test_limitations_preview_has_five_entries_and_full_text_download():
     node = shutil.which("node")
     if node is None:
@@ -281,6 +301,8 @@ for(const count of [0,5,6,12]){
  D={inputLimitations:{audited:true,entries:Array.from({length:count},(_,i)=>"Limitation "+i)}};
  renderInputLimitations();
  const article=grid.children[0];
+ const paragraphs=article.children.filter(child=>child.tag==="p").map(child=>child.textContent);
+ assert.deepEqual(paragraphs,count===0?["No input exclusions were recorded during preparation."]:count>5?["Preview: showing the first 5 limitations. Download the full list below."]:[]);
  const list=article.children.find(child=>child.tag==="ul");
  assert.equal(list?.children.length||0,Math.min(5,count));
  const link=article.children.find(child=>child.tag==="a");
@@ -292,6 +314,9 @@ for(const count of [0,5,6,12]){
  }
  assert.equal(jump.children[0].href,"#methodology-limitations");
 }
+grid=new Element("div");jump=new Element("nav");D={};
+renderInputLimitations();
+assert.match(grid.children[0].children.find(child=>child.tag==="p").textContent,/exclusions were not recorded/);
 '''
     subprocess.run(
         [node, "-e", "function renderInputLimitations(){" + function + "\n" + checks],
@@ -1268,12 +1293,15 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     assert rendered_intro.group(1) == canonical_intro.group(1)
     assert rendered_intro.group(1).count("<br><br>") == 3
     assert "<br><br><br>" not in rendered_intro.group(1)
+    assert report.index(rendered_intro.group(1)) < report.index("id=attritionDays")
+    assert report.index("id=attritionDays") < report.index("id=attritionVisual")
     alerts_intro = re.search(
         r"<section class=panel id=alerts\b.*?<p class=tab-intro>(.*?)</p>",
         report,
         re.DOTALL,
     ).group(1)
     assert "later exits.<br><br>Start" in alerts_intro
+    assert report.index(alerts_intro) < report.index("id=alertDays")
     higher_minimum_report = module.inject_attrition_report(
         module.prepare_report_shell(golden, True),
         {**payload, "minimumCategoryN": 10},
@@ -1289,6 +1317,255 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     assert "<th>Unfavorable attrition</th>" not in report
     assert "fewer than 5 favorable or unfavorable respondents" in report
     assert "2025-12-15" in report
+
+
+def test_survey_summary_omits_average_badge_but_keeps_item_scores_and_movement():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is required to exercise the survey summary.")
+    golden = (ROOT / "skills/analyze-survey/references/golden-report.html").read_text(
+        encoding="utf-8"
+    )
+    renderer = next(
+        line for line in golden.splitlines()
+        if line.startswith("function renderSurveySummary()")
+    )
+    checks = r"""
+const assert=require("node:assert/strict"),root={innerHTML:""};
+const D={questions:["Q_ONE","Q_TWO"],labels:{Q_ONE:"Role fit",Q_TWO:"Career"},
+  cycles:{cycles:["Earlier","Latest"]},commentThemes:{}};
+const attr={value:""},val={value:""};
+globalThis.document={querySelector(){return root}};
+function selectedScope(){return attr.value?"Department: Sales":"All employees"}
+function cycleSource(){return{
+  Earlier:{n:40,items:[[75,20,40],[60,20,40]]},
+  Latest:{n:40,items:[[80,20,40],[70,20,40]]}
+}}
+function compactN(value){return String(value)}
+function escapeHtml(value){return String(value)}
+for(const filtered of [false,true]){
+  attr.value=filtered?"department":"";val.value=filtered?"Sales":"";
+  renderSurveySummary();
+  assert.ok(!root.innerHTML.includes("summary-score"));
+  assert.ok(!root.innerHTML.includes("Average item score"));
+  assert.ok(root.innerHTML.includes(selectedScope()));
+  assert.ok(root.innerHTML.includes("<h1>Latest</h1>"));
+  assert.ok(root.innerHTML.includes("40 responses"));
+  assert.ok(root.innerHTML.includes("<strong>80</strong>"));
+  assert.ok(root.innerHTML.includes("<strong>70</strong>"));
+  assert.ok(root.innerHTML.includes("average item score increased by 8 points"));
+  assert.ok(root.innerHTML.includes("High scoring items"));
+  assert.ok(root.innerHTML.includes("Low scoring items"));
+}
+"""
+    subprocess.run(
+        [node, "-e", renderer + "\n" + checks], check=True,
+        capture_output=True, text=True, encoding="utf-8", timeout=30,
+    )
+
+
+def test_report_filters_move_with_tabs_without_resetting_selections():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is required to exercise report filters.")
+    golden = (ROOT / "skills/analyze-survey/references/golden-report.html").read_text(
+        encoding="utf-8"
+    )
+    helper = re.search(
+        r"^function placeReportFilters\(tabId\)\{.*?^\}",
+        golden, re.DOTALL | re.MULTILINE,
+    ).group(0)
+    checks = r"""
+const assert=require("node:assert/strict");
+const attr={value:"department"},val={value:"Sales"},cycleLabel={hidden:false};
+const cycle={value:"Latest",closest(){return cycleLabel}};
+const help={},note={},filters={hidden:true,querySelector(){return help}};
+const panels=Object.fromEntries(["relationships","factors","changes","attrition","alerts","downloads","methodology"].map(id=>[
+  id,{querySelector(selector){assert.equal(selector,".tab-intro");return{after(element){
+    assert.equal(element,filters);element.parentId=id;
+  }}}}
+]));
+globalThis.document={
+  getElementById(id){return panels[id]},
+  querySelector(selector){return selector==="#reportFilters"?filters:note}
+};
+function cycleAwareScope(){return"Department: Sales; Survey cycle: Latest"}
+function selectedScope(){return"Department: Sales"}
+for(const id of ["relationships","changes","attrition","alerts","factors"]){
+  placeReportFilters(id);
+  assert.equal(filters.hidden,false);
+  assert.equal(filters.parentId,id);
+  const cycleApplies=["relationships","factors"].includes(id);
+  assert.equal(cycleLabel.hidden,!cycleApplies);
+  assert.equal(note.textContent,cycleApplies?cycleAwareScope():selectedScope());
+  assert.equal(attr.value,"department");assert.equal(val.value,"Sales");assert.equal(cycle.value,"Latest");
+}
+for(const id of ["downloads","methodology"]){
+  placeReportFilters(id);assert.equal(filters.hidden,true);
+}
+placeReportFilters("relationships");
+assert.equal(filters.parentId,"relationships");assert.equal(filters.hidden,false);
+assert.match(help.textContent,/work together/);
+"""
+    subprocess.run(
+        [node, "-e", helper + "\n" + checks], check=True,
+        capture_output=True, text=True, encoding="utf-8", timeout=30,
+    )
+
+
+def test_visual_exports_use_current_relevant_filter_context_and_safe_cells():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is required to exercise visual export context.")
+    golden = (ROOT / "skills/analyze-survey/references/golden-report.html").read_text(
+        encoding="utf-8"
+    )
+    helpers = [re.search(r"^function csvEscape\(.*$", golden, re.MULTILINE).group(0)]
+    for name in ("visualFilterContext", "rowsWithFilterContext"):
+        helpers.append(re.search(
+            rf"^function {name}\(.*?^\}}", golden, re.DOTALL | re.MULTILINE,
+        ).group(0))
+    checks = r"""
+const assert=require("node:assert/strict");
+const D={segments:{department:{label:"Department"}}};
+const attr={value:"department"},val={value:"Sales"},cycle={value:"Latest"};
+const names=["Role fit","Career"],relFocus=new Set([1]);
+const relColor={checked:true},relSignificance={checked:false};
+const controls={};
+function select(id,text,value=text){controls[id]={value,selectedOptions:[{textContent:text}],disabled:false}}
+globalThis.document={querySelector(selector){return controls[selector]||null}};
+select("#relClusters","4 clusters","4");select("#relStrength","High+",".5");
+select("#oldCycle","Earlier");select("#newCycle","Latest");
+select("#respondentPopulation","Repeat respondents","repeat");
+select("#attritionDays","180 days (6 months)","1");select("#alertDays","365 days","365");
+let context=Object.fromEntries(visualFilterContext("relationships"));
+assert.deepEqual(context,{
+  "Report attribute":"Department",Value:"Sales","Survey cycle":"Latest",
+  Clusters:"4 clusters","Minimum strength":"High+","Highlighted questions":"Career",
+  Color:"On",Significance:"Hidden"
+});
+const input=[["Item","Score"],["Role fit","72"]];
+let exported=rowsWithFilterContext(input,"changes");
+assert.deepEqual(exported,[
+  ["Item","Score","Report attribute","Value","Old survey cycle","New survey cycle","Respondent population"],
+  ["Role fit","72","Department","Sales","Earlier","Latest","Repeat respondents"]
+]);
+assert.deepEqual(input,[["Item","Score"],["Role fit","72"]]);
+val.value=' =HYPERLINK("unsafe")';
+controls["#respondentPopulation"].selectedOptions[0].textContent="All respondents";
+exported=rowsWithFilterContext(input,"changes");
+assert.equal(exported[1][3],val.value);
+assert.match(csvEscape(exported[1][3]),/^"'/);
+assert.equal(exported[1].at(-1),"All respondents");
+assert.equal(csvEscape('Career, "growth"'),'"Career, ""growth""'+'"');
+attr.value="";
+context=Object.fromEntries(visualFilterContext("factors"));
+assert.deepEqual(context,{"Report attribute":"Company overall",Value:"All employees","Survey cycle":"Latest"});
+cycle.value="";
+assert.equal(Object.fromEntries(visualFilterContext("factors"))["Survey cycle"],"All cycles");
+for(const [tab,window] of [["attrition","180 days (6 months)"],["alerts","365 days"]]){
+  context=Object.fromEntries(visualFilterContext(tab));
+  assert.deepEqual(context,{"Report attribute":"Company overall",Value:"All employees","Outcome window":window});
+}
+controls["#relClusters"].disabled=true;
+assert.equal(Object.fromEntries(visualFilterContext("relationships")).Clusters,"Unavailable");
+assert.deepEqual(rowsWithFilterContext([],"changes"),[]);
+"""
+    subprocess.run(
+        [node, "-e", "\n".join(helpers) + "\n" + checks], check=True,
+        capture_output=True, text=True, encoding="utf-8", timeout=30,
+    )
+
+
+def test_visual_png_copy_adds_filter_footnote_and_preserves_download_fallback():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is required to exercise PNG exports.")
+    golden = (ROOT / "skills/analyze-survey/references/golden-report.html").read_text(
+        encoding="utf-8"
+    )
+    helpers = []
+    for name in ("wrapVisualText", "copyVisualImage"):
+        helpers.append(re.search(
+            rf"^(?:async )?function {name}\(.*?^\}}",
+            golden, re.DOTALL | re.MULTILINE,
+        ).group(0))
+    checks = r"""
+const assert=require("node:assert/strict");
+let capture,canvas,svgCount=0,revoked=0,downloaded=0,copied=0,encodingFails=false;
+const footnotes=[],messages=[],errors=[];
+const toolbar={closest(){return{id:"changes"}}};
+const el={
+  scrollWidth:1000,getBoundingClientRect(){return{width:800}},
+  querySelectorAll(){return[{scrollWidth:1200}]},
+  cloneNode(){capture={
+    style:{},scroll:{style:{}},heading:{style:{}},removed:false,
+    removeAttribute(){},setAttribute(){},
+    querySelectorAll(selector){
+      if(selector===".scroll")return[this.scroll];
+      if(selector==="th")return[this.heading];
+      return[];
+    },
+    remove(){this.removed=true}
+  };return capture}
+};
+const context={
+  measureText(text){return{width:text.length*6}},
+  scale(){},fillRect(){},drawImage(){},
+  fillText(text){footnotes.push(text)}
+};
+globalThis.document={
+  body:{appendChild(node){assert.equal(node,capture)}},
+  createElement(tag){assert.equal(tag,"canvas");canvas={
+    getContext(){return context},
+    toBlob(resolve){resolve(encodingFails?null:new Blob(["png"],{type:"image/png"}))}
+  };return canvas}
+};
+globalThis.getComputedStyle=()=>({color:"text",backgroundColor:"surface"});
+globalThis.URL={createObjectURL(){return"blob:"+ ++svgCount},revokeObjectURL(){revoked++}};
+globalThis.Image=class{set src(value){queueMicrotask(()=>this.onload())}};
+Object.defineProperty(globalThis,"navigator",{value:{},configurable:true});
+globalThis.window={};
+function visualFilterContext(tab){
+  assert.equal(tab,"changes");return[["Report attribute","Department"],["Value","Sales"],["Respondent population","Repeat respondents"]];
+}
+function domToSvgMarkup(node){
+  assert.equal(node,capture);
+  assert.equal(node.style.width,"1200px");
+  assert.equal(node.scroll.style.maxHeight,"none");
+  assert.equal(node.scroll.style.overflow,"visible");
+  assert.equal(node.heading.style.position,"static");
+  return{width:1200,height:900,svg:"<svg/>"}
+}
+function downloadBlob(blob,filename){assert.equal(blob.type,"image/png");assert.equal(filename,"visual.png");downloaded++}
+function showVisualToast(target,message){assert.equal(target,toolbar);messages.push(message)}
+console.error=(...args)=>errors.push(args);
+(async()=>{
+  await copyVisualImage(el,toolbar);
+  assert.equal(downloaded,1);assert.equal(capture.removed,true);
+  assert.equal(canvas.width,2400);assert.ok(canvas.height>1800);
+  assert.match(footnotes.join(" "),/Value: Sales/);
+  assert.match(footnotes.join(" "),/Respondent population: Repeat respondents/);
+  assert.equal(messages.at(-1),"Image downloaded");
+  window.ClipboardItem=globalThis.ClipboardItem=class{constructor(data){assert.ok(data["image/png"])}};
+  navigator.clipboard={async write(items){assert.equal(items.length,1);copied++}};
+  await copyVisualImage(el,toolbar);
+  assert.equal(copied,1);assert.equal(downloaded,1);assert.equal(messages.at(-1),"Image copied");
+  navigator.clipboard.write=async()=>{throw new Error("Permission denied")};
+  await copyVisualImage(el,toolbar);
+  assert.equal(downloaded,2);assert.equal(messages.at(-1),"Image downloaded");
+  encodingFails=true;
+  await copyVisualImage(el,toolbar);
+  assert.equal(downloaded,2);assert.equal(messages.at(-1),"Copy failed");
+  assert.equal(errors[0][0],"copyVisualImage failed");
+  assert.equal(capture.removed,true);assert.equal(revoked,svgCount);
+  assert.deepEqual(wrapVisualText(context,"unbrokenlongvalue",18),["unb","rok","enl","ong","val","ue"]);
+})().catch(error=>{process.stderr.write(String(error));process.exitCode=1});
+"""
+    subprocess.run(
+        [node, "-e", "\n".join(helpers) + "\n" + checks], check=True,
+        capture_output=True, text=True, encoding="utf-8", timeout=30,
+    )
 
 
 def test_attrition_table_exports_preserve_filters_and_suppression():
