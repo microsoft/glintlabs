@@ -24,7 +24,6 @@ def test_each_skill_has_first_priority_reference_folder():
         "analysis-qa",
         "analyze-survey",
         "analyze-survey-ai-preview",
-        "interpret-analysis",
         "people-science-knowledge-vault",
     ]
 
@@ -50,6 +49,7 @@ def test_analyze_survey_required_grounding_paths_are_skill_relative():
         "references/golden-report.html",
         "references/scores-change-format.png",
         "references/interactive-report-contract.md",
+        "references/interpretation.md",
         "references/people-science-summaries.schema.json",
         "references/people-science-source-index.json",
         "../people-science-knowledge-vault/references",
@@ -59,6 +59,58 @@ def test_analyze_survey_required_grounding_paths_are_skill_relative():
     ]
 
     assert all((skill_dir / path).resolve().exists() for path in required)
+
+
+def test_survey_interpretation_workflow_is_consolidated():
+    skill_dir = ROOT / "skills/analyze-survey"
+    skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    interpretation_path = skill_dir / "references/interpretation.md"
+    interpretation = interpretation_path.read_text(encoding="utf-8")
+    interpretation_text = " ".join(interpretation.split())
+
+    assert "interpret existing vivaglint outputs" in skill
+    existing_outputs = skill.split("### Existing analysis outputs", 1)[1].split(
+        "### New survey analysis", 1
+    )[0]
+    assert "references/interpretation.md" in existing_outputs
+    assert "Do not ask for a new ingest" in existing_outputs
+    assert "rerun codebooks" in existing_outputs
+    assert "require HTML/ZIP generation" in existing_outputs
+    assert "Only after QA passes (Ready or Use with caveats)" in interpretation_text
+    assert "knowledge-vault handoff" in existing_outputs
+    assert "Purely conceptual" in existing_outputs
+    assert "../../people-science-knowledge-vault/SKILL.md" in interpretation
+    assert "Use the vault's complete retrieval process" in interpretation_text
+    assert "without requiring a manifest, survey data, QA, or a new analysis" in interpretation_text
+    assert "retain the QA gate above" in interpretation_text
+    assert "Keep observed survey findings, cited published guidance, and hypotheses clearly separate" in interpretation_text
+    assert "Cite retrieved article bodies beside the claims" in interpretation_text
+
+    for section in (
+        "## Required grounding",
+        "## Interpretation process",
+        "### Executive takeaways",
+        "### Evidence pattern",
+        "### What not to over-interpret",
+        "### Recommended follow-up",
+        "## Guardrails",
+    ):
+        assert section in interpretation
+    for safeguard in (
+        "repeatability fails",
+        "QA identifies a hard stop",
+        "Do not overstate causality",
+        "Do not name small groups",
+        "Do not create manager-facing action plans in this workflow",
+        "Do not substitute overall averages for missing benchmarks",
+        "Do not label factors as definitive constructs",
+    ):
+        assert safeguard in interpretation_text
+
+    for path in re.findall(r"`(\.\./[^`]+\.md)`", interpretation):
+        assert (interpretation_path.parent / path).resolve().is_file()
+    for document in ROOT.rglob("*.md"):
+        assert "interpret-analysis" not in document.read_text(encoding="utf-8")
 
 
 def test_analyze_survey_points_to_linked_dataset():
@@ -98,22 +150,6 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "interactive-report-contract.md" in skill
     assert "golden-report.html" in skill
     assert "scores-change-format.png" in skill
-    assert "strength-color visibility" in skill
-    assert "statistical-significance visibility" in skill
-    assert "multiple highlighted questions" in skill
-    assert "positive-correlation distance (`1 - r`)" in skill
-    assert "highest average silhouette score" in skill
-    assert "dropdown from 3 through 10 clusters" in skill
-    assert "median privacy-eligible attrition multiplier" in skill
-    assert "top-five results" in skill
-    assert "lowest-scoring group" in skill
-    assert "deterministic, filter-aware current-survey" in skill
-    assert "three high-scoring items" in skill
-    assert "three low-scoring items" in skill
-    assert "privacy-safe aggregate comment themes" in skill
-    assert "Never include raw comments" in skill
-    assert "greater of 100 complete responses or five complete responses" in skill
-    assert "clustered horizontal bar small multiples" in skill
     assert "progress bar" in skill
     assert "estimated completion time" in skill
     assert "first response that starts the run" in skill
@@ -127,7 +163,7 @@ def test_analyze_survey_points_to_linked_dataset():
     ).read_text(encoding="utf-8")
     assert "--summary-mode required" in preview_skill
     assert "people-science-summaries.schema.json" in preview_skill
-    assert "`interpret-analysis`" in preview_skill
+    assert "../analyze-survey/references/interpretation.md" in preview_skill
     assert "`people-science-knowledge-vault`" in preview_skill
 
     report_contract = (
@@ -166,6 +202,16 @@ def test_analyze_survey_points_to_linked_dataset():
     assert "**Example interpretation** and **Example action** callouts" in report_contract
     assert "deterministic keyword coding" in report_contract
     assert "Raw comments must never enter HTML" in report_contract
+    assert "three high-scoring items" in report_contract
+    assert "three low-scoring items" in report_contract
+    assert "privacy-safe aggregate\n  comment themes" in report_contract
+    assert "greater of 100 complete responses or five complete" in report_contract
+    assert "positive-correlation distance (`1 - r`)" in report_contract
+    assert "highest average silhouette score" in report_contract
+    assert "Clicking a cell shows `r`, p-value, N, strength" in report_contract
+    assert "Tab-level AI summary containers stay hidden in every mode" in report_contract
+    assert "Tab-level AI cards remain hidden" in preview_skill
+    assert "contains six summary cards" not in preview_skill
     assert "`off`: render no AI summary cards" in report_contract
     assert "`required`: fail report generation" in report_contract
     assert "Recalculate summaries when the report attribute or value changes" in report_contract
