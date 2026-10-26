@@ -1,0 +1,153 @@
+:root {
+  /* Glint Labs foundation */
+  --glint-ink: #17213a;
+  --glint-ink-deep: #10192c;
+  --glint-text: #303744;
+  --glint-muted: #667085;
+  --glint-line: #d9e1ea;
+  --glint-paper: #ffffff;
+  --glint-wash: #f5f8fb;
+  --glint-blue: #1677d2;
+  --glint-blue-strong: #0f5fae;
+  --glint-blue-soft: #eaf4fd;
+  --glint-blue-pale: #dcebf7;
+  --glint-teal: #0e776d;
+  --glint-teal-soft: #eaf7f5;
+  --glint-violet: #6e4bd8;
+  --glint-violet-soft: #f1edfc;
+  --glint-orange: #d75b27;
+  --glint-orange-strong: #b3471c;
+  --glint-orange-soft: #fff3ed;
+  --glint-red: #a4262c;
+  --glint-red-soft: #fff1f1;
+
+  /* Studio semantic tokens */
+  --background: var(--glint-paper);
+  --surface: var(--glint-wash);
+  --ink: var(--glint-ink);
+  --muted: var(--glint-muted);
+  --accent: var(--glint-blue);
+  --accent-hover: var(--glint-blue-strong);
+  --accent-soft: var(--glint-blue-soft);
+  --border: var(--glint-line);
+  --focus: var(--glint-blue);
+  --positive: var(--glint-teal);
+  --positive-border: #a9d5cf;
+  --positive-background: var(--glint-teal-soft);
+  --warning: var(--glint-orange-strong);
+  --warning-accent: var(--glint-orange);
+  --warning-background: var(--glint-orange-soft);
+  --danger: var(--glint-red);
+  --danger-background: var(--glint-red-soft);
+  --studio-canvas: #edf2f7;
+  --studio-surface: var(--glint-paper);
+  --studio-surface-subtle: var(--glint-wash);
+  --studio-control-border: #98a6b8;
+  --studio-code-background: var(--glint-ink);
+  --studio-code-text: var(--glint-blue-pale);
+  --studio-shadow: 0 8px 28px rgb(23 33 58 / 9%);
+
+  /* Report semantic tokens */
+  --report-canvas: var(--glint-paper);
+  --report-heading: #000000db;
+  --report-text: #000000db;
+  --report-muted: var(--glint-muted);
+  --report-rule: var(--glint-line);
+  --report-selection: var(--glint-blue);
+  --report-selection-soft: var(--glint-blue-soft);
+  --report-visual: var(--glint-violet);
+  --report-visual-soft: var(--glint-violet-soft);
+  --report-issue: var(--glint-orange-strong);
+  --report-issue-soft: var(--glint-orange-soft);
+  --report-cover: #ffffff;
+  --report-light-blue: #b3e0ff;
+  --report-periwinkle: #9299f7;
+  --report-blue: #2764e7;
+  --report-navy: #102784;
+  --report-cyan: #16bbda;
+  --report-mint: #73edd8;
+
+  /* Typography mappings */
+  --report-title-size: var(--fontSizeHero800);
+  --report-title-line-height: var(--lineHeightHero800);
+  --report-section-size: var(--fontSizeHero700);
+  --report-section-line-height: var(--lineHeightHero700);
+  --report-subsection-size: var(--fontSizeBase600);
+  --report-subsection-line-height: var(--lineHeightBase600);
+  --report-body-size: var(--fontSizeBase400);
+  --report-body-line-height: var(--lineHeightBase400);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  min-width: 0;
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100%;
+  color: var(--ink);
+  background: var(--background);
+  font-family: var(
+    --fontFamilyBase,
+    "Segoe UI Variable Text",
+    "Segoe UI",
+    Arial,
+    sans-serif
+  );
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+html[data-hero-transition]::view-transition-group(*),
+html[data-hero-transition]::view-transition-old(*),
+html[data-hero-transition]::view-transition-new(*) {
+  animation-duration: 300ms;
+  animation-timing-function: ease-in-out;
+}
+
+html[data-hero-transition]::view-transition-old(root) {
+  animation: none;
+}
+
+html[data-hero-transition]::view-transition-new(root) {
+  animation-name: hero-dissolve-in;
+  mix-blend-mode: normal;
+}
+
+html[data-hero-transition]::view-transition-old(annual-hero-photo) {
+  animation: none;
+  opacity: 0;
+}
+
+html[data-hero-transition]::view-transition-new(annual-hero-photo) {
+  animation: none;
+}
+
+@keyframes hero-dissolve-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  html[data-hero-transition]::view-transition-group(*),
+  html[data-hero-transition]::view-transition-old(*),
+  html[data-hero-transition]::view-transition-new(*) {
+    animation: none;
+  }
+}

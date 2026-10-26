@@ -1,0 +1,70 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="364" height="168" viewBox="0 0 364 168" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Frame 435">
+<g clip-path="url(#clip0_0_592)">
+<path d="M0 0H364V168H0V0Z" fill="#FBFDFF"/>
+<g id="Ellipse 4" opacity="0.1" filter="url(#filter0_f_0_592)">
+<circle r="119" fill="#5C8DF8"/>
+</g>
+<g id="Ellipse 5" opacity="0.1" filter="url(#filter1_f_0_592)">
+<circle cx="363" cy="168" r="188" fill="#FFE6A5"/>
+</g>
+<g id="Plan">
+<g id="Vector 18209 (Stroke)">
+<use xlink:href="#stroke0_0_592" fill="#294482"/>
+<use xlink:href="#stroke0_0_592" fill="#294482"/>
+</g>
+<g id="Vector 18208 (Stroke)">
+<use xlink:href="#stroke1_0_592" fill="#294482"/>
+<use xlink:href="#stroke1_0_592" fill="#294482"/>
+</g>
+<g id="Vector 18331 (Stroke)">
+<use xlink:href="#stroke2_0_592" fill="#294482"/>
+<use xlink:href="#stroke2_0_592" fill="#294482"/>
+</g>
+<g id="Vector 18332 (Stroke)">
+<use xlink:href="#stroke3_0_592" fill="#294482"/>
+<use xlink:href="#stroke3_0_592" fill="#294482"/>
+</g>
+<g id="Vector 18333 (Stroke)">
+<use xlink:href="#stroke4_0_592" fill="#294482"/>
+<use xlink:href="#stroke4_0_592" fill="#294482"/>
+</g>
+<g id="Vector 18334 (Stroke)">
+<use xlink:href="#stroke5_0_592" fill="#294482"/>
+<use xlink:href="#stroke5_0_592" fill="#294482"/>
+</g>
+<circle id="Ellipse 27779" cx="154" cy="84" r="9.5" fill="#5C8DF8"/>
+<circle id="Ellipse 27777" cx="154" cy="112" r="9.5" fill="#CEDEFF"/>
+<circle id="Ellipse 27775" cx="210" cy="56" r="9.5" fill="#CEDEFF"/>
+<circle id="Ellipse 27773" cx="210" cy="84" r="9.5" fill="#5C8DF8"/>
+<circle id="Ellipse 27770" cx="182" cy="56" r="9.5" fill="#FFE6A5" stroke="#294482"/>
+<circle id="Ellipse 27778" cx="210" cy="112" r="13.75" fill="#F5F5F5" stroke="#294482" stroke-linecap="round" stroke-dasharray="3 3"/>
+<circle id="Ellipse 27780" cx="182" cy="112" r="9.5" fill="#FFE6A5" stroke="#294482"/>
+<path id="Vector (Stroke)" d="M212.586 106.336C213.367 105.555 214.633 105.555 215.414 106.336C216.195 107.117 216.195 108.383 215.414 109.164L212.704 111.875L215.414 114.586C216.195 115.367 216.195 116.633 215.414 117.414C214.633 118.195 213.367 118.195 212.586 117.414L209.875 114.704L207.164 117.414C206.383 118.195 205.117 118.195 204.336 117.414C203.555 116.633 203.555 115.367 204.336 114.586L207.046 111.875L204.336 109.164C203.555 108.383 203.555 107.117 204.336 106.336C205.117 105.555 206.383 105.555 207.164 106.336L209.875 109.046L212.586 106.336Z" fill="#294482"/>
+<circle id="Ellipse 27776" cx="154" cy="56" r="14.25" fill="#F5F5F5" stroke="#294482"/>
+<path id="Vector 17643 (Stroke)" d="M158.066 51.6056C158.836 50.8138 160.103 50.7962 160.895 51.5663C161.686 52.3364 161.704 53.6028 160.934 54.3946L153.882 61.6446C153.511 62.0268 153.001 62.2449 152.468 62.2501C151.935 62.2553 151.422 62.0473 151.043 61.6725L147.094 57.7684C146.308 56.9918 146.301 55.7255 147.078 54.94C147.854 54.1546 149.12 54.1474 149.906 54.9239L152.421 57.41L158.066 51.6056Z" fill="#294482"/>
+</g>
+</g>
+</g>
+<defs>
+<filter id="filter0_f_0_592" x="-269" y="-269" width="538" height="538" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="75" result="effect1_foregroundBlur_0_592"/>
+</filter>
+<filter id="filter1_f_0_592" x="25" y="-170" width="676" height="676" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="75" result="effect1_foregroundBlur_0_592"/>
+</filter>
+<clipPath id="clip0_0_592">
+<path d="M0 0H364V168H0V0Z" fill="white"/>
+</clipPath>
+<path id="stroke0_0_592" d="M150.672 83.9746L153.525 81.1714L184.328 112.525L181.475 115.328L150.672 83.9746Z"/>
+<path id="stroke1_0_592" d="M212.828 84.5254L209.975 87.3286L179.172 55.9751L182.025 53.1719L212.828 84.5254Z"/>
+<path id="stroke2_0_592" d="M155.75 85.25V111.75H151.75V85.25H155.75Z"/>
+<path id="stroke3_0_592" d="M211.875 57.5V84H208.125V57.5H211.875Z"/>
+<path id="stroke4_0_592" d="M182 58L155.5 58L155.5 54L182 54L182 58Z"/>
+<path id="stroke5_0_592" d="M206.75 113.875L180.25 113.875L180.25 110.125L206.75 110.125L206.75 113.875Z"/>
+</defs>
+</svg>

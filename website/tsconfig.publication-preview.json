@@ -1,0 +1,50 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false
+  },
+  "include": [
+    ".next-annual-anchor-ready/types/**/*.ts",
+    ".next-annual-canonical-2026/types/**/*.ts",
+    ".next-annual-canonical-final/types/**/*.ts",
+    ".next-annual-canonical-ready/types/**/*.ts",
+    ".next-annual-card-scroll-ready/types/**/*.ts",
+    ".next-annual-clean-preview/types/**/*.ts",
+    ".next-annual-fixed-nav/types/**/*.ts",
+    ".next-annual-hero-colors/types/**/*.ts",
+    ".next-annual-momentum-dev/types/**/*.ts",
+    ".next-annual-momentum-ready/types/**/*.ts",
+    ".next-annual-pixel-dev/types/**/*.ts",
+    ".next-annual-pixel-ready/types/**/*.ts",
+    ".next-compact-publishing/types/**/*.ts",
+    ".next-connected-studio-final/types/**/*.ts",
+    ".next-connected-studio-live/types/**/*.ts",
+    ".next-connected-studio/types/**/*.ts",
+    ".next-inline-image-descriptions/types/**/*.ts",
+    ".next-no-legacy-preview/types/**/*.ts",
+    ".next-no-saved-reports/types/**/*.ts",
+    ".next-owner-key-test/types/**/*.ts",
+    ".next-publication-preview/types/**/*.ts",
+    ".next-publish-report-header/types/**/*.ts",
+    ".next-publishing-ux-final/types/**/*.ts",
+    ".next-publishing-ux-pass1/types/**/*.ts",
+    ".next-reader-width-test/types/**/*.ts",
+    ".next-review-feedback-test/types/**/*.ts",
+    ".next-simple-publishing-glacier-final/types/**/*.ts",
+    ".next-simple-publishing-glacier/types/**/*.ts",
+    ".next-v1-word-images-final/types/**/*.ts",
+    ".next-v1-word-images/types/**/*.ts",
+    "next-env.d.ts",
+    "next.config.ts",
+    "scripts/**/*.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".next-staging-source-ready/types/**/*.ts",
+    ".next-local-studio/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx"
+  ]
+}

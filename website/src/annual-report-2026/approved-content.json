@@ -1,0 +1,3379 @@
+{
+  "schemaVersion": "0.1.0",
+  "source": {
+    "fileName": "Next Gen Employee Listening Narrative_v5COPY.docx",
+    "sizeBytes": 699273,
+    "sha256": "3ce32b3c7b95945a4b97507c9bfd465e5cc55486bf91b8688c2da890c72def14"
+  },
+  "metadata": {
+    "title": "The next generation of employee listening",
+    "status": "draft",
+    "author": {
+      "name": "Microsoft Viva Glint People Science",
+      "handle": "@MicrosoftViva"
+    },
+    "publishedDate": "2026",
+    "readTimeMinutes": 28,
+    "topics": [
+      "Employee listening",
+      "Workforce intelligence",
+      "AI"
+    ]
+  },
+  "blocks": [
+    {
+      "id": "block-0",
+      "source": {
+        "part": "word/document.xml",
+        "index": 0,
+        "paragraphId": "7C6AFE25"
+      },
+      "type": "heading",
+      "level": 1,
+      "text": "The next generation of employee listening"
+    },
+    {
+      "id": "block-1",
+      "source": {
+        "part": "word/document.xml",
+        "index": 1,
+        "paragraphId": "38E93207"
+      },
+      "type": "heading",
+      "level": 2,
+      "text": "Listening at the speed of change"
+    },
+    {
+      "id": "block-2",
+      "source": {
+        "part": "word/document.xml",
+        "index": 2,
+        "paragraphId": "1D8C8893"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Everything is expected to move faster: faster work, faster decisions, faster impact. Employee listening is not exempt from that pressure. But faster listening cannot simply mean asking employees more often. As organizations redesign how work gets done, listening has a meaningful role in shaping what that next experience becomes for employees."
+    },
+    {
+      "id": "block-3",
+      "source": {
+        "part": "word/document.xml",
+        "index": 3,
+        "paragraphId": "178CE26F"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "A new AI model is introduced, on average, every five days. Before one quarterly planning cycle ends, organizations and employees may be working with capabilities that did not exist when it began. Workflows developed over years can now be reconsidered in months, while employees are still working out what those changes mean for their roles, expertise, and future."
+    },
+    {
+      "id": "block-4",
+      "source": {
+        "part": "word/document.xml",
+        "index": 4,
+        "paragraphId": "7F16D912"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Organizations cannot navigate that pace of change through business metrics alone. Employees see where new tools improve work, where they create friction, and where the intended transformation is diverging from the day-to-day experience. Their perspective can reveal what an organization needs to understand before those effects become visible in performance, productivity, or retention."
+    },
+    {
+      "id": "block-5",
+      "source": {
+        "part": "word/document.xml",
+        "index": 5,
+        "paragraphId": "5FCAA0D2"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Enter employee listening. It gives organizations access to knowledge held by the people closest to the work. But access is not the same as understanding or influence. Employees need reason to believe that sharing is safe and worthwhile, while organizations need the capacity to interpret what they hear, connect it to decisions, and respond credibly."
+    },
+    {
+      "id": "block-6",
+      "source": {
+        "part": "word/document.xml",
+        "index": 6,
+        "paragraphId": "43806E41"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Our foundational listening practices were built for a more stable operating environment. Surveys, reporting cycles, and manager action plans created scale, consistency, and trust. When information changes faster than those cycles, solely increasing frequency can add burden without necessarily producing faster understanding."
+    },
+    {
+      "id": "block-7",
+      "source": {
+        "part": "word/document.xml",
+        "index": 7,
+        "paragraphId": "51542818"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Next-generation employee listening starts with the question the organization needs to answer, not the tool it already knows how to use. Right-fit listening aligns the topics, voices, channels, cadence, interpretation, and response around what employees and the organization need to learn. The goal is not to listen more. It is to hear what matters when it matters and connect that understanding to a credible response."
+    },
+    {
+      "id": "block-8",
+      "source": {
+        "part": "word/document.xml",
+        "index": 8,
+        "paragraphId": "641F8F31"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "[Copilot suggested opening visual: Contrast the accelerating pace of work with the slower cycle of traditional listening. Show that more frequent asking does not necessarily produce faster understanding.]"
+    },
+    {
+      "id": "block-9",
+      "source": {
+        "part": "word/document.xml",
+        "index": 9,
+        "paragraphId": "74B81AFC"
+      },
+      "type": "heading",
+      "level": 2,
+      "text": "Where employee listening stands today"
+    },
+    {
+      "id": "block-10",
+      "source": {
+        "part": "word/document.xml",
+        "index": 10,
+        "paragraphId": "2B17EA1D"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Listening programs already create value in areas that matter to employees and organizations. Listening leaders see their programs contributing across the full value chain: improving workforce experiences and outcomes, focusing organizational response, and strengthening the relationship between employees and leaders."
+    },
+    {
+      "id": "block-11",
+      "source": {
+        "part": "word/document.xml",
+        "index": 11,
+        "paragraphId": "0FD87FE7"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual. Either three boxes side by side or a stacked list."
+    },
+    {
+      "id": "block-12",
+      "source": {
+        "part": "word/document.xml",
+        "index": 12,
+        "paragraphId": "7FAF7298"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Improving engagement, retention, wellbeing, or other talent outcomes"
+    },
+    {
+      "id": "block-13",
+      "source": {
+        "part": "word/document.xml",
+        "index": 13,
+        "paragraphId": "08CC1B79"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Enabling more focused action and follow-through on employee feedback"
+    },
+    {
+      "id": "block-14",
+      "source": {
+        "part": "word/document.xml",
+        "index": 14,
+        "paragraphId": "29B865AF"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Strengthening trust between employees and leaders"
+    },
+    {
+      "id": "block-15",
+      "source": {
+        "part": "word/document.xml",
+        "index": 15,
+        "paragraphId": "3BA9E941"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Employees also continue to see value in having a voice. Across employees and managers, 83% say the feedback they are asked to provide is relevant, 82% say they are asked about topics that matter, and 85% believe feedback helps their organization identify and address important issues."
+    },
+    {
+      "id": "block-16",
+      "source": {
+        "part": "word/document.xml",
+        "index": 16,
+        "paragraphId": "2B4F490D"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "However, that foundation is meaningful and fragile. Listening leaders identify employees losing trust that feedback will lead to meaningful change as their top challenge, followed by taking timely action and balancing business priorities with employee needs and expectations. The value of voice depends on what the organization is able to do with it."
+    },
+    {
+      "id": "block-17",
+      "source": {
+        "part": "word/document.xml",
+        "index": 17,
+        "paragraphId": "4BD9B7FA"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-18",
+      "source": {
+        "part": "word/document.xml",
+        "index": 18,
+        "paragraphId": "4798DA08"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Title: The tenuous balance of trust."
+    },
+    {
+      "id": "block-19",
+      "source": {
+        "part": "word/document.xml",
+        "index": 19,
+        "paragraphId": "46B0D9B5"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Content: Even though listening leaders rank strengthening trust as one of their top three value adds, they also place losing that trust as their number one challenge."
+    },
+    {
+      "id": "block-20",
+      "source": {
+        "part": "word/document.xml",
+        "index": 20,
+        "paragraphId": "6C3C173A"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Quote: “It’s a fine balance: how do you encourage employees and create that space? If participation becomes a compliance exercise, we see comments saying, ‘I was forced to do it’, ‘I didn’t want to do it.’”"
+    },
+    {
+      "id": "block-21",
+      "source": {
+        "part": "word/document.xml",
+        "index": 21,
+        "paragraphId": "48E67C9E"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The listening system is expanding beyond a central survey program. Across the listening leaders we surveyed, the following active feedback channel composition emerged:"
+    },
+    {
+      "id": "block-22",
+      "source": {
+        "part": "word/document.xml",
+        "index": 22,
+        "paragraphId": "486077A5"
+      },
+      "type": "list-item",
+      "text": "Core surveys (e.g., engagement survey) – 91% average channel adoption",
+      "level": 0
+    },
+    {
+      "id": "block-23",
+      "source": {
+        "part": "word/document.xml",
+        "index": 23,
+        "paragraphId": "61BFAEDE"
+      },
+      "type": "list-item",
+      "text": "Facilitated dialogue (e.g., focus groups) – 78% average channel adoption",
+      "level": 0
+    },
+    {
+      "id": "block-24",
+      "source": {
+        "part": "word/document.xml",
+        "index": 24,
+        "paragraphId": "11A46726"
+      },
+      "type": "list-item",
+      "text": "Open and ongoing (e.g., suggestion box) – 74% channel adoption",
+      "level": 0
+    },
+    {
+      "id": "block-25",
+      "source": {
+        "part": "word/document.xml",
+        "index": 25,
+        "paragraphId": "6BBAAA42"
+      },
+      "type": "list-item",
+      "text": "Ambient or passive data (e.g., collaboration signals) – 71% channel adoption",
+      "level": 0
+    },
+    {
+      "id": "block-26",
+      "source": {
+        "part": "word/document.xml",
+        "index": 26,
+        "paragraphId": "6B15D0E1"
+      },
+      "type": "list-item",
+      "text": "Embedded and frontline (e.g., feedback kiosk) – 48% channel adoption",
+      "level": 0
+    },
+    {
+      "id": "block-27",
+      "source": {
+        "part": "word/document.xml",
+        "index": 27,
+        "paragraphId": "2AFFE0D8"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Each method makes a different contribution. Surveys provide representative, intentional voice at scale and allow organizations to track experiences over time. Dialogue adds depth and makes it possible to test interpretation. Open channels allow employees to raise issues outside a scheduled cycle. Embedded approaches bring voice closer to a specific moment or workflow. Ambient signals can reveal behavioral patterns, but they cannot explain employee meaning or intent on their own."
+    },
+    {
+      "id": "block-28",
+      "source": {
+        "part": "word/document.xml",
+        "index": 28,
+        "paragraphId": "4A005160"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual. Use an architecture diagram, potentially with core surveys as the foundation and the other channels as pillars on top or mix and match puzzle pieces."
+    },
+    {
+      "id": "block-29",
+      "source": {
+        "part": "word/document.xml",
+        "index": 29,
+        "paragraphId": "63C642DE"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Seventy-four percent of listening leaders say their organization is expanding its listening channels. The direction is toward more diversified portfolios, but diversification itself is not the outcome. Expansion is not evidence of maturity. A more capable system is distinguished by whether each additional signal improves understanding, reaches a decision, or enables a more credible response."
+    },
+    {
+      "id": "block-30",
+      "source": {
+        "part": "word/document.xml",
+        "index": 30,
+        "paragraphId": "4461AE32"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual. Potentially 2x2 interactive box below."
+    },
+    {
+      "id": "block-31-image-0",
+      "source": {
+        "part": "word/document.xml",
+        "index": 31,
+        "paragraphId": "3F0ECF77"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "image",
+      "alt": "Quadrant chart showing where listening practices are gaining momentum, comparing current adoption with net momentum across established, momentum, at-risk, and emerging practices.",
+      "fileName": "image1.png",
+      "dataUrl": "/annual-report-2026/word-assets/image1.png",
+      "width": 400,
+      "height": 453,
+      "sourceAssetSha256": "3efe20a151971abd7e3dc00311abc88cf915a914ab8007c52ef533f69648724f",
+      "assetSource": "word-import"
+    },
+    {
+      "id": "block-32",
+      "source": {
+        "part": "word/document.xml",
+        "index": 32,
+        "paragraphId": "1FA55845"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Every additional channel creates another claim on employee attention, analytical capacity, governance, and response. An ambient signal may reduce the burden of asking while increasing the need for transparency and careful interpretation. A conversational channel may improve access while making consistency harder. A survey may offer scale while providing less context. Without a clear purpose and the capacity to interpret and respond,  a broader channel portfolio can create noise rather than insight."
+    },
+    {
+      "id": "block-33",
+      "source": {
+        "part": "word/document.xml",
+        "index": 33,
+        "paragraphId": "7995D598"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The field has embraced continuous listening faster than it has agreed on what the term requires. Listening leaders do not yet share a single definition of continuous listening. Their responses cluster around six features: listening throughout the year (55%); connecting listening to action (48%); maintaining an organizational pulse (37%); using multiple channels (31%); informing decisions (29%); and giving employees accessible opportunities to speak (26%). Continuous listening remains a developing idea, defined through a combination of timing, channels, access, decision use, and response."
+    },
+    {
+      "id": "block-34",
+      "source": {
+        "part": "word/document.xml",
+        "index": 34,
+        "paragraphId": "7E667102"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual. 6 box definitions of continuous listening"
+    },
+    {
+      "id": "block-35",
+      "source": {
+        "part": "word/document.xml",
+        "index": 35,
+        "paragraphId": "3B0A4360"
+      },
+      "type": "list-item",
+      "text": "Ongoing rather than episodic: Listening throughout the year, not solely through an annual survey—57/103 (55%).",
+      "level": 0
+    },
+    {
+      "id": "block-36",
+      "source": {
+        "part": "word/document.xml",
+        "index": 36,
+        "paragraphId": "13C79836"
+      },
+      "type": "list-item",
+      "text": "Connected to action: Feedback should lead to improvement, decisions, or visible change—49/103 (48%).",
+      "level": 0
+    },
+    {
+      "id": "block-37",
+      "source": {
+        "part": "word/document.xml",
+        "index": 37,
+        "paragraphId": "6B271D64"
+      },
+      "type": "list-item",
+      "text": "A way to maintain an organizational pulse: Continually understanding employee sentiment and emerging experience—38/103 (37%).",
+      "level": 0
+    },
+    {
+      "id": "block-38",
+      "source": {
+        "part": "word/document.xml",
+        "index": 38,
+        "paragraphId": "569F73FF"
+      },
+      "type": "list-item",
+      "text": "Multichannel: Combining surveys with conversations, focus groups, lifecycle feedback, and other signals—32/103 (31%).",
+      "level": 0
+    },
+    {
+      "id": "block-39",
+      "source": {
+        "part": "word/document.xml",
+        "index": 39,
+        "paragraphId": "3E31E26A"
+      },
+      "type": "list-item",
+      "text": "Strategically useful: Informing culture, priorities, and organizational decisions—30/103 (29%).",
+      "level": 0
+    },
+    {
+      "id": "block-40",
+      "source": {
+        "part": "word/document.xml",
+        "index": 40,
+        "paragraphId": "3840A526"
+      },
+      "type": "list-item",
+      "text": "Conversational and accessible: Giving employees regular or on-demand opportunities to speak—27/103 (26%).",
+      "level": 0
+    },
+    {
+      "id": "block-41",
+      "source": {
+        "part": "word/document.xml",
+        "index": 41,
+        "paragraphId": "184C342B"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "What is clear is that continuous listening is not continuous asking. It is the ability to recognize when understanding is needed, reach the employees or signals closest to the experience of interest, and use the method best suited to the question. A listening portfolio may move quickly in one area, preserve a stable measure in another, and deliberately choose not to collect at all where the organization lacks a clear purpose or capacity to respond."
+    },
+    {
+      "id": "block-42",
+      "source": {
+        "part": "word/document.xml",
+        "index": 42,
+        "paragraphId": "31189742"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-43",
+      "source": {
+        "part": "word/document.xml",
+        "index": 43,
+        "paragraphId": "04E1CFA0"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Quote from Katie (C0) on continuous listening or GLG expert."
+    },
+    {
+      "id": "block-44",
+      "source": {
+        "part": "word/document.xml",
+        "index": 44,
+        "paragraphId": "04A1FBFF"
+      },
+      "type": "heading",
+      "level": 2,
+      "text": "What employee listening needs to accomplish now"
+    },
+    {
+      "id": "block-45",
+      "source": {
+        "part": "word/document.xml",
+        "index": 45,
+        "paragraphId": "2077E381"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The current model has been effective at measuring and improving the employee experience. But the information organizations need from listening is becoming broader and more immediate. Decisions about AI adoption, organizational change, workforce strategy, and new ways of working require an understanding of what employees are experiencing, why patterns are emerging, and what those experiences may mean for workforce and business outcomes."
+    },
+    {
+      "id": "block-46",
+      "source": {
+        "part": "word/document.xml",
+        "index": 46,
+        "paragraphId": "182F6EC7"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Employee listening is well positioned to become a stronger source of workforce intelligence. It already has access to employee perspective, expertise in measurement and interpretation, and a role connecting what employees experience with what organizations do. The opportunity is to extend that contribution beyond reporting scores: bringing employee voice together with relevant context to support decisions while those decisions can still be shaped."
+    },
+    {
+      "id": "block-47",
+      "source": {
+        "part": "word/document.xml",
+        "index": 47,
+        "paragraphId": "34430685"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-48",
+      "source": {
+        "part": "word/document.xml",
+        "index": 48,
+        "paragraphId": "3A96C93E"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Quote: “How do we get it to that point where it's not just a standalone… it's a data point just like they would look at their safety metrics or their productivity metrics or whatever their operational metrics are, and their employee experience is right there with it.”"
+    },
+    {
+      "id": "block-49",
+      "source": {
+        "part": "word/document.xml",
+        "index": 49,
+        "paragraphId": "02A58F19"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Forty-three percent of listening teams report expanding their synthesis across multiple employee data sources. Yet synthesis is not the same as intelligence. Workforce intelligence depends on determining which signals belong together, what context changes their meaning, where evidence remains incomplete, and which decision the resulting insight can credibly inform."
+    },
+    {
+      "id": "block-50",
+      "source": {
+        "part": "word/document.xml",
+        "index": 50,
+        "paragraphId": "17F7A0C5"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "We asked listening leaders to evaluate their organizations across 12 capabilities spanning four areas: inclusive participation and access, action and accountability, strategic impact, and adaptive intelligence. Only 22.3% rated themselves strong or best-in-class on at least seven of the 12 capabilities, meeting our criteria for Advanced Listeners."
+    },
+    {
+      "id": "block-51",
+      "source": {
+        "part": "word/document.xml",
+        "index": 51,
+        "paragraphId": "1EF76CE4"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual. Four category scorecard with circles/other progression marker on a 1-5 scale."
+    },
+    {
+      "id": "block-52",
+      "source": {
+        "part": "word/document.xml",
+        "index": 52,
+        "paragraphId": "4468E3E6"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Title: How developed is our listening system across the capabilities we will need for what comes next?"
+    },
+    {
+      "id": "block-53",
+      "source": {
+        "part": "word/document.xml",
+        "index": 53,
+        "paragraphId": "1519252C"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Inclusive participation and access: Easy to provide feedback; representative employee reach; listening data easy to access and use"
+    },
+    {
+      "id": "block-54",
+      "source": {
+        "part": "word/document.xml",
+        "index": 54,
+        "paragraphId": "00B3C142"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Action and accountability: Communicate what changed; equip managers to act promptly; hold leaders and managers accountable"
+    },
+    {
+      "id": "block-55",
+      "source": {
+        "part": "word/document.xml",
+        "index": 55,
+        "paragraphId": "0B09C444"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Strategic impact: Influence senior and business decisions; connect listening to outcomes; measure the impact of actions"
+    },
+    {
+      "id": "block-56",
+      "source": {
+        "part": "word/document.xml",
+        "index": 56,
+        "paragraphId": "10BB1C87"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Adaptive intelligence: Listen outside formal survey cycles; identify emerging risks and friction; inform AI-adoption decisions"
+    },
+    {
+      "id": "block-57",
+      "source": {
+        "part": "word/document.xml",
+        "index": 57,
+        "paragraphId": "2170FF92"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "[ALTERNATIVE IDEA from CG: can we have a dynamic \"assessment\" where readers rate themselves on the couple of dimensions and then we could tell them how many orgs in the sample were like them?]"
+    },
+    {
+      "id": "block-58",
+      "source": {
+        "part": "word/document.xml",
+        "index": 58,
+        "paragraphId": "45B36643"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "What distinguishes these programs is important. Their aspirations are not simply more surveys, more technology, or more continuous listening. When asked to describe their employee listening North Star, Advanced Listeners more often emphasized capabilities such as detecting issues earlier, making listening easier to access, and ensuring employees feel heard. Emerging Listeners more often described their future in terms of moving beyond annual surveys and improving the mechanics of channels and action. Aspirations around continuous listening and AI appeared across both groups."
+    },
+    {
+      "id": "block-59",
+      "source": {
+        "part": "word/document.xml",
+        "index": 59,
+        "paragraphId": "4BC170FA"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Listening advances when the system becomes more capable, not simply more active. A workforce-intelligence function identifies what the organization needs to understand, reaches the employees whose experience can clarify it, interprets the evidence in context, and connects what it learns to an appropriate decision or response. Employee influence is part of what makes that intelligence useful and legitimate."
+    },
+    {
+      "id": "block-60",
+      "source": {
+        "part": "word/document.xml",
+        "index": 60,
+        "paragraphId": "57F2FFCA"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-61",
+      "source": {
+        "part": "word/document.xml",
+        "index": 61,
+        "paragraphId": "3C9369B5"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Title: Information versus intelligence"
+    },
+    {
+      "id": "block-62",
+      "source": {
+        "part": "word/document.xml",
+        "index": 62,
+        "paragraphId": "423B03C1"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "During an AI rollout, collaboration declines, workload concerns rise, and support questions increase. Together with employee feedback and rollout context, these signals suggest unclear workflows—not necessarily resistance to AI. That interpretation directs a specific response: clarify expectations, redesign workflows, and evaluate whether collaboration improves."
+    },
+    {
+      "id": "block-63",
+      "source": {
+        "part": "word/document.xml",
+        "index": 63,
+        "paragraphId": "76B4CD75"
+      },
+      "type": "heading",
+      "level": 2,
+      "text": "Building a listening agenda that can evolve"
+    },
+    {
+      "id": "block-64",
+      "source": {
+        "part": "word/document.xml",
+        "index": 64,
+        "paragraphId": "2726ADB9"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "AI was the 14th most common topic listening leaders asked about in their surveys in the past year. It is the number one topic they expect to prioritize in the next 12 to 18 months. A topic can move from the edge of the listening portfolio to its center within a single planning cycle."
+    },
+    {
+      "id": "block-65",
+      "source": {
+        "part": "word/document.xml",
+        "index": 65,
+        "paragraphId": "7183DA93"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "A fixed survey architecture will struggle to keep pace with that movement. Asking about AI once a year may miss meaningful shifts in adoption, confidence, workflow, or trust. Adding it permanently to every survey may create a different problem: a temporary priority becomes embedded in the instrument long after the information need has changed."
+    },
+    {
+      "id": "block-66",
+      "source": {
+        "part": "word/document.xml",
+        "index": 66,
+        "paragraphId": "04D1B9C8"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual. Bump chart of the rankings of survey content. Below is example but we can make it way better – I’ve seen it look like pipes before between the topics."
+    },
+    {
+      "id": "block-67",
+      "source": {
+        "part": "word/document.xml",
+        "index": 67,
+        "paragraphId": "5F60D7BA"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Title: More than 80% of topics are shifting in priority"
+    },
+    {
+      "id": "block-68-image-1",
+      "source": {
+        "part": "word/document.xml",
+        "index": 68,
+        "paragraphId": "457565E2"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "image",
+      "alt": "Rank movement chart showing employee-listening priorities shifting toward AI adoption and organizational transformation over the next 12 to 18 months.",
+      "fileName": "image2.png",
+      "dataUrl": "/annual-report-2026/word-assets/image2.png",
+      "width": 624,
+      "height": 338,
+      "sourceAssetSha256": "e0cb45227c44e6e602e88910b50c3d5d69e87a40f262f3421dcf63f40bb5d851",
+      "assetSource": "word-import"
+    },
+    {
+      "id": "block-69",
+      "source": {
+        "part": "word/document.xml",
+        "index": 69,
+        "paragraphId": "1EC9CB00"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "A more adaptive agenda does not require abandoning the experiences listening has measured over time, however. Trust, growth, wellbeing, leadership, belonging, and agency remain consequential even when the technologies and conditions surrounding work change. Their enduring human importance – not their historical place in a survey – makes them foundational."
+    },
+    {
+      "id": "block-70",
+      "source": {
+        "part": "word/document.xml",
+        "index": 70,
+        "paragraphId": "54C8E9EA"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Listening leaders are prioritizing AI, organizational transformation, leadership and strategy, and manager effectiveness. Employees experience transformation through changes to their jobs, workload, skills, security, growth, and opportunity. A listening agenda that tracks the transformation without preserving those experiences would capture the organizational initiative while missing part of its human impact. But one that measures only enduring experiences could identify that something changed without revealing the new conditions producing it."
+    },
+    {
+      "id": "block-71",
+      "source": {
+        "part": "word/document.xml",
+        "index": 71,
+        "paragraphId": "46006398"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-72",
+      "source": {
+        "part": "word/document.xml",
+        "index": 72,
+        "paragraphId": "36881642"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Quote from Caribay Garcia. General topic is that team collaboration dropped six places in future priorities. Potentially connect to our earlier agentic teaming work and explore whether team dynamics may become more important as AI-enabled work moves beyond individual experiences."
+    },
+    {
+      "id": "block-73",
+      "source": {
+        "part": "word/document.xml",
+        "index": 73,
+        "paragraphId": "068622E7"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The agenda is a portfolio. Some topics need consistent measurement because they represent foundational parts of the employee experience. Others should enter, change, or leave as organizational and workforce conditions evolve. Before adding a topic to the next survey, teams should ask what decision or uncertainty created the need, whose perspective can clarify it, how quickly the answer may change, and which method can produce useful evidence. Those answers determine whether the topic belongs in a stable measure, a time-bound pulse, a conversation, an ambient signal, or no new collection at all."
+    },
+    {
+      "id": "block-74",
+      "source": {
+        "part": "word/document.xml",
+        "index": 74,
+        "paragraphId": "41211451"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual: Copilot recommended the following: \nI recommend a three-layer “adaptive listening portfolio”:"
+    },
+    {
+      "id": "block-75",
+      "source": {
+        "part": "word/document.xml",
+        "index": 75,
+        "paragraphId": "2D15446A"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "1. Enduring foundation\nA stable horizontal band containing trust, growth, wellbeing, leadership, belonging, and agency."
+    },
+    {
+      "id": "block-76",
+      "source": {
+        "part": "word/document.xml",
+        "index": 76,
+        "paragraphId": "23EE59F2"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "2. Responsive priorities\nMovable tiles above the foundation representing AI adoption, organizational transformation, new ways of working, policy changes, or emerging risks. These visually enter and leave the portfolio as conditions change."
+    },
+    {
+      "id": "block-77",
+      "source": {
+        "part": "word/document.xml",
+        "index": 77,
+        "paragraphId": "09FD5EAD"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "3. Method decision pathway\nBeneath both layers, show four questions:"
+    },
+    {
+      "id": "block-78",
+      "source": {
+        "part": "word/document.xml",
+        "index": 78,
+        "paragraphId": "5825CA71"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "What decision created the need? → Whose perspective is needed? → How quickly could the answer change? → Which method fits?"
+    },
+    {
+      "id": "block-79",
+      "source": {
+        "part": "word/document.xml",
+        "index": 79,
+        "paragraphId": "3CD448B6"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Route the pathway to: Stable measure | Time-bound pulse | Conversation | Ambient signal | No new collection"
+    },
+    {
+      "id": "block-80",
+      "source": {
+        "part": "word/document.xml",
+        "index": 80,
+        "paragraphId": "192C415C"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The discipline to choose among these options (and sometimes not collect anything new) is what separates a more responsive listening system from a busier one. The next generation of listening should not be defined by how often organizations ask, but by how effectively the system senses when understanding is needed and how intentionally it responds."
+    },
+    {
+      "id": "block-81",
+      "source": {
+        "part": "word/document.xml",
+        "index": 81,
+        "paragraphId": "1018D81D"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Getting there will require more than adding channels or increasing cadence. It will require challenging some of the assumptions that have shaped how organizations listen today."
+    },
+    {
+      "id": "block-82",
+      "source": {
+        "part": "word/document.xml",
+        "index": 82,
+        "paragraphId": "2A03D0A7"
+      },
+      "type": "heading",
+      "level": 2,
+      "text": "Three assumptions to reconsider"
+    },
+    {
+      "id": "block-83",
+      "source": {
+        "part": "word/document.xml",
+        "index": 83,
+        "paragraphId": "3A535C6C"
+      },
+      "type": "heading",
+      "level": 3,
+      "text": "Assumption 1: Surveys are the gold standard"
+    },
+    {
+      "id": "block-84",
+      "source": {
+        "part": "word/document.xml",
+        "index": 84,
+        "paragraphId": "4F9F42BD"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Predictions about the death of the employee survey have followed nearly every new development in listening. But data tells a different story. Surveys remain firmly embedded in listening systems, including among Advanced Listeners, and for good reason. They provide representative measurement, comparability over time, anonymity, and a deliberate opportunity for employees to exercise voice at scale."
+    },
+    {
+      "id": "block-85",
+      "source": {
+        "part": "word/document.xml",
+        "index": 85,
+        "paragraphId": "5209D741"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The problem to address here is not the survey itself. It is the privileged position surveys have come to occupy within many listening systems."
+    },
+    {
+      "id": "block-86",
+      "source": {
+        "part": "word/document.xml",
+        "index": 86,
+        "paragraphId": "5E93AD5B"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Organizations have built substantial infrastructure around surveys: specialized teams, standardized programs, governance processes, reporting cycles, benchmarks, and established expectations about when and how employees are asked for feedback. Those structures can protect rigor and trust. They can also make the survey, rather than the listening need, the organizing principle of the system."
+    },
+    {
+      "id": "block-87",
+      "source": {
+        "part": "word/document.xml",
+        "index": 87,
+        "paragraphId": "64A84412"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-88",
+      "source": {
+        "part": "word/document.xml",
+        "index": 88,
+        "paragraphId": "23A6A939"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Quote: “From the moment we receive the data, my team is heavily involved. It consumes more than 25% of our time during the first months – consolidating results, conducting focus groups, designing implementation plans, and supporting leadership. If you take it seriously, it’s a lot of work.”"
+    },
+    {
+      "id": "block-89",
+      "source": {
+        "part": "word/document.xml",
+        "index": 89,
+        "paragraphId": "410575C1"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Some information needs require representative measurement across groups or a stable trend over time. Others require a conversation, qualitative depth, observation closer to the work, or a combination of methods. Open-text comments can add context, but they remain bounded by the questions asked, reflect only employees who choose to write, and cannot probe an answer or test an interpretation. A survey may establish that career growth is a widespread concern; understanding whether employees mean promotion, skill development, mobility, manager support, or access to opportunity may require targeted follow-up. Otherwise, the organization can achieve precision about the size of a problem without sufficiently understanding its form."
+    },
+    {
+      "id": "block-90",
+      "source": {
+        "part": "word/document.xml",
+        "index": 90,
+        "paragraphId": "057D7955"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-91",
+      "source": {
+        "part": "word/document.xml",
+        "index": 91,
+        "paragraphId": "5349E343"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Quote: “We measure engagement through our engagement score in Glint, but that’s not the whole story. We also look at things like attrition, recognition-program uptake, and participation in company sessions. In terms of success, it is a mix of all the people-experience things that we do.”"
+    },
+    {
+      "id": "block-92",
+      "source": {
+        "part": "word/document.xml",
+        "index": 92,
+        "paragraphId": "3FD48D9B"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The risk is not that surveys remain a pillar. It is that their privileged position unintentionally excludes options better suited to the need. Before commissioning another survey, teams can test the default with two questions: What would we lose if a survey were unavailable? What might another method reveal that a survey cannot? If the first answer is representation, anonymity, or trend measurement, the survey has a clear role. If the second is depth, context, immediacy, or access in the flow of work, the design likely needs another method as well – or instead."
+    },
+    {
+      "id": "block-93",
+      "source": {
+        "part": "word/document.xml",
+        "index": 93,
+        "paragraphId": "1A49C2AC"
+      },
+      "type": "heading",
+      "level": 3,
+      "text": "Assumption 2: Slow and steady wins the race"
+    },
+    {
+      "id": "block-94",
+      "source": {
+        "part": "word/document.xml",
+        "index": 94,
+        "paragraphId": "4AAE6120"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Employee listening handles some of the most sensitive information an organization collects. A poorly designed experiment can expose employees, weaken confidentiality, or create another experience in which people share without seeing a credible response. Listening teams therefore have a legitimate responsibility to protect the trust their programs have built."
+    },
+    {
+      "id": "block-95",
+      "source": {
+        "part": "word/document.xml",
+        "index": 95,
+        "paragraphId": "466137AE"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Over time though, that responsibility can make caution part of the field’s professional identity. Familiar methods feel rigorous because their risks are understood. New methods can feel irresponsible because their failure points are not. Avoiding experimentation becomes easier to defend than learning through it, even when the operating environment has already changed."
+    },
+    {
+      "id": "block-96",
+      "source": {
+        "part": "word/document.xml",
+        "index": 96,
+        "paragraphId": "428D05A4"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Employee behavior is moving faster than formal adoption. Two in three employees trust AI tools to keep their feedback confidential, represent it fairly, and represent it accurately. Seventy percent are open to their organization expanding its use of AI in employee listening. Fifty-nine percent already use AI tools not provided by their organization to support some part of the feedback process."
+    },
+    {
+      "id": "block-97",
+      "source": {
+        "part": "word/document.xml",
+        "index": 97,
+        "paragraphId": "189F8987"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual. Data callout on the above stats on employee trust, openness, and shadow-AI use in the feedback process."
+    },
+    {
+      "id": "block-98",
+      "source": {
+        "part": "word/document.xml",
+        "index": 98,
+        "paragraphId": "61202637"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Moving slowly does not preserve a stable status quo when employees are establishing new practices on their own. It leaves listening teams with less influence over the transparency, safeguards, and quality standards surrounding those practices. The effort to protect trust can move experimentation into places where the organization has less visibility and employees have fewer protections."
+    },
+    {
+      "id": "block-99",
+      "source": {
+        "part": "word/document.xml",
+        "index": 99,
+        "paragraphId": "36FC871B"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The alternative is not speed at any cost. It is building ways to learn without making employees bear the risk of that learning. Synthetic or simulated data, structured human evaluation, scenario testing, approved de-identified data, controlled pilots, and staged or reversible releases allow teams to identify failure points before expanding exposure. In our data, only 15% of listening leaders reported piloting or deploying synthetic data to simulate employee responses to proposed change."
+    },
+    {
+      "id": "block-100",
+      "source": {
+        "part": "word/document.xml",
+        "index": 100,
+        "paragraphId": "2A58B81B"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-101",
+      "source": {
+        "part": "word/document.xml",
+        "index": 101,
+        "paragraphId": "72017B20"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Quote: “Companies are pretty risk averse when we’re talking about HR data. We’re still trying to determine the hard guardrails.”"
+    },
+    {
+      "id": "block-102",
+      "source": {
+        "part": "word/document.xml",
+        "index": 102,
+        "paragraphId": "723E4F0D"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "A listening team should distinguish between a risk that requires a firm boundary and an uncertainty that can be reduced through testing. For each proposed use, teams can name the employee harm they are protecting against, the evidence needed to proceed, the safest environment in which to gather it, and the condition that would stop the test. Treating every unknown as a reason to wait can make caution look responsible while leaving the system less prepared for what employees are already doing. Rigor comes from responsible testing, explicit evidence thresholds, and clear stop rules – not delay alone."
+    },
+    {
+      "id": "block-103",
+      "source": {
+        "part": "word/document.xml",
+        "index": 103,
+        "paragraphId": "4D283D19"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "CG idea for visual: Safe-learning spectrum—from simulation and human evaluation through controlled pilots and staged releases—with employee exposure and reversibility clearly marked."
+    },
+    {
+      "id": "block-104",
+      "source": {
+        "part": "word/document.xml",
+        "index": 104,
+        "paragraphId": "2CAF1455"
+      },
+      "type": "heading",
+      "level": 3,
+      "text": "Assumption 3: Action taking is broken"
+    },
+    {
+      "id": "block-105",
+      "source": {
+        "part": "word/document.xml",
+        "index": 105,
+        "paragraphId": "60111371"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Only 38% of managers in our research reported holding a meeting to discuss their team’s feedback, and 29% reported creating an action plan. If those activities define action, the system appears to be failing."
+    },
+    {
+      "id": "block-106",
+      "source": {
+        "part": "word/document.xml",
+        "index": 106,
+        "paragraphId": "5706F055"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Yet 79% of managers say their organization provides adequate resources to act on feedback, and 80% say they are held accountable for following through. Seventy-five percent of employees say they have seen meaningful organizational changes resulting from employee feedback. Low manager activity and high perceived response are both present."
+    },
+    {
+      "id": "block-107",
+      "source": {
+        "part": "word/document.xml",
+        "index": 107,
+        "paragraphId": "6AD38B4C"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual. Action-taking paradox: contrast the low prevalence of traditional manager action behaviors with high manager enablement and accountability and employees’ perceptions of meaningful change."
+    },
+    {
+      "id": "block-108",
+      "source": {
+        "part": "word/document.xml",
+        "index": 108,
+        "paragraphId": "37BF299E"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The conventional model assumes a linear path: collect feedback, provide results to managers, discuss the results with the team, create an action plan, and follow through. Meetings and action plans can support response, but they show that a process occurred –not that employee voice reached the right decision or produced an appropriate outcome."
+    },
+    {
+      "id": "block-109",
+      "source": {
+        "part": "word/document.xml",
+        "index": 109,
+        "paragraphId": "393A1C62"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The model also places responsibility at the manager level even when authority sits elsewhere. For upcoming topics, employees reported that they most want organizations to ask about compensation and benefits, career growth and development, and workload and burnout."
+    },
+    {
+      "id": "block-110",
+      "source": {
+        "part": "word/document.xml",
+        "index": 110,
+        "paragraphId": "5FEF7050"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual. Data callout on the top three topics that employees want to be asked about: compensation and benefits, career growth and development, and workload and burnout. Then arrows left to associated boxes of three hierarchy levels: Leadership, manager, team. The arrows are thicker when piping into an action level where influence is high. E.g., Compensation and benefits – large arrow to leadership, small arrow to manager, no arrow to team. Career growth and development – medium arrow to leadership, medium arrow to manager, small arrow to team. Workload and burnout – small arrow to leadership, medium arrow to manager, medium arrow to team."
+    },
+    {
+      "id": "block-111",
+      "source": {
+        "part": "word/document.xml",
+        "index": 111,
+        "paragraphId": "19B91838"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The appropriate owner depends on the conditions producing the experience. Compensation and benefits are primarily shaped by enterprise policy and leadership investment. Career growth is shared across levels: leaders shape mobility, promotion, and learning systems; managers provide coaching and access; and teams create day-to-day development opportunities. Workload and burnout may require leadership decisions about staffing and priorities, manager decisions about work allocation, and changes to team norms. A manager can influence each experience but rarely controls all of it. Routing the result to the manager does not necessarily route it to the decision."
+    },
+    {
+      "id": "block-112",
+      "source": {
+        "part": "word/document.xml",
+        "index": 112,
+        "paragraphId": "79324D53"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Some feedback belongs with a manager; some requires an HR, business, or senior-leadership decision; some needs coordination across levels. The recipient must be positioned, accountable, and sufficiently motivated to respond. Otherwise, better routing simply moves the insight to a new bottleneck."
+    },
+    {
+      "id": "block-113",
+      "source": {
+        "part": "word/document.xml",
+        "index": 113,
+        "paragraphId": "06C502BB"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-114",
+      "source": {
+        "part": "word/document.xml",
+        "index": 114,
+        "paragraphId": "1D369422"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Quote: “We put the accountability on the managers, and then we don't give… the tools… to actually do something with it… It needs to be a waterfall from the top to bottom. And that just never happens.”"
+    },
+    {
+      "id": "block-115",
+      "source": {
+        "part": "word/document.xml",
+        "index": 115,
+        "paragraphId": "0BE53D7B"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Response also takes more than one form. An organization may act, investigate further, escalate an issue, integrate the evidence into a broader decision, or explain why change will not occur. Each can be appropriate if it reflects purposeful consideration and employees can see what happened to what they shared."
+    },
+    {
+      "id": "block-116",
+      "source": {
+        "part": "word/document.xml",
+        "index": 116,
+        "paragraphId": "58DCE9D7"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual. Examples of non-traditional behavioral metrics for action planning"
+    },
+    {
+      "id": "block-117",
+      "source": {
+        "part": "word/document.xml",
+        "index": 117,
+        "paragraphId": "17F1C2D2"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Title: What follow-through looks like beyond an action plan"
+    },
+    {
+      "id": "block-118",
+      "source": {
+        "part": "word/document.xml",
+        "index": 118,
+        "paragraphId": "105839BB"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Traditional measurement: Was an action plan created or completed?"
+    },
+    {
+      "id": "block-120",
+      "source": {
+        "part": "word/document.xml",
+        "index": 120
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "data-visual-source",
+      "data": {
+        "sourceKind": "word-table",
+        "title": "Approved Word data table",
+        "unit": "unknown",
+        "columns": [
+          "Response",
+          "Observable behavior to measure"
+        ],
+        "rows": [
+          {
+            "id": "row-1",
+            "cells": [
+              "Act",
+              "A policy, process, resource allocation, workflow, or leadership practice changed."
+            ]
+          },
+          {
+            "id": "row-2",
+            "cells": [
+              "Investigate",
+              "A follow-up study, employee conversation, root-cause analysis, or evidence review was commissioned and completed."
+            ]
+          },
+          {
+            "id": "row-3",
+            "cells": [
+              "Escalate",
+              "The issue reached the person or governance body with authority, and that owner acknowledged responsibility for a decision."
+            ]
+          },
+          {
+            "id": "row-4",
+            "cells": [
+              "Integrate",
+              "Employee evidence was documented in a business case, workforce plan, product decision, risk review, or organizational-change strategy."
+            ]
+          },
+          {
+            "id": "row-5",
+            "cells": [
+              "Explain",
+              "The accountable decision-maker communicated what was considered, why change would not occur, and what conditions might reopen the decision."
+            ]
+          }
+        ],
+        "sha256": "2624698b5b1ec50164e2ea0828c6ee80aecc54fdf7e530409740190cc865101f"
+      }
+    },
+    {
+      "id": "block-122",
+      "source": {
+        "part": "word/document.xml",
+        "index": 122,
+        "paragraphId": "26EBC461"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The stronger measure of follow-through is whether the organization understood the signal, placed it with someone able and accountable to respond, and made the response visible. Teams can test that chain directly: Who can change this condition? What decision can the evidence inform? What form of response is credible? How will employees know what happened? Employee voice may influence the organization without producing a traditional action plan and may go nowhere despite a completed one."
+    },
+    {
+      "id": "block-123",
+      "source": {
+        "part": "word/document.xml",
+        "index": 123,
+        "paragraphId": "15024C0A"
+      },
+      "type": "heading",
+      "level": 2,
+      "text": "The right-fit listening system"
+    },
+    {
+      "id": "block-124",
+      "source": {
+        "part": "word/document.xml",
+        "index": 124,
+        "paragraphId": "407D9651"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "A survey used before the question is defined, caution that prevents responsible learning, and an action plan disconnected from decision authority are three forms of the same problem: the listening system is not calibrated to the need."
+    },
+    {
+      "id": "block-125",
+      "source": {
+        "part": "word/document.xml",
+        "index": 125,
+        "paragraphId": "0CF52ACF"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Underfit systems miss the signal, perspective, or context needed to understand an experience. Overfit systems collect excessively, fragment understanding across channels, burden employees, or generate more specificity than the organization can use. The symptoms can appear together: an organization may ask employees too often while still failing to hear from the people closest to a consequential experience. The correction is therefore not automatically more or less listening. It may be a different voice, method, cadence, level of interpretation, or route to response."
+    },
+    {
+      "id": "block-126",
+      "source": {
+        "part": "word/document.xml",
+        "index": 126,
+        "paragraphId": "7964AE6F"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Right-fit is not a midpoint between more and less listening. It is the point at which the system produces enough credible understanding to support a consequential choice without exceeding employee trust, organizational capacity, or the legitimate purpose for collecting the information."
+    },
+    {
+      "id": "block-127",
+      "source": {
+        "part": "word/document.xml",
+        "index": 127,
+        "paragraphId": "08E7B8DA"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual: Observable signs of underfit, right-fit, and overfit, paired with practical course corrections."
+    },
+    {
+      "id": "block-128",
+      "source": {
+        "part": "word/document.xml",
+        "index": 128,
+        "paragraphId": "1E28F10A"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Flying blind / Underfit"
+    },
+    {
+      "id": "block-129",
+      "source": {
+        "part": "word/document.xml",
+        "index": 129,
+        "paragraphId": "23B3CE32"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The loudest voices stand in for the workforce."
+    },
+    {
+      "id": "block-130",
+      "source": {
+        "part": "word/document.xml",
+        "index": 130,
+        "paragraphId": "43FA2B88"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "A score moves, but no one understands why."
+    },
+    {
+      "id": "block-131",
+      "source": {
+        "part": "word/document.xml",
+        "index": 131,
+        "paragraphId": "6F64D24D"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Evidence arrives after the decision."
+    },
+    {
+      "id": "block-132",
+      "source": {
+        "part": "word/document.xml",
+        "index": 132,
+        "paragraphId": "09E4C245"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Leaders discover problems through exits or operational failures."
+    },
+    {
+      "id": "block-133",
+      "source": {
+        "part": "word/document.xml",
+        "index": 133,
+        "paragraphId": "45FA8156"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Enough to decide / Right-fit"
+    },
+    {
+      "id": "block-134",
+      "source": {
+        "part": "word/document.xml",
+        "index": 134,
+        "paragraphId": "3640A805"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Every signal has a defined job."
+    },
+    {
+      "id": "block-135",
+      "source": {
+        "part": "word/document.xml",
+        "index": 135,
+        "paragraphId": "697A913E"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Evidence is credible enough to support a consequential choice."
+    },
+    {
+      "id": "block-136",
+      "source": {
+        "part": "word/document.xml",
+        "index": 136,
+        "paragraphId": "1E22F807"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The recipient has authority to respond."
+    },
+    {
+      "id": "block-137",
+      "source": {
+        "part": "word/document.xml",
+        "index": 137,
+        "paragraphId": "3E91EBBA"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Collection stops when the information need has been met."
+    },
+    {
+      "id": "block-138",
+      "source": {
+        "part": "word/document.xml",
+        "index": 138,
+        "paragraphId": "31E4A30C"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Drowning in signal / Overfit"
+    },
+    {
+      "id": "block-139",
+      "source": {
+        "part": "word/document.xml",
+        "index": 139,
+        "paragraphId": "2B4FC107"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Employees answer the same question through multiple channels."
+    },
+    {
+      "id": "block-140",
+      "source": {
+        "part": "word/document.xml",
+        "index": 140,
+        "paragraphId": "2DACEFD4"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Every new priority earns a measure, but nothing leaves."
+    },
+    {
+      "id": "block-141",
+      "source": {
+        "part": "word/document.xml",
+        "index": 141,
+        "paragraphId": "5E795A07"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Dashboards multiply faster than decisions."
+    },
+    {
+      "id": "block-142",
+      "source": {
+        "part": "word/document.xml",
+        "index": 142,
+        "paragraphId": "707F995A"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Insights accumulate while response capacity remains unchanged."
+    },
+    {
+      "id": "block-143",
+      "source": {
+        "part": "word/document.xml",
+        "index": 143,
+        "paragraphId": "6A2B1797"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The organization collects detail it cannot safely or credibly use."
+    },
+    {
+      "id": "block-144",
+      "source": {
+        "part": "word/document.xml",
+        "index": 144,
+        "paragraphId": "771C5CFD"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Underpinned by this statement: The goal is not maximum listening. It is enough understanding to make a better decision and no more collection than that decision can justify."
+    },
+    {
+      "id": "block-145",
+      "source": {
+        "part": "word/document.xml",
+        "index": 145,
+        "paragraphId": "77EEF22C"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Five principles define the standard for those choices. A right-fit system is trustworthy: employees understand what is collected, why it is needed, how it will be used, and what protections and choices apply. It is intelligent: signals produce valid, contextual, and decision-relevant understanding rather than simply more information."
+    },
+    {
+      "id": "block-146",
+      "source": {
+        "part": "word/document.xml",
+        "index": 146,
+        "paragraphId": "4878B5A6"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "It is responsive: employee voice reaches someone positioned and accountable to respond, and employees can see what happened next. It is embedded: surveys, conversations, open channels, and ambient signals connect to the moments where work and decisions happen rather than operating as isolated programs. It is outcome-driven: what the organization learns improves workforce experiences, team and organizational conditions, strategic choices, or business outcomes – and the effects of the response are evaluated."
+    },
+    {
+      "id": "block-147",
+      "source": {
+        "part": "word/document.xml",
+        "index": 147,
+        "paragraphId": "283D3779"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual: Five principles—Trustworthy, Intelligent, Responsive, Embedded, and Outcome-driven—shown as standards surrounding the right-fit framework rather than a separate model."
+    },
+    {
+      "id": "block-148",
+      "source": {
+        "part": "word/document.xml",
+        "index": 148,
+        "paragraphId": "21D7E413"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Copilot suggested layout:"
+    },
+    {
+      "id": "block-149",
+      "source": {
+        "part": "word/document.xml",
+        "index": 149,
+        "paragraphId": "398A0FA6"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Keep the Flying blind / Enough to decide / Drowning in signal framework, but surround it with a five-part outer frame. The principles become the standards used to judge whether listening is truly right-fit."
+    },
+    {
+      "id": "block-150",
+      "source": {
+        "part": "word/document.xml",
+        "index": 150,
+        "paragraphId": "0087383D"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Center:"
+    },
+    {
+      "id": "block-151",
+      "source": {
+        "part": "word/document.xml",
+        "index": 151,
+        "paragraphId": "5E8522F9"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "RIGHT-FIT LISTENING\nEnough credible understanding to support a consequential choice."
+    },
+    {
+      "id": "block-152",
+      "source": {
+        "part": "word/document.xml",
+        "index": 152,
+        "paragraphId": "349B87BF"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Five surrounding segments:"
+    },
+    {
+      "id": "block-153",
+      "source": {
+        "part": "word/document.xml",
+        "index": 153,
+        "paragraphId": "4DB36ECC"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Trustworthy - Do employees understand what is collected, why, and how they are protected?"
+    },
+    {
+      "id": "block-154",
+      "source": {
+        "part": "word/document.xml",
+        "index": 154,
+        "paragraphId": "77AE5BBA"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Intelligent - Does the evidence provide valid, contextual, decision-relevant understanding?"
+    },
+    {
+      "id": "block-155",
+      "source": {
+        "part": "word/document.xml",
+        "index": 155,
+        "paragraphId": "7701E3AE"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Responsive - Does the signal reach someone able and accountable to respond?"
+    },
+    {
+      "id": "block-156",
+      "source": {
+        "part": "word/document.xml",
+        "index": 156,
+        "paragraphId": "1E8886D2"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Embedded - Is listening connected to the moments and workflows where decisions happen?"
+    },
+    {
+      "id": "block-157",
+      "source": {
+        "part": "word/document.xml",
+        "index": 157,
+        "paragraphId": "76A8DC76"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Outcome-driven - Can the organization determine whether the response made a difference?"
+    },
+    {
+      "id": "block-158",
+      "source": {
+        "part": "word/document.xml",
+        "index": 158,
+        "paragraphId": "471E8138"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Add a circular arrow around the outside labeled:"
+    },
+    {
+      "id": "block-159",
+      "source": {
+        "part": "word/document.xml",
+        "index": 159,
+        "paragraphId": "78501FFA"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Reassess as topics, conditions, capacity, and employee expectations change."
+    },
+    {
+      "id": "block-160",
+      "source": {
+        "part": "word/document.xml",
+        "index": 160,
+        "paragraphId": "34E7A378"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "This makes the principles feel like guardrails around the right-fit framework rather than a separate five-part model."
+    },
+    {
+      "id": "block-161",
+      "source": {
+        "part": "word/document.xml",
+        "index": 161,
+        "paragraphId": "3A481C6C"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Right-fit is ultimately experienced by employees. Employees reporting greater psychological safety were 24 percentage points more likely to say the time they spent responding to feedback requests was worthwhile. Credible response matters as well. Employees who believed feedback helped their organization identify and address important issues were 2.2 times as likely to be engaged and 1.5 times as likely to intend to stay. Those who had seen meaningful change resulting from feedback were 1.5 times as likely to recommend their organization."
+    },
+    {
+      "id": "block-162",
+      "source": {
+        "part": "word/document.xml",
+        "index": 162,
+        "paragraphId": "1D719E91"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-163",
+      "source": {
+        "part": "word/document.xml",
+        "index": 163,
+        "paragraphId": "22A846BC"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Title: Run a right-fit check."
+    },
+    {
+      "id": "block-164",
+      "source": {
+        "part": "word/document.xml",
+        "index": 164,
+        "paragraphId": "1C42782E"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "What decision or uncertainty is driving the need? What evidence is missing? Whose voice or which signal is required? Which method fits? What response is realistically possible?"
+    },
+    {
+      "id": "block-165",
+      "source": {
+        "part": "word/document.xml",
+        "index": 165,
+        "paragraphId": "5440E96E"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Calibration is not a one-time design exercise. Topics change, channels evolve, employee expectations shift, and organizational capacity expands or contracts. Listening leaders need to continually assess where the system is underfit, where it is overfit, and what adjustment would produce better understanding or a more credible response."
+    },
+    {
+      "id": "block-166",
+      "source": {
+        "part": "word/document.xml",
+        "index": 166,
+        "paragraphId": "0D5497B4"
+      },
+      "type": "heading",
+      "level": 2,
+      "text": "AI raises the stakes for right-fit listening"
+    },
+    {
+      "id": "block-167",
+      "source": {
+        "part": "word/document.xml",
+        "index": 167,
+        "paragraphId": "020DFF09"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Eighty-three percent of employee listening leaders believe AI will fundamentally change how organizations act on insights. Only 43% say their organization has a clear point of view on which AI-enabled listening use cases to prioritize and why. The field is far more certain that change is coming than it is about what to do with it."
+    },
+    {
+      "id": "block-168",
+      "source": {
+        "part": "word/document.xml",
+        "index": 168,
+        "paragraphId": "67336790"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual. Data callout."
+    },
+    {
+      "id": "block-169",
+      "source": {
+        "part": "word/document.xml",
+        "index": 169,
+        "paragraphId": "3A18FE77"
+      },
+      "type": "list-item",
+      "text": "83% of employee listening leaders believe AI will fundamentally change how organizations act on insights",
+      "level": 0
+    },
+    {
+      "id": "block-170",
+      "source": {
+        "part": "word/document.xml",
+        "index": 170,
+        "paragraphId": "73E45DDC"
+      },
+      "type": "list-item",
+      "text": "but only 43% believe their organization has a clear point of view on which AI-enabled listening use cases to prioritize and why",
+      "level": 0
+    },
+    {
+      "id": "block-171",
+      "source": {
+        "part": "word/document.xml",
+        "index": 171,
+        "paragraphId": "4E254A37"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Experimentation is advancing faster than strategy, and it is clustering where listening teams already understand the work. Across the capabilities in our research, 43% of analysis capabilities are being piloted or have been deployed – 13 percentage points more than the next-most-developed phase. Strategy, planning, and design stands at 27%; listening at 30%; and action taking at 25%."
+    },
+    {
+      "id": "block-172",
+      "source": {
+        "part": "word/document.xml",
+        "index": 172,
+        "paragraphId": "5440EC19"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual. Bar graph or similar showing the piloting/deployed %s by phases."
+    },
+    {
+      "id": "block-173",
+      "source": {
+        "part": "word/document.xml",
+        "index": 173,
+        "paragraphId": "5E19F16D"
+      },
+      "type": "list-item",
+      "text": "Phase 1: Strategy, Planning, & Design - 27%",
+      "level": 0
+    },
+    {
+      "id": "block-174",
+      "source": {
+        "part": "word/document.xml",
+        "index": 174,
+        "paragraphId": "255226E3"
+      },
+      "type": "list-item",
+      "text": "Phase 2: Listening - 30%",
+      "level": 0
+    },
+    {
+      "id": "block-175",
+      "source": {
+        "part": "word/document.xml",
+        "index": 175,
+        "paragraphId": "00254E1B"
+      },
+      "type": "list-item",
+      "text": "Phase 3: Analysis - 43%",
+      "level": 0
+    },
+    {
+      "id": "block-176",
+      "source": {
+        "part": "word/document.xml",
+        "index": 176,
+        "paragraphId": "45C7287B"
+      },
+      "type": "list-item",
+      "text": "Phase 4: Action Taking - 25%",
+      "level": 0
+    },
+    {
+      "id": "block-177",
+      "source": {
+        "part": "word/document.xml",
+        "index": 177,
+        "paragraphId": "705AF250"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "This pattern reveals an important limitation in how AI is entering employee listening. Adoption is strongest where AI can accelerate familiar, largely internal work – not where it requires changes to the employee experience, governance, decision rights, or organizational response. If AI remains concentrated in analysis, organizations may produce faster reports without building a more capable listening system. The greater opportunity is to extend AI both upstream, into what organizations listen for and how employees participate, and downstream, into how insights reach decisions and credible responses."
+    },
+    {
+      "id": "block-178",
+      "source": {
+        "part": "word/document.xml",
+        "index": 178,
+        "paragraphId": "659CC82C"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-179",
+      "source": {
+        "part": "word/document.xml",
+        "index": 179,
+        "paragraphId": "7730137D"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Quote: “I have not seen any clear [...] guidelines that says you can do this with your AI analysis and you cannot do that. I’m just using the tools [...] probably more like in the wild, wild west. I’m pulling off all of those open-text comments, [...] throwing them into [...] Copilot and Gemini [...] running my own analyses [...] putting it into a narrative that makes sense.”"
+    },
+    {
+      "id": "block-180",
+      "source": {
+        "part": "word/document.xml",
+        "index": 180,
+        "paragraphId": "766D6BAD"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Each phase changes a different part of the listening system. The sections below examine what AI can unlock at each phase and the conditions under which it adds meaningful value."
+    },
+    {
+      "id": "block-181",
+      "source": {
+        "part": "word/document.xml",
+        "index": 181,
+        "paragraphId": "695ED2CA"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Phase 1: Strategy, planning, and design"
+    },
+    {
+      "id": "block-182",
+      "source": {
+        "part": "word/document.xml",
+        "index": 182,
+        "paragraphId": "4C1B52C4"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Focus the listening agenda"
+    },
+    {
+      "id": "block-183",
+      "source": {
+        "part": "word/document.xml",
+        "index": 183,
+        "paragraphId": "52087E92"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "AI can help identify emerging information needs, connect listening priorities to workforce and business conditions, recommend topics, support conversational authoring, and identify the employees closest to an experience. This phase may be less visible than analysis, but it shapes everything that follows. The most consequential design decision is not how quickly a question can be generated; it is whether the organization has defined what it needs to understand, whose perspective can clarify it, and what evidence would be sufficient to inform a decision. AI creates value here when it improves the questions the system pursues – not simply the speed with which surveys are produced."
+    },
+    {
+      "id": "block-184",
+      "source": {
+        "part": "word/document.xml",
+        "index": 184,
+        "paragraphId": "2333AD71"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-185",
+      "source": {
+        "part": "word/document.xml",
+        "index": 185,
+        "paragraphId": "1EF5902D"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Customer zero story on Survey Sage."
+    },
+    {
+      "id": "block-186",
+      "source": {
+        "part": "word/document.xml",
+        "index": 186,
+        "paragraphId": "52CCF5B3"
+      },
+      "type": "heading",
+      "level": 3,
+      "text": "Phase 2: Listening"
+    },
+    {
+      "id": "block-187",
+      "source": {
+        "part": "word/document.xml",
+        "index": 187,
+        "paragraphId": "17A41D50"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Expand participation and access"
+    },
+    {
+      "id": "block-188",
+      "source": {
+        "part": "word/document.xml",
+        "index": 188,
+        "paragraphId": "0E0534F9"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Conversational feedback, adaptive experiences, accessibility support, translation, and AI-assisted drafting can create new ways for employees to participate. The opportunity is not merely to introduce another channel, but to make voice easier to exercise for employees who may be poorly served by traditional survey experiences. As listening becomes more conversational and personalized, employees also need greater visibility and choice regarding how their input is captured, interpreted, combined, and used. AI-enabled listening expands voice most credibly when increased access is matched by increased transparency and agency."
+    },
+    {
+      "id": "block-189",
+      "source": {
+        "part": "word/document.xml",
+        "index": 189,
+        "paragraphId": "2B88616C"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Potential product feature on copilot assisted authoring?"
+    },
+    {
+      "id": "block-190",
+      "source": {
+        "part": "word/document.xml",
+        "index": 190,
+        "paragraphId": "1DB4A1DC"
+      },
+      "type": "heading",
+      "level": 3,
+      "text": "Phase 3: Analysis"
+    },
+    {
+      "id": "block-191",
+      "source": {
+        "part": "word/document.xml",
+        "index": 191,
+        "paragraphId": "6E5FB5A3"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Turn more signals into usable understanding"
+    },
+    {
+      "id": "block-192",
+      "source": {
+        "part": "word/document.xml",
+        "index": 192,
+        "paragraphId": "68C831F0"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Analysis is where AI has gained the most traction because the work is familiar and the value is immediate. Summarization, conversational querying, pattern detection, and automated reporting can reduce manual effort and make evidence easier to explore. But the larger opportunity is not a faster version of the existing reporting cycle. It is the ability to connect signals across sources, test competing interpretations, identify where context is missing, and examine questions practitioners previously lacked the time or tools to pursue. AI changes analysis most meaningfully when it helps teams move from describing scores to developing decision-relevant workforce intelligence."
+    },
+    {
+      "id": "block-193",
+      "source": {
+        "part": "word/document.xml",
+        "index": 193,
+        "paragraphId": "74CCA7C9"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-194",
+      "source": {
+        "part": "word/document.xml",
+        "index": 194,
+        "paragraphId": "578DA7D8"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Customer story on analysis?"
+    },
+    {
+      "id": "block-195",
+      "source": {
+        "part": "word/document.xml",
+        "index": 195,
+        "paragraphId": "161E692E"
+      },
+      "type": "heading",
+      "level": 3,
+      "text": "Phase 4: Action taking"
+    },
+    {
+      "id": "block-196",
+      "source": {
+        "part": "word/document.xml",
+        "index": 196,
+        "paragraphId": "00EB01D8"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Move insight closer to accountable response"
+    },
+    {
+      "id": "block-197",
+      "source": {
+        "part": "word/document.xml",
+        "index": 197,
+        "paragraphId": "6190488D"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Action taking has seen the least traction, even though listening leaders overwhelmingly expect AI to change how organizations act on insights. The gap reflects the difficulty of this phase: response depends not only on technology, but on authority, accountability, organizational capacity, and judgment. AI can prepare leader briefings, provide in-context coaching, recommend possible responses, route insights, and monitor follow-through. Its greatest value is not automating action for its own sake, but shortening the distance between an employee signal, the person positioned to make a decision, and a response employees can see."
+    },
+    {
+      "id": "block-198",
+      "source": {
+        "part": "word/document.xml",
+        "index": 198,
+        "paragraphId": "768EFAF3"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-199",
+      "source": {
+        "part": "word/document.xml",
+        "index": 199,
+        "paragraphId": "663E3D14"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Toshiba MAT story?"
+    },
+    {
+      "id": "block-200",
+      "source": {
+        "part": "word/document.xml",
+        "index": 200,
+        "paragraphId": "671C8225"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual. Progressive from Listening today --> Listening in the age of AI."
+    },
+    {
+      "id": "block-201",
+      "source": {
+        "part": "word/document.xml",
+        "index": 201,
+        "paragraphId": "4BB9AF77"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Trustworthy: Trust through confidentiality → Trust through transparency, agency, and access"
+    },
+    {
+      "id": "block-202",
+      "source": {
+        "part": "word/document.xml",
+        "index": 202,
+        "paragraphId": "2D8D42E5"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Intelligent: Reports, dashboards, and scores → Root-cause, multi-source workforce intelligence"
+    },
+    {
+      "id": "block-203",
+      "source": {
+        "part": "word/document.xml",
+        "index": 203,
+        "paragraphId": "1F4C1CCA"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Responsive: Point-in-time action plans → Guided and personalized response"
+    },
+    {
+      "id": "block-204",
+      "source": {
+        "part": "word/document.xml",
+        "index": 204,
+        "paragraphId": "45F943CE"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Embedded: Periodic survey programs → Continuous, conversational listening in the flow of work"
+    },
+    {
+      "id": "block-205",
+      "source": {
+        "part": "word/document.xml",
+        "index": 205,
+        "paragraphId": "06AB0830"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Outcome-Driven: Engagement metrics → Connected employee, workforce, and business outcomes"
+    },
+    {
+      "id": "block-206",
+      "source": {
+        "part": "word/document.xml",
+        "index": 206,
+        "paragraphId": "236E95F6"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Across all four phases, AI is a multiplier. It can extend access, reduce friction, improve interpretation, and strengthen response. It can also accelerate a listening system that lacks a clear purpose, sufficient context, or credible route to action. The practical test is therefore not whether AI can perform a listening task. It is whether AI makes the system more trustworthy, intelligent, responsive, embedded, and outcome-driven. As the mechanics of listening become easier, the quality of the organization’s judgment becomes more consequential."
+    },
+    {
+      "id": "block-207",
+      "source": {
+        "part": "word/document.xml",
+        "index": 207,
+        "paragraphId": "2AA230F5"
+      },
+      "type": "heading",
+      "level": 2,
+      "text": "Human judgment needs a job description"
+    },
+    {
+      "id": "block-208",
+      "source": {
+        "part": "word/document.xml",
+        "index": 208,
+        "paragraphId": "24FEF119"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "As AI expands across the listening cycle, the practitioner’s role shifts from performing every task to defining the standards the system must meet and determining when it should defer, escalate, or stop. Sixty-eight percent of listening leaders say their organization has a clear point of view on where human judgment must remain central in AI-enabled listening. Nearly one in three do not. “Keep a human in the loop” is not a governance model unless that human has a defined responsibility, decision authority, and standard of evidence."
+    },
+    {
+      "id": "block-209",
+      "source": {
+        "part": "word/document.xml",
+        "index": 209,
+        "paragraphId": "29C32DF1"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Listening leaders need to define what good means before deciding what AI should own. That includes standards for validity, representation, context, confidentiality, employee agency, decision relevance, and appropriate response. Evaluation becomes part of the operating model: testing whether AI meets those standards across populations and use cases, identifying predictable failure modes, and determining when the system should defer, escalate, or stop."
+    },
+    {
+      "id": "block-210",
+      "source": {
+        "part": "word/document.xml",
+        "index": 210,
+        "paragraphId": "5456010A"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "This does not require practitioners to retain every manual task. AI can produce, organize, and recommend at a speed and scale that humans cannot match. Listening leaders remain accountable for whether those capabilities uphold the principles of the system and whether the outputs are good enough to inform a consequential choice. They own the definition of quality, the evidence used to judge it, and the response when the technology falls short."
+    },
+    {
+      "id": "block-211",
+      "source": {
+        "part": "word/document.xml",
+        "index": 211,
+        "paragraphId": "265B7090"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Callout box."
+    },
+    {
+      "id": "block-212",
+      "source": {
+        "part": "word/document.xml",
+        "index": 212,
+        "paragraphId": "778DB1B8"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Evaluating employee-experience agents—why quality must be defined, how evaluations work, and what listening leaders should test. Include EFA story and quote from Caribay or Liz."
+    },
+    {
+      "id": "block-213",
+      "source": {
+        "part": "word/document.xml",
+        "index": 213,
+        "paragraphId": "7A67C272"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The skills listening leaders want to build reflect that role. AI and automation literacy ranks first at 41%, followed by consultative and advisory skills at 39% and advanced AI skills at 38%. Literacy means understanding enough about how AI works to recognize where it fits and how it can fail. Advanced skill supports the design, orchestration, and evaluation of more complex applications. Consultative capability connects the output to a decision and gives leaders the language to explain why a technically possible use may not be an appropriate one."
+    },
+    {
+      "id": "block-214",
+      "source": {
+        "part": "word/document.xml",
+        "index": 214,
+        "paragraphId": "5B1D8421"
+      },
+      "type": "visual-placeholder",
+      "description": "Visual: Highlight the three priority skill areas with concrete examples of the knowledge and behaviors each requires."
+    },
+    {
+      "id": "block-215",
+      "source": {
+        "part": "word/document.xml",
+        "index": 215,
+        "paragraphId": "561FF12D"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Title: Employee listening skill stack for the AI era"
+    },
+    {
+      "id": "block-216",
+      "source": {
+        "part": "word/document.xml",
+        "index": 216,
+        "paragraphId": "227423B1"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "#1 AI and automation literacy — 41%"
+    },
+    {
+      "id": "block-217",
+      "source": {
+        "part": "word/document.xml",
+        "index": 217,
+        "paragraphId": "5C89F6B2"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Understand where AI fits and how it can fail"
+    },
+    {
+      "id": "block-218",
+      "source": {
+        "part": "word/document.xml",
+        "index": 218,
+        "paragraphId": "33C9E9C0"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Recognize capabilities and limitations."
+    },
+    {
+      "id": "block-219",
+      "source": {
+        "part": "word/document.xml",
+        "index": 219,
+        "paragraphId": "6419317B"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Identify risks involving bias, privacy, representation, and data quality."
+    },
+    {
+      "id": "block-220",
+      "source": {
+        "part": "word/document.xml",
+        "index": 220,
+        "paragraphId": "358C2782"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Distinguish useful applications from automation for its own sake."
+    },
+    {
+      "id": "block-221",
+      "source": {
+        "part": "word/document.xml",
+        "index": 221,
+        "paragraphId": "5CD46850"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Test what evidence supports an output."
+    },
+    {
+      "id": "block-222",
+      "source": {
+        "part": "word/document.xml",
+        "index": 222,
+        "paragraphId": "5BB2A6D8"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "#2 Consultative and advisory skills — 39%"
+    },
+    {
+      "id": "block-223",
+      "source": {
+        "part": "word/document.xml",
+        "index": 223,
+        "paragraphId": "6FB787E1"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Connect evidence to decisions and value"
+    },
+    {
+      "id": "block-224",
+      "source": {
+        "part": "word/document.xml",
+        "index": 224,
+        "paragraphId": "6EE4B3A7"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Define the organizational question."
+    },
+    {
+      "id": "block-225",
+      "source": {
+        "part": "word/document.xml",
+        "index": 225,
+        "paragraphId": "56CD03AE"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Translate findings into choices and tradeoffs."
+    },
+    {
+      "id": "block-226",
+      "source": {
+        "part": "word/document.xml",
+        "index": 226,
+        "paragraphId": "1213075A"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Identify accountable decision-makers."
+    },
+    {
+      "id": "block-227",
+      "source": {
+        "part": "word/document.xml",
+        "index": 227,
+        "paragraphId": "7F0DB2B3"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Challenge uses that are possible but not appropriate."
+    },
+    {
+      "id": "block-228",
+      "source": {
+        "part": "word/document.xml",
+        "index": 228,
+        "paragraphId": "4B8D8745"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "#3 Advanced AI skills — 38%"
+    },
+    {
+      "id": "block-229",
+      "source": {
+        "part": "word/document.xml",
+        "index": 229,
+        "paragraphId": "0F8B40DB"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Design and evaluate sophisticated applications"
+    },
+    {
+      "id": "block-230",
+      "source": {
+        "part": "word/document.xml",
+        "index": 230,
+        "paragraphId": "6C43BC6A"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Orchestrate workflows, agents, and data sources."
+    },
+    {
+      "id": "block-231",
+      "source": {
+        "part": "word/document.xml",
+        "index": 231,
+        "paragraphId": "7DA02ACF"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Build evaluation criteria and test cases."
+    },
+    {
+      "id": "block-232",
+      "source": {
+        "part": "word/document.xml",
+        "index": 232,
+        "paragraphId": "04975498"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Monitor performance across populations and use cases."
+    },
+    {
+      "id": "block-233",
+      "source": {
+        "part": "word/document.xml",
+        "index": 233,
+        "paragraphId": "6FB20826"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Define guardrails, escalation points, and stop conditions."
+    },
+    {
+      "id": "block-234",
+      "source": {
+        "part": "word/document.xml",
+        "index": 234,
+        "paragraphId": "4E500B8B"
+      },
+      "type": "heading",
+      "level": 2,
+      "text": "Lead the system, not the survey"
+    },
+    {
+      "id": "block-235",
+      "source": {
+        "part": "word/document.xml",
+        "index": 235,
+        "paragraphId": "1A3F79F5"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The next generation of employee listening will not be defined by how many signals an organization collects, how frequently it asks for feedback, or how much of the process it automates. It will be defined by whether the organization can turn employee voice into timely workforce intelligence and use that understanding responsibly."
+    },
+    {
+      "id": "block-236",
+      "source": {
+        "part": "word/document.xml",
+        "index": 236,
+        "paragraphId": "7E48EA4B"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "This expands the listening leader’s role beyond designing surveys, reporting results, and encouraging action. The work is to steward a connected system of voice, evidence, interpretation, decisions, response, and trust."
+    },
+    {
+      "id": "block-237",
+      "source": {
+        "part": "word/document.xml",
+        "index": 237,
+        "paragraphId": "39FCA17A"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Stewarding that system means resisting simple proxies: volume for intelligence, frequency for responsiveness, action plans for influence, or automation for maturity."
+    },
+    {
+      "id": "block-238",
+      "source": {
+        "part": "word/document.xml",
+        "index": 238,
+        "paragraphId": "7E1837F0"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "The shift is from administering listening activities to continually calibrating the system around the needs of employees and the organization:"
+    },
+    {
+      "id": "block-239",
+      "source": {
+        "part": "word/document.xml",
+        "index": 239,
+        "paragraphId": "0226ED86"
+      },
+      "type": "list-item",
+      "text": "Are we hearing from the people and perspectives that matter?",
+      "level": 0
+    },
+    {
+      "id": "block-240",
+      "source": {
+        "part": "word/document.xml",
+        "index": 240,
+        "paragraphId": "2A72E08F"
+      },
+      "type": "list-item",
+      "text": "Are we asking about the employee experience of the changes the organization is pursuing?",
+      "level": 0
+    },
+    {
+      "id": "block-241",
+      "source": {
+        "part": "word/document.xml",
+        "index": 241,
+        "paragraphId": "141D8E3E"
+      },
+      "type": "list-item",
+      "text": "Are we collecting more than the organization can interpret or respond to?",
+      "level": 0
+    },
+    {
+      "id": "block-242",
+      "source": {
+        "part": "word/document.xml",
+        "index": 242,
+        "paragraphId": "4CE6A528"
+      },
+      "type": "list-item",
+      "text": "Can employees see how their voice influences organizational understanding, decisions, and response?",
+      "level": 0
+    },
+    {
+      "id": "block-243",
+      "source": {
+        "part": "word/document.xml",
+        "index": 243,
+        "paragraphId": "007B29BE"
+      },
+      "type": "list-item",
+      "text": "Is AI strengthening employee voice and organizational intelligence, or merely increasing the volume and speed of signals?",
+      "level": 0
+    },
+    {
+      "id": "block-244",
+      "source": {
+        "part": "word/document.xml",
+        "index": 244,
+        "paragraphId": "0F4E073C"
+      },
+      "provenance": {
+        "kind": "imported"
+      },
+      "type": "paragraph",
+      "text": "Organizations will answer those questions differently because their workforces, strategies, risks, and capacity differ. A single listening architecture cannot fit every context. The standard is a system that preserves meaningful employee voice, produces intelligence the organization can use, and continues to recalibrate as work and the people doing it change."
+    }
+  ],
+  "reviewItems": [
+    {
+      "id": "review-0",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-11",
+      "source": {
+        "part": "word/document.xml",
+        "index": 11,
+        "paragraphId": "0FD87FE7"
+      }
+    },
+    {
+      "id": "review-1",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-28",
+      "source": {
+        "part": "word/document.xml",
+        "index": 28,
+        "paragraphId": "4A005160"
+      }
+    },
+    {
+      "id": "review-2",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-30",
+      "source": {
+        "part": "word/document.xml",
+        "index": 30,
+        "paragraphId": "4461AE32"
+      }
+    },
+    {
+      "id": "review-3",
+      "code": "missing-image-description",
+      "severity": "warning",
+      "message": "image1.png does not have an image description.",
+      "blockId": "block-31-image-0",
+      "source": {
+        "part": "word/document.xml",
+        "index": 31,
+        "paragraphId": "3F0ECF77"
+      }
+    },
+    {
+      "id": "review-4",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-34",
+      "source": {
+        "part": "word/document.xml",
+        "index": 34,
+        "paragraphId": "7E667102"
+      }
+    },
+    {
+      "id": "review-5",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-51",
+      "source": {
+        "part": "word/document.xml",
+        "index": 51,
+        "paragraphId": "1EF76CE4"
+      }
+    },
+    {
+      "id": "review-6",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-66",
+      "source": {
+        "part": "word/document.xml",
+        "index": 66,
+        "paragraphId": "04D1B9C8"
+      }
+    },
+    {
+      "id": "review-7",
+      "code": "missing-image-description",
+      "severity": "warning",
+      "message": "image2.png does not have an image description.",
+      "blockId": "block-68-image-1",
+      "source": {
+        "part": "word/document.xml",
+        "index": 68,
+        "paragraphId": "457565E2"
+      }
+    },
+    {
+      "id": "review-8",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-74",
+      "source": {
+        "part": "word/document.xml",
+        "index": 74,
+        "paragraphId": "41211451"
+      }
+    },
+    {
+      "id": "review-9",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-97",
+      "source": {
+        "part": "word/document.xml",
+        "index": 97,
+        "paragraphId": "189F8987"
+      }
+    },
+    {
+      "id": "review-10",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-107",
+      "source": {
+        "part": "word/document.xml",
+        "index": 107,
+        "paragraphId": "6AD38B4C"
+      }
+    },
+    {
+      "id": "review-11",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-110",
+      "source": {
+        "part": "word/document.xml",
+        "index": 110,
+        "paragraphId": "5FEF7050"
+      }
+    },
+    {
+      "id": "review-12",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-116",
+      "source": {
+        "part": "word/document.xml",
+        "index": 116,
+        "paragraphId": "58DCE9D7"
+      }
+    },
+    {
+      "id": "review-13",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-127",
+      "source": {
+        "part": "word/document.xml",
+        "index": 127,
+        "paragraphId": "08E7B8DA"
+      }
+    },
+    {
+      "id": "review-14",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-147",
+      "source": {
+        "part": "word/document.xml",
+        "index": 147,
+        "paragraphId": "283D3779"
+      }
+    },
+    {
+      "id": "review-15",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-168",
+      "source": {
+        "part": "word/document.xml",
+        "index": 168,
+        "paragraphId": "67336790"
+      }
+    },
+    {
+      "id": "review-16",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-172",
+      "source": {
+        "part": "word/document.xml",
+        "index": 172,
+        "paragraphId": "5440EC19"
+      }
+    },
+    {
+      "id": "review-17",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-200",
+      "source": {
+        "part": "word/document.xml",
+        "index": 200,
+        "paragraphId": "671C8225"
+      }
+    },
+    {
+      "id": "review-18",
+      "code": "visual-treatment-needed",
+      "severity": "warning",
+      "message": "A manuscript visual or sidebar still needs an approved treatment.",
+      "blockId": "block-214",
+      "source": {
+        "part": "word/document.xml",
+        "index": 214,
+        "paragraphId": "5B1D8421"
+      }
+    },
+    {
+      "id": "review-19",
+      "code": "comments-omitted",
+      "severity": "warning",
+      "message": "72 Word comment references are not included in the report rendering."
+    },
+    {
+      "id": "review-20",
+      "code": "bitmap-visual-needs-data",
+      "severity": "blocker",
+      "message": "This bitmap visual needs approved structured data before it can be converted to a coded visual.",
+      "blockId": "block-31-image-0",
+      "source": {
+        "part": "word/document.xml",
+        "index": 31,
+        "paragraphId": "3F0ECF77"
+      }
+    },
+    {
+      "id": "review-21",
+      "code": "bitmap-visual-needs-data",
+      "severity": "blocker",
+      "message": "This bitmap visual needs approved structured data before it can be converted to a coded visual.",
+      "blockId": "block-68-image-1",
+      "source": {
+        "part": "word/document.xml",
+        "index": 68,
+        "paragraphId": "457565E2"
+      }
+    }
+  ],
+  "extraction": {
+    "paragraphCount": 244,
+    "imageCount": 2,
+    "unsupportedCount": 0
+  }
+}

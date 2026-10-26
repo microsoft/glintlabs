@@ -1,0 +1,24 @@
+.page { min-height: 100vh; overflow: clip; color: var(--site-ink); background: var(--site-paper); font-family: var(--site-content-font); font-weight: 420; }
+.main { position: relative; isolation: isolate; padding: 200px max(24px, calc((100% - 1140px) / 2)) 136px; }
+.content { position: relative; z-index: 1; display: flex; width: 100%; max-width: 1140px; flex-direction: column; gap: 112px; margin: auto; }
+.reportsContent { gap: 80px; }
+.intro { display: grid; grid-template-columns: minmax(0, 461px) minmax(0, 558px); justify-content: space-between; gap: 48px; }
+.intro h1 { margin: 0; font: 420 36px/48px var(--site-editorial-font); letter-spacing: -.75px; }
+.intro p { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -.15px; line-height: 28px; }
+.reportsIntro p, .toolsIntro p, .aboutIntro p { font-size: 20px; font-weight: 550; line-height: 24px; font-variation-settings: "opsz" 36; }
+.intro a { text-decoration: underline; text-underline-offset: 3px; }
+.intro a:focus-visible { outline: 3px solid var(--site-focus); outline-offset: 4px; }
+.divider { width: 100%; height: 1px; border: 0; background: var(--site-line); }
+
+@media (max-width: 900px) {
+  .main { padding-top: 168px; padding-bottom: 80px; }
+  .content { gap: 64px; }
+  .intro { grid-template-columns: 1fr; gap: 24px; }
+  .intro p { max-width: 700px; }
+}
+
+@media (max-width: 600px) {
+  .intro h1 { font-size: 32px; line-height: 40px; }
+  .reportsIntro h1 { font-size: clamp(28px, 8vw, 32px); line-height: 1.25; }
+  .intro p { font-size: 21px; line-height: 28px; }
+}

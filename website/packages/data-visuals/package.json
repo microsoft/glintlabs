@@ -1,0 +1,25 @@
+{
+  "name": "@glint-labs/data-visuals",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist-lib/glint-labs-data-visuals.js",
+  "types": "./dist-types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist-types/index.d.ts",
+      "import": "./dist-lib/glint-labs-data-visuals.js"
+    },
+    "./styles.css": "./dist-lib/glint-labs-data-visuals.css"
+  },
+  "files": [
+    "dist-lib",
+    "dist-types",
+    "src",
+    "README.md"
+  ],
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  }
+}

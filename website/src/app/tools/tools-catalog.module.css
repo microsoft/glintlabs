@@ -1,0 +1,48 @@
+.catalog { display: flex; width: 100%; flex-direction: column; align-items: stretch; gap: 32px; overflow-anchor: none; }
+.catalogIntro { max-width: 849px; margin-bottom: 16px; }
+.catalogIntro h2 { margin: 0; font: 420 36px/44px var(--site-editorial-font); letter-spacing: -.75px; }
+.catalogIntro p { margin: 8px 0 0; color: var(--site-muted); font-size: 16px; line-height: 22px; }
+.filters { display: flex; flex-wrap: wrap; gap: 16px; }
+.filters button { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; border: 1px solid rgb(0 0 0 / 13%); border-radius: 16px; color: var(--site-ink); background: transparent; font: inherit; font-size: 16px; line-height: 22px; cursor: pointer; }
+.filters button[aria-pressed="true"] { color: #fff; background: #242424; border-color: #242424; }
+.filters button:hover { box-shadow: inset 0 0 0 1px currentColor; }
+.filters button svg, .primaryAction svg { width: 20px; height: 20px; flex: 0 0 auto; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr); }
+.card { display: grid; grid-template-columns: minmax(0, 363px) minmax(0, 1fr); min-width: 0; min-height: 296px; overflow: hidden; border: 1px solid var(--site-feature-line); border-radius: 20px; background: var(--site-feature); }
+.cardVisual { position: relative; isolation: isolate; display: grid; min-height: 296px; place-items: center; overflow: hidden; background: var(--site-card); }
+.cardVisual::before, .cardVisual::after { position: absolute; z-index: -1; background: center / contain no-repeat; content: ""; }
+.cardVisual::before { top: -269px; left: -269px; width: 538px; height: 538px; background-image: url("/figma/site-canonical/tools/card-glow-top.svg"); }
+.cardVisual::after { right: -339px; bottom: -338px; width: 676px; height: 676px; background-image: url("/figma/site-canonical/tools/card-glow-bottom.svg"); }
+.cardVisual img { display: block; width: 170px; height: 170px; }
+.cardContent { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; justify-content: center; gap: 32px; padding: 32px 40px; }
+.titleRow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.titleRow h3 { margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -.15px; line-height: 28px; }
+.skillBadge { display: inline-flex; min-height: 26px; flex: 0 0 auto; align-items: center; gap: 6px; padding: 4px 8px; border: 1px solid var(--site-line); border-radius: 8px; color: #242424; font-size: 12px; line-height: 16px; }
+.skillBadge svg { width: 16px; height: 16px; }
+.byline { margin: 10px 0 0; color: var(--site-muted); font-size: 14px; line-height: 20px; }
+.description { margin: 16px 0 0; color: var(--site-muted); font-size: 16px; line-height: 22px; }
+.primaryAction { display: inline-flex; min-height: 32px; align-items: center; justify-content: center; gap: 4px; padding: 6px 10px; border: 0; border-radius: 12px; color: var(--site-ink); background: rgb(0 0 0 / 5%); font: inherit; font-size: 14px; line-height: 20px; text-decoration: none; cursor: pointer; }
+.primaryAction:hover { background: rgb(0 0 0 / 10%); }
+.primaryAction:focus-visible, .filters button:focus-visible { outline: 3px solid var(--site-focus); outline-offset: 4px; }
+.empty { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding-block: 24px; font-size: 16px; line-height: 24px; }
+.modal { width: min(946px, calc(100vw - 64px)); height: min(848px, calc(100dvh - 72px)); max-height: calc(100dvh - 72px); margin: auto; padding: 0; overflow: hidden; overscroll-behavior: contain; border: 0; border-radius: 20px; color: var(--site-ink); background: var(--site-paper); box-shadow: 0 24px 80px rgb(0 0 0 / 20%); }
+.modal::backdrop { background: rgb(0 0 0 / 44%); }
+
+@media (max-width: 1100px) {
+  .card { grid-template-columns: minmax(0, 32%) minmax(0, 1fr); }
+  .cardContent { padding-inline: 24px; }
+}
+
+@media (max-width: 600px) {
+  .card { grid-template-columns: 1fr; }
+  .cardVisual { min-height: 220px; }
+  .catalogIntro h2 { font-size: 32px; line-height: 40px; }
+  .cardContent { padding: 24px; }
+  .primaryAction, .filters button { min-height: 44px; }
+  .modal { width: calc(100vw - 24px); height: calc(100dvh - 32px); max-height: calc(100dvh - 32px); }
+}
+
+@media (forced-colors: active) {
+  .card, .filters button, .primaryAction, .skillBadge { border: 1px solid CanvasText; }
+  .filters button[aria-pressed="true"] { color: HighlightText; background: Highlight; }
+}
