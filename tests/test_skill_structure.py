@@ -382,7 +382,8 @@ def test_native_export_end_to_end_repeats_and_packages_full_limitations(platform
     assert all(step["status"] == "completed" for step in manifest["analyses"])
     report = (output / f"{output.name}-report.html").read_text(encoding="utf-8")
     payload = json.loads(report.split("<script>const D=", 1)[1].split(";\nconst names=", 1)[0])
-    assert len(payload["inputLimitations"]["entries"]) == 10
+    assert len(payload["inputLimitations"]["entries"]) == 11
+    assert any("exit outcomes were not provided" in entry for entry in payload["inputLimitations"]["entries"])
     assert payload["cycles"]["cycles"] == ["Cycle A", "Cycle B"]
     assert next(iter(payload["cycles"]["repeat"]["overall"].values()))["Cycle A"]["n"] == 140
     assert "N/A" in payload["segments"]["Tenure"]["values"]
@@ -992,9 +993,15 @@ def test_registered_demo_requests_embedded_attrition(tmp_path):
     attributes = module.pd.DataFrame(
         {
             "user_id": [1, 2],
-            "attrition date": [46113, None],
+            "attrition date": [
+                (module.pd.Timestamp("2026-07-15") - module.pd.Timestamp("1899-12-30")).days,
+                None,
+            ],
         }
     )
+    with module.pd.ExcelWriter(survey) as workbook:
+        frame.to_excel(workbook, sheet_name="Sheet1", index=False)
+        attributes.to_excel(workbook, sheet_name="user_properties", index=False)
     module.read_export = lambda *args: (
         frame,
         survey,
@@ -1337,10 +1344,11 @@ const D={questions:["Q_ONE","Q_TWO"],labels:{Q_ONE:"Role fit",Q_TWO:"Career"},
 const attr={value:""},val={value:""};
 globalThis.document={querySelector(){return root}};
 function selectedScope(){return attr.value?"Department: Sales":"All employees"}
-function cycleSource(){return{
+const cycleValues={
   Earlier:{n:40,items:[[75,20,40],[60,20,40]]},
   Latest:{n:40,items:[[80,20,40],[70,20,40]]}
-}}
+};
+function cycleSource(){return cycleValues}
 function compactN(value){return String(value)}
 function escapeHtml(value){return String(value)}
 for(const filtered of [false,true]){
@@ -1357,6 +1365,14 @@ for(const filtered of [false,true]){
   assert.ok(root.innerHTML.includes("High scoring items"));
   assert.ok(root.innerHTML.includes("Low scoring items"));
 }
+cycleValues.Latest.items[1]=[null,null,null];
+cycleValues.Earlier.items[0]=[null,null,null];
+renderSurveySummary();
+assert.ok(root.innerHTML.includes("<strong>80</strong>"));
+assert.ok(!root.innerHTML.includes("Career"));
+assert.ok(!root.innerHTML.includes("<strong>0</strong>"));
+assert.ok(!root.innerHTML.includes("+80"));
+assert.ok(root.innerHTML.includes("A comparable prior survey cycle is not available"));
 """
     subprocess.run(
         [node, "-e", renderer + "\n" + checks], check=True,
@@ -1968,7 +1984,9 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     (tmp_path / "analysis-manifest.json").write_text(
         json.dumps(
             {
-                "repeatability_check": {"status": "passed"},
+                "repeatability_check": {
+                    "status": "passed", "verification_dir": str(tmp_path / "_repeatability_run"),
+                },
                 "analyses": [
                     {
                         "name": "attrition",
@@ -1980,6 +1998,7 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         ),
         encoding="utf-8",
     )
+    (tmp_path / "attrition.csv").write_text("STALE_ATTRITION_SENTINEL\n", encoding="utf-8")
     sample_summary = {
         "headline": "A concise headline",
         "observation": "The aggregate results show a pattern.",
@@ -2031,6 +2050,12 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
     report = tmp_path / f"{tmp_path.name}-report.html"
     share_zip = tmp_path / f"{tmp_path.name}-share.zip"
     report_text = report.read_text(encoding="utf-8")
+    with zipfile.ZipFile(share_zip) as archive:
+        shared_manifest = json.loads(archive.read("analysis-manifest.json"))
+        assert "attrition.csv" not in archive.namelist()
+    assert "STALE_ATTRITION_SENTINEL" not in report_text
+    assert shared_manifest["repeatability_check"]["verification_dir"] == "_repeatability_run"
+    assert str(tmp_path) not in json.dumps(shared_manifest)
     for tab in (
         "Scores change",
         "Correlation",
@@ -2331,8 +2356,382 @@ def test_factor_cube_reestimates_eligible_cuts_and_suppresses_small_ones(monkeyp
     assert len(eligible["rows"]) == 8
     assert eligible["rows"][0]["loading"] == 0.6
     assert suppressed["status"] == "suppressed"
-    assert suppressed["completeN"] == 20
+    assert all(suppressed[key] is None for key in ("n", "completeN", "responseRows"))
     assert "At least 100 complete responses" in suppressed["reason"]
+
+
+def test_sparse_item_counts_and_factor_counts_are_not_serialized():
+    module = load_script("build_interactive_report")
+    questions = ["Q_ONE", "Q_SPARSE"]
+    frame = module.pd.DataFrame({
+        "__employee_id": range(10),
+        "survey_cycle_title": ["Old"] * 5 + ["New"] * 5,
+        "Q_ONE": [1, 2, 3, 4, 5] * 2,
+        "Q_SPARSE": [1, 2, None, None, None] * 2,
+    })
+    metrics = module.metrics(frame, questions, 5)
+    assert metrics[0][4] == 10
+    assert metrics[1] == [None] * 5
+    cycles = module.cycle_cube(frame, questions, [], "survey_cycle_title", 5)
+    assert cycles["overall"]["New"]["items"][1] == [None] * 3
+    factors = module.factor_cube(frame, questions, [], [])
+    assert factors["overall"]["status"] == "suppressed"
+    assert all(factors["overall"][key] is None for key in ("n", "completeN", "responseRows"))
+    context = module.summary_context(questions, cycles, {}, {}, factors, "", [])
+    assert len(context["tabs"]["changes"]["largest_changes"]) == 1
+
+
+@pytest.fixture
+def custom_exit_export(tmp_path):
+    module = load_script("analyze_survey_export")
+    rows = []
+    for cycle, title, completion in [
+        (10, "H1", "2025-06-01"), (20, "H2", "2025-12-15"),
+    ]:
+        for index in range(80):
+            rows.append({
+                "user_id": index + 1, "survey_cycle_id": cycle,
+                "survey_cycle_title": title, "survey_completion_date": completion,
+                "termination date": None,
+                "Location": "Tiny" if index < 3 else "Large",
+                "Q_ONE": index % 5 + 1, "Q_TWO": (index * 3 + 1) % 5 + 1,
+            })
+    for index in range(40):
+        rows.append({
+            "user_id": index + 1, "survey_cycle_id": 30, "survey_cycle_title": "Exit",
+            "survey_completion_date": None, "termination date": "2026-01-15",
+            "Location": "Tiny" if index < 3 else "Large", "Q_ONE": None, "Q_TWO": None,
+        })
+    frame = module.pd.DataFrame(rows)
+    source = tmp_path / "customer-survey.csv"
+    frame.to_csv(source, index=False)
+    options = SimpleNamespace(
+        survey_export=str(source), sheet=None, attribute_sheet=None,
+        emp_id_col=None, scale_points=5, question_cols=None, attribute_cols=None,
+        min_group_size=5, inspect_only=False, preparation_decisions=None,
+        summary_mode="off", attrition_config=None,
+    )
+    return module, frame, options
+
+
+def test_custom_exit_export_runs_attrition_and_packages_portable_private_payload(custom_exit_export, tmp_path):
+    module, _, options = custom_exit_export
+    output = tmp_path / "report"
+    subprocess.run([
+        sys.executable, str(ROOT / "scripts/analyze_survey_export.py"),
+        "--survey-export", options.survey_export, "--output-dir", str(output),
+    ], check=True, capture_output=True, text=True)
+    config = json.loads((output / "_input" / "analysis-config.json").read_text(encoding="utf-8"))
+    assert config["embedded_attrition"]["predictor_cycle"] == 20
+    assert config["embedded_attrition"]["outcome_cycle"] == 30
+    assert config["embedded_attrition"]["predictor_completion_date"] == "2025-12-15"
+    with zipfile.ZipFile(output / "report-share.zip") as archive:
+        manifest = json.loads(archive.read("analysis-manifest.json"))
+        report = archive.read("OPEN_REPORT.html").decode("utf-8")
+    assert manifest["repeatability_check"]["status"] == "passed"
+    assert manifest["repeatability_check"]["verification_dir"] == "_repeatability_run"
+    assert str(tmp_path) not in json.dumps(manifest)
+    assert any(item["name"] == "attrition" and item["status"] == "completed" for item in manifest["analyses"])
+    assert ">Attrition analysis</button>" in report
+    payload = json.JSONDecoder().raw_decode(report.split("<script>const D=", 1)[1])[0]
+    suppressed = payload["factors"]["segments"]["Location"]["Tiny"]
+    assert suppressed["status"] == "suppressed"
+    assert all(suppressed[key] is None for key in ("n", "completeN", "responseRows"))
+
+
+@pytest.mark.parametrize("problem", ["ambiguous_cycle", "invalid_date", "ambiguous_column", "missing_outcome", "unsupported_scale"])
+def test_uncertain_exit_data_is_excluded_and_recorded_in_limitations(custom_exit_export, tmp_path, problem):
+    module, frame, options = custom_exit_export
+    if problem == "ambiguous_cycle":
+        frame.loc[frame["survey_cycle_title"] == "Exit", "survey_cycle_title"] = "Unclear"
+        frame.loc[frame["survey_cycle_id"] == 10, "termination date"] = "2026-01-15"
+        frame.loc[frame["survey_cycle_id"] == 10, ["Q_ONE", "Q_TWO"]] = None
+    elif problem == "invalid_date":
+        frame.loc[frame["survey_cycle_title"] == "Exit", "termination date"] = "not a date"
+    elif problem == "ambiguous_column":
+        frame["exit date"] = frame["termination date"]
+    elif problem == "missing_outcome":
+        frame = frame.drop(columns="termination date")
+    else:
+        options.scale_points = 7
+    frame.to_csv(options.survey_export, index=False)
+    output = tmp_path / "output"
+    config_path = module.build_config(options, output)
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    assert "attrition" not in config["analyses"]
+    assert "embedded_attrition" not in config
+    assert "termination date" not in config["attribute_cols"]
+    assert "exit date" not in config["attribute_cols"]
+    report = load_script("build_interactive_report")
+    limitations = report.input_limitations(
+        config_path, Path(config["survey_csv"]), output, config["analysis_limitations"],
+    )
+    assert "Attrition analysis was excluded" in limitations["entries"][0]
+    assert "not a date" not in json.dumps(limitations)
+
+
+@pytest.mark.parametrize("outcome_source", ["external", "explicit"])
+def test_custom_attrition_supports_external_or_explicit_outcomes(custom_exit_export, tmp_path, outcome_source):
+    module, frame, options = custom_exit_export
+    if outcome_source == "external":
+        attributes = frame[["user_id", "termination date"]].dropna().drop_duplicates("user_id")
+        source = tmp_path / "customer.xlsx"
+        with module.pd.ExcelWriter(source) as workbook:
+            frame.drop(columns="termination date").to_excel(workbook, sheet_name="Sheet1", index=False)
+            attributes.to_excel(workbook, sheet_name="user_properties", index=False)
+        options.survey_export = str(source)
+    else:
+        frame = frame.rename(columns={"termination date": "leaving_on"})
+        frame.loc[frame["user_id"] == 1, "leaving_on"] = "2026-01-20"
+        frame.to_csv(options.survey_export, index=False)
+        settings = tmp_path / "attrition.json"
+        settings.write_text(json.dumps({
+            "cycle_column": "survey_cycle_id", "predictor_cycle": 20,
+            "outcome_cycle": 30, "termination_date_column": "leaving_on",
+            "predictor_completion_date_column": "survey_completion_date",
+        }), encoding="utf-8")
+        options.attrition_config = str(settings)
+    config_path = module.build_config(options, tmp_path / "output")
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    assert "attrition" in config["analyses"]
+    assert config["embedded_attrition"]["predictor_cycle"] == 20
+    assert config["embedded_attrition"]["outcome_cycle"] == 30
+    assert "leaving_on" not in config["attribute_cols"]
+    assert "termination date" not in config["attribute_cols"]
+
+
+def test_native_exit_detection_preserves_string_cycles_and_employee_ids(platform_input):
+    module, frame, options = platform_input
+    exits = frame.iloc[:4].copy()
+    exits["Survey Cycle Title"] = "Exit"
+    exits["Survey Cycle UUID"] = "0002"
+    exits["termination_date"] = "2026-02-15"
+    for column in exits.columns[5:13]:
+        exits[column] = -1 if column in (frame.columns[5], frame.columns[9]) else ""
+    module.pd.concat([frame, exits], ignore_index=True).to_csv(options.survey_export, index=False)
+    config_path = approve_platform(module, options)
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    assert config["embedded_attrition"]["predictor_cycle"] == "0001"
+    assert config["embedded_attrition"]["outcome_cycle"] == "0002"
+    assert "termination_date" not in config["attribute_cols"]
+    runner = load_script("run_vivaglint_analysis")
+    result = runner.embedded_exit_attrition(
+        config, config_path, Path(config["survey_csv"]), config["question_cols"],
+        config["emp_id_col"], config["min_group_size"],
+    )
+    assert not result.empty
+    assert set(result.loc[result["analysis_scope"] == "overall", "group_size"]) == {8}
+
+
+@pytest.mark.parametrize("name", [
+    "Leaver Date", "date_of_leaving", "Employee Separation Date",
+    "lastWorkingDay", "DepartureDate", "attrition",
+])
+def test_attrition_discovers_actual_exit_date_aliases(custom_exit_export, tmp_path, name):
+    module, frame, options = custom_exit_export
+    frame = frame.rename(columns={"termination date": name})
+    frame.loc[frame["survey_cycle_title"] == "Exit", "survey_cycle_title"] = "Leavers"
+    frame.to_csv(options.survey_export, index=False)
+    config_path = module.build_config(options, tmp_path / "output")
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    assert config["embedded_attrition"]["termination_date_column"] == name
+    assert config["embedded_attrition"]["outcome_cycle"] == 30
+    assert name not in config["attribute_cols"]
+
+
+def test_attrition_inspection_searches_all_sheets_without_running_analysis(tmp_path):
+    module = load_script("analyze_survey_export")
+    source = tmp_path / "survey.xlsx"
+    with module.pd.ExcelWriter(source) as workbook:
+        module.pd.DataFrame({"user_id": ["PRIVATE_EMPLOYEE"], "Q_ONE": [4]}).to_excel(
+            workbook, sheet_name="Sheet1", index=False,
+        )
+        module.pd.DataFrame({
+            "Employee ID": ["PRIVATE_EMPLOYEE"], "Last Working Day": ["2026-01-15"],
+            "Leaver Flag": [1], "Expected Exit Date": ["2026-02-15"],
+            "Department": ["PRIVATE_DEPARTMENT"],
+            "End Date": ["2026-01-15"],
+        }).to_excel(workbook, sheet_name="Historical departures", index=False)
+    output = tmp_path / "output"
+    subprocess.run([
+        sys.executable, str(ROOT / "scripts/analyze_survey_export.py"),
+        "--survey-export", str(source), "--output-dir", str(output), "--inspect-attrition",
+    ], check=True, capture_output=True, text=True)
+    discovery = json.loads((output / "_input" / "attrition-discovery.json").read_text(encoding="utf-8"))
+    candidates = {item["column"]: item for item in discovery["candidates"]}
+    assert candidates["Last Working Day"]["sheet"] == "Historical departures"
+    assert candidates["Last Working Day"]["kind"] == "exit_date"
+    assert candidates["Leaver Flag"]["kind"] == "flag_or_status"
+    assert candidates["Expected Exit Date"]["requires_confirmation"]
+    assert candidates["End Date"]["kind"] == "date_candidate"
+    assert candidates["End Date"]["requires_confirmation"]
+    assert discovery["inspected_sheets"] == ["Sheet1", "Historical departures"]
+    assert "Department" not in candidates
+    assert "PRIVATE_" not in json.dumps(discovery)
+    assert not (output / "analysis-manifest.json").exists()
+    assert not (output / "_input" / "analysis-config.json").exists()
+
+
+@pytest.mark.parametrize("kind", ["flag", "missing", "predicted"])
+def test_missing_or_uncertain_outcomes_explain_required_inputs(custom_exit_export, tmp_path, capsys, kind):
+    module, frame, options = custom_exit_export
+    frame = frame.drop(columns="termination date")
+    if kind == "flag":
+        frame["Leaver Flag"] = (frame["survey_cycle_id"] == 30).astype(int)
+    elif kind == "predicted":
+        frame["Predicted Exit Date"] = "2026-01-15"
+    frame.to_csv(options.survey_export, index=False)
+    config_path = module.build_config(options, tmp_path / "output")
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    assert "attrition" not in config["analyses"]
+    assert "Leaver Flag" not in config["attribute_cols"]
+    assert "Predicted Exit Date" not in config["attribute_cols"]
+    assert config["analysis_limitations"]
+    message = capsys.readouterr().err
+    for required in ("matching employee IDs", "actual exit dates", "completion date", "as-of date", "worksheet", "--exit-data"):
+        assert required in message
+
+
+@pytest.fixture
+def separate_exit_export(custom_exit_export, tmp_path):
+    module, frame, options = custom_exit_export
+    mapping = {1: "00001", 2: "1"}
+    frame["user_id"] = frame["user_id"].map(lambda value: mapping.get(value, str(value)))
+    survey = frame.loc[frame["survey_cycle_id"] == 20].drop(
+        columns=["survey_cycle_id", "survey_cycle_title", "termination date"],
+    )
+    survey.to_csv(options.survey_export, index=False)
+    exits = frame.loc[frame["survey_cycle_id"] == 30, ["user_id", "termination date"]].rename(
+        columns={"user_id": "StaffKey", "termination date": "Last Working Day"},
+    )
+    exit_path = tmp_path / "leavers.csv"
+    exits.to_csv(exit_path, index=False)
+    settings = {
+        "outcome_emp_id_col": "StaffKey",
+        "outcome_population_confirmed": True, "outcome_as_of_date": "2026-12-15",
+    }
+    settings_path = tmp_path / "outcomes.json"
+    settings_path.write_text(json.dumps(settings), encoding="utf-8")
+    options.exit_data = str(exit_path)
+    options.attrition_config = str(settings_path)
+    return module, options, settings
+
+
+def test_separate_exit_file_runs_without_fabricated_exit_cycles(separate_exit_export, tmp_path):
+    module, options, _ = separate_exit_export
+    output = tmp_path / "report"
+    subprocess.run([
+        sys.executable, str(ROOT / "scripts/analyze_survey_export.py"),
+        "--survey-export", options.survey_export, "--output-dir", str(output),
+        "--exit-data", options.exit_data, "--attrition-config", options.attrition_config,
+    ], check=True, capture_output=True, text=True)
+    config = json.loads((output / "_input" / "analysis-config.json").read_text(encoding="utf-8"))
+    assert "outcome_cycle" not in config["embedded_attrition"]
+    assert "cycle_column" not in config["embedded_attrition"]
+    ids = module.pd.read_csv(config["survey_csv"], converters={"user_id": str})["user_id"]
+    assert ids.nunique() == 80
+    assert {"00001", "1"}.issubset(ids)
+    with zipfile.ZipFile(output / "report-share.zip") as archive:
+        manifest = json.loads(archive.read("analysis-manifest.json"))
+        assert manifest["repeatability_check"]["status"] == "passed"
+        assert any(item["name"] == "attrition" and item["status"] == "completed" for item in manifest["analyses"])
+        assert not any("exit-outcomes" in name or "attrition-discovery" in name for name in archive.namelist())
+        assert str(tmp_path) not in json.dumps(manifest)
+
+
+@pytest.mark.parametrize("confirmed", [False, True])
+def test_outcome_coverage_is_required_and_limits_followup_windows(separate_exit_export, tmp_path, confirmed):
+    module, options, settings = separate_exit_export
+    settings.update(outcome_population_confirmed=confirmed, outcome_as_of_date="2026-04-01")
+    Path(options.attrition_config).write_text(json.dumps(settings), encoding="utf-8")
+    config_path = module.build_config(options, tmp_path / "output")
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    if confirmed:
+        assert config["embedded_attrition"]["time_periods"] == [90]
+        assert config["analysis_limitations"][0]["code"] == "attrition_followup"
+    else:
+        assert "attrition" not in config["analyses"]
+        assert "embedded_attrition" not in config
+        assert config["analysis_limitations"][0]["code"] == "attrition_unavailable"
+
+
+def test_inline_outcome_dates_do_not_require_an_exit_cycle(separate_exit_export, tmp_path):
+    module, options, _ = separate_exit_export
+    survey = module.pd.read_csv(options.survey_export, converters={"user_id": str})
+    exits = module.pd.read_csv(options.exit_data, converters={"StaffKey": str}).rename(columns={"StaffKey": "user_id"})
+    survey.merge(exits, on="user_id", how="left", validate="one_to_one").to_csv(options.survey_export, index=False)
+    options.exit_data = None
+    config_path = module.build_config(options, tmp_path / "output")
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    assert "attrition" in config["analyses"]
+    assert "outcome_cycle" not in config["embedded_attrition"]
+    assert Path(config["embedded_attrition"]["outcome_file"]).is_file()
+
+
+def test_user_can_point_to_exit_worksheet(separate_exit_export, tmp_path):
+    module, options, _ = separate_exit_export
+    source = tmp_path / "survey-with-exits.xlsx"
+    with module.pd.ExcelWriter(source) as workbook:
+        module.pd.read_csv(options.survey_export, dtype=str).to_excel(workbook, sheet_name="Sheet1", index=False)
+        module.pd.read_csv(options.exit_data, dtype=str).to_excel(workbook, sheet_name="HR departures", index=False)
+    options.survey_export = str(source)
+    options.exit_data = None
+    options.exit_sheet = "HR departures"
+    config_path = module.build_config(options, tmp_path / "output")
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    assert "attrition" in config["analyses"]
+    assert Path(config["embedded_attrition"]["outcome_file"]).name == "exit-outcomes.csv"
+
+
+def test_skill_requires_missing_outcome_followup_and_open_text_adaptation():
+    skill = (ROOT / "skills/analyze-survey/SKILL.md").read_text(encoding="utf-8")
+    discovery = skill.split("### Attrition discovery and missing-data follow-up", 1)[1].split("### Native platform", 1)[0]
+    assert "--inspect-attrition" in discovery
+    assert "before excluding attrition" in discovery
+    assert "ask_user" in discovery
+    assert "open-text" in discovery
+    completion = skill.split("### Post-analysis adaptation", 1)[1]
+    assert "Did I miss anything? Any other data or attribute cuts you would like to include?" in completion
+    assert "ask_user" in completion
+    assert "open-text response field" in completion
+    assert "repeatability" in completion
+
+
+def test_cycle_changes_render_suppressed_item_without_numeric_values():
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is required to exercise cycle changes.")
+    golden = (ROOT / "skills/analyze-survey/references/golden-report.html").read_text(encoding="utf-8")
+    renderer = next(line for line in golden.splitlines() if line.startswith("const respondentPopulation="))
+    setup = r"""
+const assert=require("node:assert/strict");
+const controls={
+  "#respondentPopulation":{value:"all"},
+  "#oldCycle":{add(){}}, "#newCycle":{add(){}}, "#changesTable":{innerHTML:""}
+};
+const document={querySelector(selector){return controls[selector]}};
+function Option(text,value){return {text,value}}
+const attr={value:""},val={value:""};
+const D={questions:["Q_ONE","Q_TWO"],labels:{Q_ONE:"Eligible",Q_TWO:"Sparse"},
+  cycles:{cycles:["Old","New"]}};
+const values={Old:{items:[[50,20,10],[null,null,null]]},
+  New:{items:[[75,20,10],[80,20,10]]}};
+function cycleSource(){return values}
+"""
+    checks = r"""
+renderChanges();
+const html=controls["#changesTable"].innerHTML;
+assert.ok(html.includes("Eligible"));
+assert.ok(html.includes(">+25</span>"));
+assert.ok(html.includes("Sparse</td><td colspan=8>Suppressed"));
+assert.ok(!html.includes(">+80</span>"));
+assert.ok(!html.includes("NaN"));
+assert.ok(!html.includes("null"));
+"""
+    subprocess.run(
+        [node, "-e", setup + "\n" + renderer + "\n" + checks], check=True,
+        capture_output=True, text=True, encoding="utf-8", timeout=30,
+    )
 
 
 def test_people_science_summary_validation_and_script_escaping(tmp_path):

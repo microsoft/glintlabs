@@ -206,17 +206,24 @@ def embedded_exit_attrition(
     min_group_size: int,
 ) -> pd.DataFrame:
     settings = config["embedded_attrition"]
-    raw = pd.read_csv(survey_csv, low_memory=False)
+    converters = {emp_id_col: str}
+    cycle_col = settings.get("cycle_column")
+    if cycle_col and isinstance(settings.get("predictor_cycle"), str):
+        converters[cycle_col] = str
+    raw = pd.read_csv(survey_csv, low_memory=False, converters=converters)
     attribute_file = resolve_path(config_path, config.get("attribute_file"))
     if attribute_file:
-        attributes = pd.read_csv(attribute_file, low_memory=False)
+        attributes = pd.read_csv(attribute_file, low_memory=False, converters={emp_id_col: str})
         raw = raw.merge(attributes, on=emp_id_col, how="left", validate="many_to_one")
 
-    cycle_col = settings["cycle_column"]
     term_col = settings["termination_date_column"]
+    outcome_file = resolve_path(config_path, settings.get("outcome_file"))
     missing = [
         column
-        for column in (cycle_col, term_col, emp_id_col, *questions)
+        for column in (
+            *([cycle_col] if cycle_col else []),
+            *([term_col] if not outcome_file else []), emp_id_col, *questions,
+        )
         if column not in raw.columns
     ]
     if missing:
@@ -224,8 +231,17 @@ def embedded_exit_attrition(
             "Embedded attrition columns not found: " + ", ".join(missing)
         )
 
-    predictor = raw.loc[raw[cycle_col] == settings["predictor_cycle"]].copy()
-    outcomes = raw.loc[raw[cycle_col] == settings["outcome_cycle"], [emp_id_col, term_col]].copy()
+    predictor = (
+        raw.loc[raw[cycle_col] == settings["predictor_cycle"]].copy()
+        if cycle_col else raw.loc[raw[questions].notna().any(axis=1)].copy()
+    )
+    if outcome_file:
+        outcomes = pd.read_csv(outcome_file, converters={emp_id_col: str})
+        if not {emp_id_col, term_col}.issubset(outcomes.columns):
+            raise ValueError("The outcome file is missing employee ID or termination-date columns.")
+        outcomes = outcomes[[emp_id_col, term_col]].copy()
+    else:
+        outcomes = raw.loc[raw[cycle_col] == settings["outcome_cycle"], [emp_id_col, term_col]].copy()
     if predictor.empty or outcomes.empty:
         raise ValueError("Configured predictor or Exit survey cycle has no rows.")
     if outcomes[emp_id_col].duplicated().any():
@@ -444,7 +460,7 @@ def compare_repeatability(
         "enabled": True,
         "runs": 2,
         "status": "passed",
-        "verification_dir": str(verification_dir),
+        "verification_dir": verification_dir.name,
         "compared_artifacts": [],
         "mismatches": [],
     }

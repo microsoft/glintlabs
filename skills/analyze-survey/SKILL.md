@@ -153,6 +153,47 @@ Base the estimate on the export size and prior runs when available, and state
 that correlation clustering, attrition-alert aggregation, and repeatability are the
 most variable phases. Do this in the first response that starts the run.
 
+### Attrition discovery and missing-data follow-up
+
+Treat attrition as a priority discovery task, not a single exact-header check.
+Before the analysis run, use:
+
+```bash
+python scripts/analyze_survey_export.py \
+  --survey-export <survey.csv-or-xlsx> \
+  --output-dir <output-directory> \
+  --inspect-attrition
+```
+
+Review the private `_input/attrition-discovery.json`. Search every supplied
+worksheet, including employee attributes and non-default sheets, for actual
+exit dates or leads such as attrition, exit, leaver, leaving, termination,
+separation, departure, last working day, and employment/active status.
+Inspect candidate types, parseability, missingness, linkage, and chronology
+locally; never show employee values or small counts. A flag/status or predicted
+exit date is a lead, not an observed exit date.
+
+If actual outcomes are missing or ambiguous, use `ask_user` with open-text
+fields **before excluding attrition**. Explain: "I can run an attrition analysis
+if you provide matching employee IDs, actual exit dates, the predictor survey
+and completion date, and outcome coverage/as-of date." Ask only for missing
+parameters and confirm follow-up windows (normally 90/180/365 days).
+Let the user point to existing columns, any worksheet, or a separate
+CSV/XLSX/XLSM file, explain a flag, or choose to continue without attrition.
+Do not make them re-upload data already supplied.
+
+Use `--exit-data`, `--exit-sheet`, and `--attrition-config` for confirmed
+user-directed mappings; see `references/README.md`. Confirm that the outcome
+source covers the predictor population and observation period before treating
+unmatched employees as non-leavers. Omit windows without complete follow-up.
+Never invent dates, synthetic Exit cycles, or outcome meanings.
+
+Ask once per unresolved issue, not repeatedly on unchanged reruns. After the
+user declines, cannot provide reliable outcomes, or mappings remain uncertain,
+exclude attrition, explain the specific gap in Methodology → Limitations, and
+continue the supported analyses. Other uncertain optional columns are excluded
+with disclosure; do not guess or block unrelated analyses.
+
 ### Native platform export preparation
 
 Native exports have five cycle-metadata columns, repeated four-column question
@@ -166,8 +207,10 @@ edit the library or manually reinterpret arbitrary numeric columns as items.
 2. Review its structure and decisions template locally. Use `ask_user` to
    confirm the employee ID, cycle identity and chronological order, response scale, flag encodings,
    proposed attributes, and exclusions. Show structural summaries, never
-   individual values or raw comments. Ask for a dictionary/mapping where
-   meaning is uncertain. Value-based inference requires a deterministic
+   individual values or raw comments. Exclude optional columns or outcomes
+   whose meaning cannot be established and record the resulting gap in
+   **Methodology → Limitations**, rather than guessing or blocking the
+   remaining analysis. Value-based inference requires a deterministic
    mapping/rule and the user's confirmation, not a confidence percentage.
 3. If the employee ID or scale needs correction, inspect again with
    `--emp-id-col` or `--scale-points` before approving. Do not silently choose
@@ -190,7 +233,8 @@ Sensitive or unknown-flag comments and their topics are excluded while valid
 scores are retained. Confirm any contradictory nonblank comments with missing
 flags, invalid scores, or incomplete blocks before proceeding.
 
-Confirmed exclusions appear under **Methodology → Limitations**. At most five
+Confirmed exclusions and uncertain outcome/column omissions appear under
+**Methodology → Limitations**. At most five
 entries are shown; longer lists have a complete privacy-safe text download,
 also included in Downloads and the share ZIP.
 
@@ -237,7 +281,17 @@ Use explicit options only when automatic detection is wrong:
 --question-cols <item1> <item2> ...
 --attribute-cols <attribute1> <attribute2> ...
 --min-group-size <5-or-higher>
+--attrition-config <confirmed-outcome-settings.json>
+--exit-data <exit-outcomes.csv-or-xlsx>
+--exit-sheet <worksheet>
 ```
+
+Attrition detection uses outcome columns and cycle/date evidence, not the
+demo filename. Follow the discovery and missing-data follow-up above before
+excluding uncertain Exit mappings. Unresolved omissions are explained in
+Limitations; continue supported analyses without inventing outcomes.
+This exclusion-with-disclosure rule applies to Analyze Survey.
+See `references/README.md` for supported outcome fields and explicit mappings.
 
 ## Completion
 
@@ -253,6 +307,25 @@ completed aggregate artifacts listed in the manifest
 After repeatability passes, open the HTML report before finishing. Then follow
 `references/interpretation.md` for QA and People Science findings.
 For interpretation-only requests, return its narrative format instead.
+
+### Post-analysis adaptation
+
+After delivering the report and findings, or an interpretation of existing
+analysis outputs, use `ask_user` to present exactly:
+
+> Did I miss anything? Any other data or attribute cuts you would like to include?
+
+Provide an open-text response field, not only preset choices. Let the user add
+files or locations, request additional attribute cuts, correct mappings, or
+describe missing context. Do not use a yes/no-only question.
+
+Treat a response as an amendment to the current analysis, not a new intake.
+Inspect additional data, confirm only unresolved required mappings, apply
+minimum-N/privacy checks, rerun affected official analyses and repeatability
+when data/config changes, and regenerate the report/share ZIP and findings.
+Reuse unchanged verified outputs when only interpretation changes. Disclose
+unsupported cuts or unresolved gaps in Limitations. If the user has no changes
+or dismisses the form, finish without repeated prompts.
 
 ## Failure handling
 

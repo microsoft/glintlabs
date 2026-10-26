@@ -39,6 +39,10 @@ come from the user's output directory:
 4. Separate what is observed from what is inferred.
 5. Name caveats and missing context.
 6. Recommend follow-up analyses or stakeholder questions only when they would change action.
+7. After delivering findings, follow `../SKILL.md`'s post-analysis adaptation
+   step: ask the exact open-text "Did I miss anything?" prompt and let the user
+   add data, request attribute cuts, or correct mappings. Amend the current
+   analysis rather than restarting intake; preserve QA and privacy gates.
 
 ## Detailed questions and published guidance
 

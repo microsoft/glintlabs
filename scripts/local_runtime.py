@@ -45,6 +45,7 @@ REQUIRED_FILES = (
     "scripts/local_runtime.py",
     "scripts/progress.py",
     "scripts/analyze_survey_export.py",
+    "scripts/attrition_discovery.py",
     "scripts/run_vivaglint_analysis.py",
     "scripts/build_interactive_report.py",
     "scripts/fixtures/runtime-smoke.json",
