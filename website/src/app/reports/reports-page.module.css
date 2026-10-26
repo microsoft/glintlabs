@@ -1,0 +1,48 @@
+.catalog { display: flex; width: 100%; flex-direction: column; gap: 40px; }
+.filters { display: flex; flex-wrap: wrap; gap: 16px; }
+.filters button { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; border: 1px solid rgb(0 0 0 / 13%); border-radius: 16px; color: var(--site-ink); background: transparent; font: inherit; font-size: 16px; line-height: 22px; cursor: pointer; }
+.filters button svg { width: 20px; height: 20px; flex: 0 0 auto; }
+.filters button[aria-pressed="true"] { color: #fff; background: #242424; border-color: #242424; }
+.filters button:hover { box-shadow: inset 0 0 0 1px currentColor; }
+.filters button:focus-visible, .cardAction:focus-visible { outline: 3px solid var(--site-focus); outline-offset: 4px; }
+.catalogResults { display: flex; flex-direction: column; gap: 24px; }
+.feature { display: grid; grid-template-columns: minmax(0, 461px) minmax(0, 1fr); align-items: center; padding: 32px 0 32px 32px; overflow: clip; border: 1px solid var(--site-feature-line); border-radius: 20px; background: var(--site-feature); }
+.featureVisual { width: 100%; height: 296px; overflow: hidden; border-radius: 16px; }
+.featureVisual img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.featureIllustration { display: grid; place-items: center; }
+.featureIllustration img { width: 128px; height: 128px; object-fit: contain; }
+.featureContent { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; gap: 32px; padding: 24px 40px; }
+.featureHeader { display: flex; flex-direction: column; gap: 24px; }
+.feature h2 { margin: 0 0 -12px; font: 420 24px/32px var(--site-editorial-font); letter-spacing: -.75px; }
+.feature p { margin: 0; color: var(--site-muted); font-size: 16px; line-height: 22px; }
+.reportBadge { display: inline-flex; align-self: flex-start; align-items: center; gap: 6px; padding: 3px 8px; border: 1px solid var(--site-line); border-radius: 8px; font-size: 12px; line-height: 16px; }
+.reportBadge svg { width: 16px; height: 16px; }
+.reportBadges { display: flex; max-width: 100%; flex-direction: column; align-items: flex-start; gap: 8px; }
+.cardAction { display: inline-flex; min-height: 32px; align-items: center; justify-content: center; padding: 6px 10px; border: 0; border-radius: 12px; color: var(--site-ink); background: rgb(0 0 0 / 5%); font: inherit; font-size: 14px; line-height: 20px; text-decoration: none; cursor: pointer; }
+.cardAction:hover { background: rgb(0 0 0 / 10%); }
+.reportGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.reportGrid > article { min-height: 480px; }
+.empty { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding-block: 24px; font-size: 16px; line-height: 24px; }
+
+@media (max-width: 1100px) {
+  .feature { grid-template-columns: minmax(0, 42%) minmax(0, 1fr); }
+  .featureContent { padding: 16px 24px; }
+}
+
+@media (max-width: 900px) {
+  .feature { grid-template-columns: 1fr; padding: 24px; gap: 24px; }
+  .featureContent { padding: 0; }
+  .reportGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .filters { gap: 8px; }
+  .filters button, .cardAction { min-height: 44px; }
+  .filters button { font-size: 14px; }
+  .reportGrid { grid-template-columns: 1fr; }
+}
+
+@media (forced-colors: active) {
+  .feature, .filters button, .reportBadge { border-color: CanvasText; }
+  .filters button[aria-pressed="true"] { color: HighlightText; background: Highlight; }
+}

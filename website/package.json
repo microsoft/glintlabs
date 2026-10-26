@@ -1,0 +1,54 @@
+{
+  "name": "glint-labs-publishing-studio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "pages:build": "node --experimental-strip-types scripts/build-pages.mjs",
+    "pages:export": "node --experimental-strip-types scripts/export-pages-publication.ts",
+    "pages:preview": "node scripts/serve-pages.mjs",
+    "content:annual-report": "node --experimental-strip-types scripts/generate-annual-report-content.mjs",
+    "publication:preview": "node --experimental-strip-types scripts/ingest-publication-preview.ts",
+    "publication:preview:build": "node --experimental-strip-types scripts/run-publication-preview.ts build",
+    "publication:preview:start": "node --experimental-strip-types scripts/run-publication-preview.ts start",
+    "studio:owner-key": "node --experimental-strip-types scripts/studio-owner-key.ts",
+    "studio:build": "node --experimental-strip-types scripts/run-connected-studio.ts build",
+    "studio:start": "node --experimental-strip-types scripts/run-connected-studio.ts start",
+    "template:word": "node scripts/create-word-template.mjs",
+    "accessibility:audit": "node scripts/audit-annual-report-accessibility.mjs",
+    "accessibility:interactions": "node scripts/audit-annual-report-interactions.mjs",
+    "assets:annual-report": "node scripts/verify-annual-report-assets.mjs",
+    "assets:annual-report:update": "node scripts/verify-annual-report-assets.mjs --write",
+    "lint": "eslint",
+    "test": "node --experimental-strip-types --test scripts/connected-build-config.test.mjs scripts/studio-editing.test.mjs scripts/build-pages.test.mjs src/app/site-palette.test.ts src/annual-report-2026/approved-content.test.ts src/annual-report-2026/canonical-report.test.ts src/manifest/report-manifest.test.ts src/extraction/extract-docx.test.ts src/extraction/word-text-links.test.ts src/integrity/approved-content.test.ts src/project/report-block-history.test.ts src/project/studio-project.test.ts src/project/bulk-report-import.test.ts src/project/publication-package.test.ts src/project/publication-flow.test.ts src/project/accessible-chart-data.test.ts src/publishing/publication-preview.test.ts src/publishing/owner-access.test.ts src/publishing/publish-report.test.ts src/review/fidelity-review.test.ts src/visualization/verified-data-visual.test.ts src/app/tools/analyze-survey/analyze-survey-details.test.ts src/launch-reports/reports.test.ts"
+  },
+  "dependencies": {
+    "@fluentui/react-icons": "^2.0.341",
+    "@fluentui/react-provider": "^9.22.20",
+    "@fluentui/react-text": "^9.6.19",
+    "@fluentui/react-theme": "^9.2.2",
+    "@glint-labs/data-visuals": "file:packages/data-visuals",
+    "fast-xml-parser": "^5.11.1",
+    "jszip": "^3.10.1",
+    "next": "^15.5.28",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "zod": "^4.6.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "axe-core": "^4.14.0",
+    "docx": "^9.7.1",
+    "eslint": "^9",
+    "eslint-config-next": "^15.5.28",
+    "typescript": "^5"
+  },
+  "overrides": {
+    "postcss": "8.5.28"
+  }
+}

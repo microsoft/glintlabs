@@ -1,0 +1,46 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="Plan">
+<g id="Vector 18209 (Stroke)">
+<use xlink:href="#stroke0_0_185" fill="#EEF6FF"/>
+<use xlink:href="#stroke0_0_185" fill="#EEF6FF"/>
+</g>
+<g id="Vector 18208 (Stroke)">
+<use xlink:href="#stroke1_0_185" fill="#EEF6FF"/>
+<use xlink:href="#stroke1_0_185" fill="#EEF6FF"/>
+</g>
+<g id="Vector 18331 (Stroke)">
+<use xlink:href="#stroke2_0_185" fill="#EEF6FF"/>
+<use xlink:href="#stroke2_0_185" fill="#EEF6FF"/>
+</g>
+<g id="Vector 18332 (Stroke)">
+<use xlink:href="#stroke3_0_185" fill="#EEF6FF"/>
+<use xlink:href="#stroke3_0_185" fill="#EEF6FF"/>
+</g>
+<g id="Vector 18333 (Stroke)">
+<use xlink:href="#stroke4_0_185" fill="#EEF6FF"/>
+<use xlink:href="#stroke4_0_185" fill="#EEF6FF"/>
+</g>
+<g id="Vector 18334 (Stroke)">
+<use xlink:href="#stroke5_0_185" fill="#EEF6FF"/>
+<use xlink:href="#stroke5_0_185" fill="#EEF6FF"/>
+</g>
+<circle id="Ellipse 27779" cx="36" cy="64" r="9.5" fill="#5C8DF8"/>
+<circle id="Ellipse 27777" cx="36" cy="92" r="9.5" fill="#294482"/>
+<circle id="Ellipse 27775" cx="92" cy="36" r="9.5" fill="#294482"/>
+<circle id="Ellipse 27773" cx="92" cy="64" r="9.5" fill="#5C8DF8"/>
+<circle id="Ellipse 27770" cx="64" cy="36" r="9.5" fill="#FFE6A5" stroke="#EEF6FF"/>
+<circle id="Ellipse 27778" cx="92" cy="92" r="13.75" fill="#242424" stroke="#EEF6FF" stroke-linecap="round" stroke-dasharray="3 3"/>
+<circle id="Ellipse 27780" cx="64" cy="92" r="9.5" fill="#FFE6A5" stroke="#EEF6FF"/>
+<path id="Vector (Stroke)" d="M94.5856 86.3358C95.3667 85.5547 96.6332 85.5547 97.4142 86.3358C98.1953 87.1168 98.1953 88.3834 97.4142 89.1644L94.7035 91.8751L97.4142 94.5858C98.1953 95.3668 98.1953 96.6334 97.4142 97.4144C96.6332 98.1954 95.3667 98.1954 94.5856 97.4144L91.8749 94.7037L89.1642 97.4144C88.3832 98.1954 87.1167 98.1954 86.3356 97.4144C85.5546 96.6334 85.5546 95.3668 86.3356 94.5858L89.0463 91.8751L86.3356 89.1644C85.5546 88.3834 85.5546 87.1168 86.3356 86.3358C87.1167 85.5547 88.3832 85.5547 89.1642 86.3358L91.8749 89.0465L94.5856 86.3358Z" fill="#EEF6FF"/>
+<circle id="Ellipse 27776" cx="36" cy="36" r="14.25" fill="#242424" stroke="#EEF6FF"/>
+<path id="Vector 17643 (Stroke)" d="M40.0662 31.6056C40.8363 30.8138 42.1027 30.7962 42.8945 31.5663C43.6863 32.3364 43.7039 33.6028 42.9338 34.3946L35.8823 41.6446C35.5105 42.0268 35.0014 42.2449 34.4683 42.2501C33.9351 42.2553 33.4219 42.0473 33.0427 41.6725L29.094 37.7684C28.3085 36.9918 28.3011 35.7255 29.0776 34.94C29.8542 34.1546 31.1205 34.1474 31.906 34.9239L34.4206 37.41L40.0662 31.6056Z" fill="#EEF6FF"/>
+</g>
+<defs>
+<path id="stroke0_0_185" d="M32.6716 63.9759L35.5251 61.1727L66.3284 92.5262L63.4749 95.3294L32.6716 63.9759Z"/>
+<path id="stroke1_0_185" d="M94.8284 64.5241L91.9749 67.3273L61.1716 35.9738L64.0251 33.1706L94.8284 64.5241Z"/>
+<path id="stroke2_0_185" d="M37.75 65.25V91.75H33.75V65.25H37.75Z"/>
+<path id="stroke3_0_185" d="M93.875 37.5V64H90.125V37.5H93.875Z"/>
+<path id="stroke4_0_185" d="M64 38L37.5 38L37.5 34L64 34L64 38Z"/>
+<path id="stroke5_0_185" d="M88.75 93.875L62.25 93.875L62.25 90.125L88.75 90.125L88.75 93.875Z"/>
+</defs>
+</svg>

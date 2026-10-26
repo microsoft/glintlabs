@@ -1,0 +1,23 @@
+.team { display: flex; flex-direction: column; gap: 40px; }
+.team h2 { margin: 0; color: rgb(0 0 0 / 86%); font: 600 24px/28px var(--site-content-font); font-variation-settings: "opsz" 36; letter-spacing: -.15px; }
+.teamGrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.member { display: flex; min-width: 0; flex-direction: column; gap: 16px; }
+.portrait { position: relative; isolation: isolate; width: 100%; aspect-ratio: 1; overflow: hidden; border-radius: 16px; background: #fff; }
+.portrait img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+.portrait::after { position: absolute; left: -74.5318%; top: -4.1199%; width: 249.4382%; height: 208.2397%; background: url("/figma/site-canonical/about/portrait-glow.svg") center / 100% 100% no-repeat; mix-blend-mode: multiply; content: ""; pointer-events: none; }
+.memberDetails { flex: 1; padding: 24px 20px; border: 1px solid var(--site-feature-line); border-radius: 20px; background: var(--site-card); }
+.memberDetails h3 { margin: 0; font-size: 20px; font-weight: 550; letter-spacing: -.15px; line-height: 24px; }
+.memberDetails p { display: flex; align-items: flex-start; gap: 8px; margin: 4px 0 0; color: #6b6b6b; font-size: 16px; font-weight: 400; line-height: 22px; }
+.memberDetails .contribution { margin: 4px 0 12px; }
+.memberDetails svg { width: 16px; height: 16px; flex: 0 0 auto; margin-top: 3px; color: var(--site-profile-icon); }
+.linkedInLink { display: inline-flex; min-height: 24px; align-items: center; gap: 10px; color: var(--site-profile-icon); text-decoration: underline; text-underline-offset: 3px; }
+.linkedInLink img { box-sizing: border-box; flex: 0 0 auto; padding: 2px; }
+.linkedInLink:focus-visible { outline: 3px solid var(--site-focus); outline-offset: 3px; }
+
+@media (max-width: 1100px) {
+  .teamGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .teamGrid { grid-template-columns: 1fr; gap: 32px; }
+}

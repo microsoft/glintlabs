@@ -1,0 +1,37 @@
+.hero { position: relative; isolation: isolate; padding: 208px max(24px, calc((100% - 1140px) / 2)) 112px; }
+.inner { position: relative; z-index: 1; display: flex; max-width: 1140px; align-items: center; justify-content: space-between; gap: 48px; margin: auto; }
+.copy { display: flex; width: 558px; max-width: 100%; flex-direction: column; align-items: flex-start; gap: 24px; }
+.copy > h1 { margin: 0; font: 420 48px/59px var(--site-editorial-font); letter-spacing: -.75px; }
+.copy > p { min-height: 84px; margin: 0 0 -4px; font-size: 16px; line-height: 28px; }
+.action { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; margin-top: 10px; padding: 8px 12px; border-radius: 16px; color: #fff; background: #000; font-size: 16px; line-height: 22px; }
+.action:hover { background: #333; }
+.action:focus-visible { outline: 3px solid var(--site-focus); outline-offset: 4px; }
+.withoutAction::after { content: ""; display: block; flex-shrink: 0; height: 40px; margin-top: 10px; }
+.inner > .photo { width: 461px; max-width: 100%; height: auto; aspect-ratio: 1024 / 684; }
+.photo > img { display: block; width: 100%; height: auto; }
+
+:global(html[data-hero-transition]) .copy > h1 { view-transition-name: annual-hero-title; }
+:global(html[data-hero-transition]) .copy > div { view-transition-name: annual-hero-badges; }
+:global(html[data-hero-transition]) .photo { view-transition-name: annual-hero-photo; }
+:global(html[data-hero-transition]) .action { view-transition-name: annual-hero-action; }
+
+@media (max-width: 1199px) {
+  .inner { gap: 40px; }
+  .copy { width: 52%; }
+  .inner > .photo { width: 44%; }
+}
+
+@media (max-width: 900px) {
+  .hero { padding-top: 168px; padding-bottom: 80px; }
+  .inner { flex-direction: column; gap: 40px; }
+  .copy, .inner > .photo { width: 100%; }
+  .copy > p { min-height: 0; }
+  .action, .withoutAction::after { margin-top: 0; }
+  .inner > .photo { max-width: 558px; }
+}
+
+@media (max-width: 600px) {
+  .copy > h1 { font-size: 40px; line-height: 48px; }
+  .action { min-height: 44px; }
+  .withoutAction::after { height: 44px; }
+}

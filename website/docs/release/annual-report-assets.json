@@ -1,0 +1,3830 @@
+{
+  "schemaVersion": 1,
+  "scope": {
+    "route": "/annual-report-2026",
+    "entryPoint": "src/app/annual-report-2026/page.tsx",
+    "figma": {
+      "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+      "reportNode": "1655:41913",
+      "canonicalSnapshotNode": "1655:41913"
+    },
+    "evidence": {
+      "baselineCommit": "9e6a597",
+      "method": "Source-graph and SHA-256 checks across Blue and Legacy palettes, plus Chromium route audits for active image slots and requested resources.",
+      "result": "Canonical redesign asset inventory. Runtime verification reports active-palette requests separately from conditional source assets."
+    },
+    "ignoredReferences": [
+      {
+        "publicPath": "/annual-report-2026/continuous-listening-card-surface.png",
+        "reason": "Referenced by a legacy CSS class in the imported component module, but the canonical route never renders that class and the runtime audit does not request the asset."
+      }
+    ],
+    "sourceFiles": [
+      "src/annual-report-2026/annual-report-components.module.css",
+      "src/annual-report-2026/annual-report-components.tsx",
+      "src/annual-report-2026/annual-report-data.ts",
+      "src/annual-report-2026/annual-report-interactive-visuals.tsx",
+      "src/annual-report-2026/canonical-figma.module.css",
+      "src/annual-report-2026/canonical-figma.tsx",
+      "src/annual-report-2026/canonical-interactions.module.css",
+      "src/annual-report-2026/canonical-report-data.ts",
+      "src/annual-report-2026/canonical-report-diagrams.module.css",
+      "src/annual-report-2026/canonical-report-diagrams.tsx",
+      "src/annual-report-2026/canonical-report-interactions.tsx",
+      "src/annual-report-2026/canonical-report.module.css",
+      "src/annual-report-2026/channel-portfolio.tsx",
+      "src/app/_components/marketing-footer.module.css",
+      "src/app/_components/marketing-footer.tsx",
+      "src/app/_components/site-navigation.module.css",
+      "src/app/_components/site-navigation.tsx",
+      "src/app/annual-report-2026/annual-report-page.module.css",
+      "src/app/annual-report-2026/page.tsx",
+      "src/app/site-palette.ts",
+      "src/app/site-theme.css",
+      "src/manifest/report-manifest.ts",
+      "src/report-system/report-side-nav.module.css",
+      "src/report-system/report-side-nav.tsx",
+      "src/visualization/listening-maturity-scorecard.module.css",
+      "src/visualization/listening-maturity-scorecard.tsx"
+    ]
+  },
+  "assets": [
+    {
+      "publicPath": "/figma/about/glow-left.svg",
+      "repositoryPath": "public/figma/about/glow-left.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 675,
+      "sha256": "c8856257a44d82859f96845dc3266e8ae10054b1bbd1132992958e902e9bab8b",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 73,
+          "detail": "literal production reference"
+        },
+        {
+          "path": "src/app/site-theme.css",
+          "line": 74,
+          "detail": "literal production reference"
+        },
+        {
+          "path": "src/app/site-theme.css",
+          "line": 78,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/about/glow-right.svg",
+      "repositoryPath": "public/figma/about/glow-right.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 675,
+      "sha256": "00b4e240c0dec754e6544245b345f3f07d074501a4e819bfa67c7e1c2552055b",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 75,
+          "detail": "literal production reference"
+        },
+        {
+          "path": "src/app/site-theme.css",
+          "line": 79,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/accountability-quote-glow.svg",
+      "repositoryPath": "public/figma/annual-blue/accountability-quote-glow.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 672,
+      "sha256": "a400f5d2a822f702739b787dfee505f71bd4a43f6a3e7a03a704148456b6b58c",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1499,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/agents.svg",
+      "repositoryPath": "public/figma/annual-blue/agents.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 1839,
+      "sha256": "9a16138d5c84d900cc97806b0c8427aff6270dfe3c683d77d8f3c6b5eaac22ca",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 680,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/ai-glow-bottom.svg",
+      "repositoryPath": "public/figma/annual-blue/ai-glow-bottom.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 669,
+      "sha256": "81f4744dd353f6b80bd244db78166c488ec8428bf62a50d378a41d8f394d5990",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 59,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/ai-glow-top.svg",
+      "repositoryPath": "public/figma/annual-blue/ai-glow-top.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 669,
+      "sha256": "1ad98c30722df2b79b8abd738622c6e138318ac1ffb234294d3022c6ebce5842",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 58,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/arrange.svg",
+      "repositoryPath": "public/figma/annual-blue/arrange.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 1121,
+      "sha256": "ad2cb740d7628c7f502547b1ebab973e1ec413fdbc7580bb1b6a52f972f9a7cf",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 658,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/burden-quote-glow.svg",
+      "repositoryPath": "public/figma/annual-blue/burden-quote-glow.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 672,
+      "sha256": "a400f5d2a822f702739b787dfee505f71bd4a43f6a3e7a03a704148456b6b58c",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 558,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/card-glow.svg",
+      "repositoryPath": "public/figma/annual-blue/card-glow.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 672,
+      "sha256": "275dba92051a205f6379c211263a01f21d6970e5c43378845e1145709dbd464f",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 106,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/celebration.svg",
+      "repositoryPath": "public/figma/annual-blue/celebration.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 3650,
+      "sha256": "8cb50b33239e8a11fd48bd9d7b344f9c45243161364995330ffcf6411f9d3254",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 115,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/continuous-quote-glow.svg",
+      "repositoryPath": "public/figma/annual-blue/continuous-quote-glow.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 672,
+      "sha256": "a400f5d2a822f702739b787dfee505f71bd4a43f6a3e7a03a704148456b6b58c",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 341,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/customer-story-person.svg",
+      "repositoryPath": "public/figma/annual-blue/customer-story-person.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 804,
+      "sha256": "22daafe58e8dca1694ff414c9be1e41b517f18141d74ea6ffaa522a34e9aaeaf",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 485,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/data-flow.svg",
+      "repositoryPath": "public/figma/annual-blue/data-flow.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 2255,
+      "sha256": "cac43a98c89fa0fb64bd566c5488ffafbc7fa83148e177fc93eb17a20c205518",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 127,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/email.svg",
+      "repositoryPath": "public/figma/annual-blue/email.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 2018,
+      "sha256": "0002a32600460d97cf2cb1e48bf58baf025145d39e067df1702e7b69931f27a3",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 499,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/embedded-quote-glow.svg",
+      "repositoryPath": "public/figma/annual-blue/embedded-quote-glow.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 672,
+      "sha256": "a400f5d2a822f702739b787dfee505f71bd4a43f6a3e7a03a704148456b6b58c",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 388,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/employee-ai-glow.svg",
+      "repositoryPath": "public/figma/annual-blue/employee-ai-glow.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 675,
+      "sha256": "304dc9515cd640b8736c2d693bc068328df7e732eba7d3bf8c369b8fb8f35628",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 648,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/example-glow.svg",
+      "repositoryPath": "public/figma/annual-blue/example-glow.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 672,
+      "sha256": "8c0aa4e28350773e8ffb9d23def392ed6a09bc5678a48bd4f689dbc928d8555e",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 482,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/guardrails-quote-glow.svg",
+      "repositoryPath": "public/figma/annual-blue/guardrails-quote-glow.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 672,
+      "sha256": "a400f5d2a822f702739b787dfee505f71bd4a43f6a3e7a03a704148456b6b58c",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 602,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/hero-calendar.svg",
+      "repositoryPath": "public/figma/annual-blue/hero-calendar.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 1453,
+      "sha256": "d1984a27d93db1f45559e78305f19131481090738d7ccaaf56bc1b1097dcca96",
+      "references": [
+        {
+          "path": "src/app/annual-report-2026/page.tsx",
+          "line": 41,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/hero-diagonal.svg",
+      "repositoryPath": "public/figma/annual-blue/hero-diagonal.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 213,
+      "sha256": "14bf086ef5ae327b115ae6df49127dc980b554e8a593b97b8f1d2f0c3390a83b",
+      "references": [
+        {
+          "path": "src/app/annual-report-2026/page.tsx",
+          "line": 32,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/hero-glow-bottom.svg",
+      "repositoryPath": "public/figma/annual-blue/hero-glow-bottom.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 660,
+      "sha256": "ad86de95d24ba6a1a47c7f899e59dded72835ad89cd9c8bf3a0c481fed70ef7d",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 53,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/hero-glow-left.svg",
+      "repositoryPath": "public/figma/annual-blue/hero-glow-left.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 658,
+      "sha256": "5f004e212d39ffa8effd913dfa4504384fe09deda775472b11b93239e4467d03",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 52,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/hero-glow-top.svg",
+      "repositoryPath": "public/figma/annual-blue/hero-glow-top.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 660,
+      "sha256": "911d6fc96da81a6c9a9a4bda2c69ba5788ba06719561604fcf769639bd21a095",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 51,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/hero-grid.svg",
+      "repositoryPath": "public/figma/annual-blue/hero-grid.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 4731,
+      "sha256": "848474546856cc70d7df698e742130b1599604c969179c8987966cdff6dc7358",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 50,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/hero-people.svg",
+      "repositoryPath": "public/figma/annual-blue/hero-people.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 2058,
+      "sha256": "faf636dc42c7d401a9495a5b341a3bc8df040f1efe6aa350c7b651277e679e88",
+      "references": [
+        {
+          "path": "src/app/annual-report-2026/page.tsx",
+          "line": 43,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/hero-person.svg",
+      "repositoryPath": "public/figma/annual-blue/hero-person.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 702,
+      "sha256": "3eb60f78acc57ad3de3612f04f264991b8700c09fa7b18d36883268f0c9e060f",
+      "references": [
+        {
+          "path": "src/app/annual-report-2026/page.tsx",
+          "line": 42,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/hero.png",
+      "repositoryPath": "public/figma/annual-blue/hero.png",
+      "category": "figma-decoration",
+      "mediaType": "image/png",
+      "bytes": 531865,
+      "sha256": "2b1638854ecf4d39f4785e33e1da7cde283a0cf62d5383d47f2f7cf32c645d71",
+      "references": [
+        {
+          "path": "src/app/annual-report-2026/page.tsx",
+          "line": 47,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/microsoft-quote-glow.svg",
+      "repositoryPath": "public/figma/annual-blue/microsoft-quote-glow.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 672,
+      "sha256": "a400f5d2a822f702739b787dfee505f71bd4a43f6a3e7a03a704148456b6b58c",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 425,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/people.svg",
+      "repositoryPath": "public/figma/annual-blue/people.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 811,
+      "sha256": "110779e7099c2224ef717c2cfe649c91e0bb382ac067a5e741d10051b73798c4",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 139,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/phase-glow-bottom.svg",
+      "repositoryPath": "public/figma/annual-blue/phase-glow-bottom.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 669,
+      "sha256": "d81293a01082a2a458b88be97072c8e6fa75a04b5b6bc66edd82bf4c77e46180",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 61,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/phase-glow-top.svg",
+      "repositoryPath": "public/figma/annual-blue/phase-glow-top.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 669,
+      "sha256": "81877f7286c52845072756eaa4c8b807c00f5dd4d8bde72f25f33ee471bc1d03",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 60,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/photo-glow-bottom.svg",
+      "repositoryPath": "public/figma/annual-blue/photo-glow-bottom.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 703,
+      "sha256": "357348300d54618d742adb16dd2c252cd85ab3546788a88805515e766bd44148",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 55,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/photo-glow-top.svg",
+      "repositoryPath": "public/figma/annual-blue/photo-glow-top.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 700,
+      "sha256": "338a06d21966f9c89b4e76b180da0403daa0fea449591f23f52b7e648493c9ea",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 54,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/plan.svg",
+      "repositoryPath": "public/figma/annual-blue/plan.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 3255,
+      "sha256": "6681486ff8478ccbf107780f1623f93b2029500f05d39bc5eb61e21c98701c78",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 670,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/principle-horizontal.svg",
+      "repositoryPath": "public/figma/annual-blue/principle-horizontal.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 225,
+      "sha256": "cd2a77c0632d52192ae5c46d61d968a5ca50b83536e86065510b246a2b6f6a9d",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-report-diagrams.tsx",
+          "line": 72,
+          "detail": "literal production reference"
+        },
+        {
+          "path": "src/annual-report-2026/canonical-report-diagrams.tsx",
+          "line": 73,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/principle-left-fidelity.svg",
+      "repositoryPath": "public/figma/annual-blue/principle-left-fidelity.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 280,
+      "sha256": "5a12b0b7b1f5024193ac4079dc0ae23bdcf516ff68c88d0a5b75e7335eee7364",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-report-diagrams.tsx",
+          "line": 69,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/principle-right-fidelity.svg",
+      "repositoryPath": "public/figma/annual-blue/principle-right-fidelity.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 280,
+      "sha256": "426bd84cadf9d086f32bc071423550ec0f4e783d20df873ac4240a5c4ecc094d",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-report-diagrams.tsx",
+          "line": 70,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/principle-vertical.svg",
+      "repositoryPath": "public/figma/annual-blue/principle-vertical.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 225,
+      "sha256": "3118761735ef21951cb410dc12e9da49a2afaead51799f37268225ba8d42fca9",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-report-diagrams.tsx",
+          "line": 71,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/quote-glow.svg",
+      "repositoryPath": "public/figma/annual-blue/quote-glow.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 672,
+      "sha256": "2d2ddf14c6b1dacfb2e894bee904111dc648a2b0b19a10566c372a080a579966",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 164,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/stat-glow-bottom.svg",
+      "repositoryPath": "public/figma/annual-blue/stat-glow-bottom.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 669,
+      "sha256": "4bb2edc9e31df88df9a7d277e96fe9b08ea71c49c1f2ad5abe26f48b49a1e403",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 57,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-blue/stat-glow-top.svg",
+      "repositoryPath": "public/figma/annual-blue/stat-glow-top.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 669,
+      "sha256": "fb58a98b6266c58a9e06fd1f26678d8991ce686d94f891bab17ea380e7d8777c",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 56,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1655:41913",
+        "canonicalSnapshotNode": "1655:41913",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgApprovalsApp.svg",
+      "repositoryPath": "public/figma/annual-canonical/imgApprovalsApp.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 1146,
+      "sha256": "458803d75e14ec7a0225b05f8bae75ec16be068f1e76171572b92938bc4c58ab",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 269,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgEllipse9.svg",
+      "repositoryPath": "public/figma/annual-canonical/imgEllipse9.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 678,
+      "sha256": "4c72fd01d7ee2576ce0245ed5a34dd00245a3da7c901f9c495bca17176b700ce",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 106,
+          "detail": "palette illustration helper"
+        },
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 164,
+          "detail": "palette illustration helper"
+        },
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 341,
+          "detail": "palette illustration helper"
+        },
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 388,
+          "detail": "palette illustration helper"
+        },
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 425,
+          "detail": "palette illustration helper"
+        },
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 482,
+          "detail": "palette illustration helper"
+        },
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 558,
+          "detail": "palette illustration helper"
+        },
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 602,
+          "detail": "palette illustration helper"
+        },
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 648,
+          "detail": "palette illustration helper"
+        },
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1499,
+          "detail": "palette illustration helper"
+        },
+        {
+          "path": "src/app/site-theme.css",
+          "line": 109,
+          "detail": "literal production reference"
+        },
+        {
+          "path": "src/app/site-theme.css",
+          "line": 110,
+          "detail": "literal production reference"
+        },
+        {
+          "path": "src/app/site-theme.css",
+          "line": 111,
+          "detail": "literal production reference"
+        },
+        {
+          "path": "src/app/site-theme.css",
+          "line": 112,
+          "detail": "literal production reference"
+        },
+        {
+          "path": "src/app/site-theme.css",
+          "line": 113,
+          "detail": "literal production reference"
+        },
+        {
+          "path": "src/app/site-theme.css",
+          "line": 114,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgFlowDot.svg",
+      "repositoryPath": "public/figma/annual-canonical/imgFlowDot.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 743,
+      "sha256": "28da26994646963deb81b20dee3c7922bef65a79e5136efb8add4b108db6d110",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 308,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgForm.svg",
+      "repositoryPath": "public/figma/annual-canonical/imgForm.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 1321,
+      "sha256": "66f8471d9d84309c1dcbadaa7c9760790b6922e0bf8c76a3cac70dbdddc4f2a3",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 218,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgIllustrations.svg",
+      "repositoryPath": "public/figma/annual-canonical/imgIllustrations.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 2262,
+      "sha256": "188085609076705881c3842465bab51a0f21fbd6ab9b9cd777885fe5a96f8139",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 115,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgIllustrations1.svg",
+      "repositoryPath": "public/figma/annual-canonical/imgIllustrations1.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 3887,
+      "sha256": "e080293683f86b4fdf0c7d1b74d5bea35762bbf6ba804f714cd979fe5be73d90",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 127,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgIllustrations2.svg",
+      "repositoryPath": "public/figma/annual-canonical/imgIllustrations2.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 3799,
+      "sha256": "9ee229e99e793f868b8b8893e59956f202e2e0acf1ccce8432a46743afe0e6f9",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 139,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgIllustrations3.svg",
+      "repositoryPath": "public/figma/annual-canonical/imgIllustrations3.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 1833,
+      "sha256": "62980ffab2743e16c2ce01c98090c213489cb349bac726b36dc18d3f68d034e9",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 499,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgIllustrations4.svg",
+      "repositoryPath": "public/figma/annual-canonical/imgIllustrations4.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 1518,
+      "sha256": "54bc14590c53d67962d61e994a9d22639694496f75943c72b60b6512ced034ac",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 658,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgIllustrations5.svg",
+      "repositoryPath": "public/figma/annual-canonical/imgIllustrations5.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 3279,
+      "sha256": "8c7d5dca56fd475a0ee17a8fce130593bc080d11e8ff7c7dffdda6d30ad94280",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 670,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgIllustrations6.svg",
+      "repositoryPath": "public/figma/annual-canonical/imgIllustrations6.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 1983,
+      "sha256": "1485d661d3a4083a6420fc7303b17e534f0375d7b169acef2541bb7ca276e1e0",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 680,
+          "detail": "palette illustration helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgPeopleSwap.svg",
+      "repositoryPath": "public/figma/annual-canonical/imgPeopleSwap.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 2194,
+      "sha256": "1939bc23173b851a842bf8f700b82506be56853490cb783c2336c6917de9eb78",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 242,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgTimeAndWeather.svg",
+      "repositoryPath": "public/figma/annual-canonical/imgTimeAndWeather.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 2190,
+      "sha256": "ab0c45b59aed10c6b8f9ee8c7d1eab23d90b9677f1af3cdea4ee94ae3bffa41f",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 290,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/interaction-bookmark.svg",
+      "repositoryPath": "public/figma/annual-canonical/interaction-bookmark.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 1147,
+      "sha256": "025ce1666bd4ad1304a7442b0f90ed203c1fe2cebde4739bdb371c5a6c78257a",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-interactions.module.css",
+          "line": 140,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/interaction-chat.svg",
+      "repositoryPath": "public/figma/annual-canonical/interaction-chat.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 1517,
+      "sha256": "b87a692d8d2003f29a941b87b06212839c16e28eb26130dd9d51e72fc1c7ccbe",
+      "references": [
+        {
+          "path": "src/annual-report-2026/annual-report-components.tsx",
+          "line": 127,
+          "detail": "dynamic interaction icon map"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/interaction-chess.svg",
+      "repositoryPath": "public/figma/annual-canonical/interaction-chess.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 3145,
+      "sha256": "5db75aae4eb04d7f8a177d27d8aca850e852bd330db0972fe11666a6c33226ed",
+      "references": [
+        {
+          "path": "src/annual-report-2026/annual-report-components.tsx",
+          "line": 127,
+          "detail": "dynamic interaction icon map"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/interaction-chevron-down.svg",
+      "repositoryPath": "public/figma/annual-canonical/interaction-chevron-down.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 547,
+      "sha256": "c6dfd8bc9ae6af715a451c2ef6e8e241814625c18deab21780d90cff2b681218",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-interactions.module.css",
+          "line": 133,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/interaction-chevron.svg",
+      "repositoryPath": "public/figma/annual-canonical/interaction-chevron.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 547,
+      "sha256": "9a7c8b4728cad86b103c1c64246b9489a62fbf8625e0baa73d8b12bbdc243139",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-report-interactions.tsx",
+          "line": 294,
+          "detail": "dynamic interaction helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/interaction-coins.svg",
+      "repositoryPath": "public/figma/annual-canonical/interaction-coins.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 1952,
+      "sha256": "e0c60b27e65094ae63b7f53fda38f8a209bca0c0fa7e941974be9803819fa308",
+      "references": [
+        {
+          "path": "src/annual-report-2026/annual-report-components.tsx",
+          "line": 127,
+          "detail": "dynamic interaction icon map"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/interaction-connected.svg",
+      "repositoryPath": "public/figma/annual-canonical/interaction-connected.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 1950,
+      "sha256": "d88c55499ab1d83695f3098df5f9397ff7ee718cec2276972cda17dbee0f478c",
+      "references": [
+        {
+          "path": "src/annual-report-2026/annual-report-components.tsx",
+          "line": 127,
+          "detail": "dynamic interaction icon map"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/interaction-dismiss.svg",
+      "repositoryPath": "public/figma/annual-canonical/interaction-dismiss.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 819,
+      "sha256": "38351426445730103f647942c6ca4abefbfc2a01ceec175e0059cb14037fb635",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-report-interactions.tsx",
+          "line": 139,
+          "detail": "dynamic interaction helper"
+        },
+        {
+          "path": "src/annual-report-2026/canonical-report-interactions.tsx",
+          "line": 256,
+          "detail": "dynamic interaction helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/interaction-flow.svg",
+      "repositoryPath": "public/figma/annual-canonical/interaction-flow.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 1075,
+      "sha256": "baff0125f7ebe70c7aa827d44c4efec682a0d7b2c39aaa7afec1252c2c21800f",
+      "references": [
+        {
+          "path": "src/annual-report-2026/annual-report-components.tsx",
+          "line": 127,
+          "detail": "dynamic interaction icon map"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/interaction-globe.svg",
+      "repositoryPath": "public/figma/annual-canonical/interaction-globe.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 2074,
+      "sha256": "b84ab576314f6018564453609041e84d9e9cf8b2b07c15b6330d855c83663eae",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-report-interactions.tsx",
+          "line": 320,
+          "detail": "dynamic interaction helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/interaction-pulse.svg",
+      "repositoryPath": "public/figma/annual-canonical/interaction-pulse.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 972,
+      "sha256": "4e76f52d47da51227feace7bb6def76e6386ab1bf07b53ce4c720ddb4c0df6c2",
+      "references": [
+        {
+          "path": "src/annual-report-2026/annual-report-components.tsx",
+          "line": 127,
+          "detail": "dynamic interaction icon map"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/matrix-leadership.svg",
+      "repositoryPath": "public/figma/annual-canonical/matrix-leadership.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 1918,
+      "sha256": "34761edffd4e664a0c3cdf9036bc445ee03dceae0a7a01182200fa202c70fb3e",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1481,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/matrix-manager.svg",
+      "repositoryPath": "public/figma/annual-canonical/matrix-manager.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 1036,
+      "sha256": "d9f2f201249f452db9fe118492cfc2c25c50e115bb2bff40f60735ad234f3329",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1480,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/matrix-person.svg",
+      "repositoryPath": "public/figma/annual-canonical/matrix-person.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 746,
+      "sha256": "9712e07c79d1f77d633f24d9014e92190cc48bcc2a19e9a8e1c19540109d9041",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1479,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/priority-all.svg",
+      "repositoryPath": "public/figma/annual-canonical/priority-all.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 837,
+      "sha256": "637ebf72c0987fb91e1f937249a98ffc5a74ff105e6c83c3bb648df3c9052df3",
+      "references": [
+        {
+          "path": "src/annual-report-2026/annual-report-interactive-visuals.tsx",
+          "line": 762,
+          "detail": "dynamic priority icon map"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/priority-down.svg",
+      "repositoryPath": "public/figma/annual-canonical/priority-down.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 661,
+      "sha256": "9ba65a95407682d6825dc0e022ebdcd4b7681898c3913fc9043ed85cd40fb3bf",
+      "references": [
+        {
+          "path": "src/annual-report-2026/annual-report-interactive-visuals.tsx",
+          "line": 762,
+          "detail": "dynamic priority icon map"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/priority-flag.svg",
+      "repositoryPath": "public/figma/annual-canonical/priority-flag.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 533,
+      "sha256": "2ab47e312e48439aafd17643df8b4b2307a5effe89cc94454089698a3762f768",
+      "references": [
+        {
+          "path": "src/annual-report-2026/annual-report-interactive-visuals.tsx",
+          "line": 762,
+          "detail": "dynamic priority icon map"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/priority-up.svg",
+      "repositoryPath": "public/figma/annual-canonical/priority-up.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 664,
+      "sha256": "da59fc73801c48207869205d0263317480a0fd96afecda928c778863f473f5de",
+      "references": [
+        {
+          "path": "src/annual-report-2026/annual-report-interactive-visuals.tsx",
+          "line": 762,
+          "detail": "dynamic priority icon map"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/shell-glow-left.svg",
+      "repositoryPath": "public/figma/annual-canonical/shell-glow-left.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 660,
+      "sha256": "9d08057b20ac182eab8ee1febc0b486e6dd0f4e35b589c33d2ad2cceac9b1a24",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 105,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/shell-glow-right.svg",
+      "repositoryPath": "public/figma/annual-canonical/shell-glow-right.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 657,
+      "sha256": "9aafaa4d789830770b9e2c0b423aa79ecad93a4c23d5063bfd13ff05c7f7e4ed",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 106,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/shell-glow-top.svg",
+      "repositoryPath": "public/figma/annual-canonical/shell-glow-top.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 660,
+      "sha256": "6376b3f3262e8e37eeeb6cae1629ae6495110a9e981a113d0f8a39633c62d407",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 104,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/shell-grid-browser.webp",
+      "repositoryPath": "public/figma/annual-canonical/shell-grid-browser.webp",
+      "category": "figma-decoration",
+      "mediaType": "image/webp",
+      "bytes": 4724,
+      "sha256": "d93d155f191973bd11601c13698718236e072d49cd2b3e2142955c30996a530b",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 103,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/shell-photo-glow-bottom.svg",
+      "repositoryPath": "public/figma/annual-canonical/shell-photo-glow-bottom.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 680,
+      "sha256": "744c0fbff2eca7c96350bce16fd0f44f548b31f0cc727666c0915c545588b0eb",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 77,
+          "detail": "literal production reference"
+        },
+        {
+          "path": "src/app/site-theme.css",
+          "line": 108,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/shell-photo-glow-top.svg",
+      "repositoryPath": "public/figma/annual-canonical/shell-photo-glow-top.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 700,
+      "sha256": "92466956dca63e9ed2f691ddc0cd801c0da314230f485c9a65bf1d49cfeead3b",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 76,
+          "detail": "literal production reference"
+        },
+        {
+          "path": "src/app/site-theme.css",
+          "line": 107,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/homepage-v2/reports-background.svg",
+      "repositoryPath": "public/figma/homepage-v2/reports-background.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 4706,
+      "sha256": "e4d4cd3677635aade8674b951ba077d725f735c673cc17aecd41bc84622216a8",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 72,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/site-canonical/home/ellipse4.svg",
+      "repositoryPath": "public/figma/site-canonical/home/ellipse4.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 677,
+      "sha256": "a94cf5c05cfcfd9f3886d276a3a76a86ada4e4c2997639f14223823e196dff4e",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 18,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "310:14672",
+        "canonicalSnapshotNode": "310:14672",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/site-canonical/home/ellipse5.svg",
+      "repositoryPath": "public/figma/site-canonical/home/ellipse5.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 661,
+      "sha256": "2ce5c07772479b030592704d2cd52eee31738a7b0f847efb21e42aaa9c748dcd",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 20,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "310:14672",
+        "canonicalSnapshotNode": "310:14672",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/site-canonical/home/ellipse6.svg",
+      "repositoryPath": "public/figma/site-canonical/home/ellipse6.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 661,
+      "sha256": "74474aef8d6e89b6aabf4c382e906283d8432b76cef802f801af661c285317ff",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 19,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "310:14672",
+        "canonicalSnapshotNode": "310:14672",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/site-canonical/home/ellipse7.svg",
+      "repositoryPath": "public/figma/site-canonical/home/ellipse7.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 706,
+      "sha256": "fe90d3e09678be5837b44b0624d7f85d11023021883cc09bd9124c74dad359fb",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 21,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "310:14672",
+        "canonicalSnapshotNode": "310:14672",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/site-canonical/home/ellipse8.svg",
+      "repositoryPath": "public/figma/site-canonical/home/ellipse8.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 706,
+      "sha256": "939327dfba33a42d591579779eb750712bc1309ef72542d6bdae6ecaf8954911",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 22,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "310:14672",
+        "canonicalSnapshotNode": "310:14672",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/site-canonical/home/group.svg",
+      "repositoryPath": "public/figma/site-canonical/home/group.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 6722,
+      "sha256": "df9ba3ce872f32c4eb3c1c024c4576a7e7c7ab283841a1d01280cd9ce046a39c",
+      "references": [
+        {
+          "path": "src/app/_components/marketing-footer.tsx",
+          "line": 12,
+          "detail": "literal production reference"
+        },
+        {
+          "path": "src/app/_components/site-navigation.tsx",
+          "line": 37,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "310:14672",
+        "canonicalSnapshotNode": "310:14672",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/site-canonical/home/group1.svg",
+      "repositoryPath": "public/figma/site-canonical/home/group1.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 6712,
+      "sha256": "449f173c9fc49394d9cfd25bf856eabf73688a9ef26927c082355affdfb48da2",
+      "references": [
+        {
+          "path": "src/app/_components/site-navigation.tsx",
+          "line": 38,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "310:14672",
+        "canonicalSnapshotNode": "310:14672",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/site-canonical/home/union.svg",
+      "repositoryPath": "public/figma/site-canonical/home/union.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 4713,
+      "sha256": "65cd06ac70b60c54b21605025e8283482ae58517c9ee60ef542fb6f613f1a4e7",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 17,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "310:14672",
+        "canonicalSnapshotNode": "310:14672",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/site-canonical/reports/ellipse4.svg",
+      "repositoryPath": "public/figma/site-canonical/reports/ellipse4.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 663,
+      "sha256": "e900569d6b7dc368dd45b63695f3360390ccfdc7160c2ad997b1e819ac288483",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 23,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1487:30116",
+        "canonicalSnapshotNode": "1487:30116",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/site-canonical/reports/ellipse5.svg",
+      "repositoryPath": "public/figma/site-canonical/reports/ellipse5.svg",
+      "category": "figma-decoration",
+      "mediaType": "image/svg+xml",
+      "bytes": 681,
+      "sha256": "9d2eb9fc9777ae38c83033aa58bd6c37da7211086521cc8356f3fb32af074f11",
+      "references": [
+        {
+          "path": "src/app/site-theme.css",
+          "line": 24,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "1487:30116",
+        "canonicalSnapshotNode": "1487:30116",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    }
+  ],
+  "sourceOnlyAssets": [
+    {
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/hero.png",
+      "category": "photography-source",
+      "mediaType": "image/png",
+      "bytes": 534573,
+      "sha256": "bcdbf9d944f8d01fd1bb34d05d6c7413580135c6c09ca239aff563cdf0c40a9e",
+      "purpose": "Lossless source provenance for the runtime hero.webp derivative; decoded pixels are identical.",
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Asset licensing or Legal/Privacy",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/shell-grid.svg",
+      "category": "figma-decoration-source",
+      "mediaType": "image/svg+xml",
+      "bytes": 4734,
+      "sha256": "9f1f6806e654570f56043e5ee7e18bf2ddcaf5b05395d8b68a4838617b6594de",
+      "purpose": "Vector source provenance for the browser-rasterized shell-grid-browser.webp derivative.",
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      }
+    },
+    {
+      "publicPath": "/figma/annual-canonical/hero.webp",
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/hero.webp",
+      "category": "photography",
+      "mediaType": "image/webp",
+      "bytes": 313396,
+      "sha256": "691a9b1e7be82614d39ed3123b91c0770626d199609999a6da98bce1effc2188",
+      "references": [
+        {
+          "path": "src/app/annual-report-2026/page.tsx",
+          "line": 42,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Asset licensing or Legal/Privacy",
+          "Accessibility/content reviewer",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      },
+      "disposition": "Retired from canonical layouts; retained privately with original provenance and approval status. The complete previous experience is also preserved at baseline/pre-canonical-redesign-20261021."
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgIllustrations7.svg",
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/imgIllustrations7.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 1893,
+      "sha256": "bb50774484ea39c45f37c82de4e86c7d461e9899ce782f1df6569a9bd8436dd1",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1460,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      },
+      "disposition": "Retired from canonical layouts; retained privately with original provenance and approval status. The complete previous experience is also preserved at baseline/pre-canonical-redesign-20261021."
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgIllustrations8.svg",
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/imgIllustrations8.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 2271,
+      "sha256": "aa0d7ccbe299b881e1bf389c92f3d95a5a4b04bbdab52bf6670add1447abb2d2",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1478,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      },
+      "disposition": "Retired from canonical layouts; retained privately with original provenance and approval status. The complete previous experience is also preserved at baseline/pre-canonical-redesign-20261021."
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgIllustrations9.svg",
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/imgIllustrations9.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 2630,
+      "sha256": "2f3d8ef0e26853dc7711e639b22a990df7d7ad037e7fce488853b40d7db7a142",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1721,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      },
+      "disposition": "Retired from canonical layouts; retained privately with original provenance and approval status. The complete previous experience is also preserved at baseline/pre-canonical-redesign-20261021."
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgIllustrations10.svg",
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/imgIllustrations10.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 1883,
+      "sha256": "7fbb75ae1c161e610c28a6efc342046ea32973029df3b3157bf29a20e05610df",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1735,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      },
+      "disposition": "Retired from canonical layouts; retained privately with original provenance and approval status. The complete previous experience is also preserved at baseline/pre-canonical-redesign-20261021."
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgVector9.svg",
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/imgVector9.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 269,
+      "sha256": "b87445208c250b8e4c63e3ba60a15b175d4599ea9ddea0eae245cc99901df00f",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1656,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      },
+      "disposition": "Retired from canonical layouts; retained privately with original provenance and approval status. The complete previous experience is also preserved at baseline/pre-canonical-redesign-20261021."
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgVector11.svg",
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/imgVector11.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 225,
+      "sha256": "782a85c9d7c145d524bf620aad66f13fd2b6742a5d88a1783677a8aa66ed7829",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1670,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      },
+      "disposition": "Retired from canonical layouts; retained privately with original provenance and approval status. The complete previous experience is also preserved at baseline/pre-canonical-redesign-20261021."
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgVector12.svg",
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/imgVector12.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 225,
+      "sha256": "4b12412610e793c93641de5036f331e321a94be833f0da921719df64e6105ef3",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1677,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      },
+      "disposition": "Retired from canonical layouts; retained privately with original provenance and approval status. The complete previous experience is also preserved at baseline/pre-canonical-redesign-20261021."
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgVector13.svg",
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/imgVector13.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 225,
+      "sha256": "2af2e2acc791d75fdc6c43d53ea9cd1d3f559f6abdbf0231ee5f5a4324575fda",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1686,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      },
+      "disposition": "Retired from canonical layouts; retained privately with original provenance and approval status. The complete previous experience is also preserved at baseline/pre-canonical-redesign-20261021."
+    },
+    {
+      "publicPath": "/figma/annual-canonical/imgVector14.svg",
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/imgVector14.svg",
+      "category": "figma-illustration",
+      "mediaType": "image/svg+xml",
+      "bytes": 270,
+      "sha256": "9ec0765aa62860c2d38d7fe7f5c062004d886dac67db41c9c235dcc67eded790",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-figma.tsx",
+          "line": 1663,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      },
+      "disposition": "Retired from canonical layouts; retained privately with original provenance and approval status. The complete previous experience is also preserved at baseline/pre-canonical-redesign-20261021."
+    },
+    {
+      "publicPath": "/figma/annual-canonical/interaction-arrow-right.svg",
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/interaction-arrow-right.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 648,
+      "sha256": "a42b345b53f59fce87214b56101807f1393bd6c637c31b9a652f8ad933fe1695",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-report-interactions.tsx",
+          "line": 253,
+          "detail": "dynamic interaction helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      },
+      "disposition": "Retired from canonical layouts; retained privately with original provenance and approval status. The complete previous experience is also preserved at baseline/pre-canonical-redesign-20261021."
+    },
+    {
+      "publicPath": "/figma/annual-canonical/interaction-arrow-up.svg",
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/interaction-arrow-up.svg",
+      "category": "figma-icon",
+      "mediaType": "image/svg+xml",
+      "bytes": 648,
+      "sha256": "a42b345b53f59fce87214b56101807f1393bd6c637c31b9a652f8ad933fe1695",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-report-interactions.tsx",
+          "line": 253,
+          "detail": "dynamic interaction helper"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Design/Figma owner",
+          "Legal/IP",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      },
+      "disposition": "Retired from canonical layouts; retained privately with original provenance and approval status. The complete previous experience is also preserved at baseline/pre-canonical-redesign-20261021."
+    },
+    {
+      "publicPath": "/figma/annual-canonical/microsoft.svg",
+      "repositoryPath": "docs/release/source-assets/annual-report-2026/microsoft.svg",
+      "category": "brand-mark",
+      "mediaType": "image/svg+xml",
+      "bytes": 6722,
+      "sha256": "df9ba3ce872f32c4eb3c1c024c4576a7e7c7ab283841a1d01280cd9ce046a39c",
+      "references": [
+        {
+          "path": "src/annual-report-2026/canonical-report.module.css",
+          "line": 17,
+          "detail": "literal production reference"
+        },
+        {
+          "path": "src/app/annual-report-2026/page.tsx",
+          "line": 58,
+          "detail": "literal production reference"
+        }
+      ],
+      "source": {
+        "kind": "figma-export",
+        "fileKey": "rkrC8mdVsXC1rAITLp04Sq",
+        "reportNode": "843:18509",
+        "canonicalSnapshotNode": "1584:78960",
+        "assetNode": null,
+        "status": "asset-node-unresolved"
+      },
+      "approval": {
+        "status": "blocked",
+        "requiredApproverRoles": [
+          "Microsoft Brand/Trademark",
+          "Legal",
+          "Release owner"
+        ],
+        "approver": null,
+        "approvalDate": null,
+        "evidence": [],
+        "blocksPublication": true
+      },
+      "disposition": "Retired from canonical layouts; retained privately with original provenance and approval status. The complete previous experience is also preserved at baseline/pre-canonical-redesign-20261021."
+    }
+  ],
+  "outOfScopeInventories": [
+    {
+      "path": "public/annual-report-2026",
+      "disposition": "retained",
+      "reason": "Legacy/dynamic report rendering and approved Word-source provenance; not requested by the canonical Annual Report route."
+    },
+    {
+      "path": "packages/data-visuals/public",
+      "disposition": "retained",
+      "reason": "Used by other Glint Labs routes and package fixtures; the canonical Annual Report route requests none of these public files."
+    },
+    {
+      "path": "public/figma excluding annual-canonical and nav-viva-glint-annual-report.svg",
+      "disposition": "retained",
+      "reason": "Used by other production routes or retained design sources; outside the canonical Annual Report runtime manifest."
+    }
+  ]
+}

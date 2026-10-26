@@ -1,0 +1,50 @@
+.page {
+  min-width: 320px;
+  min-height: 100vh;
+  background: #fff;
+}
+
+.previewBar {
+  position: sticky;
+  z-index: 20;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
+  padding: 10px 24px;
+  border-bottom: 1px solid #d9e1ea;
+  background: rgb(255 255 255 / 96%);
+  backdrop-filter: blur(12px);
+}
+
+.previewBar div {
+  display: grid;
+  gap: 2px;
+}
+
+.previewBar strong {
+  font-size: 14px;
+}
+
+.previewBar span {
+  color: #667085;
+  font-size: 12px;
+}
+
+.previewBar a {
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #0f5fae;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.previewBar a:hover {
+  background: #eaf4fd;
+}
+
+.previewBar a:focus-visible {
+  outline: 3px solid #1677d2;
+  outline-offset: 3px;
+}

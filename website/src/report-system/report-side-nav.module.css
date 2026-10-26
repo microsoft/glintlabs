@@ -1,0 +1,164 @@
+.sideNav {
+  position: relative;
+  width: 170px;
+  height: auto;
+  box-sizing: border-box;
+  color: #000;
+  background: transparent;
+  font-family: "Segoe Sans", "Segoe UI Variable Text", "Segoe UI", sans-serif;
+  font-weight: 420;
+  overflow-wrap: anywhere;
+}
+
+.metadata {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.icons {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.icons span {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  color: #707070;
+  background: #f7f7f7;
+  place-items: center;
+}
+
+.icons svg {
+  width: 16px;
+  height: 16px;
+}
+
+.details {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.author {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.author span:last-child:not(:first-child) {
+  color: #232323;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.credits .details {
+  gap: 16px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.authors {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.creditedAuthor {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.authorRole {
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.dark .credits {
+  color: #fff;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  margin-top: 24px;
+  background: rgb(0 0 0 / 12%);
+}
+
+.sideNav nav {
+  margin-top: 24px;
+}
+
+.sections {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 20px;
+  width: 170px;
+  padding-left: 0;
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  list-style: none;
+}
+
+.sections a {
+  color: #000;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 1px;
+}
+
+.sections a:hover,
+.sections a[aria-current="location"],
+.sections a.pastSection {
+  color: var(--report-visual, #9299f7);
+}
+
+.sections a:focus-visible {
+  border-radius: 2px;
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.dark {
+  color: #f6f6f8;
+}
+
+.dark .icons span {
+  color: #fff;
+  background: rgb(255 255 255 / 8%);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
+}
+
+.dark .author span:last-child:not(:first-child) {
+  color: rgb(246 246 248 / 62%);
+}
+
+.dark .divider {
+  background: rgb(255 255 255 / 22%);
+}
+
+.dark .sections a {
+  color: rgb(246 246 248 / 82%);
+}
+
+.dark .sections a:hover,
+.dark .sections a[aria-current="location"],
+.dark .sections a.pastSection {
+  color: var(--report-visual, #9299f7);
+}

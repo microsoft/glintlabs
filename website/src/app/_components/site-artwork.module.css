@@ -1,0 +1,29 @@
+.artwork { position: absolute; z-index: 0; inset: 0; overflow: clip; pointer-events: none; }
+.artwork img { position: absolute; max-width: none; }
+.grid { position: absolute; right: 0; bottom: 0; width: 927px; height: 1339px; background: var(--site-hero-grid) center / contain no-repeat; }
+.reports .grid { background-image: url("/figma/site-canonical/reports/union.svg"); }
+.tools .grid { background-image: url("/figma/site-canonical/tools/union.svg"); }
+.about .grid { background-image: url("/figma/site-canonical/about/union.svg"); }
+.section .grid { top: 0; bottom: auto; background-image: url("/figma/site-canonical/home/union1.svg"); }
+.diagonalGrid { right: 0; bottom: 0; }
+.glowTop, .glowLeft, .glowBottom { position: absolute; display: block; background-position: center; background-repeat: no-repeat; background-size: contain; }
+.home .glowTop { top: -1256px; left: -1256px; width: 2512px; height: 2512px; background-image: var(--site-hero-glow-top); }
+.home .glowLeft { top: -376px; left: -1072px; width: 2144px; height: 2144px; background-image: var(--site-hero-glow-left); }
+.home .glowBottom { right: -846px; bottom: -846px; width: 1692px; height: 1692px; background-image: var(--site-hero-glow-right); }
+.section .glowTop { top: -846px; right: -846px; width: 1692px; height: 1692px; background-image: var(--site-hero-glow-right); }
+.reports .glowTop, .tools .glowTop { top: -1044px; left: -1044px; width: 2088px; height: 2088px; background-image: var(--site-interior-glow); }
+.tools .glowTop { background-image: url("/figma/site-canonical/tools/ellipse4.webp"); }
+.reports .glowBottom, .tools .glowBottom { right: -941px; bottom: -941px; width: 1883px; height: 1883px; background-image: var(--site-interior-glow-bottom); }
+.about .glowTop { top: -813px; left: -813px; width: 1627px; height: 1627px; background-image: url("/figma/site-canonical/about/ellipse4.webp"); }
+.about .glowLeft { top: calc(50% - 207.5px); left: -1000px; width: 2000px; height: 2000px; background-image: url("/figma/site-canonical/about/ellipse6.webp"); }
+.about .glowBottom { right: -950px; bottom: -950px; width: 1900px; height: 1900px; background-image: url("/figma/site-canonical/about/ellipse7.webp"); }
+
+:global([data-site-palette="legacy"]) .about .glowTop { background-image: var(--site-interior-glow); }
+:global([data-site-palette="legacy"]) .about .glowBottom { background-image: var(--site-interior-glow-bottom); }
+:global([data-site-palette="legacy"]) .about .glowLeft { background-image: var(--site-interior-glow); }
+:global([data-site-palette="legacy"]) .tools .glowTop { background-image: var(--site-interior-glow); }
+:global([data-site-palette="legacy"]) .grid { background-image: var(--site-hero-grid); }
+
+@media (forced-colors: active), print {
+  .artwork { display: none; }
+}

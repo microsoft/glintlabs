@@ -1,0 +1,77 @@
+.page {
+  min-height: 100vh;
+  color: var(--report-text);
+  background: var(--studio-canvas);
+}
+
+.previewBar {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--studio-surface);
+}
+
+.previewBar a,
+.message a {
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.previewBar a:hover,
+.message a:hover {
+  background: var(--accent-soft);
+}
+
+.previewBar a:focus-visible,
+.message a:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.canvas {
+  overflow-x: clip;
+  padding: 40px;
+}
+
+.reportSurface {
+  width: min(1440px, 100%);
+  min-height: calc(100vh - 144px);
+  margin: 0 auto;
+  border: 1px solid var(--report-rule);
+  background: var(--report-canvas);
+  box-shadow: var(--studio-shadow);
+}
+
+@media (max-width: 720px) {
+  .canvas {
+    padding: 0;
+  }
+
+  .reportSurface {
+    border: 0;
+    box-shadow: none;
+  }
+}
+
+.message {
+  display: grid;
+  gap: 14px;
+  width: min(460px, calc(100% - 48px));
+  margin: 15vh auto 0;
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--studio-surface);
+}
+
+.message a {
+  width: fit-content;
+}

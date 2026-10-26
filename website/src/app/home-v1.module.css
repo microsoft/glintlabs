@@ -1,0 +1,28 @@
+.page { min-height: 100vh; color: var(--site-ink); background: var(--site-paper); font-family: var(--site-content-font); font-weight: 420; }
+.viewAll { display: inline-flex; min-height: 40px; align-items: center; justify-content: center; padding: 8px 12px; border-radius: 16px; color: #fff; background: #000; font-size: 16px; line-height: 22px; }
+.viewAll:hover { background: #333; }
+.viewAll:focus-visible { outline: 3px solid var(--site-focus); outline-offset: 4px; }
+.sections { position: relative; isolation: isolate; padding: 120px max(24px, calc((100% - 1140px) / 2)); }
+.content { position: relative; z-index: 1; display: flex; max-width: 1140px; flex-direction: column; gap: 112px; margin: auto; }
+.featured { display: flex; flex-direction: column; gap: 48px; }
+.sectionHeader { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.sectionHeader > div { width: 849px; max-width: 100%; min-width: 0; }
+.sectionHeader h2 { margin: 0; font: 420 36px/48px var(--site-editorial-font); letter-spacing: -.75px; }
+.sectionHeader p { margin: 8px 0 0; color: var(--site-muted); font-size: 16px; line-height: 22px; }
+.viewAll { flex: 0 0 auto; }
+.cardGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.cardGrid > article { min-height: 480px; }
+.divider { height: 1px; background: var(--site-line); }
+
+@media (max-width: 900px) {
+  .sections { padding-block: 72px; }
+  .content { gap: 72px; }
+  .cardGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .sectionHeader { align-items: flex-start; flex-direction: column; }
+  .sectionHeader h2 { font-size: 32px; line-height: 40px; }
+  .cardGrid { grid-template-columns: 1fr; }
+  .viewAll { min-height: 44px; }
+}

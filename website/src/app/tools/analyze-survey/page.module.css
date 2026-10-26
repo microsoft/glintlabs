@@ -1,0 +1,25 @@
+.main {
+  min-height: 100vh;
+  padding: 24px;
+  color: #242424;
+  background: #f3f3f3;
+}
+
+.main > * {
+  width: min(944px, 100%);
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid #dedede;
+  border-radius: 20px;
+}
+
+@media (max-width: 600px) {
+  .main {
+    padding: 0;
+  }
+
+  .main > * {
+    border: 0;
+    border-radius: 0;
+  }
+}
