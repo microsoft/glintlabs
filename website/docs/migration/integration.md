@@ -47,9 +47,17 @@ build/export tooling, `/glintlabs/` handling, root plugin/Python files, original
 report content/assets, dependency lockfile and owner/approval safeguards remain.
 The static reader's source-revision marker advances to the same baseline.
 
-This follow-up is authorized for a draft PR and Ben's review only, not merge or
-deployment. A later approved main merge would use the existing Pages workflow;
-neither that workflow nor its deployment conditions are changed here.
+The maintainer explicitly authorized merge and deployment once browser checks,
+hosted CI and CLA pass, with Ben's review optional. This latest instruction
+supersedes both the original draft-only hold and an intervening request for
+pre-merge manual testing. It does not authorize an agent to sign the CLA or
+bypass checks. All work already merged into destination main is retained;
+separate feature branches are not silently included.
+
+The follow-up adds a repeatable public-reader browser check to Site CI before
+artifact upload. Main-only deployment conditions, permissions, owner access
+and exact-revision publication approval remain unchanged. The two inherited
+audit failures remain disclosed in `validation.md`, not represented as passing.
 
 ## Intentional differences and additions
 
@@ -60,7 +68,7 @@ neither that workflow nor its deployment conditions are changed here.
 2. Site CI sets its run working directory and npm cache lockfile to `website/`,
    pins Node 22.23.4, and verifies the migration inventory. It keeps the source
    lint, test, public build, and production audit checks, and adds a verified
-   public-reader build. PRs validate only. Main pushes upload `website/out` and
+   public-reader build and browser check. PRs validate only. Main pushes upload `website/out` and
    deploy it to GitHub Pages with job-scoped Pages/OIDC permissions. Studio,
    API routes, private previews, owner state and ignored local packages are not
    deployment artifacts. No credentials or protection bypass is added.
@@ -74,7 +82,7 @@ neither that workflow nor its deployment conditions are changed here.
 5. `tsconfig.publication-preview.json` adds the required
    `.next-local-studio/types/**/*.ts` include. Next otherwise rewrites this
    source file during the required connected build. Existing includes remain.
-6. `package.json` adds Pages build/export/preview commands and four focused build
+6. `package.json` adds Pages build/export/preview/browser-check commands and four focused build
    tests to the existing test command; dependencies and lockfile are unchanged.
    `publication-preview.test.ts` adds one approved-export integrity test without
    changing existing assertions.
@@ -136,6 +144,19 @@ Run from `website/`:
 npm run pages:build
 npm run pages:preview
 ```
+
+For the repeatable browser check, stop the preview first and run
+`npm run pages:test:browser` after `npm run pages:build`. It starts and stops its
+own loopback preview on port 3011 and a temporary headless Chrome profile.
+Chrome must already be installed; set `CHROME_PATH` if it is not in a detected
+location. No browser, dependency, owner key or publication data is installed or
+copied. Port conflicts fail rather than attaching to or stopping another server.
+The check covers ten routes at four widths, original image hashes, catalog
+cards, report titles/references, native keyboard disclosures, forced colors
+and cumulative colors-only section navigation. Evidence is written to ignored
+`test-results/reader-browser.json`. Site CI runs it against the actual exported
+reader before upload; it is scoped regression proof, not full accessibility
+certification.
 
 Open `http://127.0.0.1:3011/glintlabs/`. Check port 3011 first. Stop this foreground
 preview with Ctrl+C. An agent-started preview must be stopped through its

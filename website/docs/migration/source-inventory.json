@@ -14,8 +14,8 @@
       "source": ".github/workflows/site-ci.yml",
       "destination": ".github/workflows/site-ci.yml",
       "sourceSha256": "21ed094e6da10c12eb4e2c9b57bbee6305a1f8fafef492661dae0c7ea6951ba0",
-      "destinationSha256": "05f9d7cde492965cc151511e239446198ca4ca86f2ada28e6e84da1e01742b04",
-      "intentionalDifference": "Relocated to destination root with website working directory/npm cache, Node22.23.4 and inventory check; preserves source checks, adds verified static-reader build and explicitly authorized main-only GitHub Pages deployment."
+      "destinationSha256": "3da9d48bdb6ecd3f24b4e5b159a549b502eff7798b2cc8d5042b25fe6ab108f9",
+      "intentionalDifference": "Relocated to destination root with website working directory/npm cache, Node22.23.4 and inventory check; preserves source checks, adds verified static-reader build and browser regression check before the unchanged main-only GitHub Pages deployment."
     },
     {
       "source": ".gitignore",
@@ -315,8 +315,8 @@
       "source": "package.json",
       "destination": "website/package.json",
       "sourceSha256": "077e6bd8fb609e100c287c6a2d03dd3a6f5d15d170f2931e6febe3c53249cb27",
-      "destinationSha256": "1e8c55ebb4abf3d356b6c4f08e34cd8ecce3cb27895dceded38b9f2c6d23ad86",
-      "intentionalDifference": "Adds static Pages build, explicit approved-report export and loopback preview commands; appends focused reader-build tests. Dependencies and lockfile unchanged."
+      "destinationSha256": "bf9730e172da2431c088d8e7b85de9bc3e157bb179623c811c693551fa22fde3",
+      "intentionalDifference": "Adds static Pages build, explicit approved-report export, loopback preview and browser-check commands; appends focused reader-build tests. Dependencies and lockfile unchanged."
     },
     {
       "source": "packages/data-visuals/.gitattributes",
