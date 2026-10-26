@@ -28,9 +28,10 @@ if SCRIPT_DIR not in sys.path:
     sys.path.insert(0, SCRIPT_DIR)
 
 from progress import ProgressReporter
+from local_runtime import ENGINE_REQUIREMENT, runtime_provenance
 
 
-RECOMMENDED_INSTALL = "vivaglint[all]==0.1.1"
+RECOMMENDED_INSTALL = ENGINE_REQUIREMENT
 SOURCE_REPO = "https://github.com/microsoft/vivaglint_py"
 SOURCE_COMMIT = "761d847a8c8d38ff42c78b4501d761350c9fd03f"
 DEFAULT_ANALYSES = [
@@ -808,6 +809,7 @@ def main() -> int:
             "source_repo": SOURCE_REPO,
             "source_commit": SOURCE_COMMIT,
         },
+        "runtime_provenance": runtime_provenance(),
         "input_profile": {
             "n_rows": int(len(survey.data)),
             "n_questions": int(len(questions)),

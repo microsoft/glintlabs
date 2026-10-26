@@ -157,6 +157,8 @@ def test_runner_exports_scores_and_declares_units(tmp_path, monkeypatch, attribu
     }
     assert manifest["input_profile"]["scale_points"] == 5
     assert manifest["export_profile"] == expected_profile
+    assert manifest["runtime_provenance"]["dependencies"]["vivaglint"] == "0.1.1"
+    assert len(manifest["runtime_provenance"]["plugin"]["content_sha256"]) == 64
     assert all(item["status"] == "completed" for item in manifest["analyses"])
     schema = json.loads((ROOT / "schemas/analysis-manifest.schema.json").read_text(encoding="utf-8"))
     assert {
