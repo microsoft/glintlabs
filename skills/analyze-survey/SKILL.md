@@ -121,6 +121,33 @@ shared builder, not a manually recreated report.
 
 ## Primary workflow
 
+### Local runtime readiness
+
+After data-source selection, before loading respondent data or starting the
+runner, follow `references/local-runtime.md`:
+
+1. Confirm local command execution and permission to read the chosen input
+   and write outputs. Reading a GitHub skill link is not a runtime installation.
+2. Locate the complete plugin and check its actual source revision/content
+   against the supported upstream version. Obtain approval for updates,
+   preserve local changes, and update all assets together, never just the data.
+3. Run `scripts/local_runtime.py check` using the intended analysis Python,
+   including `--output-dir` to check output access.
+4. If setup is missing, obtain approval before environment creation or
+   dependency downloads, then use `scripts/local_runtime.py setup` with an
+   approved `--env-dir`. Pass `--yes` only after approval. Use the isolated
+   environment, not global Python or ad hoc package installation.
+5. Require `scripts/local_runtime.py smoke` after setup, plugin updates, or
+   dependency changes. Its synthetic installation fixture is never a substitute
+   for the user's input or the registered demo workbook.
+6. Run the official analysis with that same verified interpreter and fixed
+   plugin revision. Each manifest records privacy-safe `runtime_provenance`.
+
+If execution is unavailable or readiness fails, stop with the specific blocker
+and supported setup instructions. Never substitute AI-written analysis code,
+silently switch runtimes, or claim the official pipeline completed.
+Interpretation-only requests using existing outputs do not require local setup.
+
 Before starting the runner, give the user a concise estimated completion time.
 Base the estimate on the export size and prior runs when available, and state
 that correlation clustering, attrition-alert aggregation, and repeatability are the

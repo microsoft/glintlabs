@@ -25,6 +25,10 @@ The plugin deliberately does not duplicate the `vivaglint` analysis package. It 
 - Access to the relevant Viva Glint survey exports or analysis outputs for the
   workflow being used.
 
+Install the complete plugin, not just its skill Markdown. A command-capable
+host with local file/process permissions is required to run analysis; a
+browser-chat GitHub connection alone is not sufficient.
+
 ## Install
 
 Add the EVE marketplace, then install the plugin:
@@ -33,6 +37,27 @@ Add the EVE marketplace, then install the plugin:
 /plugin marketplace add https://github.com/employee-experience/EVE-Plugin-Marketplace.git
 /plugin install eve-people-science@eve-plugin-marketplace
 ```
+
+### Local analysis runtime
+
+From the complete plugin or repository root, after approving environment
+creation and dependency downloads, run this PowerShell command:
+
+```powershell
+python .\scripts\local_runtime.py setup --env-dir "$HOME\.glintlabs\survey-runtime" --yes
+```
+
+This installs `requirements-runtime.txt` into an isolated environment outside
+the plugin, checks dependencies, and runs an installation-only smoke test of
+the real report pipeline. It does not modify global Python. Use the resulting
+environment interpreter for readiness checks and analysis. Repeat the smoke
+test after plugin/dependency updates.
+
+See [local runtime setup](skills/analyze-survey/references/local-runtime.md)
+for readiness commands, host limitations, safe updates, and troubleshooting.
+New analysis manifests identify the actual plugin content, available Git
+revision, Python, and dependency versions under `runtime_provenance`, without
+recording local paths or respondent data.
 
 ## Usage
 
@@ -140,13 +165,12 @@ are omitted or shown with an explanation.
 
 ## Analysis engine
 
-Default package:
+The supported setup installs `vivaglint` 0.1.1 from the exact public source
+commit below, plus the pinned Excel reader. This avoids relying on package
+indexes that only publish 0.1.0. Use `requirements-runtime.txt` inside the
+isolated environment; do not downgrade or substitute the analysis engine.
 
-```bash
-pip install "vivaglint[all]==0.1.1"
-```
-
-Development pin:
+Source pin:
 
 ```bash
 pip install "git+https://github.com/microsoft/vivaglint_py.git@761d847a8c8d38ff42c78b4501d761350c9fd03f#egg=vivaglint[all]"

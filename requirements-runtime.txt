@@ -1,0 +1,2 @@
+vivaglint[all] @ https://github.com/microsoft/vivaglint_py/archive/761d847a8c8d38ff42c78b4501d761350c9fd03f.zip
+openpyxl==3.1.5

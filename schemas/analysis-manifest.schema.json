@@ -18,6 +18,43 @@
         "source_commit": { "type": "string" }
       }
     },
+    "runtime_provenance": {
+      "type": "object",
+      "required": ["plugin", "files", "python", "platform", "dependencies"],
+      "properties": {
+        "plugin": {
+          "type": "object",
+          "required": ["name", "version", "git_commit", "git_dirty", "content_sha256"],
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" },
+            "git_commit": { "type": ["string", "null"] },
+            "git_dirty": { "type": ["boolean", "null"] },
+            "content_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+          },
+          "additionalProperties": false
+        },
+        "files": {
+          "type": "object",
+          "additionalProperties": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        },
+        "python": {
+          "type": "object",
+          "required": ["version", "implementation"],
+          "properties": {
+            "version": { "type": "string" },
+            "implementation": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "platform": { "type": "string" },
+        "dependencies": {
+          "type": "object",
+          "additionalProperties": { "type": ["string", "null"] }
+        }
+      },
+      "additionalProperties": false
+    },
     "input_profile": {
       "type": "object",
       "required": ["n_rows", "n_questions", "emp_id_col", "scale_points"],
