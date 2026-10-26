@@ -54,10 +54,11 @@ pre-merge manual testing. It does not authorize an agent to sign the CLA or
 bypass checks. All work already merged into destination main is retained;
 separate feature branches are not silently included.
 
-The follow-up adds a repeatable public-reader browser check to Site CI before
-artifact upload. Main-only deployment conditions, permissions, owner access
-and exact-revision publication approval remain unchanged. The two inherited
-audit failures remain disclosed in `validation.md`, not represented as passing.
+The follow-up adds a repeatable public-reader browser check as a separate
+pre-merge release check. Site CI, main-only deployment conditions, permissions,
+owner access and exact-revision publication approval remain unchanged. The
+browser check is not automatically enforced by CI. The two inherited audit
+failures remain disclosed in `validation.md`, not represented as passing.
 
 ## Intentional differences and additions
 
@@ -68,7 +69,7 @@ audit failures remain disclosed in `validation.md`, not represented as passing.
 2. Site CI sets its run working directory and npm cache lockfile to `website/`,
    pins Node 22.23.4, and verifies the migration inventory. It keeps the source
    lint, test, public build, and production audit checks, and adds a verified
-   public-reader build and browser check. PRs validate only. Main pushes upload `website/out` and
+   public-reader build. PRs validate only. Main pushes upload `website/out` and
    deploy it to GitHub Pages with job-scoped Pages/OIDC permissions. Studio,
    API routes, private previews, owner state and ignored local packages are not
    deployment artifacts. No credentials or protection bypass is added.
@@ -154,9 +155,9 @@ copied. Port conflicts fail rather than attaching to or stopping another server.
 The check covers ten routes at four widths, original image hashes, catalog
 cards, report titles/references, native keyboard disclosures, forced colors
 and cumulative colors-only section navigation. Evidence is written to ignored
-`test-results/reader-browser.json`. Site CI runs it against the actual exported
-reader before upload; it is scoped regression proof, not full accessibility
-certification.
+`test-results/reader-browser.json`. Run this separate release check against the
+actual exported reader before merging; the unchanged Site CI does not run it.
+It is scoped regression proof, not full accessibility certification.
 
 Open `http://127.0.0.1:3011/glintlabs/`. Check port 3011 first. Stop this foreground
 preview with Ctrl+C. An agent-started preview must be stopped through its

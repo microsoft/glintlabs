@@ -198,14 +198,15 @@ data was transferred. The temporary browser and reader preview are stopped
 after validation. These measurements did not merge, deploy or publish a report.
 The maintainer's later release authorization is recorded in `integration.md`.
 
-## Repeatable reader browser gate
+## Repeatable reader browser release check
 
 The browser proof is now checked in as `scripts/check-reader-browser.mjs` and
 run with `npm run pages:test:browser` after `npm run pages:build`. It owns its
 temporary preview and browser profile, fails on port conflicts, and stops only
 its own processes. It adds no dependency, application, source-asset, owner-state
-or approval changes. Site CI invokes it before the unchanged main-only artifact
-upload and deployment conditions.
+or approval changes. It is a separately run pre-merge release check, not a
+hosted CI step. Site CI and its main-only artifact upload/deployment conditions
+remain unchanged.
 
 On the Mac task worktree with Node 22.23.4, dependency restore, lint, all 286
 tests and the Pages build pass. The new browser command passes 40 route/viewport
@@ -214,8 +215,8 @@ states, all 18 original image hashes and private-route exclusion. It checks
 catalog illustrations, original heroes, title/reference typography and scoped
 axe, with no captured runtime, console, network or HTTP errors. The inventory
 still verifies 684 mappings, 678 identical and the same six documented
-differences; the workflow and package-script difference descriptions now include
-the browser gate. Dependencies and lockfile are unchanged.
+differences; the package-script difference description now includes the browser
+command. Dependencies, lockfile and the CI workflow are unchanged.
 
 Evidence is written to ignored `test-results/reader-browser.json`. Port 3011
 has no remaining test listener; the existing Home/Studio on port 3010 remain

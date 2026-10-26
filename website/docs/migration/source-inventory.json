@@ -14,8 +14,8 @@
       "source": ".github/workflows/site-ci.yml",
       "destination": ".github/workflows/site-ci.yml",
       "sourceSha256": "21ed094e6da10c12eb4e2c9b57bbee6305a1f8fafef492661dae0c7ea6951ba0",
-      "destinationSha256": "3da9d48bdb6ecd3f24b4e5b159a549b502eff7798b2cc8d5042b25fe6ab108f9",
-      "intentionalDifference": "Relocated to destination root with website working directory/npm cache, Node22.23.4 and inventory check; preserves source checks, adds verified static-reader build and browser regression check before the unchanged main-only GitHub Pages deployment."
+      "destinationSha256": "05f9d7cde492965cc151511e239446198ca4ca86f2ada28e6e84da1e01742b04",
+      "intentionalDifference": "Relocated to destination root with website working directory/npm cache, Node22.23.4 and inventory check; preserves source checks, adds verified static-reader build and explicitly authorized main-only GitHub Pages deployment."
     },
     {
       "source": ".gitignore",

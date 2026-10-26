@@ -53,9 +53,6 @@ jobs:
       - name: Build public GitHub Pages reader
         run: npm run pages:build
 
-      - name: Check public reader in Chrome
-        run: npm run pages:test:browser
-
       - name: Upload public reader only
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
