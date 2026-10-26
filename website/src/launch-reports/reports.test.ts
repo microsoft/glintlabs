@@ -25,7 +25,7 @@ test("all three required launch reports retain independently verified Word text 
     assert.equal(report.manifest.source.sha256, expected.source);
     assert.equal(report.manifest.reviewItems.length, 0);
     assert.ok(report.manifest.blocks.every(block => block.type !== "unsupported" && block.type !== "visual-placeholder"));
-    assert.equal(report.catalog.featured, false);
+    assert.equal(report.catalog.featured, true);
     assert.equal(report.privatePreview, false);
   }
 });
@@ -44,6 +44,59 @@ test("every source image remains byte-identical, with its Word dimensions and a 
     }
   }
   assert.equal(imageCount, 18);
+});
+
+test("P0 cards use existing Blue illustrations without replacing the original report heroes", async () => {
+  const expected: Record<string, { id: string; alt: string }> = {
+    "empowering-managers-for-an-ai-first-future": { id: "people", alt: "People illustration." },
+    "fighting-ai-slop-with-meta-cognition-around-ai": { id: "document-edit-text", alt: "Document edit text illustration." },
+    "tracking-the-rise-of-perceived-ai-value-at-work": { id: "data", alt: "Data illustration." },
+  };
+  for (const report of allReports) {
+    const { id, alt } = expected[report.slug];
+    const src = `/figma/illustrations/blue/${id}.png`;
+    assert.deepEqual(report.catalog.thumbnail, { src, alt, presentation: "illustration" });
+    const bytes = await readFile(new URL(`../../public${src}`, import.meta.url));
+    assert.equal(bytes.readUInt32BE(16), 512);
+    assert.equal(bytes.readUInt32BE(20), 512);
+    const hero = report.manifest.blocks.find(block => block.type === "image" && block.placement === "hero");
+    assert.ok(hero?.type === "image" && hero.dataUrl.startsWith(`/launch-report-assets/${report.slug}/`));
+    assert.match(hero.fileName, /\.jpeg$/);
+  }
+});
+
+test("all source reference lists receive reference styling, including reports without a References heading", async () => {
+  const expected: Record<string, string[]> = {
+    "empowering-managers-for-an-ai-first-future": ["block-62", "block-63", "block-64", "block-65"],
+    "fighting-ai-slop-with-meta-cognition-around-ai": ["block-78", "block-79", "block-80", "block-81"],
+    "tracking-the-rise-of-perceived-ai-value-at-work": ["block-81", "block-82", "block-83", "block-84", "block-85", "block-86"],
+  };
+  for (const report of allReports) {
+    assert.deepEqual([...report.referenceBlockIds], expected[report.slug]);
+    for (const id of report.referenceBlockIds) {
+      assert.equal(report.manifest.blocks.find(block => block.id === id)?.type, "paragraph");
+      assert.equal(report.textRuns[id][0].superscript, true);
+    }
+  }
+  const renderer = await readFile(new URL("../report-system/report-renderer.tsx", import.meta.url), "utf8");
+  const page = await readFile(new URL("./launch-report.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../report-system/report-renderer.module.css", import.meta.url), "utf8");
+  assert.match(page, /referenceBlockIds=\{report\.referenceBlockIds\}/);
+  assert.match(renderer, /startsReferences \? styles\.referencesStart/);
+  assert.match(renderer, /startsReferences \|\| \(block\.type === "heading" && block\.level <= 2\)/);
+  assert.match(css, /\.sectionStart:first-child:not\(\.referencesStart\)/);
+  assert.match(css, /\.referencesBlock \.paragraph,\s*\.referencesList \{[^}]*font-size: 12px;[^}]*line-height: 18px;/);
+});
+
+test("figure descriptions retain native disclosure semantics with a branded Fluent control", async () => {
+  const renderer = await readFile(new URL("../report-system/report-renderer.tsx", import.meta.url), "utf8");
+  const css = await readFile(new URL("../report-system/report-renderer.module.css", import.meta.url), "utf8");
+  assert.match(renderer, /<details className=\{`\$\{styles\.accessibleData\} \$\{styles\.figureDescription\}`\}>/);
+  assert.match(renderer, /<span>Read figure description<\/span>\s*<ChevronDown16Regular aria-hidden="true" \/>/);
+  assert.match(css, /\.figureDescription summary\s*\{[^}]*font-size: 14px;[^}]*font-weight: 400;[^}]*list-style: none;/);
+  assert.match(css, /\.figureDescription summary::-webkit-details-marker\s*\{\s*display: none;/);
+  assert.match(css, /\.figureDescription\[open\] summary svg\s*\{\s*transform: rotate\(180deg\);/);
+  assert.match(css, /@container report \(max-width: 600px\)\s*\{\s*\.figureDescription summary\s*\{\s*min-height: 44px;/);
 });
 
 test("Word link targets and linked wording survive removal of editorial formatting tags", () => {

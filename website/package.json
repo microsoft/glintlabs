@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "pages:build": "node --experimental-strip-types scripts/build-pages.mjs",
+    "pages:test:browser": "node --experimental-strip-types scripts/check-reader-browser.mjs",
     "pages:export": "node --experimental-strip-types scripts/export-pages-publication.ts",
     "pages:preview": "node scripts/serve-pages.mjs",
     "content:annual-report": "node --experimental-strip-types scripts/generate-annual-report-content.mjs",

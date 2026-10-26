@@ -126,7 +126,7 @@
 .sections a:hover,
 .sections a[aria-current="location"],
 .sections a.pastSection {
-  color: var(--report-visual, #9299f7);
+  color: var(--site-profile-icon, #3f66d1);
 }
 
 .sections a:focus-visible {
@@ -154,11 +154,11 @@
 }
 
 .dark .sections a {
-  color: rgb(246 246 248 / 82%);
+  color: #f6f6f8;
 }
 
 .dark .sections a:hover,
 .dark .sections a[aria-current="location"],
 .dark .sections a.pastSection {
-  color: var(--report-visual, #9299f7);
+  color: var(--annual-accent, #9299f7);
 }
