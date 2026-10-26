@@ -1,10 +1,16 @@
 import type { ReportCatalogItem } from "../app/reports/reports-data.ts";
 import { reportManifestSchema, type ReportBlock } from "../manifest/report-manifest.ts";
+import { publicationIllustrations } from "../publishing/featured-illustrations.ts";
 import { launchImageDescriptions } from "./image-descriptions.ts";
 import { launchReportSources } from "./source-data.ts";
 import { wordPlainText, wordTextRuns, type WordTextRun } from "./word-format.ts";
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const catalogIllustrations: Record<string, string> = {
+  "empowering-managers-for-an-ai-first-future": "people",
+  "fighting-ai-slop-with-meta-cognition-around-ai": "document-edit-text",
+  "tracking-the-rise-of-perceived-ai-value-at-work": "data",
+};
 
 const reports = launchReportSources.map(source => {
   const original = reportManifestSchema.parse(source.manifest);
@@ -21,6 +27,7 @@ const reports = launchReportSources.map(source => {
   const coverDetails = [`${month} ${day}, ${year} • Research Drop`, `${employees} Employees`];
   const textRuns: Record<string, WordTextRun[]> = {};
   const descriptions: Record<string, string> = {};
+  const referenceBlockIds = new Set<string>();
   let hero = true;
   const blocks: ReportBlock[] = [];
   for (const block of original.blocks) {
@@ -54,6 +61,7 @@ const reports = launchReportSources.map(source => {
       blocks.push({ ...block, type: "list-item", level: /^\[open sub-bullet\]/i.test(block.text) ? 1 : 0, text, links });
     } else {
       blocks.push({ ...block, type: "paragraph", text, links });
+      if (runs[0]?.superscript && /^\d+$/.test(runs[0].text)) referenceBlockIds.add(block.id);
     }
   }
   const firstBullet = original.blocks.find(block => "text" in block && /^\[open bullet\]/i.test(block.text));
@@ -67,6 +75,8 @@ const reports = launchReportSources.map(source => {
   });
   const image = manifest.blocks.find(block => block.type === "image");
   if (!image || image.type !== "image") throw new Error(`Missing source hero: ${source.slug}`);
+  const illustration = publicationIllustrations.find(item => item.id === catalogIllustrations[source.slug]);
+  if (!illustration) throw new Error(`Missing catalog illustration: ${source.slug}`);
   const catalog: ReportCatalogItem = {
     id: `launch-${source.slug}`,
     title,
@@ -75,10 +85,10 @@ const reports = launchReportSources.map(source => {
     badge: `${source.privatePreview ? "Private preview • " : ""}${month} ${year} • Research Drop`,
     employeeCount: Number(employees.replaceAll(",", "")),
     href: `/reports/${source.slug}`,
-    featured: false,
-    thumbnail: { src: image.dataUrl, alt: image.alt },
+    featured: true,
+    thumbnail: { src: illustration.src, alt: illustration.description, presentation: "illustration" },
   };
-  return { slug: source.slug, privatePreview: source.privatePreview, manifest, textRuns, descriptions, coverDetails, catalog, isoDate };
+  return { slug: source.slug, privatePreview: source.privatePreview, manifest, textRuns, descriptions, referenceBlockIds, coverDetails, catalog, isoDate };
 }).toSorted((left, right) => right.isoDate.localeCompare(left.isoDate));
 
 function canonicalSlug(slug: string) {

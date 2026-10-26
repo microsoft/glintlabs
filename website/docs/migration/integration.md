@@ -9,11 +9,13 @@ Studio remaining local. That later authorization supersedes the initial
 local-only hold. Approval is the maintainer's attestation in this migration
 conversation, not an independent legal or accessibility certification.
 
-- Source: `ericschroen_microsoft/glintlabs-site-staging`, merged main revision
+- Initial source: `ericschroen_microsoft/glintlabs-site-staging`, merged main revision
   `0ef824b3ad840a6a75d16261168bd0219f2ee510`, PR #2.
-- Destination base: `microsoft/glintlabs/main`,
+- Current source baseline: `7991c205b54b9efabffa1fdceb8208099ccf8848`, staging
+  PR #3, containing polish commit `9705f3c837a698f347fe327ab1f25028640f8a7a`.
+- Initial destination base: `microsoft/glintlabs/main`,
   `d1613e539d7a6fb1d8855f2cf1468495b262ae2e`.
-- Local branch: `users/bentankus/website-studio-migration`.
+- Initial migration branch: `users/bentankus/website-studio-migration`.
 - The destination maintainer approved the isolated `website/` workspace and
   preservation of the source website/Studio design, including the dark Annual
   Report. This is a scoped migration exception, not a change to the plugin's
@@ -27,6 +29,27 @@ data-visuals package, and source evidence remain byte-identical. New tests and
 export tooling are documented below. No original DOCX files are required for
 normal builds. No ignored local data, credentials, build outputs, browser saves,
 owner keys, or staged/published packages were transferred.
+
+## Launch-polish follow-up
+
+The follow-up branch `users/ericschroen/launch-report-polish` starts from the
+merged migration at `a95f33f4d4868e040ad6b82810b85fed78062e85`. It applies only
+the ten-file source delta between the initial import and current baseline:
+existing Blue catalog illustrations and Home featuring, branded native figure
+disclosures, Home-scale Research Drop titles, reference dividers/type, grid-seam
+alignment and colors-only cumulative section-navigation highlighting.
+
+Nine updated files match the new source exactly. The updated publication test
+also retains the migration's approved-export integrity test. Inventory source
+hashes now refer to the current source baseline; its original destination base
+still records the initial import. The six documented migration differences,
+build/export tooling, `/glintlabs/` handling, root plugin/Python files, original
+report content/assets, dependency lockfile and owner/approval safeguards remain.
+The static reader's source-revision marker advances to the same baseline.
+
+This follow-up is authorized for a draft PR and Ben's review only, not merge or
+deployment. A later approved main merge would use the existing Pages workflow;
+neither that workflow nor its deployment conditions are changed here.
 
 ## Intentional differences and additions
 
@@ -71,7 +94,10 @@ The exact source revision and current validation supersede historical handoff
 commits/test counts and obsolete UI instructions. Do not revert the current
 experience to match older registers.
 
-All three direct launch reports remain in Reports, not automatically Featured.
+All three direct launch reports remain in Reports and are explicitly featured
+on Home in the current source baseline, using the existing Blue illustrations.
+This does not change other reports' Reports-by-default behavior: featuring a
+Studio publication still requires its separate catalog option and approval.
 November's text and images are explicitly cleared for public repository use;
 its earlier private-only restriction is superseded. April retains the selected
 April 14, 2025 header date. The February alias stays supported without a second

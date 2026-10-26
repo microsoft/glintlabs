@@ -1,10 +1,12 @@
 .artwork { position: absolute; z-index: 0; inset: 0; overflow: clip; pointer-events: none; }
 .artwork img { position: absolute; max-width: none; }
 .grid { position: absolute; right: 0; bottom: 0; width: 927px; height: 1339px; background: var(--site-hero-grid) center / contain no-repeat; }
+/* Align the exported SVG's horizontal rows with the hero/Featured seam. */
+.home .grid { bottom: -103.5px; }
 .reports .grid { background-image: url("/figma/site-canonical/reports/union.svg"); }
 .tools .grid { background-image: url("/figma/site-canonical/tools/union.svg"); }
 .about .grid { background-image: url("/figma/site-canonical/about/union.svg"); }
-.section .grid { top: 0; bottom: auto; background-image: url("/figma/site-canonical/home/union1.svg"); }
+.section .grid { top: -102.502px; bottom: auto; background-image: url("/figma/site-canonical/home/union1.svg"); }
 .diagonalGrid { right: 0; bottom: 0; }
 .glowTop, .glowLeft, .glowBottom { position: absolute; display: block; background-position: center; background-repeat: no-repeat; background-size: contain; }
 .home .glowTop { top: -1256px; left: -1256px; width: 2512px; height: 2512px; background-image: var(--site-hero-glow-top); }

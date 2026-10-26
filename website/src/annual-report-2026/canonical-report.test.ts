@@ -416,10 +416,25 @@ test("Studio leave dialog has one hairline divider and a subtle destructive acti
   assert.match(studio, /className=\{`\$\{styles\.secondaryAction\} \$\{styles\.leaveWithoutSaving\}`\}[\s\S]*?onClick=\{returnToStart\}/);
 });
 
-test("report side navigation highlights the current section, including the final section", () => {
+test("report side navigation keeps passed sections highlighted alongside the current section using colors only", () => {
   const sideNavStyles = readFileSync(new URL("../report-system/report-side-nav.module.css", import.meta.url), "utf8");
-  assert.match(sideNavStyles, /\.sections a\[aria-current="location"\],[\s\S]*?\.sections a\.pastSection \{\s*color: var\(--report-visual, #9299f7\);/);
-  assert.match(sideNavStyles, /\.dark \.sections a\[aria-current="location"\],[\s\S]*?\.dark \.sections a\.pastSection \{\s*color: var\(--report-visual, #9299f7\);/);
+  assert.match(sideNavStyles, /\.sections a\[aria-current="location"\],\s*\.sections a\.pastSection \{\s*color: var\(--site-profile-icon, #3f66d1\);\s*\}/);
+  assert.match(sideNavStyles, /\.dark \.sections a\[aria-current="location"\],\s*\.dark \.sections a\.pastSection \{\s*color: var\(--annual-accent, #9299f7\);/);
+  assert.match(sideNavStyles, /\.sections a \{\s*color: #000;/);
+  assert.match(sideNavStyles, /\.dark \.sections a \{\s*color: #f6f6f8;/);
+  const sideNav = readFileSync(new URL("../report-system/report-side-nav.tsx", import.meta.url), "utf8");
+  assert.match(sideNav, /index < activeSectionIndex \? styles\.pastSection : undefined/);
+  assert.doesNotMatch(sideNavStyles, /(?:color-mix|inset 3px|font-weight: 600|padding: 6px|border-inline-start)/);
+  assert.match(sideNavStyles, /\.sections a:focus-visible \{[^}]*outline: 3px solid var\(--focus\);/);
+});
+
+test("Research Drop hero titles match Home's scale without changing the Annual Report", () => {
+  const rendererStyles = readFileSync(new URL("../report-system/report-renderer.module.css", import.meta.url), "utf8");
+  const homeHeroStyles = readFileSync(new URL("../app/_components/annual-study-hero.module.css", import.meta.url), "utf8");
+  assert.match(homeHeroStyles, /\.copy > h1 \{[^}]*font: 420 48px\/59px/);
+  assert.match(homeHeroStyles, /@media \(max-width: 600px\)[\s\S]*font-size: 40px; line-height: 48px;/);
+  assert.match(rendererStyles, /\.report:not\(\.annualReport\) \.coverTitle \{\s*font-size: 48px;\s*line-height: 59px;/);
+  assert.match(rendererStyles, /@container report \(max-width: 600px\) \{\s*\.report:not\(\.annualReport\) \.coverTitle \{\s*font-size: 40px;\s*line-height: 48px;/);
 });
 
 test("annual report sticky side navigation keeps 60px of clearance above the footer", () => {

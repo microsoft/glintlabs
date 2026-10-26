@@ -28,9 +28,10 @@ test("all palette decoration sources are persistent non-empty local assets", () 
   }
 });
 
-test("the Featured grid stays top-anchored without changing other artwork or intercepting input", () => {
+test("Home grid rows meet at the hero/Featured seam without changing other artwork or intercepting input", () => {
   const artwork = readFileSync(new URL("./_components/site-artwork.module.css", import.meta.url), "utf8");
-  assert.match(artwork, /\.section \.grid \{ top: 0; bottom: auto; background-image: url\("\/figma\/site-canonical\/home\/union1\.svg"\); \}/);
+  assert.match(artwork, /\.home \.grid \{ bottom: -103\.5px; \}/);
+  assert.match(artwork, /\.section \.grid \{ top: -102\.502px; bottom: auto; background-image: url\("\/figma\/site-canonical\/home\/union1\.svg"\); \}/);
   assert.match(artwork, /\.grid \{[^}]*right: 0; bottom: 0;/);
   assert.match(artwork, /\.artwork \{[^}]*overflow: clip; pointer-events: none;/);
 });

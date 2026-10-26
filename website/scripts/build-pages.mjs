@@ -172,7 +172,7 @@ export function pagesSitePath(value: string) {
     await writeFile(path.join(output, ".nojekyll"), "");
     await writeFile(path.join(output, "release.json"), JSON.stringify({
       revision: process.env.GITHUB_SHA ?? null,
-      sourceRevision: "0ef824b3ad840a6a75d16261168bd0219f2ee510",
+      sourceRevision: "7991c205b54b9efabffa1fdceb8208099ccf8848",
       delivery: "static-reader",
     }, null, 2));
     await verifyPages();

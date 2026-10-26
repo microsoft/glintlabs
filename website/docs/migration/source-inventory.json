@@ -1,6 +1,6 @@
 {
   "sourceRepository": "ericschroen_microsoft/glintlabs-site-staging",
-  "sourceCommit": "0ef824b3ad840a6a75d16261168bd0219f2ee510",
+  "sourceCommit": "7991c205b54b9efabffa1fdceb8208099ccf8848",
   "destinationBase": "d1613e539d7a6fb1d8855f2cf1468495b262ae2e",
   "files": [
     {
@@ -3653,8 +3653,8 @@
     {
       "source": "src/annual-report-2026/canonical-report.test.ts",
       "destination": "website/src/annual-report-2026/canonical-report.test.ts",
-      "sourceSha256": "bf421e1c26a4b5b4fe3e02c37ea878a0f3e49eae8e4b0318a9a11cd554baa161",
-      "destinationSha256": "bf421e1c26a4b5b4fe3e02c37ea878a0f3e49eae8e4b0318a9a11cd554baa161",
+      "sourceSha256": "523b6ea2cc284516e5cb58e76d118082d50aea5a7f207c6f2c3035d7f66ab7e2",
+      "destinationSha256": "523b6ea2cc284516e5cb58e76d118082d50aea5a7f207c6f2c3035d7f66ab7e2",
       "intentionalDifference": ""
     },
     {
@@ -3751,8 +3751,8 @@
     {
       "source": "src/app/_components/site-artwork.module.css",
       "destination": "website/src/app/_components/site-artwork.module.css",
-      "sourceSha256": "e0de8b28a15621ce9edf5b82ad70477711122656737fbea123c69d96b16e2111",
-      "destinationSha256": "e0de8b28a15621ce9edf5b82ad70477711122656737fbea123c69d96b16e2111",
+      "sourceSha256": "3d4c69f04f0737ad21fc7d8b5d11bb79b8d0f8f515a0890b84aad4ba49022614",
+      "destinationSha256": "3d4c69f04f0737ad21fc7d8b5d11bb79b8d0f8f515a0890b84aad4ba49022614",
       "intentionalDifference": ""
     },
     {
@@ -4052,8 +4052,8 @@
     {
       "source": "src/app/site-palette.test.ts",
       "destination": "website/src/app/site-palette.test.ts",
-      "sourceSha256": "a300e66d4065014b606923925ac9792868dff810516920e328a0ca5710c54da9",
-      "destinationSha256": "a300e66d4065014b606923925ac9792868dff810516920e328a0ca5710c54da9",
+      "sourceSha256": "fde336bfe353c256889a2f71720e7d8f3cfb006a1330dc65ec93fd0ba1d92266",
+      "destinationSha256": "fde336bfe353c256889a2f71720e7d8f3cfb006a1330dc65ec93fd0ba1d92266",
       "intentionalDifference": ""
     },
     {
@@ -4360,22 +4360,22 @@
     {
       "source": "src/launch-reports/launch-report.tsx",
       "destination": "website/src/launch-reports/launch-report.tsx",
-      "sourceSha256": "1d10fd2a858288894f4d9e08b9ff631c893c5ff0718e3f5a6a573f03ed499a8a",
-      "destinationSha256": "1d10fd2a858288894f4d9e08b9ff631c893c5ff0718e3f5a6a573f03ed499a8a",
+      "sourceSha256": "d712770fd8356776ab2d0a637e377136a8c80ee3c5de402b50bcd74e8e4e1afa",
+      "destinationSha256": "d712770fd8356776ab2d0a637e377136a8c80ee3c5de402b50bcd74e8e4e1afa",
       "intentionalDifference": ""
     },
     {
       "source": "src/launch-reports/reports.test.ts",
       "destination": "website/src/launch-reports/reports.test.ts",
-      "sourceSha256": "8d10295779082022d5c93b181cce05bbe0f743a93da4fd76d68859ab02d9a804",
-      "destinationSha256": "8d10295779082022d5c93b181cce05bbe0f743a93da4fd76d68859ab02d9a804",
+      "sourceSha256": "6dfc354d95b1d7d670f1e42a312a856670a83f2deb9e993b6574f3e2cfbc4de6",
+      "destinationSha256": "6dfc354d95b1d7d670f1e42a312a856670a83f2deb9e993b6574f3e2cfbc4de6",
       "intentionalDifference": ""
     },
     {
       "source": "src/launch-reports/reports.ts",
       "destination": "website/src/launch-reports/reports.ts",
-      "sourceSha256": "61a3c72dae0a5a5baa0dd598f02eceb0a3bfe171011aa963cef342a70218f3f3",
-      "destinationSha256": "61a3c72dae0a5a5baa0dd598f02eceb0a3bfe171011aa963cef342a70218f3f3",
+      "sourceSha256": "994ed10ecc42c729a52b287a5dca7656d4be2e0f21d12020435c96602970c613",
+      "destinationSha256": "994ed10ecc42c729a52b287a5dca7656d4be2e0f21d12020435c96602970c613",
       "intentionalDifference": ""
     },
     {
@@ -4584,8 +4584,8 @@
     {
       "source": "src/publishing/publication-preview.test.ts",
       "destination": "website/src/publishing/publication-preview.test.ts",
-      "sourceSha256": "7b15c530004ea20eb65722b6ea531777035a0bc9ea676108b4b3252ea543310a",
-      "destinationSha256": "01cefadbe90cac94e628f79557d9d3839077fdcb79c49ca549a0b6df911f60bc",
+      "sourceSha256": "3ae9fc599384ac299041054983d66ea3bec75c61d778e6cc8d079efc79b37f11",
+      "destinationSha256": "a5a0457b3f5773e65bba99455fe6451644e384624750198465d0fc16c2d5ed43",
       "intentionalDifference": "Adds one test for explicit exact-revision approved export, staged-only rejection, declared-assets-only copying and tamper detection; all source tests/assertions retained."
     },
     {
@@ -4647,22 +4647,22 @@
     {
       "source": "src/report-system/report-renderer.module.css",
       "destination": "website/src/report-system/report-renderer.module.css",
-      "sourceSha256": "0e507e70c84e74ad84569c35acc10f520bbdbabe0c45b60a8ba6dab16babd9e3",
-      "destinationSha256": "0e507e70c84e74ad84569c35acc10f520bbdbabe0c45b60a8ba6dab16babd9e3",
+      "sourceSha256": "2f87ac1839f8a7735beb5b2ead6e4fb33edff245d971bdab0ab6d39561c98668",
+      "destinationSha256": "2f87ac1839f8a7735beb5b2ead6e4fb33edff245d971bdab0ab6d39561c98668",
       "intentionalDifference": ""
     },
     {
       "source": "src/report-system/report-renderer.tsx",
       "destination": "website/src/report-system/report-renderer.tsx",
-      "sourceSha256": "9e579b1b626442aa1f58295de7f779bc65568669974836149999c153f773dd55",
-      "destinationSha256": "9e579b1b626442aa1f58295de7f779bc65568669974836149999c153f773dd55",
+      "sourceSha256": "862d43be55da72ef46d10dad23395372be76513cefac999a68410138eb5fabf8",
+      "destinationSha256": "862d43be55da72ef46d10dad23395372be76513cefac999a68410138eb5fabf8",
       "intentionalDifference": ""
     },
     {
       "source": "src/report-system/report-side-nav.module.css",
       "destination": "website/src/report-system/report-side-nav.module.css",
-      "sourceSha256": "68c572c3cc587f45090b54d81e269f99977e58093cc8f111b31919c2b903ee5a",
-      "destinationSha256": "68c572c3cc587f45090b54d81e269f99977e58093cc8f111b31919c2b903ee5a",
+      "sourceSha256": "f8e58ca2be7d42ab2c8899b0689d579db34c19ab5f1dd64fb4b54e1cc290d8e3",
+      "destinationSha256": "f8e58ca2be7d42ab2c8899b0689d579db34c19ab5f1dd64fb4b54e1cc290d8e3",
       "intentionalDifference": ""
     },
     {

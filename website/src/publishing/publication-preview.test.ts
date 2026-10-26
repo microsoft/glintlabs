@@ -75,10 +75,31 @@ test("Home and Reports consume the validated catalog, with Home limited to featu
   assert.match(reports, /<ReportsCatalog reports=\{reports\} \/>/);
 });
 
+test("all three P0 reports are featured on Home while retaining one illustrated Reports entry each", async () => {
+  const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-p0-featured-"));
+  try {
+    const catalog = await loadReportCatalog({ rootDirectory });
+    const featured = catalog.filter(report => report.featured);
+    assert.deepEqual(featured.map(report => report.href), [
+      "/reports/fighting-ai-slop-with-meta-cognition-around-ai",
+      "/reports/empowering-managers-for-an-ai-first-future",
+      "/reports/tracking-the-rise-of-perceived-ai-value-at-work",
+    ]);
+    for (const report of featured) {
+      assert.equal(catalog.filter(item => item.id === report.id).length, 1);
+      assert.ok(report.thumbnail);
+      assert.equal(report.thumbnail.presentation, "illustration");
+      assert.match(report.thumbnail.src, /^\/figma\/illustrations\/blue\//);
+    }
+  } finally { await rm(rootDirectory, { recursive: true, force: true }); }
+});
+
 test("isolated Word-to-website rehearsal keeps drafts off the catalog until exact-revision approval", async () => {
   const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-word-rehearsal-"));
   try {
-    const originalCatalogIds = (await loadReportCatalog({ rootDirectory })).map(report => report.id);
+    const originalCatalog = await loadReportCatalog({ rootDirectory });
+    const originalCatalogIds = originalCatalog.map(report => report.id);
+    const originalFeaturedCount = originalCatalog.filter(report => report.featured).length;
     const docx = new JSZip();
     docx.file("word/document.xml", `<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>
       <w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>Synthetic launch rehearsal</w:t></w:r></w:p>
@@ -122,7 +143,7 @@ test("isolated Word-to-website rehearsal keeps drafts off the catalog until exac
     }, { rootDirectory });
     const reports = await loadReportCatalog({ rootDirectory });
     const featured = reports.filter((report) => report.featured);
-    assert.equal(featured.length, 1);
+    assert.equal(featured.length, originalFeaturedCount + 1);
     assert.equal(featured[0].href, "/reports/synthetic-launch-rehearsal");
     assert.equal(featured[0].thumbnail?.src, `/reports-assets/${reportId}/${imageHash}.png`);
     assert.equal(reports.length, originalCatalogIds.length + 1);
@@ -246,7 +267,9 @@ async function syntheticZip(
 test("only explicit exact-revision approval enters the website; repeat approval is idempotent and later updates require review", async () => {
   const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-approval-"));
   try {
-    const originalCatalogIds = (await loadReportCatalog({ rootDirectory })).map(report => report.id);
+    const originalCatalog = await loadReportCatalog({ rootDirectory });
+    const originalCatalogIds = originalCatalog.map(report => report.id);
+    const originalFeaturedIds = originalCatalog.filter(report => report.featured).map(report => report.id);
     const { preview: staged } = await ingestUnsignedPublicationPreview(await syntheticZip(), { rootDirectory });
     assert.deepEqual(await listApprovedPublications({ rootDirectory }), []);
     assert.deepEqual((await loadReportCatalog({ rootDirectory })).map((report) => report.id), originalCatalogIds);
@@ -259,7 +282,7 @@ test("only explicit exact-revision approval enters the website; repeat approval 
     const catalog = await loadReportCatalog({ rootDirectory });
     assert.equal(catalog.length, originalCatalogIds.length + 1);
     assert.equal(catalog[0].featured, false);
-    assert.equal(catalog.filter((report) => report.featured).length, 0);
+    assert.deepEqual(catalog.filter(report => report.featured).map(report => report.id), originalFeaturedIds);
     assert.equal(catalog[0].href, "/reports/synthetic-package-test");
     assert.equal(catalog[0].thumbnail?.src, `/reports-assets/${reportId}/${imageHash}.png`);
     assert.equal(approved.publication.approval.packageFingerprint, staged.packageFingerprint);
@@ -301,7 +324,9 @@ test("employee count survives staging and exact-revision approval into preview a
 test("catalog features expire after the inclusive end date without hiding the report", async () => {
   const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-catalog-feature-"));
   try {
-    const originalCatalogCount = (await loadReportCatalog({ rootDirectory })).length;
+    const originalCatalog = await loadReportCatalog({ rootDirectory });
+    const originalCatalogCount = originalCatalog.length;
+    const originalFeaturedIds = originalCatalog.filter(report => report.featured).map(report => report.id);
     const { preview } = await ingestUnsignedPublicationPreview(await syntheticZip(undefined, undefined, {
       catalog: { featured: true, featuredUntil: "2026-10-20" },
       thumbnail: { assetPath: `assets/${imageHash}.png`, alt: "Test illustration", presentation: "illustration" },
@@ -315,7 +340,8 @@ test("catalog features expire after the inclusive end date without hiding the re
     assert.equal(onEndDate[0].thumbnail?.presentation, "illustration");
     const expired = await loadReportCatalog({ rootDirectory, now: new Date("2026-10-21T00:00:00Z") });
     assert.equal(expired.length, originalCatalogCount + 1);
-    assert.equal(expired.some((report) => report.featured), false);
+    assert.equal(expired.find(report => report.id === reportId)?.featured, false);
+    assert.deepEqual(expired.filter(report => report.featured).map(report => report.id), originalFeaturedIds);
     assert.equal(expired.find((report) => report.id === "annual-report-2026")?.href, "/annual-report-2026");
     const previewItem = publicationCatalogItem(preview.publication, { preview: true, now: new Date("2026-10-20T00:00:00Z") });
     assert.equal(previewItem.badge, "May 2026 \u2022 Test fixture");

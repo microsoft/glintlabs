@@ -7,7 +7,7 @@ const root = new URL("../../", import.meta.url);
 const inventory = JSON.parse(
   await readFile(new URL("../docs/migration/source-inventory.json", import.meta.url), "utf8"),
 );
-assert.equal(inventory.sourceCommit, "0ef824b3ad840a6a75d16261168bd0219f2ee510");
+assert.equal(inventory.sourceCommit, "7991c205b54b9efabffa1fdceb8208099ccf8848");
 assert.equal(inventory.files.length, 684);
 const destinations = new Set();
 let unchanged = 0;

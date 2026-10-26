@@ -150,6 +150,54 @@ browser assertions but failed writing an absolute Windows output path; that
 evidence-output bug was corrected and the complete run repeated successfully.
 The original runtime harness and evidence were preserved.
 
+## Mac launch-polish follow-up
+
+This follow-up applies the ten-file staging delta through
+`7991c205b54b9efabffa1fdceb8208099ccf8848` onto the merged migration at
+`a95f33f4d4868e040ad6b82810b85fed78062e85`, on the separate branch
+`users/ericschroen/launch-report-polish`. The preceding Windows measurements
+remain historical migration evidence. These new local results use Node
+22.23.4 and npm 10.9.9, without dependency or lockfile changes.
+
+| Check | Measured result |
+| --- | --- |
+| `npm ci` | Pass from the unchanged lockfile; zero audit findings |
+| `node scripts/verify-migration.mjs` | Pass; 684 mappings, 678 byte-identical to the current source baseline and the same six documented migration differences |
+| `npm test` | 286 passed, zero failures/skips, including the unchanged approved-export integrity test |
+| `npm run lint` | Pass |
+| Clean public `npm run build` | Pass, including type checking; no unsigned-preview or owner bypass |
+| `NEXT_DIST_DIR=.next-local-studio npm run studio:build` | Pass, including type checking; no owner bypass or tracked configuration rewrite |
+| `npm audit --omit=dev --audit-level=high` | Zero vulnerabilities |
+| `npm run pages:build` | Pass; ten required routes, all 18 source-image hashes, URL prefixing and private/server-route exclusion verified |
+| Reader `release.json` | Current source revision matches the inventory; local CI revision is null |
+| Original migration infrastructure | Workflow, package manifests, lockfile, tracing configuration, preview TypeScript configuration and approved-export implementation unchanged |
+
+The temporary loopback Pages preview passes 40 browser states: ten routes at
+320/390/768/1440 pixels. All visible images load; intentionally hidden lazy
+decorations are checked by HTTP rather than waiting for an invisible image to
+decode. All 18 launch images also match their source hashes over HTTP. Five
+private/Studio/API paths return 404.
+
+Home and Reports each show the three original launch entries once, using
+128-by-128 contained Blue illustrations and project-prefixed links. Home grid
+rows meet at the hero/Featured seam. Original report heroes are retained;
+Research Drop titles use the Home scale, and all original reference lists have
+the compact typography and one divider. Twelve native-disclosure states pass
+Enter/Space, focus, minimum target size, exact description wording and
+forced-colors checks. Sixteen desktop navigation states across the three
+Research Drops and Annual Report pass real keyboard/scroll tracking, cumulative
+highlighting and colors-only styling. Scoped card/disclosure/navigation axe
+checks report no violations; no runtime, console-error, failed-network or
+HTTP-error events are captured.
+
+Evidence is session-local `official-browser-results.json`,
+`verify-official-polish.mjs` and `official-*.log`; it is not a hosted result.
+The existing staging server remains untouched: Home/Studio return 200 and its
+unauthenticated owner endpoint returns 401. No owner state or local publication
+data was transferred. The temporary browser and reader preview are stopped
+after validation. This follow-up prepares a draft PR only, not a merge,
+deployment or report publication.
+
 ## Remaining limitations and delivery verification
 
 The two inherited source-check failures above remain unmodified and are not

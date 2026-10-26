@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ChevronDown16Regular } from "@fluentui/react-icons/svg/chevron-down";
 import type { ElementType, ReactNode } from "react";
 
 import { SiteNavigation } from "../app/_components/site-navigation";
@@ -51,6 +52,7 @@ type ReportRendererProps = {
   manifest: ReportManifest;
   mode?: "edit" | "read";
   previewViewport?: boolean;
+  referenceBlockIds?: ReadonlySet<string>;
   onSelectBlock?: (blockId: string) => void;
   reportStyle?: ReportStyle;
   selectedBlockId?: string;
@@ -80,7 +82,7 @@ function isResearchBriefHeading(block: ReportBlock) {
 
 function isReferencesHeading(block: ReportBlock) {
   return block.type === "heading" &&
-    /^references\s*:?\s*$/i.test(block.text.trim());
+    /^(?:references|resources)\s*:?\s*$/i.test(block.text.trim());
 }
 
 function reportReferenceMarkers(blocks: readonly ReportBlock[], hiddenBlockIds?: ReadonlySet<string>) {
@@ -349,8 +351,11 @@ function renderBlock(
           ) : null}
           {props.figureDescriptions?.[block.id] ? (
             <figcaption>
-              <details className={styles.accessibleData}>
-                <summary>Read figure description</summary>
+              <details className={`${styles.accessibleData} ${styles.figureDescription}`}>
+                <summary>
+                  <span>Read figure description</span>
+                  <ChevronDown16Regular aria-hidden="true" />
+                </summary>
                 <p className={styles.paragraph}>{props.figureDescriptions[block.id]}</p>
               </details>
             </figcaption>
@@ -509,6 +514,7 @@ function reportContent(
   let briefHeadingLevel: number | undefined;
   let briefHeadingIndex: number | undefined;
   let referencesHeadingLevel: number | undefined;
+  let previousBlockWasReference = false;
 
   for (let index = 0; index < blocks.length; index += 1) {
     const block = blocks[index];
@@ -527,13 +533,17 @@ function reportContent(
         briefHeadingLevel = undefined;
       }
     }
+    const isReference = referencesHeadingLevel !== undefined || props.referenceBlockIds?.has(block.id) === true;
+    const startsReferences = isReference && !previousBlockWasReference;
+    previousBlockWasReference = isReference;
     if (block.type !== "list-item") {
       briefHeadingIndex = isResearchBriefHeading(block) ? content.length : undefined;
       const blockClassName = [
         styles.reportBlock,
-        referencesHeadingLevel === undefined ? "" : styles.referencesBlock,
+        isReference ? styles.referencesBlock : "",
+        startsReferences ? styles.referencesStart : "",
         props.highlightedBlockId === block.id ? styles.highlighted : "",
-        block.type === "heading" && block.level <= 2
+        startsReferences || (block.type === "heading" && block.level <= 2)
           ? styles.sectionStart
           : "",
       ]
@@ -546,7 +556,7 @@ function reportContent(
           id={`report-block-${block.id}`}
           key={block.id}
         >
-          {props.blockOverrides?.[block.id] ?? renderBlock(block, props, referencesHeadingLevel !== undefined, referenceMarkers)}
+          {props.blockOverrides?.[block.id] ?? renderBlock(block, props, isReference, referenceMarkers)}
         </div>,
       );
       continue;
@@ -561,7 +571,7 @@ function reportContent(
 
     const list = (
       <ul
-        className={`${styles.list} ${briefHeadingLevel === undefined ? "" : styles.briefList} ${referencesHeadingLevel === undefined ? "" : styles.referencesList}`}
+        className={`${styles.list} ${briefHeadingLevel === undefined ? "" : styles.briefList} ${isReference ? styles.referencesList : ""}`}
         key={`list-${items[0].id}`}
       >
         {items.map((item) => (
@@ -575,7 +585,7 @@ function reportContent(
             title={`${item.source.part} · item ${item.source.index}`}
           >
             <span>
-              {props.textOverrides?.[item.id] ?? <RichText block={item} reference={referencesHeadingLevel !== undefined} referenceMarkers={referenceMarkers} />}
+              {props.textOverrides?.[item.id] ?? <RichText block={item} reference={isReference} referenceMarkers={referenceMarkers} />}
             </span>
           </li>
         ))}
