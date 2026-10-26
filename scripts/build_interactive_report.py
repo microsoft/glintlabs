@@ -275,10 +275,13 @@ def bucket_numeric(frame: pd.DataFrame, protected: set[str]) -> dict[str, list[s
 
 def metrics(
     frame: pd.DataFrame, questions: list[str], scale: int
-) -> list[list[float | int]]:
+) -> list[list[float | int | None]]:
     rows = []
     for question in questions:
         values = frame[question].dropna()
+        if len(values) < MIN_N:
+            rows.append([None] * 5)
+            continue
         rows.append(
             [
                 glint_score(float(values.mean()), scale),
@@ -497,10 +500,13 @@ def cycle_cube(
         }
     cycles = ordered_cycle_names(frame, cycle_col, confirmed_order)
 
-    def cycle_metrics(source: pd.DataFrame) -> list[list[float | int]]:
+    def cycle_metrics(source: pd.DataFrame) -> list[list[float | int | None]]:
         rows = []
         for question in questions:
             values = source[question].dropna()
+            if len(values) < MIN_N:
+                rows.append([None] * 3)
+                continue
             rows.append(
                 [
                     glint_score(float(values.mean()), scale),
@@ -812,9 +818,9 @@ def factor_cube(
         return {
             "status": status,
             "reason": reason,
-            "n": int(source["__employee_id"].nunique()),
-            "completeN": int(complete["__employee_id"].nunique()),
-            "responseRows": int(len(source)),
+            "n": None if status == "suppressed" else int(source["__employee_id"].nunique()),
+            "completeN": None if status == "suppressed" else int(complete["__employee_id"].nunique()),
+            "responseRows": None if status == "suppressed" else int(len(source)),
             "minimumN": minimum,
             "factorCount": factor_count,
             "rows": [],
@@ -908,7 +914,9 @@ def factor_cube(
         "factorCount": factor_count,
         "rows": overall_clean,
     }
-    if overall_clean and len(overall_clean) < expected_rows:
+    if overall["completeN"] < minimum:
+        overall = fit(frame)
+    elif overall_clean and len(overall_clean) < expected_rows:
         overall = fit(frame)
 
     total = sum(frame[attribute].nunique(dropna=True) for attribute in attributes)
@@ -1003,19 +1011,20 @@ def factor_cube(
     }
 
 
-def input_limitations(config_path: Path, survey_path: Path, output: Path) -> dict[str, Any]:
+def input_limitations(
+    config_path: Path, survey_path: Path, output: Path,
+    analysis_limitations: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     audit_path = config_path.parent / "preparation-audit.json"
     export_path = output / "input-limitations.txt"
-    if not audit_path.exists():
-        export_path.unlink(missing_ok=True)
-        return {"audited": False, "entries": []}
-    audit = json.loads(audit_path.read_text(encoding="utf-8"))
-    if audit.get("version") != 1 or audit.get("normalized_sha256") != file_sha256(survey_path):
+    audited = audit_path.exists()
+    audit = json.loads(audit_path.read_text(encoding="utf-8")) if audited else {}
+    if audited and (audit.get("version") != 1 or audit.get("normalized_sha256") != file_sha256(survey_path)):
         raise ValueError("Input preparation audit is unsupported or does not match the normalized survey.")
-    records = audit.get("limitations")
+    records = audit.get("limitations", [] if not audited else None)
     if not isinstance(records, list):
         raise ValueError("Input preparation audit must contain a limitations list.")
-    cycle_order = audit.get("cycle_order")
+    cycle_order = audit.get("cycle_order", [])
     if (
         not isinstance(cycle_order, list)
         or any(not isinstance(value, str) or not value for value in cycle_order)
@@ -1023,7 +1032,7 @@ def input_limitations(config_path: Path, survey_path: Path, output: Path) -> dic
     ):
         raise ValueError("Input preparation audit needs the confirmed cycle chronology.")
     entries = []
-    for record in records:
+    for record in [*records, *(analysis_limitations or [])]:
         if (
             not isinstance(record, dict) or not isinstance(record.get("code"), str)
             or record["code"] not in PREPARATION_REASONS
@@ -1042,7 +1051,10 @@ def input_limitations(config_path: Path, survey_path: Path, output: Path) -> dic
         )
     else:
         export_path.unlink(missing_ok=True)
-    return {"audited": True, "entries": entries, "cycle_order": cycle_order}
+    result = {"audited": audited, "entries": entries}
+    if audited:
+        result["cycle_order"] = cycle_order
+    return result
 
 
 def html_page(data: dict[str, Any]) -> str:
@@ -1205,7 +1217,7 @@ def attrition_alert_payload(
     path: Path,
     questions: list[str],
     segments: dict[str, Any],
-    overall: list[list[float | int]],
+    overall: list[list[float | int | None]],
     minimum_category_n: int,
 ) -> dict[str, Any]:
     frame = pd.read_csv(
@@ -1255,7 +1267,10 @@ def attrition_alert_payload(
                 for record in item_frame.to_dict("records"):
                     value = str(record["attribute_value"])
                     segment = segments[attribute]["values"].get(value)
-                    if not segment:
+                    if (
+                        not segment or segment["items"][item_index][0] is None
+                        or overall[item_index][0] is None
+                    ):
                         continue
                     group_score = float(segment["items"][item_index][0])
                     company_score = float(overall[item_index][0])
@@ -1737,6 +1752,7 @@ def summary_context(
             }
             for index, question in enumerate(questions)
             if index < len(old) and index < len(new)
+            and old[index][0] is not None and new[index][0] is not None
         ]
         changes.update(
             {
@@ -1932,9 +1948,13 @@ def main() -> int:
     manifest = json.loads((output / "analysis-manifest.json").read_text(encoding="utf-8"))
     if manifest["repeatability_check"]["status"] != "passed":
         raise ValueError("Interactive report requires a passed repeatability check.")
+    if "verification_dir" in manifest["repeatability_check"]:
+        manifest["repeatability_check"]["verification_dir"] = "_repeatability_run"
 
     survey_path = resolve(config_path.parent, config["survey_csv"])
-    limitations = input_limitations(config_path, survey_path, output)
+    limitations = input_limitations(
+        config_path, survey_path, output, config.get("analysis_limitations"),
+    )
     identity_converters = (
         {column: str for column in [
             config["emp_id_col"], "survey_cycle_id", "survey_cycle_title",
@@ -2040,6 +2060,13 @@ def main() -> int:
         "Attrition analysis was not requested.",
     )
     attrition_path = output / "attrition.csv"
+    attrition_completed = any(
+        item["name"] == "attrition" and item["status"] == "completed"
+        for item in manifest["analyses"]
+    )
+    if not attrition_completed:
+        manifest.pop("attrition_report", None)
+        manifest.pop("attrition_alerts_report", None)
     attrition_settings = config.get("embedded_attrition") or {}
     attrition_data: dict[str, Any] | None = None
     alert_data: dict[str, Any] = {
@@ -2053,8 +2080,10 @@ def main() -> int:
         ),
         "method": "",
     }
-    if attrition_path.exists():
-        attrition_status = "H2-to-Exit attrition analysis completed."
+    if attrition_completed:
+        if not attrition_path.exists():
+            raise ValueError("The completed attrition artifact is missing.")
+        attrition_status = "Attrition analysis completed."
         progress.update(86, "Preparing attrition analysis and alerts")
         minimum_category_n = int(
             attrition_settings.get("minimum_category_n", MIN_N)
@@ -2099,6 +2128,8 @@ def main() -> int:
         excluded_downloads.add(attribute_file.name)
     if summary_mode == "off":
         excluded_downloads.add("people-science-summaries.json")
+    if not attrition_completed:
+        excluded_downloads.add(attrition_path.name)
     downloads = sorted(
         path.name
         for path in output.iterdir()

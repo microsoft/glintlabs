@@ -11,7 +11,7 @@ golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`4374de2493662e7593e66d2016c07bd5526b77999a0dd1bcb0e4c77f0bd8d721`.
+`89f50c00728f01f3ad078835e935414007075b33401f80dbe932b3cd2228bc09`.
 Generated reports in `required` mode must match its static HTML shell exactly.
 The intended substitution is the JSON value assigned to `const D`. In `off`
 mode, the seven empty AI summary containers are also removed from the generated
@@ -93,6 +93,15 @@ completed aggregate CSV/JSON artifacts
 `OPEN_REPORT.html` is the report renamed as the obvious entry point. Exclude
 raw respondent data, employee-property files, comments, and repeatability
 staging data from the ZIP.
+
+Suppression must happen before serialization, not only in visible cells.
+Suppressed item metrics and factor respondent/complete-response/row counts
+must not remain in embedded JSON or visual exports. Null suppressed scores
+must never be interpreted as zero or used in cycle differences.
+Shared manifests use portable relative verification-directory metadata, never
+local absolute paths. Uncertain optional columns or outcome mappings are
+excluded and disclosed under **Methodology → Limitations** while supported
+analyses continue; omissions are not silently treated as completed analyses.
 
 ## Visual contract
 

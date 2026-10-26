@@ -20,6 +20,10 @@ if SCRIPT_DIR not in sys.path:
     sys.path.insert(0, SCRIPT_DIR)
 
 from progress import ProgressReporter
+from attrition_discovery import (
+    candidate_kind, exit_cycle_labels, inspect_source, normalized_name,
+    outcome_name_hint,
+)
 
 
 EMPLOYEE_ID_CANDIDATES = (
@@ -50,11 +54,6 @@ SENSITIVE_ATTRIBUTE_TOKENS = (
     "fullname",
     "address",
     "phone",
-)
-OUTCOME_ATTRIBUTE_TOKENS = (
-    "attrition",
-    "termination",
-    "exit date",
 )
 PREFERRED_ATTRIBUTES = (
     "survey_cycle_title",
@@ -95,6 +94,9 @@ PLATFORM_METADATA = (
 )
 QUESTION_COMPANIONS = ("_COMMENT", "_COMMENT_TOPICS", "_SENSITIVE_COMMENT_FLAG")
 PREPARATION_REASONS = {
+    "attrition_unavailable": "Attrition analysis was excluded because outcome columns, dates, or predictor/Exit cycle mappings could not be established reliably. Uncertain outcome data was not used.",
+    "attrition_not_provided": "Attrition analysis was excluded because reliable exit outcomes were not provided. Matching employee IDs, actual exit dates, predictor survey timing, and outcome coverage are needed.",
+    "attrition_followup": "Attrition follow-up windows extending beyond the confirmed outcome observation date were excluded.",
     "incomplete_question": "An incomplete or out-of-order question block was excluded.",
     "question_excluded": "A question was excluded by the confirmed loading decisions.",
     "invalid_scores": "Nonblank responses outside the confirmed integer scale were excluded.",
@@ -106,6 +108,12 @@ PREPARATION_REASONS = {
     "orphan_topics": "Topics without comment text were excluded.",
     "no_attributes": "No attributes were retained, so attribute comparisons are unavailable.",
 }
+
+
+class AttritionUnavailableError(ValueError):
+    def __init__(self, message: str, code: str = "attrition_unavailable"):
+        super().__init__(message)
+        self.code = code
 
 
 def parse_args() -> argparse.Namespace:
@@ -130,6 +138,16 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--min-group-size", type=int, default=5)
     parser.add_argument(
+        "--attrition-config",
+        help="JSON Exit-analysis settings when outcome columns or cycles are ambiguous.",
+    )
+    parser.add_argument("--exit-data", help="User-provided CSV/XLSX/XLSM exit outcomes.")
+    parser.add_argument("--exit-sheet", help="Exit worksheet in --exit-data or the survey workbook.")
+    parser.add_argument(
+        "--inspect-attrition", action="store_true",
+        help="Search all input worksheets for exit dates/flags without running analysis.",
+    )
+    parser.add_argument(
         "--inspect-only", action="store_true",
         help="Write a private platform-export preparation proposal without running analysis.",
     )
@@ -144,10 +162,6 @@ def parse_args() -> argparse.Namespace:
         help="Control AI People Science summaries in the generated report.",
     )
     return parser.parse_args()
-
-
-def normalized_name(value: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "", value.casefold())
 
 
 def choose_name(available: list[str], requested: str | None, candidates: tuple[str, ...]) -> str:
@@ -203,6 +217,7 @@ def detect_questions(
             for column in frame.columns
             if str(column).upper().startswith("Q_")
             and numeric_series(frame, str(column)).notna().any()
+            and candidate_kind(str(column), frame[column]) not in {"flag_or_status", "exit_date"}
         ]
     if not questions:
         raise ValueError(
@@ -248,7 +263,7 @@ def safe_attribute(column: str) -> bool:
     compact = normalized_name(column)
     if any(token in normalized for token in SENSITIVE_ATTRIBUTE_TOKENS):
         return False
-    if any(token in normalized for token in OUTCOME_ATTRIBUTE_TOKENS):
+    if outcome_name_hint(column):
         return False
     if compact in IDENTIFIER_ATTRIBUTE_NAMES:
         return False
@@ -318,12 +333,11 @@ def resolve_attrition_settings(
     if not completion_column:
         return resolved
 
-    cycle_column = settings["cycle_column"]
-    predictor_cycle = settings["predictor_cycle"]
-    values = survey.loc[
-        survey[cycle_column] == predictor_cycle,
-        completion_column,
-    ].dropna()
+    cycle_column = settings.get("cycle_column")
+    predictor_cycle = settings.get("predictor_cycle")
+    population = survey[survey[cycle_column] == predictor_cycle] if cycle_column else survey
+    values = population[completion_column].dropna()
+    values = values.loc[values.astype(str).str.strip().ne("")]
     if pd.api.types.is_datetime64_any_dtype(values):
         dates = pd.to_datetime(values, errors="coerce")
     else:
@@ -341,9 +355,11 @@ def resolve_attrition_settings(
             )
         else:
             dates = pd.to_datetime(values, errors="coerce")
+    if dates.isna().any():
+        raise AttritionUnavailableError(f"Invalid predictor completion dates in '{completion_column}'.")
     unique_dates = dates.dropna().dt.normalize().unique()
     if len(unique_dates) != 1:
-        raise ValueError(
+        raise AttritionUnavailableError(
             f"Expected one completion date in '{completion_column}' for "
             f"predictor cycle {predictor_cycle}; found {len(unique_dates)}."
         )
@@ -351,6 +367,247 @@ def resolve_attrition_settings(
         unique_dates[0]
     ).date().isoformat()
     return resolved
+
+
+def read_exit_data(
+    config: dict[str, Any], options: argparse.Namespace, settings: dict[str, Any],
+) -> pd.DataFrame | None:
+    source_name = getattr(options, "exit_data", None)
+    sheet = getattr(options, "exit_sheet", None)
+    if not source_name and not sheet:
+        return None
+    source = Path(source_name or options.survey_export).resolve()
+    if source.suffix.casefold() == ".csv":
+        if sheet:
+            raise AttritionUnavailableError("--exit-sheet requires an Excel workbook.")
+        frame = pd.read_csv(source, dtype=str, keep_default_na=False)
+    elif source.suffix.casefold() in {".xlsx", ".xlsm"}:
+        with pd.ExcelFile(source) as workbook:
+            if not sheet:
+                discovery = inspect_source(source)
+                sheets = {
+                    item["sheet"] for item in discovery["candidates"]
+                    if item["kind"] == "exit_date"
+                }
+                if len(sheets) != 1:
+                    raise AttritionUnavailableError("Choose the outcome worksheet with --exit-sheet.")
+                sheet = sheets.pop()
+            if sheet not in workbook.sheet_names:
+                raise AttritionUnavailableError("The selected exit worksheet does not exist.")
+            frame = pd.read_excel(workbook, sheet_name=sheet, dtype=str, keep_default_na=False)
+    else:
+        raise AttritionUnavailableError("Exit data must be a CSV, XLSX, or XLSM file.")
+    employee_id = settings.get("outcome_emp_id_col")
+    if not employee_id and config["emp_id_col"] in frame:
+        employee_id = config["emp_id_col"]
+    if not employee_id:
+        matches = [
+            name for name in frame
+            if normalized_name(name) in {normalized_name(value) for value in EMPLOYEE_ID_CANDIDATES}
+        ]
+        if len(matches) != 1:
+            raise AttritionUnavailableError("Confirm outcome_emp_id_col in --attrition-config.")
+        employee_id = matches[0]
+    if employee_id not in frame:
+        raise AttritionUnavailableError("The configured outcome employee ID column is missing.")
+    return frame.rename(columns={employee_id: config["emp_id_col"]})
+
+
+def configure_attrition(
+    config: dict[str, Any],
+    survey: pd.DataFrame,
+    attributes: pd.DataFrame | None,
+    options: argparse.Namespace,
+    defaults: dict[str, Any],
+) -> None:
+    try:
+        _configure_attrition(config, survey, attributes, options, defaults)
+    except AttritionUnavailableError as error:
+        config.setdefault("analysis_limitations", []).append({
+            "code": error.code, "columns": [],
+        })
+        print(f"Attrition excluded; recorded in Limitations: {error}", file=sys.stderr)
+        print(
+            "I can run attrition analysis with matching employee IDs, actual exit dates, "
+            "predictor survey/completion date, and outcome population coverage/as-of date. "
+            "Point to a column or worksheet, or provide --exit-data and --attrition-config.",
+            file=sys.stderr,
+        )
+
+
+def _configure_attrition(
+    config: dict[str, Any],
+    survey: pd.DataFrame,
+    attributes: pd.DataFrame | None,
+    options: argparse.Namespace,
+    defaults: dict[str, Any],
+) -> None:
+    from run_vivaglint_analysis import parse_termination_dates
+
+    settings_path = getattr(options, "attrition_config", None)
+    supplied = (
+        json.loads(Path(settings_path).read_text(encoding="utf-8"))
+        if settings_path else defaults.get("embedded_attrition") or defaults.get("attrition")
+    )
+    if supplied is not None and not isinstance(supplied, dict):
+        raise AttritionUnavailableError("Attrition settings must be a JSON object.")
+    settings = dict(supplied or {})
+    data = survey
+    if attributes is not None:
+        extra = [column for column in attributes if column not in survey.columns]
+        data = survey.merge(
+            attributes[[config["emp_id_col"], *extra]],
+            on=config["emp_id_col"], how="left", validate="many_to_one",
+        )
+
+    def column(candidates: tuple[str, ...]) -> str | None:
+        matches = [
+            name for name in data
+            if normalized_name(name) in {normalized_name(value) for value in candidates}
+        ]
+        if len(matches) > 1:
+            raise AttritionUnavailableError("Ambiguous attrition columns; confirm mappings with --attrition-config.")
+        return matches[0] if matches else None
+
+    external = read_exit_data(config, options, settings)
+    outcome_data = external if external is not None else data
+    term_column = settings.get("termination_date_column")
+    if not term_column:
+        matches = [
+            name for name in outcome_data
+            if name not in config["question_cols"]
+            and candidate_kind(name, outcome_data[name]) == "exit_date"
+        ]
+        if len(matches) != 1:
+            hints = any(outcome_name_hint(name) for name in outcome_data)
+            raise AttritionUnavailableError(
+                "No unique, reliable actual exit-date column was established. "
+                "Review _input/attrition-discovery.json and confirm the column or provide exit data.",
+                "attrition_unavailable" if hints else "attrition_not_provided",
+            )
+        term_column = matches[0]
+    if term_column not in outcome_data:
+        raise AttritionUnavailableError("The configured termination-date column is missing.")
+    settings["termination_date_column"] = term_column
+    config["attribute_cols"] = [name for name in config["attribute_cols"] if name != term_column]
+    if not config["attribute_cols"] and "by_attribute" in config["analyses"]:
+        config["analyses"].remove("by_attribute")
+    if config["scale_points"] != 5:
+        raise AttritionUnavailableError("Embedded attrition requires a confirmed five-point response scale.")
+    cycle_column = settings.get("cycle_column") or next(
+        (name for name in ("survey_cycle_id", "survey_cycle", "survey_cycle_title") if name in data), None,
+    )
+    if cycle_column and cycle_column not in data:
+        raise AttritionUnavailableError("The configured predictor cycle column is missing.")
+    if cycle_column:
+        settings["cycle_column"] = cycle_column
+    if external is None and "outcome_cycle" not in settings and cycle_column:
+        title_column = "survey_cycle_title" if "survey_cycle_title" in data else cycle_column
+        outcome_cycles = data.loc[exit_cycle_labels(data[title_column]), cycle_column].dropna().unique()
+        if not len(outcome_cycles):
+            outcome_only = data[config["question_cols"]].isna().all(axis=1) & data[term_column].notna()
+            outcome_cycles = data.loc[outcome_only, cycle_column].dropna().unique()
+        if len(outcome_cycles) > 1:
+            raise AttritionUnavailableError("The Exit cycle is ambiguous; confirm --attrition-config.")
+        if len(outcome_cycles) == 1:
+            cycle = outcome_cycles[0]
+            settings["outcome_cycle"] = cycle.item() if hasattr(cycle, "item") else cycle
+    completion_column = settings.get("predictor_completion_date_column")
+    if not completion_column and not settings.get("predictor_completion_date"):
+        completion_column = column((
+            "survey_completion_date", "Survey Cycle Completion Date", "completion_date",
+        ))
+        if not completion_column:
+            raise AttritionUnavailableError("Confirm the predictor completion date in --attrition-config.")
+        settings["predictor_completion_date_column"] = completion_column
+    if completion_column and completion_column not in data:
+        raise AttritionUnavailableError("The predictor completion-date column is missing.")
+    predictors = data[data[config["question_cols"]].notna().any(axis=1)]
+    if cycle_column and "outcome_cycle" in settings:
+        predictors = predictors[predictors[cycle_column].ne(settings["outcome_cycle"])]
+    if cycle_column and "predictor_cycle" not in settings:
+        candidates = []
+        for cycle in predictors[cycle_column].dropna().unique():
+            resolved = resolve_attrition_settings(predictors, {
+                **settings, "predictor_cycle": cycle,
+            })
+            if not resolved.get("predictor_completion_date"):
+                raise AttritionUnavailableError("Multiple predictor cycles need confirmed completion-date chronology.")
+            candidates.append((resolved["predictor_completion_date"], cycle))
+        if not candidates:
+            raise AttritionUnavailableError("Exit data has no predictor survey cycle; provide --attrition-config.")
+        latest = max(date for date, _ in candidates)
+        latest_cycles = [cycle for date, cycle in candidates if date == latest]
+        if len(latest_cycles) != 1:
+            raise AttritionUnavailableError("Predictor chronology is ambiguous; confirm cycles with --attrition-config.")
+        cycle = latest_cycles[0]
+        settings["predictor_cycle"] = cycle.item() if hasattr(cycle, "item") else cycle
+    if cycle_column:
+        predictors = predictors[predictors[cycle_column] == settings["predictor_cycle"]]
+    predictor_ids = predictors[config["emp_id_col"]]
+    if (
+        predictors.empty or predictor_ids.duplicated().any()
+        or predictor_ids.isna().any() or predictor_ids.astype(str).str.strip().eq("").any()
+    ):
+        raise AttritionUnavailableError("The predictor population is empty or contains duplicate employee IDs.")
+    settings = resolve_attrition_settings(predictors, settings)
+    completion = pd.to_datetime(settings.get("predictor_completion_date"), errors="coerce")
+    if completion is None or pd.isna(completion):
+        raise AttritionUnavailableError("Attrition requires a valid predictor_completion_date or completion-date column.")
+    embedded = external is None and "outcome_cycle" in settings
+    if embedded:
+        if settings["predictor_cycle"] == settings["outcome_cycle"]:
+            raise AttritionUnavailableError("Predictor and Exit cycles must be distinct.")
+        outcomes = data[data[cycle_column] == settings["outcome_cycle"]][[config["emp_id_col"], term_column]].copy()
+    else:
+        outcomes = outcome_data[[config["emp_id_col"], term_column]].copy()
+        nonempty = outcomes[term_column].notna() & outcomes[term_column].astype(str).str.strip().ne("")
+        outcomes = outcomes.loc[nonempty].drop_duplicates()
+    if outcomes.empty:
+        raise AttritionUnavailableError("No actual exit dates were provided.")
+    outcome_ids = outcomes[config["emp_id_col"]]
+    if outcome_ids.isna().any() or outcome_ids.astype(str).str.strip().eq("").any():
+        raise AttritionUnavailableError("Exit outcomes contain missing employee IDs.")
+    if outcomes[config["emp_id_col"]].duplicated().any():
+        raise AttritionUnavailableError("Exit survey outcomes must contain one row per employee.")
+    dates = parse_termination_dates(outcomes[term_column])
+    if dates.isna().any():
+        raise AttritionUnavailableError("Exit survey termination dates contain invalid values.")
+    matched = outcomes[config["emp_id_col"]].isin(predictors[config["emp_id_col"]])
+    if not matched.any():
+        raise AttritionUnavailableError("Outcome employee IDs do not match the predictor population.")
+    if (dates.loc[matched] <= completion).any():
+        raise AttritionUnavailableError("Matched exit dates must follow the predictor survey completion date.")
+    periods = settings.get("time_periods", [90, 180, 365])
+    minimum = settings.get("minimum_category_n", config["min_group_size"])
+    if not isinstance(periods, list) or not periods or any(type(days) is not int or days <= 0 for days in periods):
+        raise AttritionUnavailableError("Attrition time_periods must contain positive integer day windows.")
+    if type(minimum) is not int or minimum < config["min_group_size"]:
+        raise AttritionUnavailableError("Attrition minimum_category_n cannot weaken the configured minimum group size.")
+    if not embedded:
+        as_of = pd.to_datetime(settings.get("outcome_as_of_date"), errors="coerce")
+        if settings.get("outcome_population_confirmed") is not True or as_of is None or pd.isna(as_of):
+            raise AttritionUnavailableError(
+                "Confirm outcome_population_confirmed=true and outcome_as_of_date before treating unmatched employees as non-leavers."
+            )
+        if (dates > as_of).any():
+            raise AttritionUnavailableError("Exit dates exceed the confirmed outcome observation date.")
+        observed = [days for days in periods if completion + pd.Timedelta(days=days) <= as_of]
+        if not observed:
+            raise AttritionUnavailableError("No requested attrition window has complete follow-up coverage.")
+        if observed != periods:
+            config.setdefault("analysis_limitations", []).append({
+                "code": "attrition_followup", "columns": [],
+            })
+        periods = observed
+        outcomes_path = Path(config["survey_csv"]).parent / "exit-outcomes.csv"
+        outcomes[term_column] = dates.dt.strftime("%Y-%m-%d")
+        outcomes.to_csv(outcomes_path, index=False)
+        settings["outcome_file"] = str(outcomes_path)
+    settings.update(time_periods=periods, minimum_category_n=minimum)
+    config["analyses"].append("attrition")
+    config["embedded_attrition"] = settings
+    config["attrition_attribute_cols"] = config["attribute_cols"]
 
 
 def detect_attributes(
@@ -392,6 +649,7 @@ def read_export(
     input_dir: Path,
     sheet: str | None,
     attribute_sheet: str | None,
+    employee_id: str | None = None,
 ) -> tuple[
     pd.DataFrame,
     Path,
@@ -400,9 +658,18 @@ def read_export(
     Path | None,
     dict[str, str | None],
 ]:
+    def id_types(columns: Any) -> dict[str, type[str]]:
+        return {
+            name: str for name in columns
+            if name == employee_id or normalized_name(name) in {
+                normalized_name(value) for value in EMPLOYEE_ID_CANDIDATES
+            }
+        }
+
     suffix = source.suffix.casefold()
     if suffix == ".csv":
-        return pd.read_csv(source), source, None, None, None, {
+        headers = pd.read_csv(source, nrows=0).columns
+        return pd.read_csv(source, converters=id_types(headers)), source, None, None, None, {
             "survey_sheet": None,
             "attribute_sheet": None,
             "comment_sheet": None,
@@ -412,7 +679,8 @@ def read_export(
 
     workbook = pd.ExcelFile(source)
     survey_sheet = choose_name(workbook.sheet_names, sheet, SURVEY_SHEET_CANDIDATES)
-    survey = pd.read_excel(workbook, sheet_name=survey_sheet)
+    headers = pd.read_excel(workbook, sheet_name=survey_sheet, nrows=0).columns
+    survey = pd.read_excel(workbook, sheet_name=survey_sheet, converters=id_types(headers))
     survey_csv = input_dir / "survey.csv"
     survey.to_csv(survey_csv, index=False)
 
@@ -451,7 +719,8 @@ def read_export(
     if selected_attribute_sheet not in workbook.sheet_names:
         raise ValueError(f"Attribute worksheet '{selected_attribute_sheet}' was not found.")
 
-    attributes = pd.read_excel(workbook, sheet_name=selected_attribute_sheet)
+    headers = pd.read_excel(workbook, sheet_name=selected_attribute_sheet, nrows=0).columns
+    attributes = pd.read_excel(workbook, sheet_name=selected_attribute_sheet, converters=id_types(headers))
     attributes_csv = input_dir / "attributes.csv"
     attributes.to_csv(attributes_csv, index=False)
     return survey, survey_csv, attributes, attributes_csv, comments_csv, {
@@ -622,7 +891,7 @@ def platform_proposal(
         "questions": groups, "attributes": attributes, "findings": findings,
         "review": [
             "Confirm employee ID, cycle UUID/title, scale, and flag encodings.",
-            "Ask the user about every uncertain attribute meaning before mapping or excluding it.",
+            "Exclude uncertain optional attributes and disclose them in Limitations; include only reliably established mappings.",
             "Confirm exclusions of incomplete blocks, invalid records/scores, and unused attributes.",
             "A score of -1 is skipped; blank companions without a comment are normal.",
         ],
@@ -781,7 +1050,14 @@ def prepare_platform_config(
     if extract_questions(survey)["question"].tolist() != selected:
         raise ValueError("vivaglint question mapping differs from the approved preparation.")
     quantitative = split_survey_data(survey)["quantitative"].drop(columns="__response_row")
-    normalized = frame[[emp_id, *PLATFORM_METADATA, *approved_attributes]].copy()
+    outcome_columns = [
+        name for name in frame
+        if outcome_name_hint(name) and name not in selected
+        and not name.endswith(QUESTION_COMPANIONS)
+    ]
+    normalized = frame[list(dict.fromkeys([
+        emp_id, *PLATFORM_METADATA, *approved_attributes, *outcome_columns,
+    ]))].copy()
     normalized = normalized.rename(columns={
         "Survey Cycle UUID": "survey_cycle_id", "Survey Cycle Title": "survey_cycle_title",
         **approved_attributes,
@@ -834,6 +1110,7 @@ def prepare_platform_config(
     }
     if attributes:
         config["attribute_view_mode"] = "separate"
+    configure_attrition(config, normalized, None, options, {})
     config_path = input_dir / "analysis-config.json"
     config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
     return config_path
@@ -850,6 +1127,14 @@ def build_config(options: argparse.Namespace, output: Path) -> Path:
 
     input_dir = output / "_input"
     input_dir.mkdir(parents=True, exist_ok=True)
+    discovery = inspect_source(source)
+    exit_source = getattr(options, "exit_data", None)
+    if exit_source:
+        discovery["provided_exit_data"] = inspect_source(Path(exit_source).resolve())
+    discovery_path = input_dir / "attrition-discovery.json"
+    discovery_path.write_text(json.dumps(discovery, indent=2) + "\n", encoding="utf-8")
+    if getattr(options, "inspect_attrition", False):
+        return discovery_path
     platform = read_platform_export(source, options)
     if platform is not None:
         return prepare_platform_config(platform[0], source, platform[1], options, input_dir)
@@ -864,7 +1149,10 @@ def build_config(options: argparse.Namespace, output: Path) -> Path:
         attribute_path,
         comments_path,
         workbook_source,
-    ) = read_export(source, input_dir, options.sheet, options.attribute_sheet)
+    ) = read_export(
+        source, input_dir, options.sheet, options.attribute_sheet,
+        options.emp_id_col or registered_defaults.get("emp_id_col"),
+    )
     emp_id_col = detect_emp_id(
         survey,
         options.emp_id_col or registered_defaults.get("emp_id_col"),
@@ -943,22 +1231,6 @@ def build_config(options: argparse.Namespace, output: Path) -> Path:
     ]
     if attribute_cols:
         analyses.append("by_attribute")
-    linked_source = linked_source_registry(source)
-    attrition = linked_source.get("attrition")
-    if attrition:
-        required = {
-            attrition["cycle_column"],
-            attrition["termination_date_column"],
-        }
-        if attrition.get("predictor_completion_date_column"):
-            required.add(attrition["predictor_completion_date_column"])
-        available_columns = set(survey.columns)
-        if attribute_frame is not None:
-            available_columns.update(attribute_frame.columns)
-        if required.issubset(available_columns):
-            analyses.append("attrition")
-            attrition = resolve_attrition_settings(survey, attrition)
-
     config: dict[str, Any] = {
         "survey_csv": str(survey_path),
         "input_format": "wide_items",
@@ -976,9 +1248,7 @@ def build_config(options: argparse.Namespace, output: Path) -> Path:
         "source_attribute_sheet": workbook_source["attribute_sheet"],
         "source_comment_sheet": workbook_source["comment_sheet"],
     }
-    if attrition and "attrition" in analyses:
-        config["embedded_attrition"] = attrition
-        config["attrition_attribute_cols"] = attribute_cols
+    configure_attrition(config, survey, attribute_frame, options, registered_defaults)
     if attribute_cols:
         config["attribute_view_mode"] = "separate"
     if attribute_path:
@@ -1001,8 +1271,9 @@ def main() -> int:
     output.mkdir(parents=True, exist_ok=True)
     progress.update(3, "Reading the survey export and detecting its structure")
     config_path = build_config(options, output)
-    if options.inspect_only:
-        print(json.dumps({"preparation_proposal": str(config_path), "analysis_started": False}))
+    if options.inspect_only or options.inspect_attrition:
+        key = "attrition_discovery" if options.inspect_attrition else "preparation_proposal"
+        print(json.dumps({key: str(config_path), "analysis_started": False}))
         return 0
     progress.update(10, "Input prepared; starting the analysis pipeline")
     command = [
