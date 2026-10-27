@@ -17,6 +17,9 @@ skill's scope.
 ## Start here
 
 First distinguish a new analysis from QA or interpretation of existing outputs.
+If the user provides only this skill or its link without another task, use the
+new-analysis intake below. Never recommend modifying the skill or offer
+"Modify the skill" as a user-facing option.
 
 ### Existing analysis outputs
 
@@ -47,47 +50,15 @@ This skill never assumes a data source. Always ask the user, with the
 anything else in a new analysis:
 
 > How would you like to bring in survey data?
-> 1. Upload my own CSV/XLSX export
-> 2. Pull live data from the Glint API
-> 3. Use the demo/sample dataset to test the skill
+> 1. Demo Analysis
+> 2. CSV Upload
 
+Offer exactly these two options. Do not offer "Connect to API", live API
+ingestion, or skill modification.
 Do not proceed past this question with an assumed default. Branch on the
 answer:
 
-#### 1. CSV/XLSX upload
-
-Ask for the file path. Accept `.csv`, `.xlsx`, and `.xlsm` exports. Keep
-respondent-level data local and never paste employee rows into chat. Confirm
-the file exists before starting the runner.
-
-For native platform exports, run the inspection-only preparation described
-below before analysis. Confirm loading assumptions with the user; never guess
-an uncertain attribute's meaning or silently exclude it.
-
-#### 2. Glint API
-
-Pull data live via Microsoft Graph using the `vivaglint` MCP tools instead of
-a file upload:
-
-1. If credentials are not already configured for this session, ask the user
-   for `tenant_id`, `client_id`, `client_secret`, and `experience_name`, then
-   call `vivaglint-configure_api_credentials`. Never paste the client secret
-   back into chat or write it into a committed file.
-2. Ask which survey to pull and how: a specific `cycle_id`, a `survey_uuid`
-   (which may span several cycles), or a `start_date`/`end_date` range. Also
-   confirm `emp_id_col` and `scale_points` if they are not obvious.
-3. Call `vivaglint-import_survey_api` with those inputs and a `save_zip_to`
-   path so the pulled export lands on local disk. Survey/date-range mode may
-   return several cycles; treat each as its own session.
-4. Use the resulting local file as the `--survey-export` input to the runner
-   below. All analysis still runs locally from that point on exactly like the
-   upload path.
-
-If the API call fails or credentials are missing, report the failure and ask
-the user to re-enter credentials or switch to another ingest method; do not
-silently fall back to the demo dataset.
-
-#### 3. Demo/sample dataset
+#### 1. Demo Analysis
 
 Use this workbook, which is checked directly into this repository so any user
 can access it without additional permissions:
@@ -99,7 +70,17 @@ references/sample-data/Demo Viva Glint Dataset with Attributes - Exit survey res
 Use worksheet `Sheet1`, join worksheet `user_properties` by `user_id`, and use
 a 5-point scale. The checked-in workbook is the only registered sample source. Do
 not substitute bundled, generated, or synthetic survey data, and only use it
-when the user explicitly chose the demo/sample option.
+when the user explicitly chose Demo Analysis.
+
+#### 2. CSV Upload
+
+Ask for the file path. Accept `.csv`, `.xlsx`, and `.xlsm` exports. Keep
+respondent-level data local and never paste employee rows into chat. Confirm
+the file exists before starting the runner.
+
+For native platform exports, run the inspection-only preparation described
+below before analysis. Confirm loading assumptions with the user; never guess
+an uncertain attribute's meaning or silently exclude it.
 
 ## Required grounding
 
