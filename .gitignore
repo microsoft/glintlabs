@@ -2,3 +2,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .venv/
+
+# Local environment files and PEM keys, matching website/.gitignore.
+.env*
+*.pem
