@@ -1,19 +1,33 @@
-# Glint Labs Publishing Studio
+# Glint Labs website and Publishing Studio
 
-Five-day FHL prototype for turning a trusted People Science Word report into an
-accessible, on-brand, fidelity-checked preview without manual design or coding.
+This workspace contains the public Glint Labs website and local Publishing
+Studio. Studio began as a five-day FHL prototype for turning a trusted People
+Science Word report into an accessible, on-brand, fidelity-checked preview
+without manual design or coding.
 
 ## Repository status
 
-This repository is the private development and staging source for the Glint Labs
-site. It must remain private and must not be used as the production deployment
-source. Before the site goes live, the reviewed website source must be merged
-into the official `microsoft/glintlabs` repository.
+This workspace is part of the official public
+[`microsoft/glintlabs`](https://github.com/microsoft/glintlabs) repository.
+The [public website](https://microsoft.github.io/glintlabs/) is a static reader
+deployed to GitHub Pages by Site CI after validation on `main`. Only the generated
+`website/out` reader is uploaded.
+
+Authenticated Publishing Studio, owner APIs, private previews, and local
+publication storage require a local Node server and are excluded from that
+deployment. Local-only describes their runtime, not the visibility of their
+tracked source code.
+
+The [integration record](docs/migration/integration.md) documents the approved
+public-reader/local-Studio architecture and supersedes the original private
+staging hold. Historical release records retain their original evidence and
+decisions; they are not a blanket prohibition on the approved public reader.
 
 The shared Glint Labs visualization package is vendored at
 `packages/data-visuals` so a clean checkout builds without sibling repositories.
-Generated report content, previews, publication assets, and local review
-evidence are intentionally excluded from Git.
+Private drafts, staging output, and local review evidence remain excluded from
+Git. Explicitly approved Studio exports can be reviewed and committed through
+the [Pages publication workflow](pages-publications/README.md).
 
 ## Prototype contract
 
@@ -77,6 +91,12 @@ appears in the Reports catalog and can optionally be featured on the homepage.
 This machine-local flow is not a permanent production deployment. Publication
 ZIPs are prepared internally for website staging, not offered as a separate
 download in Studio.
+
+Publishing to the connected local test site does not update GitHub Pages.
+For the public reader, export the explicitly approved revision through the
+[Pages publication workflow](pages-publications/README.md), review its changes
+in a pull request, and merge through Site CI. Unlocking Studio never replaces
+the exact-revision approval or repository review.
 
 Approved structured data can be rendered with compatible Glint Labs templates,
 currently including horizontal bars, percentage rings, and two-series grouped
@@ -194,5 +214,12 @@ src/visualization/  Accessible, manifest-backed Glint Labs data visuals
 
 ## Source-data safety
 
-Do not commit Word reports, extracted media, generated manifests, or previews.
-The repository should remain private when it is published to GitHub.
+Do not commit private Word report inputs, raw respondent data, credentials,
+owner keys, browser saves, or unapproved generated content. Ignoring a file or
+omitting it from the deployed reader does not make an already tracked file
+private.
+
+Reviewed public report content and assets may be tracked in this public
+repository. Studio exports must follow the exact-revision approval and
+[Pages publication workflow](pages-publications/README.md); private drafts and
+local staging output must remain excluded.

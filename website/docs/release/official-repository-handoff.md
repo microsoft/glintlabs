@@ -1,5 +1,11 @@
 # Official repository handoff
 
+> Historical staging handoff. The source has since been integrated into the
+> official public repository. The private-source hold and runner-policy status
+> below describe that earlier handoff, not the current deployment. See the
+> [integration decision](../migration/integration.md#scope-and-provenance)
+> and the [current website README](../../README.md#repository-status).
+
 ## Release gate
 
 This private repository is a recoverable staging source, not the production

@@ -24,9 +24,10 @@ conversation, not an independent legal or accessibility certification.
 All 684 tracked source files are mapped in `source-inventory.json`. Its source
 hashes refer to the verified source checkout; destination hashes identify the
 exact transferred bytes. Run `node scripts/verify-migration.mjs` from `website/`.
-Reader/Studio application implementation, original images, fonts, local
-data-visuals package, and source evidence remain byte-identical. New tests and
-export tooling are documented below. No original DOCX files are required for
+Original images, fonts, the local data-visuals package, and source evidence were
+preserved during import. Subsequent intentional destination differences are
+recorded in the inventory without changing the original source hashes. New tests
+and export tooling are documented below. No original DOCX files are required for
 normal builds. No ignored local data, credentials, build outputs, browser saves,
 owner keys, or staged/published packages were transferred.
 
@@ -88,14 +89,19 @@ failures remain disclosed in `validation.md`, not represented as passing.
    `publication-preview.test.ts` adds one approved-export integrity test without
    changing existing assertions.
 7. This integration record, the inventory, its verifier, and validation evidence
-   are integration-only additions. Source README and release registers remain
-   unchanged as historical evidence; this document supplies destination context.
+   are integration-only additions. The source README and release registers were
+   initially retained unchanged. The [website README](../../README.md) now
+   describes the official public repository and current deployment boundaries.
+   Historical release registers have contextual notes; their original entries
+   and approval evidence remain intact. These documentation differences are
+   recorded in the inventory while retaining original source hashes.
 
-There were no pre-existing destination path collisions. The destination's root
-instructions, README, MIT license, Analyze Survey skills, Python tooling,
-examples, schemas, and tests are untouched. No source license file was tracked;
-this migration does not assert licensing or redistribution rights for the
-vendored package, fonts, photographs, Figma exports, or quotations.
+There were no pre-existing destination path collisions. At initial migration,
+the destination's root instructions, README, MIT license, Analyze Survey skills,
+Python tooling, examples, schemas, and tests were left untouched. No source
+license file was tracked; this migration does not assert licensing or
+redistribution rights for the vendored package, fonts, photographs, Figma
+exports, or quotations.
 
 ## Current content and release decisions
 

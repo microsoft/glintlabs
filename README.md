@@ -2,6 +2,17 @@
 
 People Science analytics plugin suite for Viva Glint survey data.
 
+## Glint Labs website
+
+The public website is at [Glint Labs](https://microsoft.github.io/glintlabs/).
+The website and local Publishing Studio live in [`website/`](website/README.md).
+See its [repository status](website/README.md#repository-status) for the current
+deployment architecture and publication workflow.
+
+GitHub Pages serves the public static reader only. Publishing Studio, owner
+APIs, and private previews run locally; their source code is still public in
+this repository. The plugin installation and analysis instructions follow.
+
 ## What it does
 
 This plugin provides a set of focused skills that share a common analysis contract:

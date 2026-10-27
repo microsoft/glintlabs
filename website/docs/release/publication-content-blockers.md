@@ -1,5 +1,12 @@
 # Annual Report publication-content blocker register
 
+> Historical source blocker register. Locations and states below describe the
+> staging snapshot, not an updated audit of the current public reader. See the
+> [integration record](../migration/integration.md#current-content-and-release-decisions)
+> for later owner-confirmed decisions. Original entries remain intact; this note
+> neither grants blanket clearance nor removes approval requirements for new or
+> unrelated content.
+
 This register distinguishes content rendered by `/annual-report-2026` from
 draft source material retained in the repository. Runtime hiding, omission by
 the canonical component, or an internal-use disclaimer does not constitute
