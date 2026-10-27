@@ -75,7 +75,7 @@ test("Home and Reports consume the validated catalog, with Home limited to featu
   assert.match(reports, /<ReportsCatalog reports=\{reports\} \/>/);
 });
 
-test("Home keeps exactly the three P0s featured while May appears only in Reports", async () => {
+test("Home keeps exactly the three P0s featured while P1s appear only in Reports", async () => {
   const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-p0-featured-"));
   try {
     const catalog = await loadReportCatalog({ rootDirectory });
@@ -88,7 +88,18 @@ test("Home keeps exactly the three P0s featured while May appears only in Report
     const may = catalog.filter(report => report.href === "/reports/the-human-conditions-behind-ai-value-at-work");
     assert.equal(may.length, 1);
     assert.equal(may[0].featured, false);
-    assert.equal(catalog.length, 5);
+    const october = catalog.filter(report => report.href === "/reports/amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes");
+    assert.equal(october.length, 1);
+    assert.equal(october[0].featured, false);
+    const march = catalog.filter(report => report.href === "/reports/evolving-transformational-leadership-in-the-age-of-ai");
+    assert.equal(march.length, 1);
+    assert.equal(march[0].featured, false);
+    for (const slug of ["designing-ai-feedback-systems-by-industry", "reframing-ai-friction-as-a-mastery-challenge-to-drive-impact"]) {
+      const matches = catalog.filter(report => report.href === `/reports/${slug}`);
+      assert.equal(matches.length, 1);
+      assert.equal(matches[0].featured, false);
+    }
+    assert.equal(catalog.length, 9);
     for (const report of featured) {
       assert.equal(catalog.filter(item => item.id === report.id).length, 1);
       assert.ok(report.thumbnail);

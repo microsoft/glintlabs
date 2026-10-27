@@ -4442,5 +4442,3358 @@ export const launchReportSources = [
       "hyperlinkCount": 7,
       "representedHyperlinkCount": 7
     }
+  },
+  {
+    "slug": "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes",
+    "privatePreview": false,
+    "featured": false,
+    "manifest": {
+      "schemaVersion": "0.1.0",
+      "source": {
+        "fileName": "GLPS_RD_Oct '25.docx",
+        "sizeBytes": 940281,
+        "sha256": "0a03f7ff1430334d05361dce8b0b064535b53de6f7e9981f6d8a9b1fe01e360d"
+      },
+      "metadata": {
+        "title": "GLPS_RD_Oct '25",
+        "status": "draft"
+      },
+      "blocks": [
+        {
+          "id": "block-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 0,
+            "paragraphId": "70257C5E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[Amplifying Clarity and Impact of AI Agents by Aligning on Desired Outcomes]"
+        },
+        {
+          "id": "block-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 1,
+            "paragraphId": "0780B828"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[October 14, 2025 • Research Drop] [1,800 Employees]"
+        },
+        {
+          "id": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "0D105C49"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image1.jpeg",
+          "dataUrl": "/launch-report-assets/amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes/a33aba591aa886cea676bcdaa6eba47ea469b9d2ccad8ba24f74b81755424209.jpeg",
+          "width": 624,
+          "height": 416,
+          "sourceAssetSha256": "a33aba591aa886cea676bcdaa6eba47ea469b9d2ccad8ba24f74b81755424209",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 4,
+            "paragraphId": "20BF31F8"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Research Drop in Brief:"
+        },
+        {
+          "id": "block-5",
+          "source": {
+            "part": "word/document.xml",
+            "index": 5,
+            "paragraphId": "729B5871"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Employees on teams that align on both activities and outcomes they want to achieve with AI agents are [open bold]1.9x as likely[close bold] to be high-frequency agentic AI users compared to teams focused only on activities. [close bullet]"
+        },
+        {
+          "id": "block-6",
+          "source": {
+            "part": "word/document.xml",
+            "index": 6,
+            "paragraphId": "435E83F3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Outcome-aligned teams report greater up to [open bold]22 percentage-points higher[close bold] clarity when using multiple agents, such as clearer use cases and deeper understanding of capabilities. [close bullet]"
+        },
+        {
+          "id": "block-7",
+          "source": {
+            "part": "word/document.xml",
+            "index": 7,
+            "paragraphId": "2B1E6519"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]When teams plan for outcomes, they report [open bold]greater team-based transformation[close bold] by introducing AI agents: improved knowledge sharing, problem-solving, and more. [close bullet]"
+        },
+        {
+          "id": "block-8",
+          "source": {
+            "part": "word/document.xml",
+            "index": 8,
+            "paragraphId": "008B6312"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Hear from Wipro, a leading AI-powered technology services and consulting company, on how they are anchoring on expected outcomes of agents to solve critical business problems. [close bullet]"
+        },
+        {
+          "id": "block-10",
+          "source": {
+            "part": "word/document.xml",
+            "index": 10,
+            "paragraphId": "61CAB733"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "“Task automation”, “Process optimization”, “Job redesign” – all top-of-mind concepts and phrases that surface when we think of agentic AI transformation. We continue to iterate and test the boundaries of AI agents at work and often start with thinking about what tasks we want them to do. Will they augment or automate? Which responsibilities are best suited for an AI agent?"
+        },
+        {
+          "id": "block-11",
+          "source": {
+            "part": "word/document.xml",
+            "index": 11,
+            "paragraphId": "545443C9"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "But as AI agents turn AI technology from a personal productivity tool into a team value generator, [open bold]it’s time to expand our thinking from not just the [open italics]activities[close italics] we want them to accomplish, but also the [open italics]outcomes[close italics] we want to achieve[close bold]. This involves taking our thinking beyond how the “parts” work, to how they work together and whether we can achieve new outcomes by agent involvement[open superscript]1[close superscript]."
+        },
+        {
+          "id": "block-12",
+          "source": {
+            "part": "word/document.xml",
+            "index": 12,
+            "paragraphId": "43D4A3B6"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "In this month’s Research Drop, we unpack how expanding from considering solely tasks to also evaluating outcomes unlocks new ways of working not only with our teams, but with the agents themselves. And the data tells a clear story: when teams align on outcomes, not just activities, they unlock higher adoption, greater clarity, and amplified impact."
+        },
+        {
+          "id": "block-13",
+          "source": {
+            "part": "word/document.xml",
+            "index": 13,
+            "paragraphId": "6C129CC0"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Driving adoption and clarity by aligning on goals[close H3]"
+        },
+        {
+          "id": "block-14",
+          "source": {
+            "part": "word/document.xml",
+            "index": 14,
+            "paragraphId": "37FD1E01"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "When teams take an outcome-driven approach to integrating AI agents into their work, it kicks off a flywheel of adoption to impact. By investing in strategic discussions and dedicating time to planning for this transformation, employees are more likely to lean into agentic AI. Employees on teams who are aligned not only on the activities they want AI agents to tackle, but also the outcomes they want AI agents to achieve are [open bold]1.9x as likely to be high-frequency agentic AI users[close bold] than teams who have only discussed activities."
+        },
+        {
+          "id": "block-15",
+          "source": {
+            "part": "word/document.xml",
+            "index": 15,
+            "paragraphId": "5FFC3669"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-16-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 16,
+            "paragraphId": "31F8FAFE"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image2.png",
+          "dataUrl": "/launch-report-assets/amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes/2c09318a375a59822e80f214fd96441968b1cad27535812326a3501cb41e9945.png",
+          "width": 598,
+          "height": 104,
+          "sourceAssetSha256": "2c09318a375a59822e80f214fd96441968b1cad27535812326a3501cb41e9945",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-17",
+          "source": {
+            "part": "word/document.xml",
+            "index": 17,
+            "paragraphId": "5D866915"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-18",
+          "source": {
+            "part": "word/document.xml",
+            "index": 18,
+            "paragraphId": "633B2E68"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Employees on these teams also report a sharper sense of clarity when working with AI agents. Because their focus includes aligning on outcomes, they maintain clear role boundaries, even when multiple agents are in play. They know what each agent is capable of, where each fits, and which use cases unlock the most value, allowing them to optimize the experience rather than improvise. This clarity reflects a more mature agent strategy, where the teams have moved beyond “what tasks should we offload?” to a vision for how agentic AI integrates into the team’s way of working."
+        },
+        {
+          "id": "block-19",
+          "source": {
+            "part": "word/document.xml",
+            "index": 19,
+            "paragraphId": "2A2B78A2"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-20-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 20,
+            "paragraphId": "62F9AF49"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image3.png",
+          "dataUrl": "/launch-report-assets/amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes/ab2324d98a9563330eebaf583a07012e560b36acf57613e721e32ca92c862ab1.png",
+          "width": 379,
+          "height": 281,
+          "sourceAssetSha256": "ab2324d98a9563330eebaf583a07012e560b36acf57613e721e32ca92c862ab1",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-21",
+          "source": {
+            "part": "word/document.xml",
+            "index": 21,
+            "paragraphId": "42753576"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-22",
+          "source": {
+            "part": "word/document.xml",
+            "index": 22,
+            "paragraphId": "6245CCA1"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This alignment creates the conditions for scale. When teams know why they’re using agents and what success looks like, they can avoid fragmented experimentation and move toward intentional integration. That clarity may become a competitive advantage, enabling teams to adapt faster, deploy agents more effectively, and realize value sooner."
+        },
+        {
+          "id": "block-23",
+          "source": {
+            "part": "word/document.xml",
+            "index": 23,
+            "paragraphId": "0BA2C2A9"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Elevated impact of focusing on outcomes[close H3]"
+        },
+        {
+          "id": "block-24",
+          "source": {
+            "part": "word/document.xml",
+            "index": 24,
+            "paragraphId": "5269B7D8"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "As we shift toward an outcome-focused approach to integrating agentic AI, we may need to rethink the data we use to measure success, moving beyond individual productivity to include metrics such as collaboration effectiveness and AI agent evaluation[open superscript]2[close superscript]. Team processes may look different with the introduction of AI agents, as it’s not just about adding another tool, it’s about reshaping how work gets done. [open bold]And we found that employees on teams that adopt this outcome-driven mindset are more likely to report seeing AI agents as teammates rather than just tools. [close bold]"
+        },
+        {
+          "id": "block-25",
+          "source": {
+            "part": "word/document.xml",
+            "index": 25,
+            "paragraphId": "55D17881"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "By aligning on outcomes, teams also report stronger teaming behaviors, from richer knowledge sharing to more creative problem-solving. They’re also more likely to feel proud of what their team accomplishes together. This [open bold]team readiness[close bold] step of planning for both activities [open italics]and[close italics] outcomes can transform how teams collaborate, unlocking value at a collective level."
+        },
+        {
+          "id": "block-26",
+          "source": {
+            "part": "word/document.xml",
+            "index": 26,
+            "paragraphId": "2F172BA3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-27-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 27,
+            "paragraphId": "2116E434"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image4.png",
+          "dataUrl": "/launch-report-assets/amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes/33aef82935fb8bc6935a923c0bfaf523a9608fdb1d325cd62f91950b4563a9d2.png",
+          "width": 532,
+          "height": 350,
+          "sourceAssetSha256": "33aef82935fb8bc6935a923c0bfaf523a9608fdb1d325cd62f91950b4563a9d2",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-28",
+          "source": {
+            "part": "word/document.xml",
+            "index": 28,
+            "paragraphId": "2C39C61A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-29",
+          "source": {
+            "part": "word/document.xml",
+            "index": 29,
+            "paragraphId": "1DA887D8"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "The takeaway is clear: aligning on outcomes can be the difference between incremental gains and transformative impact. Teams that take the time to define what success looks like with AI agents don’t just adopt the technology; they unlock a system-level shift in how work gets done. They see stronger adoption, clearer roles, and measurable improvements in teaming behaviors."
+        },
+        {
+          "id": "block-30",
+          "source": {
+            "part": "word/document.xml",
+            "index": 30,
+            "paragraphId": "41E22B66"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "----"
+        },
+        {
+          "id": "block-31",
+          "source": {
+            "part": "word/document.xml",
+            "index": 31,
+            "paragraphId": "540676F7"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Customer spotlight: Wipro’s outcome-driven AI journey[close H3]"
+        },
+        {
+          "id": "block-32",
+          "source": {
+            "part": "word/document.xml",
+            "index": 32,
+            "paragraphId": "614B422F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Wipro, a leading AI-powered technology services and consulting company headquartered in India, leverages an [open bold]Agent Intake and Prioritization Approach[close bold] as a structured framework for evaluating whether a new agent should be developed. By requiring teams to clearly articulate the agent’s purpose, business value, and intended outcomes in the intake form, this process ensures that every proposal is strategically aligned, technically feasible, and financially justified. Teams are prompted to consider not only what the agent will do, but also [open bold]how it will impact users, drive measurable improvements, and support broader organizational goals[close bold]. This clarity at the outset helps avoid duplication, ensures resources are allocated efficiently, and sets a clear benchmark for success."
+        },
+        {
+          "id": "block-33",
+          "source": {
+            "part": "word/document.xml",
+            "index": 33,
+            "paragraphId": "09C8C9D8"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "By investing in this process, teams are better positioned to deliver meaningful solutions, and it fosters a shared understanding across stakeholders, from technical leads to business unit representatives. [open bold]As a result, agents are developed with a clear value proposition, measurable KPIs, and a direct link to business priorities, which leads to higher adoption, improved productivity, and demonstrable ROI.[close bold] Ultimately, this approach empowers teams to innovate with confidence, knowing that their efforts are both purposeful and impactful."
+        },
+        {
+          "id": "block-34",
+          "source": {
+            "part": "word/document.xml",
+            "index": 34,
+            "paragraphId": "0500D70D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-35-image-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 35,
+            "paragraphId": "6FDB6B2F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image5.png",
+          "dataUrl": "/launch-report-assets/amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes/bebf99f8d87f894b4683afa0d7f43adc0ee18dcc93444434f91e085a7feb8275.png",
+          "width": 508,
+          "height": 110,
+          "sourceAssetSha256": "bebf99f8d87f894b4683afa0d7f43adc0ee18dcc93444434f91e085a7feb8275",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-36",
+          "source": {
+            "part": "word/document.xml",
+            "index": 36,
+            "paragraphId": "597B14DA"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-37",
+          "source": {
+            "part": "word/document.xml",
+            "index": 37,
+            "paragraphId": "3A5F1062"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "----"
+        },
+        {
+          "id": "block-38",
+          "source": {
+            "part": "word/document.xml",
+            "index": 38,
+            "paragraphId": "1B048B37"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "If your team is exploring agentic AI, start by reframing the questions: [open italics]What outcomes (not just tasks) matter most? How will we measure success beyond productivity? Where do agents fit into our team’s way of working?[close italics] Consider using these questions in your next team planning session, as these conversations can act as a foundation for clarity, adoption, and impact to truly get the most from this technology."
+        },
+        {
+          "id": "block-40",
+          "source": {
+            "part": "word/document.xml",
+            "index": 40,
+            "paragraphId": "1F673DDD"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Stay tuned for our November Research Drop to keep up with what the Microsoft People Science team is learning! [close bold]"
+        },
+        {
+          "id": "block-42",
+          "source": {
+            "part": "word/document.xml",
+            "index": 42,
+            "paragraphId": "0A7AF242"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open italics]This month’s Research Drop analyzed 1,800 global employees from the Microsoft People Science Agentic Teaming & Trust Survey from July 2025. Employees were grouped in this analysis based on their favorability for two survey items: “My team is aligned on the outcomes we would want to achieve with the help of an agentic AI (AI Agents)” and “My team understands which tasks are best suited for human judgment versus those that can be supported by agentic AI (AI Agents).”"
+        },
+        {
+          "id": "block-43",
+          "source": {
+            "part": "word/document.xml",
+            "index": 43,
+            "paragraphId": "2421E490"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Special thanks to Wipro for providing their story. Note: all data from this blog is from Microsoft People Science and is not linked to Wipro. [close italics]"
+        },
+        {
+          "id": "block-45",
+          "source": {
+            "part": "word/document.xml",
+            "index": 45,
+            "paragraphId": "73D95326"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "References"
+        },
+        {
+          "id": "block-46",
+          "source": {
+            "part": "word/document.xml",
+            "index": 46,
+            "paragraphId": "3F3AB677"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]1[close superscript]Mercer. (September 2025). The New Rules of Delivery: An AI-Powered Operating Model for Human-Machine Teaming. [open italics]HR Tech. [close italics]"
+        },
+        {
+          "id": "block-47",
+          "source": {
+            "part": "word/document.xml",
+            "index": 47,
+            "paragraphId": "7D9F8941"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]2[close superscript]Capgemini Research Institute. (July 2025). Rise of agentic AI: How trust is the key to human-AI collaboration.",
+          "links": [
+            {
+              "start": 38,
+              "end": 148,
+              "href": "https://www.capgemini.com/wp-content/uploads/2025/07/Final-Web-Version-Report-AI-Agents.pdf"
+            }
+          ]
+        }
+      ],
+      "reviewItems": [
+        {
+          "id": "review-0",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image1.jpeg does not have an image description.",
+          "blockId": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "0D105C49"
+          }
+        },
+        {
+          "id": "review-1",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image2.png does not have an image description.",
+          "blockId": "block-16-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 16,
+            "paragraphId": "31F8FAFE"
+          }
+        },
+        {
+          "id": "review-2",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image3.png does not have an image description.",
+          "blockId": "block-20-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 20,
+            "paragraphId": "62F9AF49"
+          }
+        },
+        {
+          "id": "review-3",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image4.png does not have an image description.",
+          "blockId": "block-27-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 27,
+            "paragraphId": "2116E434"
+          }
+        },
+        {
+          "id": "review-4",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image5.png does not have an image description.",
+          "blockId": "block-35-image-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 35,
+            "paragraphId": "6FDB6B2F"
+          }
+        }
+      ],
+      "extraction": {
+        "paragraphCount": 48,
+        "imageCount": 5,
+        "unsupportedCount": 0
+      }
+    },
+    "publicationSourceEvidence": {
+      "sourceSha256": "0a03f7ff1430334d05361dce8b0b064535b53de6f7e9981f6d8a9b1fe01e360d",
+      "hyperlinkCount": 1,
+      "representedHyperlinkCount": 1
+    }
+  },
+  {
+    "slug": "evolving-transformational-leadership-in-the-age-of-ai",
+    "privatePreview": false,
+    "featured": false,
+    "manifest": {
+      "schemaVersion": "0.1.0",
+      "source": {
+        "fileName": "GLPS_RD_March '26.docx",
+        "sizeBytes": 867382,
+        "sha256": "8877b26ade045fabfb07c403c89201b487f5025aaaebb87db22d62d0f4f6bb69"
+      },
+      "metadata": {
+        "title": "GLPS_RD_March '26",
+        "status": "draft"
+      },
+      "blocks": [
+        {
+          "id": "block-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 0,
+            "paragraphId": "1F6C524D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[Evolving Transformational Leadership in the Age of AI]"
+        },
+        {
+          "id": "block-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 1,
+            "paragraphId": "199E111E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[March 10, 2026 • Research Drop] [1,800 Employees]"
+        },
+        {
+          "id": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "7504EB2F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image1.jpeg",
+          "dataUrl": "/launch-report-assets/evolving-transformational-leadership-in-the-age-of-ai/a11164d56aa8c8cf6d20192f5f4da996e4cbf889c1806dc0fbcea547594431e9.jpeg",
+          "width": 415,
+          "height": 277,
+          "sourceAssetSha256": "a11164d56aa8c8cf6d20192f5f4da996e4cbf889c1806dc0fbcea547594431e9",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 3,
+            "paragraphId": "374DDA38"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Research Drop in Brief:"
+        },
+        {
+          "id": "block-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 4,
+            "paragraphId": "7ABECA84"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Employees who feel supported to integrate agentic AI are 1.8x as likely to be high-frequency AI users (use AI at least daily), yet there is a 28-percentage point gap in perceived support between leaders and ICs, a potential sign that substantive elements of support are getting lost in the rush to adopt AI. [close bullet]"
+        },
+        {
+          "id": "block-5",
+          "source": {
+            "part": "word/document.xml",
+            "index": 5,
+            "paragraphId": "6C20F066"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Transformational leadership remains a strong foundation, but effective AI leadership requires evolving how these behaviors show up in practice. [close bullet]"
+        },
+        {
+          "id": "block-6",
+          "source": {
+            "part": "word/document.xml",
+            "index": 6,
+            "paragraphId": "42C5BF6F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]When leaders encourage experimentation, offer personalized support, articulate a compelling vision, and model AI use – the four dimensions of transformational leadership – the effects are measurable: from nearly doubling employees' meta-cognition around AI to a 30-percentage point boost in trust in agentic AI. [close bullet]"
+        },
+        {
+          "id": "block-8",
+          "source": {
+            "part": "word/document.xml",
+            "index": 8,
+            "paragraphId": "4C7D26F5"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "AI is changing how work gets done, but it hasn’t changed what employees need most from their leaders. As organizations accelerate AI transformation, employees are looking for stability, clarity, and guidance to help them navigate what’s new, uncertain, and rapidly evolving. Technology may automate tasks and augment decision-making, but leadership remains the [open italics]critical human force[close italics] that shapes how change is experienced.  Employees who feel supported by their leaders to integrate agentic AI into their work are [open bold]1.8x as likely[close bold] to be high frequency AI users than those who do not feel that support."
+        },
+        {
+          "id": "block-9",
+          "source": {
+            "part": "word/document.xml",
+            "index": 9,
+            "paragraphId": "784C534D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This points to an important reality: in the AI era, the “what” of effective leadership hasn’t changed, but the “how” has. While many management processes are being automated or augmented, employees still need the personal, human side of leadership. The behaviors that help employees think critically, stay motivated, and grow through change are more important than ever."
+        },
+        {
+          "id": "block-10",
+          "source": {
+            "part": "word/document.xml",
+            "index": 10,
+            "paragraphId": "76BCBDA1"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "To understand how leadership must evolve without losing its foundation, this month’s Research Drop revisits one of the most widely studied frameworks in organizational psychology: [open bold]transformational leadership[close bold]. By examining how its core dimensions show up in the context of AI, we can better understand what leaders must double down on – and what they must adapt – to support successful, human-centered AI transformation."
+        },
+        {
+          "id": "block-11",
+          "source": {
+            "part": "word/document.xml",
+            "index": 11,
+            "paragraphId": "23B3976B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open H3]A Leadership Framework for Times of Change[close H3]"
+        },
+        {
+          "id": "block-12",
+          "source": {
+            "part": "word/document.xml",
+            "index": 12,
+            "paragraphId": "4067D2A2"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Transformational leadership is a well-established leadership approach focused on inspiring followers to perform beyond expectations by shaping how they think, feel, and act[open superscript]1[close superscript]. It provides a framework for us to guide our thinking on the changing responsibilities of leadership. Transformational leadership has four core behavioral dimensions that are empirically grounded anchors to leader and manager effectiveness:"
+        },
+        {
+          "id": "block-13",
+          "source": {
+            "part": "word/document.xml",
+            "index": 13,
+            "paragraphId": "0F7A9BA7"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open table formatting]"
+        },
+        {
+          "id": "block-14",
+          "source": {
+            "part": "word/document.xml",
+            "index": 14
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "data-visual-source",
+          "data": {
+            "sourceKind": "word-table",
+            "title": "Approved Word data table",
+            "unit": "unknown",
+            "columns": [
+              "Intellectual Stimulation",
+              "Encouraging critical thinking and novel problem-solving"
+            ],
+            "rows": [
+              {
+                "id": "row-1",
+                "cells": [
+                  "Individualized Consideration",
+                  "Personalizing coaching and developmental support"
+                ]
+              },
+              {
+                "id": "row-2",
+                "cells": [
+                  "Inspirational Motivation",
+                  "Communicating a compelling vision and organizational direction"
+                ]
+              },
+              {
+                "id": "row-3",
+                "cells": [
+                  "Idealized Influence",
+                  "Modeling values and taking principled positions"
+                ]
+              }
+            ],
+            "sha256": "dce10e451eda6104b3714dab84d4d357c5d59a6c9864bcb536b8a88c2f5eeeb6"
+          }
+        },
+        {
+          "id": "block-16",
+          "source": {
+            "part": "word/document.xml",
+            "index": 16,
+            "paragraphId": "707D3828"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close table formatting]"
+        },
+        {
+          "id": "block-17",
+          "source": {
+            "part": "word/document.xml",
+            "index": 17,
+            "paragraphId": "31B3E982"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "These dimensions describe what great leaders do to inspire strong productivity and outputs from their employees. Research debates how to measure these behaviors, but the underlying logic is robust – that leaders who challenge thinking, develop individuals, communicate purpose, and model values produce high engagement and performance[open superscript]2[close superscript]. As AI reshapes how work gets done, these four dimensions offer a useful structure for understanding how leadership behaviors must adapt, rather than disappear."
+        },
+        {
+          "id": "block-18",
+          "source": {
+            "part": "word/document.xml",
+            "index": 18,
+            "paragraphId": "349E073E"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Expanding Transformational Leadership in the Era of AI[close H3]"
+        },
+        {
+          "id": "block-19",
+          "source": {
+            "part": "word/document.xml",
+            "index": 19,
+            "paragraphId": "33983C11"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "As employees undergo change, they often look to their leaders to guide their own behavior. Employees may interpret their leaders’ actions and attitudes as signals of organizational expectations. There are early empirical signals that transformational leadership and perceived organizational support positively predict AI adoption[open superscript]3[close superscript], further suggesting that leadership plays a critical role not only in encouraging AI use, but in shaping [open italics]how[close italics] employees experiment with, trust, and ultimately derive value from AI tools. Yet how this leadership style shows up in practice in the AI-era is shifting, and each dimension of transformation leadership offers a distinct lens on what this looks like in practice."
+        },
+        {
+          "id": "block-20",
+          "source": {
+            "part": "word/document.xml",
+            "index": 20,
+            "paragraphId": "1B192F8E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Intellectual Stimulation: Teaching Teams How to Think With AI[close bold]"
+        },
+        {
+          "id": "block-21",
+          "source": {
+            "part": "word/document.xml",
+            "index": 21,
+            "paragraphId": "67C9AE06"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "When leaders encourage critical thinking, questioning assumptions, and novel problem-solving, it helps employees be creative and innovative at work. The intellectual stimulation dimension relies on leaders showcasing strong judgment and curiosity. The leadership task is no longer to provide answers, but to model how to question them."
+        },
+        {
+          "id": "block-22",
+          "source": {
+            "part": "word/document.xml",
+            "index": 22,
+            "paragraphId": "3CAF9424"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This approach is critical when using AI at work, as employees need to build their skills on questioning AI outputs and getting creative with AI agents. Research continues to show the potential negative impact that AI can have on human judgment, such as the concept of AI surrender[open superscript]4[close superscript], where users accept AI outputs with limited scrutiny, bypassing their own judgment entirely. We found that 60% of employees skip accuracy checks when using AI and 56% of employees close AI tools if they feel the response is inaccurate, rather than adjusting their prompt. This places leaders at the center of developing disciplined, thoughtful AI use – where curiosity and skepticism coexist."
+        },
+        {
+          "id": "block-23",
+          "source": {
+            "part": "word/document.xml",
+            "index": 23,
+            "paragraphId": "44FE6B82"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Leaders are a guidepost for thinking critically about AI, teaching followers how to evaluate AI-generated answers. Developing meta-cognition skills around AI has become a critical capability for employees at all levels. Meta-cognition around AI – the practice of both knowing how to use AI effectively and actively regulating how you execute those tasks – helps employees shift from passive AI users to deliberate cognitive partners. This can make the difference of whether AI usage consists of solely copy-pasting prompts and outputs, or intentionally questioning the use case, inputs, and desired outcome. Leaders have a strong role to play in helping their employees grow their meta-cognition. When leaders set clear expectations about how to use AI at work, [open bold]employees nearly double their self-reported meta-cognition around AI[close bold] – how they assess their own knowledge of AI methods and their habits of regulating AI use in practice.",
+          "links": [
+            {
+              "start": 126,
+              "end": 157,
+              "href": "https://aka.ms/researchdrop_feb2026"
+            }
+          ]
+        },
+        {
+          "id": "block-24",
+          "source": {
+            "part": "word/document.xml",
+            "index": 24,
+            "paragraphId": "39B56131"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-25-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 25,
+            "paragraphId": "78A1D492"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image2.png",
+          "dataUrl": "/launch-report-assets/evolving-transformational-leadership-in-the-age-of-ai/4608001611442d684e28b6382fd47e7608f613a9cdb28d2813de46ec6b76a0f7.png",
+          "width": 442,
+          "height": 390,
+          "sourceAssetSha256": "4608001611442d684e28b6382fd47e7608f613a9cdb28d2813de46ec6b76a0f7",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-26",
+          "source": {
+            "part": "word/document.xml",
+            "index": 26,
+            "paragraphId": "0DD50ED4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-27",
+          "source": {
+            "part": "word/document.xml",
+            "index": 27,
+            "paragraphId": "23AE0B4A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Meta-cognition around AI increases when leaders share their expectations and provide examples and scenarios to guide their employees. This can look like:"
+        },
+        {
+          "id": "block-28",
+          "source": {
+            "part": "word/document.xml",
+            "index": 28,
+            "paragraphId": "0DCE1D59"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Defining what “good” AI use looks like for the team (e.g., specifying that AI should inform and draft rather than finalize, keeping human review a non-negotiable step) [close bullet]"
+        },
+        {
+          "id": "block-29",
+          "source": {
+            "part": "word/document.xml",
+            "index": 29,
+            "paragraphId": "03C327F5"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Naming the moments where human judgment should override AI (e.g., when the stakes of error are high, when outputs are plausible but unverified) [close bullet]"
+        },
+        {
+          "id": "block-30",
+          "source": {
+            "part": "word/document.xml",
+            "index": 30,
+            "paragraphId": "5F5E906A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Asking reflective questions that build habit over time (e.g., “what would you have concluded without AI?”, “what did you have to correct or reframe in this output?”) [close bullet]"
+        },
+        {
+          "id": "block-31",
+          "source": {
+            "part": "word/document.xml",
+            "index": 31,
+            "paragraphId": "68F5A345"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "These leadership behaviors demonstrate not only the [open italics]what[close italics[ behind adoption but also the [open italics]how[close italics], encouraging a culture where critical thinking and human judgment remain the centerpiece of the workplace."
+        },
+        {
+          "id": "block-32",
+          "source": {
+            "part": "word/document.xml",
+            "index": 32,
+            "paragraphId": "2A7EF478"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Individualized Consideration: Personalizing Support Beyond AI[close bold]"
+        },
+        {
+          "id": "block-33",
+          "source": {
+            "part": "word/document.xml",
+            "index": 33,
+            "paragraphId": "63756BF2"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Employees look to their leaders and managers for support across their career. Individualized consideration includes coaching, developmental attention, and attending to individual needs – where leaders take a personalized approach to supporting their employees."
+        },
+        {
+          "id": "block-34",
+          "source": {
+            "part": "word/document.xml",
+            "index": 34,
+            "paragraphId": "29996297"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "With the emergence of AI technology at work, many AI tools enable personalized delivery at scale, so the “human touch” of consideration must shift to what AI cannot replicate. Leaders can leverage AI to surface trainings, suggest readings, and recap meetings, but the unique value of leaders lies in having the context to connect those resources to their followers’ broader goals and needs, the ability to address the genuine human concerns that AI transformation can surface, and the capability to help followers make sense of where to focus their attention in the midst of AI uncertainty. Employees are concerned about job security, the pressure to learn new ways of working, and more, which are exactly the kinds of concerns that AI can surface but not sit with – they require a leader who can acknowledge fear directly, contextualize change honestly, and adapt support to where each person actually is."
+        },
+        {
+          "id": "block-35",
+          "source": {
+            "part": "word/document.xml",
+            "index": 35,
+            "paragraphId": "2F5EF73A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "AI personalization does not replace individualized consideration and direct managerial support. Few things beat your manager sponsoring you for a project that perfectly aligns with your skills or sharing an AI use case that resonated directly with a problem you have been grappling with. This level of support can ingrain you into your team and your work, feeling understood and cared for. However, AI-specific support from human leaders is uneven. When we look on the surface, we found that 65% of all levels of employees report that they have the support to integrate agentic AI. However, a deeper look reveals a 28-percentage point gap: 78% of leaders feel they have the support they need to integrate agentic AI, compared to just 50% of individual contributors. This gap suggests that substantive elements of support may be getting lost in the rush to adopt AI – and the behavior we see clearly shows that: only 19% of managers have provided 1:1 coaching or mentoring on AI use. What  leaders believe is sufficient is not always what employees experience in practice.",
+          "links": [
+            {
+              "start": 911,
+              "end": 981,
+              "href": "https://aka.ms/researchdrop_nov2025"
+            }
+          ]
+        },
+        {
+          "id": "block-36",
+          "source": {
+            "part": "word/document.xml",
+            "index": 36,
+            "paragraphId": "74CBDD46"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-37-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 37,
+            "paragraphId": "1BC4CF3D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image3.png",
+          "dataUrl": "/launch-report-assets/evolving-transformational-leadership-in-the-age-of-ai/8808b9537d8e9addde697886110fe9f63f6b84292fd75ed1a36e0e7af9bad30f.png",
+          "width": 466,
+          "height": 330,
+          "sourceAssetSha256": "8808b9537d8e9addde697886110fe9f63f6b84292fd75ed1a36e0e7af9bad30f",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-38",
+          "source": {
+            "part": "word/document.xml",
+            "index": 38,
+            "paragraphId": "37F0B4CB"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-39",
+          "source": {
+            "part": "word/document.xml",
+            "index": 39,
+            "paragraphId": "2CC34A7F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "As the role of the manager changes with the introduction of AI, coaching, development, and mentoring from leaders becomes more important[open superscript]5[close superscript]. Yet only half of individual contributors feel supported to integrate agentic AI, individualized, human-led guidance on AI remains largely out of reach for the people who need it most."
+        },
+        {
+          "id": "block-40",
+          "source": {
+            "part": "word/document.xml",
+            "index": 40,
+            "paragraphId": "48F79B81"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "While AI can tailor content, leaders can personalize meaning and support throughout AI transformation. For example, leaders can provide structure to vibe coding experimentation sessions by helping followers channel their upskilling into something that will contribute to their personal growth or a direct value add to the business to help them shine. As AI automates personalization at scale, leaders must focus their attention on the individualized support only humans can provide."
+        },
+        {
+          "id": "block-41",
+          "source": {
+            "part": "word/document.xml",
+            "index": 41,
+            "paragraphId": "2DC16D73"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Inspirational Motivation: Creating Purpose During AI Transformation[close bold]"
+        },
+        {
+          "id": "block-42",
+          "source": {
+            "part": "word/document.xml",
+            "index": 42,
+            "paragraphId": "5A383721"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "A main responsibility of leaders is to set and communicate the strategy of the organization. Inspirational motivation includes articulating a compelling vision, conveying optimism, and expressing confidence in followers to motivate them to act and provide purpose to their work. Employees who are aligned with leadership are 78% more motivated than those who feel unaligned and employees who are highly optimistic about the future of their role are 101% more motivated than those who are not optimistic[open superscript]6[close superscript]."
+        },
+        {
+          "id": "block-43",
+          "source": {
+            "part": "word/document.xml",
+            "index": 43,
+            "paragraphId": "3AE98ACF"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Inspiration doesn’t come from more AI messages; it comes from leaders sharing how AI is changing their own work. Employees may feel overwhelmed and inundated with AI-related changes and rollouts without a clear understanding of the vision. When messaging is “lip service,” employees can see through it. They are craving tangible modeling experiences, where leaders are transparently showing the what, when, why, and how of their own AI use. The more leaders can present an authentic perspective on how AI will change the workplace, the greater the trust and buy-in from the employees. Inspirational motivation in the AI era is less about the frequency of communication and more about sharing their personal goals for AI."
+        },
+        {
+          "id": "block-44",
+          "source": {
+            "part": "word/document.xml",
+            "index": 44,
+            "paragraphId": "1E6A3B84"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This could include leaders sharing their own AI use, their own AI uncertainty, and their own moments of discovery with AI. Leaders’ openness and authenticity can communicate compelling vision of what AI makes possible for their team and their organization – cascading motivation from leader to employee. While 85% of leaders are motivated to integrate agentic AI into their work, only 56% of individual contributors feel the same, a 29-percentage point gap that mirrors the divide in perceived support. Leaders may have better access and understanding of the vision of AI for the organization, but the limited support and vision sharing can leave employees lacking the drive to adopt AI and sustain that adoption."
+        },
+        {
+          "id": "block-45",
+          "source": {
+            "part": "word/document.xml",
+            "index": 45,
+            "paragraphId": "6C6CC94B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "When employees are motivated by their leaders, it can instill a level of optimism that is a catalyst for AI adoption. Employees with high agentic AI readiness (e.g., skills, opportunity) report high levels of AI optimism – an average of 83% favorability. This drops to 47% for neutral readiness employees, and 13% for low readiness employees."
+        },
+        {
+          "id": "block-46",
+          "source": {
+            "part": "word/document.xml",
+            "index": 46,
+            "paragraphId": "39E3832B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-47-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 47,
+            "paragraphId": "09A7CBFC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image4.png",
+          "dataUrl": "/launch-report-assets/evolving-transformational-leadership-in-the-age-of-ai/0f40d73327cf9e5a495f70110e3c94bfd467184a77ba374b97f88c80980a044d.png",
+          "width": 522,
+          "height": 346,
+          "sourceAssetSha256": "0f40d73327cf9e5a495f70110e3c94bfd467184a77ba374b97f88c80980a044d",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-48",
+          "source": {
+            "part": "word/document.xml",
+            "index": 48,
+            "paragraphId": "4287612E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-49",
+          "source": {
+            "part": "word/document.xml",
+            "index": 49,
+            "paragraphId": "4EFE28DB"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "With low optimism and readiness for AI integration, employees are not set up effectively to adopt and perceive value from using AI. Leaders can try to mitigate against these downstream impacts by focusing on communicating a compelling vision for what AI makes possible and how it can elevate employees’ work, rather than replace it."
+        },
+        {
+          "id": "block-50",
+          "source": {
+            "part": "word/document.xml",
+            "index": 50,
+            "paragraphId": "7094257A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Idealized Influence: Leading by Example in HumanAI Collaboration[close bold]"
+        },
+        {
+          "id": "block-51",
+          "source": {
+            "part": "word/document.xml",
+            "index": 51,
+            "paragraphId": "7399E0A6"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Influence during change is a core mechanism for failure or success of the initiative. Idealized influence consists of displaying conviction, modeling core values, and taking principled positions on important decisions."
+        },
+        {
+          "id": "block-52",
+          "source": {
+            "part": "word/document.xml",
+            "index": 52,
+            "paragraphId": "6A68CE65"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Throughout AI transformation, employees are watching leaders closely and their AI adoption actions will mirror their leaders’ approach. Leaders need to model what credible human-AI leadership looks like: whether and when they use it, when they override it, how they acknowledge its limits, and how they openly share when it falls short. A leader who openly says “I ran this through AI, it missed the nuance, here’s how I caught it” likely does more to normalize critical AI use than any policy or training could. This can look like a leader walking through their prompting process in a team meeting, acknowledging in a 1:1 that they're still figuring out where AI fits in their own workflow, or openly crediting AI for a first draft while explaining what they changed and why. Leaders who model thoughtful, intentional AI use create the conditions for their teams to experiment with confidence, adopt AI critically rather than passively, and ultimately realize the full value of human-AI collaboration."
+        },
+        {
+          "id": "block-53",
+          "source": {
+            "part": "word/document.xml",
+            "index": 53,
+            "paragraphId": "73D1CBD3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Leadership role modeling directly shapes how much value employees realize from AI – employees who agree their leaders role model effective AI use report a 17-percentage point uplift in realized value from agentic AI. When leaders engage with AI intentionally, it creates conditions for their teams to do the same. Role modeling has always mattered and in an AI-first workplace, it's the difference between a team that experiments and one that waits.",
+          "links": [
+            {
+              "start": 146,
+              "end": 215,
+              "href": "https://aka.ms/researchdrop_nov2025"
+            }
+          ]
+        },
+        {
+          "id": "block-55",
+          "source": {
+            "part": "word/document.xml",
+            "index": 55,
+            "paragraphId": "73DF0150"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "AI transformation is not just a technological shift; it is a leadership one. The four dimensions of transformational leadership offer a powerful lens for understanding how leaders can shape not only AI adoption, but also trust, optimism, and long-term value creation. As AI becomes embedded in everyday work, leaders who intentionally model thoughtful AI use, personalize support beyond what technology can deliver, communicate purpose with authenticity, and guide employees through uncertainty will define what successful human-AI collaboration looks like."
+        },
+        {
+          "id": "block-56",
+          "source": {
+            "part": "word/document.xml",
+            "index": 56,
+            "paragraphId": "37138F77"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-57-image-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 57,
+            "paragraphId": "255115C3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image5.png",
+          "dataUrl": "/launch-report-assets/evolving-transformational-leadership-in-the-age-of-ai/7e05a85230fdaa87d9b00d7dd335aa10511ee996562e099eaae1c1d528c4c761.png",
+          "width": 624,
+          "height": 329,
+          "sourceAssetSha256": "7e05a85230fdaa87d9b00d7dd335aa10511ee996562e099eaae1c1d528c4c761",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-57",
+          "source": {
+            "part": "word/document.xml",
+            "index": 57,
+            "paragraphId": "255115C3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-58",
+          "source": {
+            "part": "word/document.xml",
+            "index": 58,
+            "paragraphId": "4D424E5A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Transformational leadership remains a strong foundation, but [open bold]effective AI leadership requires evolving how these behaviors show up in practice[close bold]. Employees are already watching how their leaders engage with AI. The question is whether what they see encourages critical thinking, confidence, and growth, or hesitation and disengagement."
+        },
+        {
+          "id": "block-59",
+          "source": {
+            "part": "word/document.xml",
+            "index": 59,
+            "paragraphId": "03C4A8F1"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "As organizations continue to navigate AI-driven change, leaders who focus not just on adoption, but on how people experience and make sense of that change, will be best positioned to unlock meaningful and lasting impact."
+        },
+        {
+          "id": "block-61",
+          "source": {
+            "part": "word/document.xml",
+            "index": 61,
+            "paragraphId": "677A5127"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Stay tuned for our April Research Drop to keep up with what the Microsoft People Science team is learning! [close bold]"
+        },
+        {
+          "id": "block-63",
+          "source": {
+            "part": "word/document.xml",
+            "index": 63,
+            "paragraphId": "5A883E53"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open italics]This month’s Research Drop analyzed 1,800 global employees from the Microsoft People Science Agentic Teaming & Trust Survey from July 2025. [close italics]"
+        },
+        {
+          "id": "block-65",
+          "source": {
+            "part": "word/document.xml",
+            "index": 65,
+            "paragraphId": "73D56089"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]1[close superscript]Bass, B. M. (1985). Leadership and Performance Beyond Expectations. Free Press."
+        },
+        {
+          "id": "block-66",
+          "source": {
+            "part": "word/document.xml",
+            "index": 66,
+            "paragraphId": "0C44D7D3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]2[close superscript]Wang, G., Oh, I.-S., Courtright, S. H., & Colbert, A. E. (2011). Transformational leadership and performance across criteria and levels: A meta-analytic review of 25 years of research. [open italics]Group & Organization Management, 36[close italics](2), 223–270. https://doi.org/10.1177/1059601111401017",
+          "links": [
+            {
+              "start": 301,
+              "end": 341,
+              "href": "https://doi.org/10.1177/1059601111401017"
+            }
+          ]
+        },
+        {
+          "id": "block-67",
+          "source": {
+            "part": "word/document.xml",
+            "index": 67,
+            "paragraphId": "48186496"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]3[close superscript]Wang, X., Liu, Y., & Ao, M. (2025). Transformational leadership and employee AI usage: The role of perceived organizational support and competitive workplace climate. [open italics]Frontiers in Psychology, 16[close italics], Article 1581337. https://doi.org/10.3389/fpsyg.2025.1581337",
+          "links": [
+            {
+              "start": 280,
+              "end": 322,
+              "href": "https://doi.org/10.3389/fpsyg.2025.1581337"
+            }
+          ]
+        },
+        {
+          "id": "block-68",
+          "source": {
+            "part": "word/document.xml",
+            "index": 68,
+            "paragraphId": "0BACD09F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]4[close superscript]Shaw, S. D. & Nave, G. (2026). Thinking – Fast, Slow, and Artificial: How AI is Reshaping Human Reasoning and the Rise of Cognitive Surrender. [open italics]Available at SSRN[close italics] 6097646. https://dx.doi.org/10.2139/ssrn.6097646",
+          "links": [
+            {
+              "start": 237,
+              "end": 276,
+              "href": "https://dx.doi.org/10.2139/ssrn.6097646"
+            }
+          ]
+        },
+        {
+          "id": "block-69",
+          "source": {
+            "part": "word/document.xml",
+            "index": 69,
+            "paragraphId": "1320F56A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]5[close superscript]Deloitte. (May 9, 2025). Reinventing the manager’s role for the future of work with AI and human collaboration. 2025 Global Human Capital Trends.",
+          "links": [
+            {
+              "start": 63,
+              "end": 148,
+              "href": "https://action.deloitte.com/insight/4475/reinventing-the-managers-role-for-the-future-of-work-with-ai-and-human-collaboration"
+            }
+          ]
+        },
+        {
+          "id": "block-70",
+          "source": {
+            "part": "word/document.xml",
+            "index": 70,
+            "paragraphId": "2C078E63"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]6[close superscript]PwC. (November 12, 2025). Rewiring the future of work. PwC’s Global Workforce Hopes and Fears Survey 2025.",
+          "links": [
+            {
+              "start": 64,
+              "end": 91,
+              "href": "https://www.pwc.com/gx/en/issues/workforce/hopes-and-fears.html"
+            }
+          ]
+        }
+      ],
+      "reviewItems": [
+        {
+          "id": "review-0",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image1.jpeg does not have an image description.",
+          "blockId": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "7504EB2F"
+          }
+        },
+        {
+          "id": "review-1",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image2.png does not have an image description.",
+          "blockId": "block-25-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 25,
+            "paragraphId": "78A1D492"
+          }
+        },
+        {
+          "id": "review-2",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image3.png does not have an image description.",
+          "blockId": "block-37-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 37,
+            "paragraphId": "1BC4CF3D"
+          }
+        },
+        {
+          "id": "review-3",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image4.png does not have an image description.",
+          "blockId": "block-47-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 47,
+            "paragraphId": "09A7CBFC"
+          }
+        },
+        {
+          "id": "review-4",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image5.png does not have an image description.",
+          "blockId": "block-57-image-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 57,
+            "paragraphId": "255115C3"
+          }
+        }
+      ],
+      "extraction": {
+        "paragraphCount": 70,
+        "imageCount": 5,
+        "unsupportedCount": 0
+      }
+    },
+    "publicationSourceEvidence": {
+      "sourceSha256": "8877b26ade045fabfb07c403c89201b487f5025aaaebb87db22d62d0f4f6bb69",
+      "hyperlinkCount": 8,
+      "representedHyperlinkCount": 8
+    }
+  },
+  {
+    "slug": "designing-ai-feedback-systems-by-industry",
+    "privatePreview": false,
+    "featured": false,
+    "manifest": {
+      "schemaVersion": "0.1.0",
+      "source": {
+        "fileName": "GLPS_RD_Jan '26.docx",
+        "sizeBytes": 877176,
+        "sha256": "646d0354dc35433109ec3911bf46cc24248b8472ac378efb1374dbc11351ab72"
+      },
+      "metadata": {
+        "title": "GLPS_RD_Jan '26",
+        "status": "draft"
+      },
+      "blocks": [
+        {
+          "id": "block-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 0,
+            "paragraphId": "633B0B89"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[Designing AI Feedback Systems by Industry]"
+        },
+        {
+          "id": "block-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 1,
+            "paragraphId": "6B366361"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[January 13, 2026 • Research Drop] [1,800 Employees]"
+        },
+        {
+          "id": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "6A1C9754"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image1.jpeg",
+          "dataUrl": "/launch-report-assets/designing-ai-feedback-systems-by-industry/6016f6cb6521252c07a15a6c064297adaae3d3b31765d12d4052c988bafba045.jpeg",
+          "width": 608,
+          "height": 406,
+          "sourceAssetSha256": "6016f6cb6521252c07a15a6c064297adaae3d3b31765d12d4052c988bafba045",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 3,
+            "paragraphId": "2271104C"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Research Drop in Brief:"
+        },
+        {
+          "id": "block-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 4,
+            "paragraphId": "4115F240"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Employees want to meaningfully shape AI transformation, yet 34% still lack opportunities to give feedback on their AI experience[close bullet]"
+        },
+        {
+          "id": "block-5",
+          "source": {
+            "part": "word/document.xml",
+            "index": 5,
+            "paragraphId": "2AFEE03F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]High frequency AI users are more likely than low frequency AI users to report regular requests for input, suggesting that listening and adoption positively reinforce each other[close bullet]"
+        },
+        {
+          "id": "block-6",
+          "source": {
+            "part": "word/document.xml",
+            "index": 6,
+            "paragraphId": "457C9ED6"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]AI feedback is social: Informal conversation and team meetings are the most utilized feedback channels across industries, making them critical early-signal channels for AI rollout success[close bullet]"
+        },
+        {
+          "id": "block-8",
+          "source": {
+            "part": "word/document.xml",
+            "index": 8,
+            "paragraphId": "2892F4E8"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Big transformations don’t stick by default; they stick by active listening and iteration. Organizations are networks of distinct communities and workflows, so a onesizefitsall change rollout rarely lands. The fastest way to derisk change is to give employees real ways to shape it: invite feedback early, often, and in the flow of work. Research shows that employee voice and involvement are significant drivers of change readiness and commitment to change – and their resistance and cynicism around the change is reduced[open superscript]1[close superscript]."
+        },
+        {
+          "id": "block-9",
+          "source": {
+            "part": "word/document.xml",
+            "index": 9,
+            "paragraphId": "36C2F258"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "The opportunity for listening in AI transformation is vast. [open bold]In our research, 66% of employees feel they have adequate opportunities to share feedback on their AI experience and specifically among individual contributors (ICs), that drops to 52%.[close bold] Increasing feedback opportunities matter as high frequency AI users (use AI daily) are more likely than low frequency AI users (use AI monthly) to report regular requests for input (e.g., company‑wide surveys, in‑product prompts), signaling that listening and adoption positively reinforce each other."
+        },
+        {
+          "id": "block-10",
+          "source": {
+            "part": "word/document.xml",
+            "index": 10,
+            "paragraphId": "18F6B67B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Integrating employee feedback can be a multiplier on change ROI. When organizations listen across channels and act on what they hear, they can accelerate AI from pilot programs to organizational value at scale. This level of iteration creates an agile change process that can adapt to the consistent technology and culture changes associated with AI transformation."
+        },
+        {
+          "id": "block-11",
+          "source": {
+            "part": "word/document.xml",
+            "index": 11,
+            "paragraphId": "76854B82"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This month’s Research Drop dives into building an AI feedback system for transformation and outlines various feedback channels to explore. We’ll also map industry differences in preferred feedback channels to learn how different industries are meeting employees where they are in the flow of work. Because integrating AI tools is fundamentally a behavioral change[open superscript]2[close superscript], not just a technological one, context matters: the right channel in one industry may be the wrong one in another."
+        },
+        {
+          "id": "block-13",
+          "source": {
+            "part": "word/document.xml",
+            "index": 13,
+            "paragraphId": "206DC306"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]High frequency AI users have a feedback advantage[close H3]"
+        },
+        {
+          "id": "block-14",
+          "source": {
+            "part": "word/document.xml",
+            "index": 14,
+            "paragraphId": "3C52BE6A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "When you involve employees in change, you signal their experience matters and earn buy‑in as the transformation unfolds. The question is: [open bold]how well are organizations actually doing this?[close bold]"
+        },
+        {
+          "id": "block-15",
+          "source": {
+            "part": "word/document.xml",
+            "index": 15,
+            "paragraphId": "79667921"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "The answer depends on who you ask. Seventy-five percent of executives say their company is employee‑centric, yet only 23% of individual contributors (ICs) agree[open superscript]3[close superscript]. In our 2025 Agentic Teaming & Trust Research Report, this leader-IC gap shows up in enablement too: 78% of leaders report feeling supported to integrate AI agents into their work, compared to 50% of ICs. Closing this gap is critical, as employee‑centric organizations were found to be 7x more likely to succeed with AI[open superscript]3[close superscript].",
+          "links": [
+            {
+              "start": 207,
+              "end": 251,
+              "href": "https://aka.ms/agentresearch2025"
+            }
+          ]
+        },
+        {
+          "id": "block-16",
+          "source": {
+            "part": "word/document.xml",
+            "index": 16,
+            "paragraphId": "7E0A9DB0"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "A practical way to narrow that gap is to build a positive feedback loop. The more avenues employees have to share their experience, the more involved they feel, and the faster teams can iterate toward fit. In our data, high frequency AI users are markedly more likely than low frequency users to report receiving:"
+        },
+        {
+          "id": "block-17",
+          "source": {
+            "part": "word/document.xml",
+            "index": 17,
+            "paragraphId": "3F76E07B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Quarterly company‑wide surveys on AI (93% vs. 71%)[close bullet]"
+        },
+        {
+          "id": "block-18",
+          "source": {
+            "part": "word/document.xml",
+            "index": 18,
+            "paragraphId": "4E8EAA05"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Monthly pulse surveys on AI (83% vs. 50%)[close bullet]"
+        },
+        {
+          "id": "block-19",
+          "source": {
+            "part": "word/document.xml",
+            "index": 19,
+            "paragraphId": "508F4062"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Weekly in‑product feedback requests (53% vs. 23%)[close bullet]"
+        },
+        {
+          "id": "block-20",
+          "source": {
+            "part": "word/document.xml",
+            "index": 20,
+            "paragraphId": "6D985F4A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-21-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 21,
+            "paragraphId": "6435FBA0"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image2.png",
+          "dataUrl": "/launch-report-assets/designing-ai-feedback-systems-by-industry/78ea697d7f4c959baaf61b9ee002581b835b120469a6464d27bf5a6823963c3f.png",
+          "width": 624,
+          "height": 303,
+          "sourceAssetSha256": "78ea697d7f4c959baaf61b9ee002581b835b120469a6464d27bf5a6823963c3f",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-22",
+          "source": {
+            "part": "word/document.xml",
+            "index": 22,
+            "paragraphId": "41BA4B9E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-23",
+          "source": {
+            "part": "word/document.xml",
+            "index": 23,
+            "paragraphId": "40E1E3EF"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This is how the flywheel turns: listen → act → adoption → deeper listening. By asking people to reflect on what’s working (and what isn’t), organizations uncover friction early, improve the rollout, and strengthen the employee experience, especially for ICs who often feel least supported in agentic AI integration."
+        },
+        {
+          "id": "block-25",
+          "source": {
+            "part": "word/document.xml",
+            "index": 25,
+            "paragraphId": "1918AE5B"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Listening where work happens: Industry patterns in AI feedback[close H3]"
+        },
+        {
+          "id": "block-26",
+          "source": {
+            "part": "word/document.xml",
+            "index": 26,
+            "paragraphId": "7329E800"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Workflow redesign – and the value AI ultimately delivers – will look different across workplaces and industries. Roles, risk profiles, and communication norms vary widely, so the feedback system that informs change should vary, too. Think deskbased flows and scheduled meetings in one sector versus shiftbased, patient or customerfacing work in another."
+        },
+        {
+          "id": "block-27",
+          "source": {
+            "part": "word/document.xml",
+            "index": 27,
+            "paragraphId": "37142762"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Depending on existing workflows, different industries lean on different ways of gathering employee input. Some rely more on traditional online surveys, while others surface feedback organically through standups, team huddles, or informal conversations. The point: there’s no one ‘right’ channel – what matters is building consistent, reliable ways for employees to signal what’s working and what isn’t. To understand how this plays out across industries in our sample, we examined industry-level patterns in feedback channel usage. In our data, most industries cluster around [open bold]twothirds of employees[close bold] who feel they have adequate opportunities to give feedback on their AI experience. By contrast, healthcare sits closer to half, underscoring the need for innovative channels tailored to shift‑based routines, clinical workflows, and higher privacy constraints."
+        },
+        {
+          "id": "block-28",
+          "source": {
+            "part": "word/document.xml",
+            "index": 28,
+            "paragraphId": "6A0263FD"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-29-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 29,
+            "paragraphId": "4AA70493"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image3.png",
+          "dataUrl": "/launch-report-assets/designing-ai-feedback-systems-by-industry/26484231ec274c49a4ca1f057aa3238d649c8d1efcab87823420ce9a7f73b420.png",
+          "width": 624,
+          "height": 323,
+          "sourceAssetSha256": "26484231ec274c49a4ca1f057aa3238d649c8d1efcab87823420ce9a7f73b420",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-30",
+          "source": {
+            "part": "word/document.xml",
+            "index": 30,
+            "paragraphId": "040EF5D2"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-31",
+          "source": {
+            "part": "word/document.xml",
+            "index": 31,
+            "paragraphId": "65A9AF60"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Differences by industry likely reflect frontline mix, regulatory burden, and maturity of AI transformation as some sectors simply started experimenting earlier and have more established listening practices."
+        },
+        {
+          "id": "block-32",
+          "source": {
+            "part": "word/document.xml",
+            "index": 32,
+            "paragraphId": "5D4D3ACF"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "So, what changes by industry? It’s not just the cadence; it’s the mix of channels that meet employees where work actually happens."
+        },
+        {
+          "id": "block-33",
+          "source": {
+            "part": "word/document.xml",
+            "index": 33,
+            "paragraphId": "3E6D9421"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "We found differences in top‑utilized AI feedback channels across industries. The headline: [open bold]AI feedback is social[close bold]. Informal conversations and team meetings rank #1 and #2 nearly everywhere – teams process change together, and quick back‑and‑forths create the fastest path to signal and iteration."
+        },
+        {
+          "id": "block-34",
+          "source": {
+            "part": "word/document.xml",
+            "index": 34,
+            "paragraphId": "733BB7F1"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-35-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 35,
+            "paragraphId": "4982C2D7"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image4.png",
+          "dataUrl": "/launch-report-assets/designing-ai-feedback-systems-by-industry/1aef15071fb5284d30890ac85b43e72e666754a9ef2186d5643ad2c145404250.png",
+          "width": 624,
+          "height": 203,
+          "sourceAssetSha256": "1aef15071fb5284d30890ac85b43e72e666754a9ef2186d5643ad2c145404250",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-36",
+          "source": {
+            "part": "word/document.xml",
+            "index": 36,
+            "paragraphId": "662F4317"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-37",
+          "source": {
+            "part": "word/document.xml",
+            "index": 37,
+            "paragraphId": "3FF6C87A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Other interesting patterns:"
+        },
+        {
+          "id": "block-38",
+          "source": {
+            "part": "word/document.xml",
+            "index": 38,
+            "paragraphId": "38A24867"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Internal social forums[close bold] are popular in construction, healthcare, and transportation/travel/hospitality. These are frontline‑heavy sectors where mobile‑friendly, non‑desk access makes forums easy to reach between tasks or at shift hand‑offs. [close bullet]"
+        },
+        {
+          "id": "block-39",
+          "source": {
+            "part": "word/document.xml",
+            "index": 39,
+            "paragraphId": "44C064AB"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Pulse surveys[close bold] show up strongly in manufacturing and transportation/travel/hospitality. A potential explanation is that short, targeted check‑ins fit shift schedules, can be team specific, and support rapid action loops without burden. [close bullet]"
+        },
+        {
+          "id": "block-40",
+          "source": {
+            "part": "word/document.xml",
+            "index": 40,
+            "paragraphId": "63C3B668"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]In‑product feedback tools[close bold] are common in construction, financial & professional services, retail/food/beverage, and technology. Their workflows are often anchored in specific applications that make embedded prompts at the point of experience both relevant and efficient. [close bullet]"
+        },
+        {
+          "id": "block-41",
+          "source": {
+            "part": "word/document.xml",
+            "index": 41,
+            "paragraphId": "4AA23CDA"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Different work, different ways to listen. Build a channel mix employees will actually use, one that is fast, familiar, and in the flow. This meets people where they work so feedback follows. Keep it easy, visible, and routine; these small, habitual touchpoints beat big, occasional asks."
+        },
+        {
+          "id": "block-43",
+          "source": {
+            "part": "word/document.xml",
+            "index": 43,
+            "paragraphId": "273034CB"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Make employee feedback the engine of AI change[close H3]"
+        },
+        {
+          "id": "block-44",
+          "source": {
+            "part": "word/document.xml",
+            "index": 44,
+            "paragraphId": "7F661D85"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Change succeeds when we understand employees and their experience. Providing listening opportunities also enables employees to lean into the change by feeling involved and actively participating in the change. This process also helps change leaders learn in real time where AI initiatives are landing versus where they’re struggling."
+        },
+        {
+          "id": "block-45",
+          "source": {
+            "part": "word/document.xml",
+            "index": 45,
+            "paragraphId": "27FE05E3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Our data shows that feedback is social – so it’s time to build systems around social feedback. Treat hallway conversations, team huddles, and quick chats as consistent signal:"
+        },
+        {
+          "id": "block-46",
+          "source": {
+            "part": "word/document.xml",
+            "index": 46,
+            "paragraphId": "33EECED4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Capture it[close bold] in the moment with lightweight prompts (e.g., “what’s one friction point you’ve had with this tool today?”) or notes tied to the task/tool. [close bullet]"
+        },
+        {
+          "id": "block-47",
+          "source": {
+            "part": "word/document.xml",
+            "index": 47,
+            "paragraphId": "6B815AB4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Route it[close bold] automatically to the owners of AI transformation (product, IT, HR) with the context needed to act. [close bullet]"
+        },
+        {
+          "id": "block-48",
+          "source": {
+            "part": "word/document.xml",
+            "index": 48,
+            "paragraphId": "2FF62633"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Close the loop[close bold] visibly so employees see their input become decisions. [close bullet]"
+        },
+        {
+          "id": "block-49",
+          "source": {
+            "part": "word/document.xml",
+            "index": 49,
+            "paragraphId": "3164A4BB"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Change moves faster when listening is woven into how work gets done. Surveys and pulses provide the backbone of organizational memory, while social feedback in meetings and everyday conversations adds the nuance that keeps AI transformation grounded in reality. Keep those signals connected in the flow of work, and the transformation becomes something employees actively shape, not something that just happens to them."
+        },
+        {
+          "id": "block-51",
+          "source": {
+            "part": "word/document.xml",
+            "index": 51,
+            "paragraphId": "4883F4F9"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Stay tuned for our February Research Drop to keep up with what the Microsoft People Science team is learning![close bold]"
+        },
+        {
+          "id": "block-53",
+          "source": {
+            "part": "word/document.xml",
+            "index": 53,
+            "paragraphId": "57FB17D6"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open italics]This month’s Research Drop analyzed 1,800 global employees from the Microsoft People Science Agentic Teaming & Trust Survey from July 2025. Leaders, managers, and individual contributors were represented across the industries included in this blog: Construction, Financial & Professional Services, Healthcare, Manufacturing, Retail, Food, & Beverage, Technology, and Transportation, Travel, & Hospitality.[close italics]"
+        },
+        {
+          "id": "block-55",
+          "source": {
+            "part": "word/document.xml",
+            "index": 55,
+            "paragraphId": "63319F4F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]1[close superscript]Potnuru, R. K. G., Sharma, R., & Sahoo, C. K. (2021). Employee voice, employee involvement, and organizational change readiness: Mediating role of commitment-to-change and moderating role of transformational leadership. [open italics]Business Perspectives and Research, 11[close italics] (3), 355-371."
+        },
+        {
+          "id": "block-56",
+          "source": {
+            "part": "word/document.xml",
+            "index": 56,
+            "paragraphId": "11724523"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]2[close superscript]De Cremer, D., Schweitzer, S., McGuire, J. J., & Narayanan, D. (November 19, 2025). How behavioral science can improve the return on AI investments. [open italics]Harvard Business Review.[close italics]"
+        },
+        {
+          "id": "block-57",
+          "source": {
+            "part": "word/document.xml",
+            "index": 57,
+            "paragraphId": "2C078E63"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]3[close superscript]Lovich, D., Meier, S., & Taylor, C. (November 26, 2025). Leaders assume employees are excited about AI: They’re wrong. [open italics]Harvard Business Review.[close italics]"
+        }
+      ],
+      "reviewItems": [
+        {
+          "id": "review-0",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image1.jpeg does not have an image description.",
+          "blockId": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "6A1C9754"
+          }
+        },
+        {
+          "id": "review-1",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image2.png does not have an image description.",
+          "blockId": "block-21-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 21,
+            "paragraphId": "6435FBA0"
+          }
+        },
+        {
+          "id": "review-2",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image3.png does not have an image description.",
+          "blockId": "block-29-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 29,
+            "paragraphId": "4AA70493"
+          }
+        },
+        {
+          "id": "review-3",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image4.png does not have an image description.",
+          "blockId": "block-35-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 35,
+            "paragraphId": "4982C2D7"
+          }
+        }
+      ],
+      "extraction": {
+        "paragraphCount": 58,
+        "imageCount": 4,
+        "unsupportedCount": 0
+      }
+    },
+    "publicationSourceEvidence": {
+      "sourceSha256": "646d0354dc35433109ec3911bf46cc24248b8472ac378efb1374dbc11351ab72",
+      "hyperlinkCount": 1,
+      "representedHyperlinkCount": 1
+    }
+  },
+  {
+    "slug": "reframing-ai-friction-as-a-mastery-challenge-to-drive-impact",
+    "privatePreview": false,
+    "featured": false,
+    "manifest": {
+      "schemaVersion": "0.1.0",
+      "source": {
+        "fileName": "GLPS_RD_Dec '25.docx",
+        "sizeBytes": 938053,
+        "sha256": "7767b61e0ecf89b620e9fdf2f7ef32aee29187a7d366bce214ea145b2a1f219d"
+      },
+      "metadata": {
+        "title": "GLPS_RD_Dec '25",
+        "status": "draft"
+      },
+      "blocks": [
+        {
+          "id": "block-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 0,
+            "paragraphId": "73C4677D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[Reframing AI Friction as a Mastery Challenge to Drive Impact]"
+        },
+        {
+          "id": "block-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 1,
+            "paragraphId": "50C3124E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[December 9, 2025 • Research Drop] [1,800 Employees]"
+        },
+        {
+          "id": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "1F7D6C74"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image1.jpeg",
+          "dataUrl": "/launch-report-assets/reframing-ai-friction-as-a-mastery-challenge-to-drive-impact/d75ba20a2eb2c05d335d604368925a59abd28e83069be744522bc56b8015f5f6.jpeg",
+          "width": 624,
+          "height": 416,
+          "sourceAssetSha256": "d75ba20a2eb2c05d335d604368925a59abd28e83069be744522bc56b8015f5f6",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 3,
+            "paragraphId": "1EAD8F2E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Research Drop in Brief:"
+        },
+        {
+          "id": "block-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 4,
+            "paragraphId": "14D5DAA4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]More than half of employees say agentic AI integration feels overwhelming and that they are struggling with the pace of change. [close bullet]"
+        },
+        {
+          "id": "block-5",
+          "source": {
+            "part": "word/document.xml",
+            "index": 5,
+            "paragraphId": "7C595A4E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Employees who lean into friction – navigating new AI tools even when it feels overwhelming – show up to +23pp agentic AI readiness, +18pp realized value, and are 1.9x as likely to be high-frequency AI users. [close bullet]"
+        },
+        {
+          "id": "block-6",
+          "source": {
+            "part": "word/document.xml",
+            "index": 6,
+            "paragraphId": "1E2A2280"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Viewing friction as a mastery challenge versus a barrier hindrance can shape AI adoption outcomes and building trust, increasing recognition, and providing training can support this mindset shift. [close bullet]"
+        },
+        {
+          "id": "block-8",
+          "source": {
+            "part": "word/document.xml",
+            "index": 8,
+            "paragraphId": "5297D9A2"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Integrating AI and AI agents isn’t just a technical upgrade – it’s a cultural shift. Organizations are rethinking workflows, decision-making, and even what knowledge and expertise looks like in human-AI teams. This transition is likely to feel messy. [open bold]It challenges deeply ingrained habits and mental models, creating inevitable friction.[close bold] One way this friction shows up is with employees who struggle with the speed and complexity of AI adoption and integration. In our data we found that:"
+        },
+        {
+          "id": "block-9",
+          "source": {
+            "part": "word/document.xml",
+            "index": 9,
+            "paragraphId": "247E1DBF"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]57% of employees feel overwhelmed by the idea of integrating agentic AI into their work[close bullet]"
+        },
+        {
+          "id": "block-10",
+          "source": {
+            "part": "word/document.xml",
+            "index": 10,
+            "paragraphId": "0AE6DB62"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]55% of employees struggle to keep up with the pace of change around agentic AI[close bullet]"
+        },
+        {
+          "id": "block-11",
+          "source": {
+            "part": "word/document.xml",
+            "index": 11,
+            "paragraphId": "58161E1C"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This month’s Research Drop explores how to balance these feelings of strain with continued growth and impact."
+        },
+        {
+          "id": "block-12",
+          "source": {
+            "part": "word/document.xml",
+            "index": 12,
+            "paragraphId": "3DFC0B44"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]The unexpected benefit of AI adoption friction[close H3]"
+        },
+        {
+          "id": "block-13",
+          "source": {
+            "part": "word/document.xml",
+            "index": 13,
+            "paragraphId": "2EF541C4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "While we may initially assume that friction in AI transformation is something to be avoided, not all friction is equal. Technical breakdowns? Bad friction. Employees stretching beyond their comfort zone? Good friction."
+        },
+        {
+          "id": "block-14",
+          "source": {
+            "part": "word/document.xml",
+            "index": 14,
+            "paragraphId": "556F905F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Employees who are reporting this friction while navigating new AI tools and ways of working [open bold]report up to 23 percentage points higher agentic AI readiness[close bold]. They’re more likely to understand how to integrate agentic AI, feel motivated and confident in their skills, have opportunities to apply it, and perceive greater value in doing so. Interestingly, those feeling overwhelmed and struggling with the pace are often the ones facing these changes head-on – making them more ready to integrate AI agents, even when the process feels daunting. In fact, they’re [open bold]1.9x as likely to be high-frequency agentic AI users[close bold], showing that leaning into friction can accelerate adoption and impact."
+        },
+        {
+          "id": "block-15",
+          "source": {
+            "part": "word/document.xml",
+            "index": 15,
+            "paragraphId": "01D3510D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "These employees also report up to [open bold]18 percentage points higher realized individual value of agentic AI (RIVA)[close bold]. In other words, leaning into the challenge pays off: when employees avoid engaging with AI tools, they miss opportunities to build readiness and capture value. “Ignorance is bliss” may feel easier, but it delivers less impact."
+        },
+        {
+          "id": "block-16",
+          "source": {
+            "part": "word/document.xml",
+            "index": 16,
+            "paragraphId": "773F20AC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-17-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 17,
+            "paragraphId": "20ECB72D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image2.png",
+          "dataUrl": "/launch-report-assets/reframing-ai-friction-as-a-mastery-challenge-to-drive-impact/3e4f9f1560cab7fc4eb45457713bc292d1ed5dbbf700a30d086fd1742325641f.png",
+          "width": 624,
+          "height": 98,
+          "sourceAssetSha256": "3e4f9f1560cab7fc4eb45457713bc292d1ed5dbbf700a30d086fd1742325641f",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-18",
+          "source": {
+            "part": "word/document.xml",
+            "index": 18,
+            "paragraphId": "0731A859"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-19",
+          "source": {
+            "part": "word/document.xml",
+            "index": 19,
+            "paragraphId": "7475DBBC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This dynamic maps onto well‑established theory. Flow theory[open superscript]1[close superscript] suggests learning happens at the edge of our comfort zones; we need genuine challenge to grow. When employees encounter complexity and uncertainty, they are developing a new capacity to build relevant skills and knowledge. Mastery emerges when challenge meets skill, so without this friction, AI transformation might stall."
+        },
+        {
+          "id": "block-20",
+          "source": {
+            "part": "word/document.xml",
+            "index": 20,
+            "paragraphId": "4E4A8C4A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "But not all friction and stress are created equal. Research shows there’s a difference between [open bold]stressors that energize and signal opportunity versus those that drain and feel like obstacles[close bold]. This distinction is called the Challenge–Hindrance Stressor Framework[open superscript]2[close superscript]. When employees encounter friction with AI, they can interpret it as either type of stress – and that perception shapes whether they lean in or disengage."
+        },
+        {
+          "id": "block-21",
+          "source": {
+            "part": "word/document.xml",
+            "index": 21,
+            "paragraphId": "1CF4D471"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "A recent study[open superscript]3[close superscript]  applying this framework to AI found early signals that these interpretations matter:"
+        },
+        {
+          "id": "block-22",
+          "source": {
+            "part": "word/document.xml",
+            "index": 22,
+            "paragraphId": "7786B98E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Mastery challenge stressors[close bold] (e.g., learning new skills, tackling complex problems with AI) spark positive emotions, which [open bold]boost adoption intention[close bold]. [close bullet]"
+        },
+        {
+          "id": "block-23",
+          "source": {
+            "part": "word/document.xml",
+            "index": 23,
+            "paragraphId": "5596E08C"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Barrier hindrance stressors[close bold] (e.g., technical breakdowns, unclear requirements) drive AI anxiety and [open bold]reduce adoption intention[close bold]. [close bullet]"
+        },
+        {
+          "id": "block-24",
+          "source": {
+            "part": "word/document.xml",
+            "index": 24,
+            "paragraphId": "1CDE7081"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "If we want employees to move from overwhelmed to ready and confident, we need to shape the experience so agentic AI is perceived as a challenge (growth, mastery, value) rather than a hindrance (block, threat, anxiety)."
+        },
+        {
+          "id": "block-25",
+          "source": {
+            "part": "word/document.xml",
+            "index": 25,
+            "paragraphId": "5F4B03FF"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Helping employees frame AI transformation as a mastery challenge[close H3]"
+        },
+        {
+          "id": "block-26",
+          "source": {
+            "part": "word/document.xml",
+            "index": 26,
+            "paragraphId": "0BACD09F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "To better understand how to support employees facing friction during AI transformation, we dove deeper into the data and found three main levers that leaders and transformation change agents can pull: build trust, increase recognition, and provide training opportunities."
+        },
+        {
+          "id": "block-27",
+          "source": {
+            "part": "word/document.xml",
+            "index": 27,
+            "paragraphId": "397C7ABA"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-28-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 28,
+            "paragraphId": "043E696A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image3.png",
+          "dataUrl": "/launch-report-assets/reframing-ai-friction-as-a-mastery-challenge-to-drive-impact/4b5f39b3fb3cf3506230d758091c4405b7dd668490e93df68ce58973bebac704.png",
+          "width": 624,
+          "height": 241,
+          "sourceAssetSha256": "4b5f39b3fb3cf3506230d758091c4405b7dd668490e93df68ce58973bebac704",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-29",
+          "source": {
+            "part": "word/document.xml",
+            "index": 29,
+            "paragraphId": "190744ED"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-30",
+          "source": {
+            "part": "word/document.xml",
+            "index": 30,
+            "paragraphId": "652C49D4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Build trust in the systems and the journey[close bold]"
+        },
+        {
+          "id": "block-31",
+          "source": {
+            "part": "word/document.xml",
+            "index": 31,
+            "paragraphId": "25E8B59E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Employees who are overwhelmed but still seeing value from AI agents are [open bold]1.7x as likely to trust AI agents[close bold] than those who are overwhelmed and not seeing value. This higher level of trust may reduce employees’ tendency to categorize AI as a hindrance (e.g., fewer structural barriers, less anxiety). In the 2025 Agentic Teaming & Trust Report, we found that trust can be built by leadership role modeling, reliable systems, and peer advocacy. When we think about building trust in the face of challenge, consider:",
+          "links": [
+            {
+              "start": 328,
+              "end": 363,
+              "href": "https://aka.ms/agentresearch2025"
+            }
+          ]
+        },
+        {
+          "id": "block-32",
+          "source": {
+            "part": "word/document.xml",
+            "index": 32,
+            "paragraphId": "53905817"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Encourage leaders and peers to share clear “why” and “how” stories of AI use that include failures and lean into continuous role modeling [close bullet]"
+        },
+        {
+          "id": "block-33",
+          "source": {
+            "part": "word/document.xml",
+            "index": 33,
+            "paragraphId": "639044DE"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Invest in reliability and structure (e.g., consistent, well‑documented workflows and guardrails) [close bullet]"
+        },
+        {
+          "id": "block-34",
+          "source": {
+            "part": "word/document.xml",
+            "index": 34,
+            "paragraphId": "69EA8B87"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Create peer advocacy opportunities, such as shadowing or live/recorded demonstrations, so employees see the “line of sight” from effort to outcome[close bullet]"
+        },
+        {
+          "id": "block-35",
+          "source": {
+            "part": "word/document.xml",
+            "index": 35,
+            "paragraphId": "42458541"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Reliable systems and social proof can help shift employee appraisals from hindrance to challenge, increasing agentic AI adoption, readiness, and value."
+        },
+        {
+          "id": "block-36",
+          "source": {
+            "part": "word/document.xml",
+            "index": 36,
+            "paragraphId": "79D05AFD"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Recognize and reward investing in development/upskilling[close bold]"
+        },
+        {
+          "id": "block-37",
+          "source": {
+            "part": "word/document.xml",
+            "index": 37,
+            "paragraphId": "63319F4F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "We found that employees who are overwhelmed but still seeing value from AI agents are [open bold]also 1.7x as likely to report they are recognized or rewarded for using AI[close bold] compared with those who are overwhelmed and not seeing value. For these employees, this level of recognition and incentives can increase positivity around experimenting, trying new things, and pushing themselves out of their comfort zone. For rewards and recognition, consider:"
+        },
+        {
+          "id": "block-38",
+          "source": {
+            "part": "word/document.xml",
+            "index": 38,
+            "paragraphId": "1C307767"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Spotlighting success stories that celebrate learning and progress, not just perfection[close bullet]"
+        },
+        {
+          "id": "block-39",
+          "source": {
+            "part": "word/document.xml",
+            "index": 39,
+            "paragraphId": "5D13444F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Rewarding employees who get involved in peer learning groups or pilot cohorts that test out new features and processes[close bullet]"
+        },
+        {
+          "id": "block-40",
+          "source": {
+            "part": "word/document.xml",
+            "index": 40,
+            "paragraphId": "3B1B9273"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Tying recognition to experimentation, not just “getting it right” (e.g., “tried X, learned Y, improved Z”)[close bullet]"
+        },
+        {
+          "id": "block-41",
+          "source": {
+            "part": "word/document.xml",
+            "index": 41,
+            "paragraphId": "1111F73F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Recognition acts as a powerful signal, as it tells employees that effort matters as much as outcomes. When people see that experimenting and learning are valued, they’re more likely to embrace discomfort as part of growth rather than interpret it as risk."
+        },
+        {
+          "id": "block-42",
+          "source": {
+            "part": "word/document.xml",
+            "index": 42,
+            "paragraphId": "46ACBE30"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Provide training that feels like a bridge, not a burden[close bold]"
+        },
+        {
+          "id": "block-43",
+          "source": {
+            "part": "word/document.xml",
+            "index": 43,
+            "paragraphId": "46D40666"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Lastly, employees who are overwhelmed but are still seeing value from AI agents are [open bold]1.8x as likely to say they are adequately trained in how to use AI[close bold] compared with those who are overwhelmed and not seeing value. Having training opportunities can support employees in understanding AI agents and their capabilities, which may turn the tide from an employee perceiving this transformation as a hindrance to a surmountable challenge. When considering training in the face of friction, consider:"
+        },
+        {
+          "id": "block-44",
+          "source": {
+            "part": "word/document.xml",
+            "index": 44,
+            "paragraphId": "12EDEBBC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Delivering just‑in‑time, role‑specific learning modules/opportunities tied to real work outcomes (demonstrating the “why” and long-term ROI)[close bullet]"
+        },
+        {
+          "id": "block-45",
+          "source": {
+            "part": "word/document.xml",
+            "index": 45,
+            "paragraphId": "4C794C42"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Pairing training with coaching and on‑the‑job use, so the “learn” and “do” loops are closely intertwined[close bullet]"
+        },
+        {
+          "id": "block-46",
+          "source": {
+            "part": "word/document.xml",
+            "index": 46,
+            "paragraphId": "56D5CF2F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Offering skill ladders/micro‑credentials that let people see and celebrate progress[close bullet]"
+        },
+        {
+          "id": "block-47",
+          "source": {
+            "part": "word/document.xml",
+            "index": 47,
+            "paragraphId": "6CC1FECC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Closing the AI skill gap is critical. Training helps employees feel supported as they stretch into new technology and ways of working. One research study found that 3 in 5 employees reported being more likely to use AI at work if proper training were available[open superscript]4[close superscript]  and technical self-efficacy was found to strengthen adoption pathways so increasing self-efficacy should also further push AI adoption and impact[open superscript]3[close superscript]."
+        },
+        {
+          "id": "block-48",
+          "source": {
+            "part": "word/document.xml",
+            "index": 48,
+            "paragraphId": "7B956B96"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-49-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 49,
+            "paragraphId": "62E3A65C"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image4.png",
+          "dataUrl": "/launch-report-assets/reframing-ai-friction-as-a-mastery-challenge-to-drive-impact/b527d474f15ae877271d89e8af1e4149f476ce64bf95915f3ce712b51cf9c3ce.png",
+          "width": 624,
+          "height": 364,
+          "sourceAssetSha256": "b527d474f15ae877271d89e8af1e4149f476ce64bf95915f3ce712b51cf9c3ce",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-50",
+          "source": {
+            "part": "word/document.xml",
+            "index": 50,
+            "paragraphId": "39289508"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]Think about friction as fuel for growth, rather than failure. Organizations that frame AI as a challenge, not a threat, and reinforce trust, recognition, and training can turn moments of strain into opportunities for readiness and impact."
+        },
+        {
+          "id": "block-52",
+          "source": {
+            "part": "word/document.xml",
+            "index": 52,
+            "paragraphId": "7F801D75"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Stay tuned for our January Research Drop to keep up with what the Microsoft People Science team is learning![close bold]"
+        },
+        {
+          "id": "block-54",
+          "source": {
+            "part": "word/document.xml",
+            "index": 54,
+            "paragraphId": "66DBDF65"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open italics]This month’s Research Drop analyzed 1,800 global employees from the Microsoft People Science Agentic Teaming & Trust Survey from July 2025. Employees were grouped in this analysis based on their favorability on two survey items (“I am overwhelmed by the idea of integrating agentic AI into my work” and “I am struggling to keep up with the pace of change surrounding agentic AI at work”) and composite scores on our Realized Individual Value of Agentic AI scale. [close italics]"
+        },
+        {
+          "id": "block-56",
+          "source": {
+            "part": "word/document.xml",
+            "index": 56,
+            "paragraphId": "7D991B1F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]1[close superscript] Csikszentmihalyi, M. (1990). Flow: The Psychology of Optimal Experience. New York: Harper & Row."
+        },
+        {
+          "id": "block-57",
+          "source": {
+            "part": "word/document.xml",
+            "index": 57,
+            "paragraphId": "0FB6FF20"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]2[close superscript] Cavanaugh, M. A., Boswell, W. R., Roehling, M. V., & Boudreau, J. W. (2000). An empirical examination of self-reported work stress among US managers. [open italics]Journal of Applied Psychology, 85[close italics] (1), 65."
+        },
+        {
+          "id": "block-58",
+          "source": {
+            "part": "word/document.xml",
+            "index": 58,
+            "paragraphId": "2CC6A0FB"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]3[close superscript] Chang, P. C., Zhang, W., Cai, Q., & Guo, H. (2024). Does AI-driven technostress promote or hinder employees’ artificial intelligence adoption intention? A moderated mediation model of affective reactions and technical self-efficacy. Psychology Research and Behavior Management, 413-427."
+        },
+        {
+          "id": "block-59",
+          "source": {
+            "part": "word/document.xml",
+            "index": 59,
+            "paragraphId": "50E8C0DC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]4[close superscript] BBC. (May 18, 2025). Workers optimistic but overwhelmed by AI – study.",
+          "links": [
+            {
+              "start": 39,
+              "end": 109,
+              "href": "https://www.pewresearch.org/social-trends/2025/02/25/workers-views-of-ai-use-in-the-workplace/"
+            }
+          ]
+        }
+      ],
+      "reviewItems": [
+        {
+          "id": "review-0",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image1.jpeg does not have an image description.",
+          "blockId": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "1F7D6C74"
+          }
+        },
+        {
+          "id": "review-1",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image2.png does not have an image description.",
+          "blockId": "block-17-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 17,
+            "paragraphId": "20ECB72D"
+          }
+        },
+        {
+          "id": "review-2",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image3.png does not have an image description.",
+          "blockId": "block-28-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 28,
+            "paragraphId": "043E696A"
+          }
+        },
+        {
+          "id": "review-3",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image4.png does not have an image description.",
+          "blockId": "block-49-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 49,
+            "paragraphId": "62E3A65C"
+          }
+        }
+      ],
+      "extraction": {
+        "paragraphCount": 60,
+        "imageCount": 4,
+        "unsupportedCount": 0
+      }
+    },
+    "publicationSourceEvidence": {
+      "sourceSha256": "7767b61e0ecf89b620e9fdf2f7ef32aee29187a7d366bce214ea145b2a1f219d",
+      "hyperlinkCount": 2,
+      "representedHyperlinkCount": 2
+    }
   }
 ];
