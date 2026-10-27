@@ -31,6 +31,7 @@ const errors = [];
 const pending = new Map();
 const states = [];
 const navigation = [];
+const exposure = [];
 let preview;
 let browser;
 let socket;
@@ -272,6 +273,39 @@ try {
         assert.equal(await evaluate(`getComputedStyle(document.querySelector('details[class*="figureDescription"] summary')).borderTopWidth`), "1px");
         await send("Emulation.setEmulatedMedia", { features: [] });
       }
+      if (route === "/annual-report-2026") {
+        const grids = await evaluate(`(() => {
+          const cases = [
+            ["1581:67550", 0], ["1581:67763", 36], ["1581:68194", 84],
+          ];
+          return cases.map(([id, yellow]) => {
+            const grid = document.querySelector('[data-node-id="' + id + '"]');
+            if (!grid) throw Error("Missing exposure grid: " + id);
+            const rows = [...grid.children];
+            const style = getComputedStyle(grid);
+            const rect = grid.getBoundingClientRect();
+            if (rect.width !== 69 || rect.height !== 69 || style.borderRadius !== "6px" ||
+                style.padding !== "3.75px" || !style.boxShadow.includes("rgb(92, 141, 248)")) {
+              throw Error("Exposure outline or geometry changed: " + id);
+            }
+            if (rows.length !== 14 || rows.some(row => row.children.length !== 14)) {
+              throw Error("Exposure grid must remain 14 by 14: " + id);
+            }
+            let highlighted = 0;
+            rows.forEach((row, r) => [...row.children].forEach((dot, c) => {
+              const isYellow = r >= 4 && r < 10 && (yellow === 84 || (yellow === 36 && c >= 4 && c < 10));
+              const color = isYellow ? "rgb(255, 230, 165)" : "rgb(41, 68, 130)";
+              const dotStyle = getComputedStyle(dot);
+              if (dotStyle.backgroundColor !== color || dotStyle.width !== "3px" || dotStyle.height !== "3px") {
+                throw Error("Exposure dot pattern changed: " + id + " row " + r + " column " + c);
+              }
+              if (isYellow) highlighted++;
+            }));
+            return { id, width: rect.width, height: rect.height, blue: 196 - highlighted, yellow: highlighted, outline: style.boxShadow };
+          });
+        })()`);
+        exposure.push({ width, grids });
+      }
       if (width === 1440 && (report || route === "/annual-report-2026")) {
         const count = await evaluate(`document.querySelectorAll('nav[aria-label="Report sections"] a').length`);
         assert(count > 1);
@@ -314,10 +348,10 @@ try {
   }
   assert.deepEqual(errors, [], "Browser runtime, console, network, or HTTP errors.");
   if (failures.length) throw failures[0];
-  const result = { states, navigation, sourceImages, privateRoutesAbsent: true, release, errors };
+  const result = { states, navigation, exposure, sourceImages, privateRoutesAbsent: true, release, errors };
   await mkdir(path.join(root, "test-results"), { recursive: true });
   await writeFile(path.join(root, "test-results/reader-browser.json"), JSON.stringify(result, null, 2));
-  console.log(`Reader browser checks passed: ${states.length} responsive states, ${navigation.length} navigation states, ${sourceImages} original images.`);
+  console.log(`Reader browser checks passed: ${states.length} responsive states, ${navigation.length} navigation states, ${exposure.length * 3} exposure grids, ${sourceImages} original images.`);
 } finally {
   stopping = true;
   socket?.close();
