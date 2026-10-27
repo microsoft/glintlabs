@@ -3605,8 +3605,8 @@
       "source": "src/annual-report-2026/canonical-figma.tsx",
       "destination": "website/src/annual-report-2026/canonical-figma.tsx",
       "sourceSha256": "9e08de47ab039c4137e18d356f220021393891e49acd65b3e93fd1c76a2c43e9",
-      "destinationSha256": "f7947f768ff8652b784e9eeed7b3b142fc5d409de19e14c96a87fde693b18268",
-      "intentionalDifference": "Correct Chad Bennett's LinkedIn profile slug to the user-confirmed chadlbennett; preserve team content, layout, accessible labeling and external-link safeguards."
+      "destinationSha256": "b85257bc0d0251c085f30875442fd9bcc65cba612a9be8cb31faaa3a89fe3955",
+      "intentionalDifference": "Correct Chad Bennett's LinkedIn profile slug to the user-confirmed chadlbennett; preserve team content, layout, accessible labeling and external-link safeguards. Replace the withdrawn collaboration placeholder with the owner-supplied approved Caribay Garcia quote, heading and attribution using existing report-card styles; preserve surrounding analysis, author credits and historical source content."
     },
     {
       "source": "src/annual-report-2026/canonical-interactions.module.css",
@@ -3654,8 +3654,8 @@
       "source": "src/annual-report-2026/canonical-report.test.ts",
       "destination": "website/src/annual-report-2026/canonical-report.test.ts",
       "sourceSha256": "523b6ea2cc284516e5cb58e76d118082d50aea5a7f207c6f2c3035d7f66ab7e2",
-      "destinationSha256": "4989f76f32664a80b386d173a5d516a540876df871498e1fac073ee3051a5c62",
-      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and associated accessible label."
+      "destinationSha256": "6da39b928fbfe2b3bf23fb72bb9f5adb341dd3ff119342041127b6d88939cedb",
+      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and verify the approved Caribay quote's exact wording, heading, attribution, placement and semantic quotation while retaining placeholder-absence and author-credit checks."
     },
     {
       "source": "src/annual-report-2026/channel-portfolio.tsx",

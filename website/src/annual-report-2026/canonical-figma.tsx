@@ -1641,21 +1641,26 @@ export function CanonicalReportBody() {
             <p className={styles.frame199}></p>
             <p className={styles.frame200}>{`For listening teams, the question to tackle is where AI can help them understand employee needs more clearly, respond more effectively, or reduce the burden of listening. And how they retain strong human judgment and cognition along the way. `}</p>
           </div>
-          <div className={styles.frame201} data-node-id="1535:38911">
-            <div className={styles.frame43} data-node-id="I1535:38911;1070:3422">
-              <div className={styles.frame44} data-node-id="I1535:38911;1070:3423" />
-              <div className={styles.frame81} data-node-id="I1535:38911;1070:3424">
-                <div className={styles.frame82} data-node-id="I1535:38911;1070:3425">
-                  <p className={styles.frame47} data-node-id="I1535:38911;1070:3426">
-                    “
-                  </p>
-                  <p className={styles.frame48} data-node-id="I1535:38911;1070:3427" style={{ fontVariationSettings: '"wdth" 100' }}>{`General topic is that team collaboration dropped six places in future priorities. Potentially connect to our earlier agentic teaming work and explore whether team dynamics may become more important as AI-enabled work moves beyond individual experiences. `}</p>
-                </div>
-                <p className={`${styles.frame202} ${styles.pendingApproval}`} data-node-id="I1535:38911;1070:3428" style={{ fontVariationSettings: '"opsz" 10.5, "opsz" 8' }}>
-                  <span className={styles.frame61}>Caribay Garcia / Head of People Science at Microsoft (pending approval)</span>
-                </p>
+          <div className={styles.frame87} data-node-id="1535:38911">
+            <div className={styles.frame88} aria-hidden="true">
+              <div className={styles.frame20}>
+                <img className={styles.frame21} alt="" src={illustration("imgEllipse9", "example-glow")} />
               </div>
             </div>
+            <h3 className={styles.frame80}>Putting human judgment at the forefront</h3>
+            <blockquote className={styles.frame43}>
+              <div className={styles.frame44} aria-hidden="true" />
+              <div className={styles.frame81}>
+                <div className={styles.frame82}>
+                  <p className={styles.frame47} aria-hidden="true">“</p>
+                  <p className={styles.frame48}>{`As AI takes on more of the mechanics of listening, human judgment becomes critical in asking harder questions: Why do we listen this way? Which practices are grounded in good science, and which are simply habits? What problems can we now solve that we couldn't before?`}</p>
+                </div>
+                <p className={styles.frame83}>
+                  Caribay Garcia / Head of People Science<br />
+                  Microsoft
+                </p>
+              </div>
+            </blockquote>
           </div>
         </div>
         <div className={styles.frame12} data-node-id="1451:11988">
