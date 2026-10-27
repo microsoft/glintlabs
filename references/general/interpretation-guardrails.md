@@ -11,6 +11,10 @@ Use these rules whenever turning survey analytics into People Science interpreta
 5. Name uncertainty plainly.
 6. Recommend follow-up only when it changes action.
 
+Follow the score-presentation policy in
+`../../skills/analyze-survey/references/interactive-report-contract.md` for
+reports and interpretations.
+
 ## Language discipline
 
 Use:

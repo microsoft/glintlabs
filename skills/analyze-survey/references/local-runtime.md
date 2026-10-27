@@ -67,8 +67,15 @@ Python/dependency combination is validated.
 
 ## Readiness and updates
 
-Always run the checker using the environment interpreter that will execute
-the analysis. Substitute the approved output directory:
+Locate the approved isolated interpreter before running the checker. A path
+existence check is enough to identify a missing environment; if isolation is
+unclear, probe `sys.prefix != sys.base_prefix` and the environment's
+`pyvenv.cfg` without importing analysis dependencies. Do not run a full
+dependency audit against global Python or search unrelated environments.
+If the approved environment is missing, go directly to approved setup.
+
+Run the checker once using the isolated interpreter that will execute the
+analysis. Substitute the approved output directory:
 
 ```powershell
 & "$HOME\.glintlabs\survey-runtime\Scripts\python.exe" .\scripts\local_runtime.py check --output-dir "C:\SurveyAnalysis\results"
@@ -80,11 +87,23 @@ engine and Excel reader, dependency imports/consistency, and output writing.
 It does not inspect the workbook, send data to a service, access credentials,
 or contact GitHub.
 
-Run the smoke test after setup, plugin updates, or dependency changes:
+Reuse a passing check in the current session while the interpreter, relevant
+plugin assets, dependencies, and output destination remain unchanged. After
+setup, do not repeat its successful readiness check or smoke test. Verify the
+chosen output directory once if setup did not check it; use a write-access
+probe rather than repeating the full dependency audit solely for that purpose.
+
+Run one smoke test after analysis-runtime code, template, or dependency changes:
 
 ```powershell
 & "$HOME\.glintlabs\survey-runtime\Scripts\python.exe" .\scripts\local_runtime.py smoke
 ```
+
+Setup already invokes this command. Do not rerun it immediately after successful
+setup, for documentation-only or unrelated repository updates, or for an
+unchanged runtime already verified in the current session. A changed Git
+revision alone is not evidence that the analysis runtime changed; compare the
+relevant scripts, templates, schemas, and dependency declarations.
 
 The fixture is explicitly synthetic installation-test data, not an alternative
 demo dataset. It is never selected by the analysis runner. Its temporary

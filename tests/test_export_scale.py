@@ -18,6 +18,33 @@ sys.modules[SPEC.name] = runner
 SPEC.loader.exec_module(runner)
 
 
+@pytest.mark.parametrize("unit", ["ns", "us"])
+@pytest.mark.parametrize("missing", [False, True])
+def test_termination_dates_preserve_datetime_values(unit, missing):
+    values = pd.Series(
+        [pd.Timestamp("2026-07-01"), pd.NaT if missing else pd.Timestamp("2026-08-01"),
+         pd.Timestamp("2026-12-01")],
+        dtype=f"datetime64[{unit}]",
+        index=[4, 8, 12],
+    )
+
+    pd.testing.assert_series_equal(runner.parse_termination_dates(values), values)
+
+
+@pytest.mark.parametrize("values", [
+    [46204, None, 46357],
+    ["46204", None, "46357"],
+    ["2026-07-01", None, "2026-12-01"],
+])
+def test_termination_dates_keep_serial_and_string_support(values):
+    parsed = runner.parse_termination_dates(pd.Series(values, index=[4, 8, 12]))
+
+    assert parsed.index.tolist() == [4, 8, 12]
+    assert parsed.iloc[0] == pd.Timestamp("2026-07-01")
+    assert pd.isna(parsed.iloc[1])
+    assert parsed.iloc[2] == pd.Timestamp("2026-12-01")
+
+
 @pytest.mark.parametrize("scale_points", range(2, 12))
 @pytest.mark.parametrize("name", ["descriptives", "by_attribute"])
 def test_written_score_statistics_use_100_point_units(tmp_path, scale_points, name):

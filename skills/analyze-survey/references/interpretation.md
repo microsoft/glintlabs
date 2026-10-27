@@ -22,11 +22,10 @@ come from the user's output directory:
 
 ## Interpretation process
 
-1. Establish QA readiness before presenting findings. If no QA exists, use
-   `analysis-qa` to inspect the manifest and relevant artifacts. Only after QA
-   passes (Ready or Use with caveats), interpret supported outputs and carry
-   forward all caveats. Stop when repeatability fails, QA identifies a hard
-   stop, or readiness cannot be established; report the blockers instead.
+1. Apply the **Analysis QA** gate in `../SKILL.md` before presenting findings,
+   reusing unchanged QA as directed there. Only after QA passes (Ready or Use
+   with caveats), interpret supported outputs and carry forward all caveats.
+   That section owns readiness checks, verdicts, and hard stops.
 2. Identify the strongest descriptive patterns.
 3. Look for convergence across codebooks:
    - descriptive item strength/weakness
@@ -93,5 +92,6 @@ raw comments, identifiable groups, or customer-identifiable information.
 - Do not name small groups or expose identifiable slices.
 - Do not create manager-facing action plans in this workflow. Handle explicit
   requests for those plans as a separate task.
-- Do not substitute overall averages for missing benchmarks without saying so.
+- Follow `interactive-report-contract.md` for score presentation. Do not
+  substitute overall averages for missing benchmarks.
 - Do not label factors as definitive constructs without item-level support.

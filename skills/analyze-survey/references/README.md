@@ -1,11 +1,12 @@
 # Analyze Survey references
 
-Use `../SKILL.md` for routing, ingest choices, execution, and completion.
+Use `../SKILL.md` for routing, ingest choices, execution, the Analysis QA gate,
+and completion. QA criteria, verdicts, and hard stops are defined there once.
 This folder supplies the detailed contracts and input notes:
 
 | Reference | Owns |
 |---|---|
-| `interpretation.md` | QA readiness, cross-codebook synthesis, narrative format, and interpretation guardrails. |
+| `interpretation.md` | Cross-codebook synthesis after QA, narrative format, and interpretation guardrails. |
 | `local-runtime.md` | Approved isolated setup, offline readiness checks, installation smoke tests, updates, and runtime provenance. |
 | `interactive-report-contract.md` | Report behavior, analytical thresholds, privacy, score units, and packaging. |
 | `golden-report.html` | Canonical HTML shell; replace its aggregate data through the shared builder, never reuse its example results. |
