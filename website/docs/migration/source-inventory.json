@@ -3878,8 +3878,8 @@
       "source": "src/app/favicon.ico",
       "destination": "website/src/app/favicon.ico",
       "sourceSha256": "c28fdd2a4f31e2dc64f653962286da5c82a4cdfc518b242d32812c624e9a19a4",
-      "destinationSha256": "c28fdd2a4f31e2dc64f653962286da5c82a4cdfc518b242d32812c624e9a19a4",
-      "intentionalDifference": ""
+      "destinationSha256": "8bc436e7791e1f5687b281b5292ad3d2489d92a7ba7ca12b8854d7f74cbc1fee",
+      "intentionalDifference": "Replace the Next.js starter favicon with 16/32/48px PNG frames of the tracked Viva Glint mark on white; add the same mark as an automatically linked SVG browser icon."
     },
     {
       "source": "src/app/globals.css",
