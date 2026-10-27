@@ -14,8 +14,8 @@
       "source": ".github/workflows/site-ci.yml",
       "destination": ".github/workflows/site-ci.yml",
       "sourceSha256": "21ed094e6da10c12eb4e2c9b57bbee6305a1f8fafef492661dae0c7ea6951ba0",
-      "destinationSha256": "05f9d7cde492965cc151511e239446198ca4ca86f2ada28e6e84da1e01742b04",
-      "intentionalDifference": "Relocated to destination root with website working directory/npm cache, Node22.23.4 and inventory check; preserves source checks, adds verified static-reader build and explicitly authorized main-only GitHub Pages deployment."
+      "destinationSha256": "cbedcfef431cfaaf160b98be52a0356662ce4976839f5a476c77c5dfce7fadaf",
+      "intentionalDifference": "Relocated to destination root with website working directory/npm cache, Node22.23.4 and inventory check; preserves source checks, adds verified static-reader build and explicitly authorized main-only GitHub Pages deployment. Subsequent maintainer-approved telemetry adds a disabled-by-default main-only Pages flag and an intercepted consent browser release gate when enabled."
     },
     {
       "source": ".gitignore",
@@ -49,8 +49,8 @@
       "source": "README.md",
       "destination": "website/README.md",
       "sourceSha256": "5d8bf5442839d7989a24a82b72496f407066ecd3381247fdfe35d4995571e0a2",
-      "destinationSha256": "cc554f2ad0ed45234e9d137748019f45cf5844526ced679d0c180c8933e709b6",
-      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract."
+      "destinationSha256": "2cb6d34bfb08583b6ffcf8a63fe9cbd2c09a915fac250eff0d92ee75d1815c89",
+      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents opt-in/privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback."
     },
     {
       "source": "artifacts/README.md",
@@ -308,15 +308,15 @@
       "source": "package-lock.json",
       "destination": "website/package-lock.json",
       "sourceSha256": "1436f18dbdbeac5f0699137a7916dec9c0bbc9891c7a57d2e6b49571c4c70541",
-      "destinationSha256": "1436f18dbdbeac5f0699137a7916dec9c0bbc9891c7a57d2e6b49571c4c70541",
-      "intentionalDifference": ""
+      "destinationSha256": "a4d2b922d57ab73c3f277fa4f8309002aee7c3cf3dbca8a943915551ea43c162",
+      "intentionalDifference": "Subsequent maintainer-approved telemetry locks the development-only PGlite migration/permissions test runtime; production dependencies are unchanged."
     },
     {
       "source": "package.json",
       "destination": "website/package.json",
       "sourceSha256": "077e6bd8fb609e100c287c6a2d03dd3a6f5d15d170f2931e6febe3c53249cb27",
-      "destinationSha256": "bf9730e172da2431c088d8e7b85de9bc3e157bb179623c811c693551fa22fde3",
-      "intentionalDifference": "Adds static Pages build, explicit approved-report export, loopback preview and browser-check commands; appends focused reader-build tests. Dependencies and lockfile unchanged."
+      "destinationSha256": "59098a18708bc55c1222f1f20311b68043214646f35e60bf5cb812b9ba9c4ba7",
+      "intentionalDifference": "Adds static Pages build, explicit approved-report export, loopback preview and browser-check commands; appends focused reader-build tests. Dependencies and lockfile unchanged. Subsequent maintainer-approved telemetry adds focused event/database tests and an intercepted browser command; PGlite is a development-only PostgreSQL test dependency."
     },
     {
       "source": "packages/data-visuals/.gitattributes",
@@ -3906,8 +3906,8 @@
       "source": "src/app/layout.tsx",
       "destination": "website/src/app/layout.tsx",
       "sourceSha256": "e680330d07265b558c4a9048141a3ee04c1aea1051aafc8abb225a226c91ea08",
-      "destinationSha256": "e680330d07265b558c4a9048141a3ee04c1aea1051aafc8abb225a226c91ea08",
-      "intentionalDifference": ""
+      "destinationSha256": "d326d09bf07ce369870efdf93cadaa1eb0108721bf74ce855a1ef50418510e75",
+      "intentionalDifference": "Subsequent maintainer-approved telemetry mounts optional consent UI and tracking, disabled in normal Next/Studio builds and gated to the public production reader."
     },
     {
       "source": "src/app/page.module.css",
@@ -4123,8 +4123,8 @@
       "source": "src/app/tools/analyze-survey/analyze-survey-modal-trigger.tsx",
       "destination": "website/src/app/tools/analyze-survey/analyze-survey-modal-trigger.tsx",
       "sourceSha256": "f9d483205ea5c812c77bb011a117fb4583a126cd6114ef59cb007693f84d6145",
-      "destinationSha256": "61eb5a938b1c793e47411d2b9c906b92f0b9b2b823f02af5d40faab8b3d684ca",
-      "intentionalDifference": "Preserve an existing classic-scrollbar gutter while the Analyze Survey modal locks scrolling, then restore its original inline style; do not introduce a gutter on pages without one or override an existing stable gutter."
+      "destinationSha256": "8ef114d02a25e58b1be8575103173d53d9d10e5405a37e5a88cd5dc156e5c108",
+      "intentionalDifference": "Preserve an existing classic-scrollbar gutter while the Analyze Survey modal locks scrolling, then restore its original inline style; do not introduce a gutter on pages without one or override an existing stable gutter. Subsequent maintainer-approved telemetry adds only a semantic event marker to the existing dialog trigger; interaction, content and dialog behavior are preserved."
     },
     {
       "source": "src/app/tools/analyze-survey/page.module.css",
