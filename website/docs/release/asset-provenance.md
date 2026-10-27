@@ -1,5 +1,12 @@
 # Asset provenance and public-release approval
 
+> Historical source approval register. The original entries and evidence
+> requirements below are retained, not rewritten or marked approved by this
+> note. Later owner-confirmed release decisions are documented in the
+> [integration record](../migration/integration.md#current-content-and-release-decisions).
+> Those decisions apply only to their stated scope; new or unrelated material
+> still requires its own review and approval.
+
 ## Inventory
 
 | Path | Current inventory | Intended source |

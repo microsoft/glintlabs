@@ -1,5 +1,11 @@
 # Hosting decision
 
+> Historical staging record. The original options and status below are retained
+> for provenance. The approved current architecture is a public GitHub Pages
+> reader with authenticated Studio remaining local; see the
+> [integration decision](../migration/integration.md#scope-and-provenance).
+> The earlier "no production host" status does not describe the current reader.
+
 ## Status
 
 No production host is selected. A product owner, service owner, security

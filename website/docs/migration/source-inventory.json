@@ -49,8 +49,8 @@
       "source": "README.md",
       "destination": "website/README.md",
       "sourceSha256": "5d8bf5442839d7989a24a82b72496f407066ecd3381247fdfe35d4995571e0a2",
-      "destinationSha256": "5d8bf5442839d7989a24a82b72496f407066ecd3381247fdfe35d4995571e0a2",
-      "intentionalDifference": ""
+      "destinationSha256": "cc554f2ad0ed45234e9d137748019f45cf5844526ced679d0c180c8933e709b6",
+      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract."
     },
     {
       "source": "artifacts/README.md",
@@ -133,22 +133,22 @@
       "source": "docs/release/asset-provenance.md",
       "destination": "website/docs/release/asset-provenance.md",
       "sourceSha256": "86d530c56e7d12467f83fe2a5af06c2e50c54725b7fd26933b75d546207cac4a",
-      "destinationSha256": "86d530c56e7d12467f83fe2a5af06c2e50c54725b7fd26933b75d546207cac4a",
-      "intentionalDifference": ""
+      "destinationSha256": "32ac1bfac27712d427331627f1edcecb757399aab3127e0383577e40ce7faa9a",
+      "intentionalDifference": "Add historical context and a link to later scoped release decisions; retain the original approval register, evidence requirements and rights records without granting additional clearance."
     },
     {
       "source": "docs/release/hosting-decision.md",
       "destination": "website/docs/release/hosting-decision.md",
       "sourceSha256": "da26d0a4c13cc7e7f3f6797fa6b9b88c9466a24f3bcacb98477e29cdbbc87179",
-      "destinationSha256": "da26d0a4c13cc7e7f3f6797fa6b9b88c9466a24f3bcacb98477e29cdbbc87179",
-      "intentionalDifference": ""
+      "destinationSha256": "6cb190a60f9d1964e3aafc68c3ae1bbd789fd5706aeaa9ac202cde7dc2ea5a63",
+      "intentionalDifference": "Add historical context and a link to the current public-reader/local-Studio decision while retaining the original hosting options and staging status as evidence."
     },
     {
       "source": "docs/release/official-repository-handoff.md",
       "destination": "website/docs/release/official-repository-handoff.md",
       "sourceSha256": "9e9e6a0827946638ed96c5f2103e3ec1e3494ac0aadc3b742d9fbd1282c04b30",
-      "destinationSha256": "9e9e6a0827946638ed96c5f2103e3ec1e3494ac0aadc3b742d9fbd1282c04b30",
-      "intentionalDifference": ""
+      "destinationSha256": "2881fa4277a0c9b27e58bbf92af9a5986601ad75b100f6247cd65969f2ed341f",
+      "intentionalDifference": "Add historical context and current documentation links while preserving the original private-source handoff and runner-policy record."
     },
     {
       "source": "docs/release/performance-readiness.md",
@@ -161,8 +161,8 @@
       "source": "docs/release/publication-content-blockers.md",
       "destination": "website/docs/release/publication-content-blockers.md",
       "sourceSha256": "c9c4720580b34b81a0195cbde4bab3d3cb1979457c7e67a1eff61db514f1ee74",
-      "destinationSha256": "c9c4720580b34b81a0195cbde4bab3d3cb1979457c7e67a1eff61db514f1ee74",
-      "intentionalDifference": ""
+      "destinationSha256": "c04b354e5c33e1534d624821117bd39bbc2cc30738bee900faf9737d0dedef77",
+      "intentionalDifference": "Add historical context and a link to later scoped release decisions; retain original blocker entries and approval requirements without rewriting content or granting blanket clearance."
     },
     {
       "source": "docs/release/source-assets/annual-report-2026/hero.png",
