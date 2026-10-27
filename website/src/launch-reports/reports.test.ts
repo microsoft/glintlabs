@@ -12,10 +12,12 @@ const fingerprints: Record<string, { paragraphs: number; text: string; source: s
   "GLPS_RD_Feb '26.docx": { paragraphs: 60, text: "beb7f8d391490722216f77487590d4a852671e9c04f0b171761df1c3874678d1", source: "7212e84cd07793b3a0066f493d9d735e2d0047fa327138a589053c14c650938d" },
   "GLPS_RD_Nov '25.docx": { paragraphs: 46, text: "91f964dbb930b729efce75de978bef747862969c62fe0cbf8248cfff14d27da7", source: "cc5e764f88ebc1a0ce56c03008ad447e7ce92816fbbe45b703a60ba79f5ff080" },
   "GLPS_RD_May '26.docx": { paragraphs: 70, text: "40ddbca29c94aaef15c28e7694068595f8e69528e03917d9f7709d2f9ac0915c", source: "14aaf4097ab8ae3d4af6c8b70f95ea1202168a9f10577d7c005df5921315d0cf" },
+  "GLPS_RD_Oct '25.docx": { paragraphs: 29, text: "5893ee6259a0d07c8bab84d18b3d76fd79027f7bf251793d2b9d095397d641e5", source: "0a03f7ff1430334d05361dce8b0b064535b53de6f7e9981f6d8a9b1fe01e360d" },
 };
 const allReports = getLaunchReports({ includePrivatePreview: true });
 const november = allReports.find(report => report.slug === "empowering-managers-for-an-ai-first-future")!;
 const may = allReports.find(report => report.slug === "the-human-conditions-behind-ai-value-at-work")!;
+const october = allReports.find(report => report.slug === "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes")!;
 const p0Slugs = new Set([
   "empowering-managers-for-an-ai-first-future",
   "fighting-ai-slop-with-meta-cognition-around-ai",
@@ -23,7 +25,7 @@ const p0Slugs = new Set([
 ]);
 
 test("all direct Research Drops retain independently verified Word text and source hashes", () => {
-  assert.equal(allReports.length, 4);
+  assert.equal(allReports.length, 5);
   for (const report of allReports) {
     const expected = fingerprints[report.manifest.source.fileName];
     const text = report.manifest.blocks.flatMap(block => "text" in block ? [block.text] : []);
@@ -50,7 +52,7 @@ test("every source image remains byte-identical, with its Word dimensions and a 
       assert.equal(block.presentation?.crop ?? "original", "original");
     }
   }
-  assert.equal(imageCount, 20);
+  assert.equal(imageCount, 25);
 });
 
 test("Research Drop cards use existing Blue illustrations without replacing the original report heroes", async () => {
@@ -59,6 +61,7 @@ test("Research Drop cards use existing Blue illustrations without replacing the 
     "fighting-ai-slop-with-meta-cognition-around-ai": { id: "document-edit-text", alt: "Document edit text illustration." },
     "tracking-the-rise-of-perceived-ai-value-at-work": { id: "data", alt: "Data illustration." },
     "the-human-conditions-behind-ai-value-at-work": { id: "sign-in", alt: "Sign in illustration." },
+    "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes": { id: "agents-workflow", alt: "Agents workflow illustration." },
   };
   for (const report of allReports) {
     const { id, alt } = expected[report.slug];
@@ -79,6 +82,7 @@ test("all source reference lists receive reference styling, including reports wi
     "fighting-ai-slop-with-meta-cognition-around-ai": ["block-78", "block-79", "block-80", "block-81"],
     "tracking-the-rise-of-perceived-ai-value-at-work": ["block-81", "block-82", "block-83", "block-84", "block-85", "block-86"],
     "the-human-conditions-behind-ai-value-at-work": ["block-74", "block-75", "block-76", "block-77", "block-78", "block-79", "block-80", "block-81"],
+    "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes": ["block-46", "block-47"],
   };
   for (const report of allReports) {
     assert.deepEqual([...report.referenceBlockIds], expected[report.slug]);
@@ -136,7 +140,7 @@ test("Word link targets and linked wording survive removal of editorial formatti
       }
     }
   }
-  assert.equal(linkCount, 22);
+  assert.equal(linkCount, 23);
 });
 
 test("April uses the corrected 2026 publication year without rewriting source evidence", () => {
@@ -149,7 +153,40 @@ test("April uses the corrected 2026 publication year without rewriting source ev
   const source = launchReportSources.find(item => item.slug === report.slug)!;
   assert.ok(source.manifest.blocks.some(block => "text" in block &&
     block.text === "[April 14, 2025 • Research Drop] [2,331 Employees]"));
-  assert.deepEqual(allReports.map(item => item.isoDate), ["2026-05-12", "2026-04-14", "2026-02-10", "2025-11-11"]);
+  assert.deepEqual(allReports.map(item => item.isoDate), ["2026-05-12", "2026-04-14", "2026-02-10", "2025-11-11", "2025-10-14"]);
+});
+
+test("October preserves its source wording, figures, Wipro spotlight and archival context without Home featuring", () => {
+  const source = launchReportSources.find(item => item.slug === october.slug)!;
+  const rawText = source.manifest.blocks.flatMap(block => "text" in block ? [block.text] : []);
+  assert.equal(rawText.length, 38);
+  assert.equal(createHash("sha256").update(rawText.join("\n")).digest("hex"), "f143947b3637d255daa110e2f5c514cba4224cfe61cf10a03682ac1c784634d5");
+  assert.equal(october.catalog.title, "Amplifying Clarity and Impact of AI Agents by Aligning on Desired Outcomes");
+  assert.equal(october.catalog.employeeCount, 1800);
+  assert.equal(october.catalog.featured, false);
+  assert.deepEqual(october.coverDetails, ["October 14, 2025 • Research Drop", "1,800 Employees"]);
+  assert.deepEqual(october.manifest.blocks.filter(block => block.type === "image").map(block => block.sourceAssetSha256), [
+    "a33aba591aa886cea676bcdaa6eba47ea469b9d2ccad8ba24f74b81755424209",
+    "2c09318a375a59822e80f214fd96441968b1cad27535812326a3501cb41e9945",
+    "ab2324d98a9563330eebaf583a07012e560b36acf57613e721e32ca92c862ab1",
+    "33aef82935fb8bc6935a923c0bfaf523a9608fdb1d325cd62f91950b4563a9d2",
+    "bebf99f8d87f894b4683afa0d7f43adc0ee18dcc93444434f91e085a7feb8275",
+  ]);
+  assert.deepEqual(october.manifest.blocks.filter(block => block.type === "heading").map(block => block.id), [
+    "block-0", "block-4", "block-13", "block-23", "block-31", "block-45",
+  ]);
+  for (const id of ["block-30", "block-37"]) {
+    const divider = october.manifest.blocks.find(block => block.id === id);
+    assert.ok(divider && "text" in divider);
+    assert.equal(divider.text, "----");
+  }
+  assert.ok(october.textRuns["block-40"].every(run => run.bold));
+  assert.match(october.textRuns["block-40"].map(run => run.text).join(""), /Stay tuned for our November Research Drop/);
+  for (const id of ["block-42", "block-43"]) assert.ok(october.textRuns[id].every(run => run.italic));
+  assert.equal(october.textRuns["block-46"][0].italic, false);
+  assert.equal(october.textRuns["block-46"].some(run => run.href), false);
+  assert.equal(source.publicationSourceEvidence.hyperlinkCount, 1);
+  assert.ok(october.textRuns["block-47"].some(run => run.href === "https://www.capgemini.com/wp-content/uploads/2025/07/Final-Web-Version-Report-AI-Agents.pdf"));
 });
 
 test("May retains Word evidence, original dates, numbered findings and multi-paragraph italics", () => {
@@ -235,7 +272,7 @@ async function withPreview(enabled: boolean, action: () => void | Promise<void>)
 
 test("November clearance makes its catalog entry and assets public without private-preview mode", async () => {
   await withPreview(false, async () => {
-    assert.equal(getLaunchReports().length, 4);
+    assert.equal(getLaunchReports().length, 5);
     assert.equal(getLaunchReport(november.slug), november);
     assert.equal(launchSourceVisible(november.slug, november.manifest.source.fileName), true);
     assert.equal(launchSourceVisible("legacy-address", november.manifest.source.fileName), true);
@@ -249,7 +286,7 @@ test("November clearance makes its catalog entry and assets public without priva
 
 test("November remains publicly cleared when the connected Studio uses preview mode", async () => {
   await withPreview(true, async () => {
-    assert.equal(getLaunchReports().length, 4);
+    assert.equal(getLaunchReports().length, 5);
     const hero = november.manifest.blocks.find(block => block.type === "image")!;
     const response = await launchReportAsset(new Request(`http://localhost${hero.dataUrl}`), november.slug, hero.dataUrl.split("/").pop()!);
     assert.equal(response.status, 200);

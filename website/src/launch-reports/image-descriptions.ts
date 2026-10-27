@@ -1,6 +1,25 @@
 type ImageDescription = { alt: string; description?: string };
 
 export const launchImageDescriptions: Record<string, Record<string, ImageDescription>> = {
+  "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes": {
+    "image1.jpeg": { alt: "Two colleagues discussing work around a laptop in a sunlit workspace." },
+    "image2.png": {
+      alt: "Teams aligned on activities and outcomes are 1.9 times as likely to be high-frequency agentic AI users.",
+      description: "Employees on teams that know both the activities and outcomes they want to achieve with AI agents are 1.9 times as likely to be high-frequency agentic AI users compared with employees on teams that know only the activities. Source: Microsoft People Science Agentic Teaming & Trust Survey, July 2025, n = 1,262 global employees using agentic AI at work.",
+    },
+    "image3.png": {
+      alt: "Employees on teams aligned on expected outcomes report higher clarity when using multiple agents.",
+      description: "Percent favorable for teams discussing only activities versus teams discussing both activities and outcomes: the capabilities of each AI agent are clear, 66% versus 88%, a 22-percentage-point difference; knowing which agent to use in different situations, 65% versus 87%, a 22-percentage-point difference. The activities-only group has 177 employees; the activities-and-outcomes group has 831. Source: Microsoft People Science Agentic Teaming & Trust Survey, July 2025, n = 1,008 global employees using more than one agent at work.",
+    },
+    "image4.png": {
+      alt: "Teams aligned on desired agent outcomes report stronger teaming behaviors.",
+      description: "Percent favorable for teams discussing only activities versus teams discussing both activities and outcomes: AI agents enhance team knowledge sharing, 67% versus 88%; improve team goal alignment, 64% versus 88%; enable more effective resource use, 66% versus 89%; drive more creative team problem-solving, 59% versus 88%; increase pride in team accomplishments, 65% versus 88%. Source: Microsoft People Science Agentic Teaming & Trust Survey, July 2025, n = 1,157 global employees using agentic AI at work and having a team.",
+    },
+    "image5.png": {
+      alt: "Kenny Kesar, Global CIO at Wipro, on connecting AI agent proposals to business priorities.",
+      description: "“Having a structured intake form means we are not just building agents for the sake of technology. By tying AI agents to business priorities, we solve real problems with measurable impact and scale solutions that users can adopt with confidence.” Kenny Kesar, Global CIO. Wipro.",
+    },
+  },
   "the-human-conditions-behind-ai-value-at-work": {
     "image1.jpeg": { alt: "A person working on a laptop in a sunlit room." },
     "image2.png": {

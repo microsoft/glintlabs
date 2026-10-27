@@ -520,12 +520,16 @@ function reportContent(
   let briefHeadingIndex: number | undefined;
   let referencesHeadingLevel: number | undefined;
   let previousBlockWasReference = false;
+  let previousBlockWasDivider = false;
 
   for (let index = 0; index < blocks.length; index += 1) {
     const block = blocks[index];
     if (props.hiddenBlockIds?.has(block.id)) {
       continue;
     }
+    const isDivider = block.type === "paragraph" && /^-{3,}$/.test(block.text.trim());
+    const followsDivider = previousBlockWasDivider;
+    previousBlockWasDivider = isDivider;
     if (block.type === "heading") {
       if (isReferencesHeading(block)) {
         referencesHeadingLevel = block.level;
@@ -548,7 +552,7 @@ function reportContent(
         isReference ? styles.referencesBlock : "",
         startsReferences ? styles.referencesStart : "",
         props.highlightedBlockId === block.id ? styles.highlighted : "",
-        startsReferences || (block.type === "heading" && block.level <= 2)
+        isDivider || (!followsDivider && (startsReferences || (block.type === "heading" && block.level <= 2)))
           ? styles.sectionStart
           : "",
       ]
@@ -560,8 +564,9 @@ function reportContent(
           className={blockClassName}
           id={`report-block-${block.id}`}
           key={block.id}
+          role={isDivider ? "separator" : undefined}
         >
-          {props.blockOverrides?.[block.id] ?? renderBlock(block, props, isReference, referenceMarkers)}
+          {isDivider ? null : props.blockOverrides?.[block.id] ?? renderBlock(block, props, isReference, referenceMarkers)}
         </div>,
       );
       continue;

@@ -11,6 +11,7 @@ const reports = [
   { fileName: "GLPS_RD_Feb '26.docx", slug: "fighting-ai-slop-with-meta-cognition-around-ai", directory, privatePreview: false, featured: true },
   { fileName: "GLPS_RD_April '26.docx", slug: "tracking-the-rise-of-perceived-ai-value-at-work", directory, privatePreview: false, featured: true },
   { fileName: "GLPS_RD_May '26.docx", slug: "the-human-conditions-behind-ai-value-at-work", directory: p1Directory, privatePreview: false, featured: false },
+  { fileName: "GLPS_RD_Oct '25.docx", slug: "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes", directory: p1Directory, privatePreview: false, featured: false },
 ];
 const generated = [];
 for (const { fileName, slug, directory, privatePreview, featured } of reports) {

@@ -68,7 +68,7 @@ export function StudyCard({
           unoptimized
         />}
         <div className={styles.cardBadges}>
-          <span className={styles.badge}>{placeholder ? <DataHistogram16Regular aria-hidden="true" /> : <Image src="/figma/site-canonical/home/study-card-calendar.svg" alt="" width={16} height={16} unoptimized />}{report.badge}</span>
+          <span className={styles.badge}>{report.category === "research-drop" ? <DataHistogram16Regular aria-hidden="true" /> : <Image src="/figma/site-canonical/home/study-card-calendar.svg" alt="" width={16} height={16} unoptimized />}{report.badge}</span>
           {placeholder ? <span className={styles.badge}><People16Regular aria-hidden="true" />[n] Employees</span> : <EmployeeCountBadge count={report.employeeCount} />}
         </div>
         <div>

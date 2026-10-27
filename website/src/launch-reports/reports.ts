@@ -11,6 +11,7 @@ const catalogIllustrations: Record<string, string> = {
   "fighting-ai-slop-with-meta-cognition-around-ai": "document-edit-text",
   "tracking-the-rise-of-perceived-ai-value-at-work": "data",
   "the-human-conditions-behind-ai-value-at-work": "sign-in",
+  "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes": "agents-workflow",
 };
 
 const reports = launchReportSources.map(source => {

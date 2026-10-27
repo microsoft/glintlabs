@@ -4442,5 +4442,686 @@ export const launchReportSources = [
       "hyperlinkCount": 7,
       "representedHyperlinkCount": 7
     }
+  },
+  {
+    "slug": "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes",
+    "privatePreview": false,
+    "featured": false,
+    "manifest": {
+      "schemaVersion": "0.1.0",
+      "source": {
+        "fileName": "GLPS_RD_Oct '25.docx",
+        "sizeBytes": 940281,
+        "sha256": "0a03f7ff1430334d05361dce8b0b064535b53de6f7e9981f6d8a9b1fe01e360d"
+      },
+      "metadata": {
+        "title": "GLPS_RD_Oct '25",
+        "status": "draft"
+      },
+      "blocks": [
+        {
+          "id": "block-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 0,
+            "paragraphId": "70257C5E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[Amplifying Clarity and Impact of AI Agents by Aligning on Desired Outcomes]"
+        },
+        {
+          "id": "block-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 1,
+            "paragraphId": "0780B828"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[October 14, 2025 • Research Drop] [1,800 Employees]"
+        },
+        {
+          "id": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "0D105C49"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image1.jpeg",
+          "dataUrl": "/launch-report-assets/amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes/a33aba591aa886cea676bcdaa6eba47ea469b9d2ccad8ba24f74b81755424209.jpeg",
+          "width": 624,
+          "height": 416,
+          "sourceAssetSha256": "a33aba591aa886cea676bcdaa6eba47ea469b9d2ccad8ba24f74b81755424209",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 4,
+            "paragraphId": "20BF31F8"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Research Drop in Brief:"
+        },
+        {
+          "id": "block-5",
+          "source": {
+            "part": "word/document.xml",
+            "index": 5,
+            "paragraphId": "729B5871"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Employees on teams that align on both activities and outcomes they want to achieve with AI agents are [open bold]1.9x as likely[close bold] to be high-frequency agentic AI users compared to teams focused only on activities. [close bullet]"
+        },
+        {
+          "id": "block-6",
+          "source": {
+            "part": "word/document.xml",
+            "index": 6,
+            "paragraphId": "435E83F3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Outcome-aligned teams report greater up to [open bold]22 percentage-points higher[close bold] clarity when using multiple agents, such as clearer use cases and deeper understanding of capabilities. [close bullet]"
+        },
+        {
+          "id": "block-7",
+          "source": {
+            "part": "word/document.xml",
+            "index": 7,
+            "paragraphId": "2B1E6519"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]When teams plan for outcomes, they report [open bold]greater team-based transformation[close bold] by introducing AI agents: improved knowledge sharing, problem-solving, and more. [close bullet]"
+        },
+        {
+          "id": "block-8",
+          "source": {
+            "part": "word/document.xml",
+            "index": 8,
+            "paragraphId": "008B6312"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Hear from Wipro, a leading AI-powered technology services and consulting company, on how they are anchoring on expected outcomes of agents to solve critical business problems. [close bullet]"
+        },
+        {
+          "id": "block-10",
+          "source": {
+            "part": "word/document.xml",
+            "index": 10,
+            "paragraphId": "61CAB733"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "“Task automation”, “Process optimization”, “Job redesign” – all top-of-mind concepts and phrases that surface when we think of agentic AI transformation. We continue to iterate and test the boundaries of AI agents at work and often start with thinking about what tasks we want them to do. Will they augment or automate? Which responsibilities are best suited for an AI agent?"
+        },
+        {
+          "id": "block-11",
+          "source": {
+            "part": "word/document.xml",
+            "index": 11,
+            "paragraphId": "545443C9"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "But as AI agents turn AI technology from a personal productivity tool into a team value generator, [open bold]it’s time to expand our thinking from not just the [open italics]activities[close italics] we want them to accomplish, but also the [open italics]outcomes[close italics] we want to achieve[close bold]. This involves taking our thinking beyond how the “parts” work, to how they work together and whether we can achieve new outcomes by agent involvement[open superscript]1[close superscript]."
+        },
+        {
+          "id": "block-12",
+          "source": {
+            "part": "word/document.xml",
+            "index": 12,
+            "paragraphId": "43D4A3B6"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "In this month’s Research Drop, we unpack how expanding from considering solely tasks to also evaluating outcomes unlocks new ways of working not only with our teams, but with the agents themselves. And the data tells a clear story: when teams align on outcomes, not just activities, they unlock higher adoption, greater clarity, and amplified impact."
+        },
+        {
+          "id": "block-13",
+          "source": {
+            "part": "word/document.xml",
+            "index": 13,
+            "paragraphId": "6C129CC0"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Driving adoption and clarity by aligning on goals[close H3]"
+        },
+        {
+          "id": "block-14",
+          "source": {
+            "part": "word/document.xml",
+            "index": 14,
+            "paragraphId": "37FD1E01"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "When teams take an outcome-driven approach to integrating AI agents into their work, it kicks off a flywheel of adoption to impact. By investing in strategic discussions and dedicating time to planning for this transformation, employees are more likely to lean into agentic AI. Employees on teams who are aligned not only on the activities they want AI agents to tackle, but also the outcomes they want AI agents to achieve are [open bold]1.9x as likely to be high-frequency agentic AI users[close bold] than teams who have only discussed activities."
+        },
+        {
+          "id": "block-15",
+          "source": {
+            "part": "word/document.xml",
+            "index": 15,
+            "paragraphId": "5FFC3669"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-16-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 16,
+            "paragraphId": "31F8FAFE"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image2.png",
+          "dataUrl": "/launch-report-assets/amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes/2c09318a375a59822e80f214fd96441968b1cad27535812326a3501cb41e9945.png",
+          "width": 598,
+          "height": 104,
+          "sourceAssetSha256": "2c09318a375a59822e80f214fd96441968b1cad27535812326a3501cb41e9945",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-17",
+          "source": {
+            "part": "word/document.xml",
+            "index": 17,
+            "paragraphId": "5D866915"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-18",
+          "source": {
+            "part": "word/document.xml",
+            "index": 18,
+            "paragraphId": "633B2E68"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Employees on these teams also report a sharper sense of clarity when working with AI agents. Because their focus includes aligning on outcomes, they maintain clear role boundaries, even when multiple agents are in play. They know what each agent is capable of, where each fits, and which use cases unlock the most value, allowing them to optimize the experience rather than improvise. This clarity reflects a more mature agent strategy, where the teams have moved beyond “what tasks should we offload?” to a vision for how agentic AI integrates into the team’s way of working."
+        },
+        {
+          "id": "block-19",
+          "source": {
+            "part": "word/document.xml",
+            "index": 19,
+            "paragraphId": "2A2B78A2"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-20-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 20,
+            "paragraphId": "62F9AF49"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image3.png",
+          "dataUrl": "/launch-report-assets/amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes/ab2324d98a9563330eebaf583a07012e560b36acf57613e721e32ca92c862ab1.png",
+          "width": 379,
+          "height": 281,
+          "sourceAssetSha256": "ab2324d98a9563330eebaf583a07012e560b36acf57613e721e32ca92c862ab1",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-21",
+          "source": {
+            "part": "word/document.xml",
+            "index": 21,
+            "paragraphId": "42753576"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-22",
+          "source": {
+            "part": "word/document.xml",
+            "index": 22,
+            "paragraphId": "6245CCA1"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This alignment creates the conditions for scale. When teams know why they’re using agents and what success looks like, they can avoid fragmented experimentation and move toward intentional integration. That clarity may become a competitive advantage, enabling teams to adapt faster, deploy agents more effectively, and realize value sooner."
+        },
+        {
+          "id": "block-23",
+          "source": {
+            "part": "word/document.xml",
+            "index": 23,
+            "paragraphId": "0BA2C2A9"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Elevated impact of focusing on outcomes[close H3]"
+        },
+        {
+          "id": "block-24",
+          "source": {
+            "part": "word/document.xml",
+            "index": 24,
+            "paragraphId": "5269B7D8"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "As we shift toward an outcome-focused approach to integrating agentic AI, we may need to rethink the data we use to measure success, moving beyond individual productivity to include metrics such as collaboration effectiveness and AI agent evaluation[open superscript]2[close superscript]. Team processes may look different with the introduction of AI agents, as it’s not just about adding another tool, it’s about reshaping how work gets done. [open bold]And we found that employees on teams that adopt this outcome-driven mindset are more likely to report seeing AI agents as teammates rather than just tools. [close bold]"
+        },
+        {
+          "id": "block-25",
+          "source": {
+            "part": "word/document.xml",
+            "index": 25,
+            "paragraphId": "55D17881"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "By aligning on outcomes, teams also report stronger teaming behaviors, from richer knowledge sharing to more creative problem-solving. They’re also more likely to feel proud of what their team accomplishes together. This [open bold]team readiness[close bold] step of planning for both activities [open italics]and[close italics] outcomes can transform how teams collaborate, unlocking value at a collective level."
+        },
+        {
+          "id": "block-26",
+          "source": {
+            "part": "word/document.xml",
+            "index": 26,
+            "paragraphId": "2F172BA3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-27-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 27,
+            "paragraphId": "2116E434"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image4.png",
+          "dataUrl": "/launch-report-assets/amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes/33aef82935fb8bc6935a923c0bfaf523a9608fdb1d325cd62f91950b4563a9d2.png",
+          "width": 532,
+          "height": 350,
+          "sourceAssetSha256": "33aef82935fb8bc6935a923c0bfaf523a9608fdb1d325cd62f91950b4563a9d2",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-28",
+          "source": {
+            "part": "word/document.xml",
+            "index": 28,
+            "paragraphId": "2C39C61A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-29",
+          "source": {
+            "part": "word/document.xml",
+            "index": 29,
+            "paragraphId": "1DA887D8"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "The takeaway is clear: aligning on outcomes can be the difference between incremental gains and transformative impact. Teams that take the time to define what success looks like with AI agents don’t just adopt the technology; they unlock a system-level shift in how work gets done. They see stronger adoption, clearer roles, and measurable improvements in teaming behaviors."
+        },
+        {
+          "id": "block-30",
+          "source": {
+            "part": "word/document.xml",
+            "index": 30,
+            "paragraphId": "41E22B66"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "----"
+        },
+        {
+          "id": "block-31",
+          "source": {
+            "part": "word/document.xml",
+            "index": 31,
+            "paragraphId": "540676F7"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Customer spotlight: Wipro’s outcome-driven AI journey[close H3]"
+        },
+        {
+          "id": "block-32",
+          "source": {
+            "part": "word/document.xml",
+            "index": 32,
+            "paragraphId": "614B422F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Wipro, a leading AI-powered technology services and consulting company headquartered in India, leverages an [open bold]Agent Intake and Prioritization Approach[close bold] as a structured framework for evaluating whether a new agent should be developed. By requiring teams to clearly articulate the agent’s purpose, business value, and intended outcomes in the intake form, this process ensures that every proposal is strategically aligned, technically feasible, and financially justified. Teams are prompted to consider not only what the agent will do, but also [open bold]how it will impact users, drive measurable improvements, and support broader organizational goals[close bold]. This clarity at the outset helps avoid duplication, ensures resources are allocated efficiently, and sets a clear benchmark for success."
+        },
+        {
+          "id": "block-33",
+          "source": {
+            "part": "word/document.xml",
+            "index": 33,
+            "paragraphId": "09C8C9D8"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "By investing in this process, teams are better positioned to deliver meaningful solutions, and it fosters a shared understanding across stakeholders, from technical leads to business unit representatives. [open bold]As a result, agents are developed with a clear value proposition, measurable KPIs, and a direct link to business priorities, which leads to higher adoption, improved productivity, and demonstrable ROI.[close bold] Ultimately, this approach empowers teams to innovate with confidence, knowing that their efforts are both purposeful and impactful."
+        },
+        {
+          "id": "block-34",
+          "source": {
+            "part": "word/document.xml",
+            "index": 34,
+            "paragraphId": "0500D70D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-35-image-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 35,
+            "paragraphId": "6FDB6B2F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image5.png",
+          "dataUrl": "/launch-report-assets/amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes/bebf99f8d87f894b4683afa0d7f43adc0ee18dcc93444434f91e085a7feb8275.png",
+          "width": 508,
+          "height": 110,
+          "sourceAssetSha256": "bebf99f8d87f894b4683afa0d7f43adc0ee18dcc93444434f91e085a7feb8275",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-36",
+          "source": {
+            "part": "word/document.xml",
+            "index": 36,
+            "paragraphId": "597B14DA"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-37",
+          "source": {
+            "part": "word/document.xml",
+            "index": 37,
+            "paragraphId": "3A5F1062"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "----"
+        },
+        {
+          "id": "block-38",
+          "source": {
+            "part": "word/document.xml",
+            "index": 38,
+            "paragraphId": "1B048B37"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "If your team is exploring agentic AI, start by reframing the questions: [open italics]What outcomes (not just tasks) matter most? How will we measure success beyond productivity? Where do agents fit into our team’s way of working?[close italics] Consider using these questions in your next team planning session, as these conversations can act as a foundation for clarity, adoption, and impact to truly get the most from this technology."
+        },
+        {
+          "id": "block-40",
+          "source": {
+            "part": "word/document.xml",
+            "index": 40,
+            "paragraphId": "1F673DDD"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Stay tuned for our November Research Drop to keep up with what the Microsoft People Science team is learning! [close bold]"
+        },
+        {
+          "id": "block-42",
+          "source": {
+            "part": "word/document.xml",
+            "index": 42,
+            "paragraphId": "0A7AF242"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open italics]This month’s Research Drop analyzed 1,800 global employees from the Microsoft People Science Agentic Teaming & Trust Survey from July 2025. Employees were grouped in this analysis based on their favorability for two survey items: “My team is aligned on the outcomes we would want to achieve with the help of an agentic AI (AI Agents)” and “My team understands which tasks are best suited for human judgment versus those that can be supported by agentic AI (AI Agents).”"
+        },
+        {
+          "id": "block-43",
+          "source": {
+            "part": "word/document.xml",
+            "index": 43,
+            "paragraphId": "2421E490"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Special thanks to Wipro for providing their story. Note: all data from this blog is from Microsoft People Science and is not linked to Wipro. [close italics]"
+        },
+        {
+          "id": "block-45",
+          "source": {
+            "part": "word/document.xml",
+            "index": 45,
+            "paragraphId": "73D95326"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "References"
+        },
+        {
+          "id": "block-46",
+          "source": {
+            "part": "word/document.xml",
+            "index": 46,
+            "paragraphId": "3F3AB677"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]1[close superscript]Mercer. (September 2025). The New Rules of Delivery: An AI-Powered Operating Model for Human-Machine Teaming. [open italics]HR Tech. [close italics]"
+        },
+        {
+          "id": "block-47",
+          "source": {
+            "part": "word/document.xml",
+            "index": 47,
+            "paragraphId": "7D9F8941"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]2[close superscript]Capgemini Research Institute. (July 2025). Rise of agentic AI: How trust is the key to human-AI collaboration.",
+          "links": [
+            {
+              "start": 38,
+              "end": 148,
+              "href": "https://www.capgemini.com/wp-content/uploads/2025/07/Final-Web-Version-Report-AI-Agents.pdf"
+            }
+          ]
+        }
+      ],
+      "reviewItems": [
+        {
+          "id": "review-0",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image1.jpeg does not have an image description.",
+          "blockId": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "0D105C49"
+          }
+        },
+        {
+          "id": "review-1",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image2.png does not have an image description.",
+          "blockId": "block-16-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 16,
+            "paragraphId": "31F8FAFE"
+          }
+        },
+        {
+          "id": "review-2",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image3.png does not have an image description.",
+          "blockId": "block-20-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 20,
+            "paragraphId": "62F9AF49"
+          }
+        },
+        {
+          "id": "review-3",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image4.png does not have an image description.",
+          "blockId": "block-27-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 27,
+            "paragraphId": "2116E434"
+          }
+        },
+        {
+          "id": "review-4",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image5.png does not have an image description.",
+          "blockId": "block-35-image-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 35,
+            "paragraphId": "6FDB6B2F"
+          }
+        }
+      ],
+      "extraction": {
+        "paragraphCount": 48,
+        "imageCount": 5,
+        "unsupportedCount": 0
+      }
+    },
+    "publicationSourceEvidence": {
+      "sourceSha256": "0a03f7ff1430334d05361dce8b0b064535b53de6f7e9981f6d8a9b1fe01e360d",
+      "hyperlinkCount": 1,
+      "representedHyperlinkCount": 1
+    }
   }
 ];
