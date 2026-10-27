@@ -3479,8 +3479,8 @@
       "source": "scripts/build-launch-report-sources.mjs",
       "destination": "website/scripts/build-launch-report-sources.mjs",
       "sourceSha256": "625f8f1363e2a6109e639fd0ad1b9353631bedc785c44d9a0c55716e803ca566",
-      "destinationSha256": "625f8f1363e2a6109e639fd0ad1b9353631bedc785c44d9a0c55716e803ca566",
-      "intentionalDifference": ""
+      "destinationSha256": "db0d7d918d5c134c8db66367750141a815a2512f33b0e19e92b448cce24d9e62",
+      "intentionalDifference": "Adds the May P1 Word original and explicit per-source Home feature flags; all three P0 manifests, assets and source evidence remain unchanged."
     },
     {
       "source": "scripts/connected-build-config.test.mjs",
@@ -3528,8 +3528,8 @@
       "source": "scripts/studio-editing.test.mjs",
       "destination": "website/scripts/studio-editing.test.mjs",
       "sourceSha256": "444b0ba27fc04939b715287253a2b59efb6ea09329e21f775f30e31b044cf631",
-      "destinationSha256": "444b0ba27fc04939b715287253a2b59efb6ea09329e21f775f30e31b044cf631",
-      "intentionalDifference": ""
+      "destinationSha256": "d3f667c8f65adca6a24b2cc37a613fc308cfb0a2f0caa6e42b2ea6380190cdf8",
+      "intentionalDifference": "Extends the existing reader-renderer test to verify colon-free brief headings, unchanged source blocks and other heading punctuation, and consistent behavior with rich-text overrides."
     },
     {
       "source": "scripts/studio-owner-key.ts",
@@ -4354,43 +4354,43 @@
       "source": "src/launch-reports/image-descriptions.ts",
       "destination": "website/src/launch-reports/image-descriptions.ts",
       "sourceSha256": "f24d9937cf401189909b1eb5fa5f83a7655bdc360d1b7d522b81eaf861af0565",
-      "destinationSha256": "f24d9937cf401189909b1eb5fa5f83a7655bdc360d1b7d522b81eaf861af0565",
-      "intentionalDifference": ""
+      "destinationSha256": "46e961f4a5ff2dd875630eb6f04dd97795f8ecb24c44fc07f3d276572b0e408c",
+      "intentionalDifference": "Adds May's original-photo alt text and a description transcribing the original coefficient figure, including unavailable values and study limitations; P0 descriptions are unchanged."
     },
     {
       "source": "src/launch-reports/launch-report.tsx",
       "destination": "website/src/launch-reports/launch-report.tsx",
       "sourceSha256": "d712770fd8356776ab2d0a637e377136a8c80ee3c5de402b50bcd74e8e4e1afa",
-      "destinationSha256": "d712770fd8356776ab2d0a637e377136a8c80ee3c5de402b50bcd74e8e4e1afa",
-      "intentionalDifference": ""
+      "destinationSha256": "ccfd53a9fb47f2ef5d8a78ec187a264295bf38d93a5b950d56a2f537058574e3",
+      "intentionalDifference": "Passes source-derived numbered-list IDs into the existing renderer without changing P0 presentation."
     },
     {
       "source": "src/launch-reports/reports.test.ts",
       "destination": "website/src/launch-reports/reports.test.ts",
       "sourceSha256": "6dfc354d95b1d7d670f1e42a312a856670a83f2deb9e993b6574f3e2cfbc4de6",
-      "destinationSha256": "f96b12f62c858f874754733ec089d1503ae46b12a1c0f2ac41ff78cdd2b79ac5",
-      "intentionalDifference": "Replaces the prior 2025 publication-date expectation with owner-confirmed 2026 cover, catalog and metadata dates, original Word-evidence retention and newest-first ordering; content and asset fidelity checks retained."
+      "destinationSha256": "b24dad2e0ff7e55bf8480c4c5a3e51a31578bbe60c276bfd8bb61e700050d28f",
+      "intentionalDifference": "Retains the owner-confirmed April 2026 date correction and all original fidelity checks; adds independently verified May text/image evidence, Reports-only placement, selected sign-in artwork, source links, numbered findings, document-spanning italics, unchanged P0 formatting, the author-confirmed reference 2-to-3 correction and shared colon-free brief heading/navigation presentation with original Word evidence retained."
     },
     {
       "source": "src/launch-reports/reports.ts",
       "destination": "website/src/launch-reports/reports.ts",
       "sourceSha256": "994ed10ecc42c729a52b287a5dca7656d4be2e0f21d12020435c96602970c613",
-      "destinationSha256": "bd080275f244903ab502b07e2af64e8e12f164132dccda41dfcd9e99723995f0",
-      "intentionalDifference": "Applies the owner-confirmed 2026 publication-year correction for the April Research Drop across cover, catalog and derived dates; imported Word evidence and study years remain unchanged."
+      "destinationSha256": "c232082b4ff8c7f756d326aff0c9e7dc2bb0ba6237e7ec92150ebb912d85b1d7",
+      "intentionalDifference": "Preserves the owner-confirmed April 2026 date correction; adds May's selected sign-in illustration, explicit source feature flags, numbered findings, document-spanning formatting and the author-confirmed reference 2-to-3 correction in the 2024 AI-adoption claim. Original Word evidence and exact P0 manifests, rich text and catalog entries are retained."
     },
     {
       "source": "src/launch-reports/source-data.ts",
       "destination": "website/src/launch-reports/source-data.ts",
       "sourceSha256": "e95299b9f2dc4e882602c9e57c27fca3522b91675b853cc3c2c1bd036184fdc5",
-      "destinationSha256": "e95299b9f2dc4e882602c9e57c27fca3522b91675b853cc3c2c1bd036184fdc5",
-      "intentionalDifference": ""
+      "destinationSha256": "84f99c21f306102fecfb59c572dcf1493e1bc1220432816373ef51fbd7aa9cd8",
+      "intentionalDifference": "Adds the source-mapped May P1 Word manifest and evidence, with featured false and explicit existing P0 featured true flags; original P0 manifests and evidence are unchanged."
     },
     {
       "source": "src/launch-reports/word-format.ts",
       "destination": "website/src/launch-reports/word-format.ts",
       "sourceSha256": "7f0dbf817e18b1256a78fcaa6345d15c33533cc1be750af443d4a23f28462f24",
-      "destinationSha256": "7f0dbf817e18b1256a78fcaa6345d15c33533cc1be750af443d4a23f28462f24",
-      "intentionalDifference": ""
+      "destinationSha256": "8c331ec6f7217c8c48bc758290390535dc7dfc2a64edb2c9c47e773fdf668197",
+      "intentionalDifference": "Recognizes May's numeric-bullet editorial markers and allows emphasis to span source paragraphs; existing standalone formatting behavior and all P0 rich-text runs are retained."
     },
     {
       "source": "src/manifest/report-manifest.test.ts",
@@ -4585,8 +4585,8 @@
       "source": "src/publishing/publication-preview.test.ts",
       "destination": "website/src/publishing/publication-preview.test.ts",
       "sourceSha256": "3ae9fc599384ac299041054983d66ea3bec75c61d778e6cc8d079efc79b37f11",
-      "destinationSha256": "5d98ff5c3fb3e78dbc87084f5648eada1645dcca7e6a5f474d9f04869453b393",
-      "intentionalDifference": "Adds one test for explicit exact-revision approved export, staged-only rejection, declared-assets-only copying and tamper detection; updates featured-report order for the corrected April 2026 publication date. Other source tests/assertions retained."
+      "destinationSha256": "17fde9bbb17489ec90aa8177896a9140d96875c03e012e5d4acfd2f1d156bdd9",
+      "intentionalDifference": "Retains exact-revision approved-export, staged-only rejection, declared-assets-only copying, tamper detection and corrected April 2026 feature-order checks; additionally requires May to appear once in Reports and never in Home Featured."
     },
     {
       "source": "src/publishing/publication-preview.ts",
@@ -4655,8 +4655,8 @@
       "source": "src/report-system/report-renderer.tsx",
       "destination": "website/src/report-system/report-renderer.tsx",
       "sourceSha256": "862d43be55da72ef46d10dad23395372be76513cefac999a68410138eb5fabf8",
-      "destinationSha256": "862d43be55da72ef46d10dad23395372be76513cefac999a68410138eb5fabf8",
-      "intentionalDifference": ""
+      "destinationSha256": "d243cfc0c68c72f1a0bebe32ef75a9d1c40832cc8fee6d4ae807a9d222698d95",
+      "intentionalDifference": "Adds optional source-derived ordered-list groups using existing list styling, and a shared display label that removes the trailing colon from brief headings and their side-nav entries. Imported text, section anchors, other punctuation and styles remain unchanged."
     },
     {
       "source": "src/report-system/report-side-nav.module.css",

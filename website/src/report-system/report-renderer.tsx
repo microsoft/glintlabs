@@ -52,6 +52,7 @@ type ReportRendererProps = {
   manifest: ReportManifest;
   mode?: "edit" | "read";
   previewViewport?: boolean;
+  orderedListBlockIds?: ReadonlySet<string>;
   referenceBlockIds?: ReadonlySet<string>;
   onSelectBlock?: (blockId: string) => void;
   reportStyle?: ReportStyle;
@@ -78,6 +79,10 @@ function headingTag(level: number): ElementType {
 function isResearchBriefHeading(block: ReportBlock) {
   return block.type === "heading" &&
     /^research\s+drop\s+in\s+brief\s*:?\s*$/i.test(block.text.trim());
+}
+
+function headingLabel(block: Extract<ReportBlock, { type: "heading" }>) {
+  return isResearchBriefHeading(block) ? block.text.replace(/\s*:\s*$/, "") : block.text;
 }
 
 function isReferencesHeading(block: ReportBlock) {
@@ -309,7 +314,7 @@ function renderBlock(
       const Heading = headingTag(block.level);
       return (
         <Heading className={`${styles[`heading${block.level}`]} ${isResearchBriefHeading(block) ? styles.briefHeading : ""} ${isReferencesHeading(block) ? styles.referencesHeading : ""}`}>
-          {props.textOverrides?.[block.id] ?? block.text}
+          {isResearchBriefHeading(block) ? headingLabel(block) : props.textOverrides?.[block.id] ?? block.text}
         </Heading>
       );
     }
@@ -562,15 +567,18 @@ function reportContent(
       continue;
     }
 
+    const ordered = props.orderedListBlockIds?.has(block.id) === true;
+    const List = ordered ? "ol" : "ul";
     const items: Extract<ReportBlock, { type: "list-item" }>[] = [];
-    while (index < blocks.length && blocks[index].type === "list-item") {
+    while (index < blocks.length && blocks[index].type === "list-item" &&
+      (props.orderedListBlockIds?.has(blocks[index].id) === true) === ordered) {
       items.push(blocks[index] as Extract<ReportBlock, { type: "list-item" }>);
       index += 1;
     }
     index -= 1;
 
     const list = (
-      <ul
+      <List
         className={`${styles.list} ${briefHeadingLevel === undefined ? "" : styles.briefList} ${isReference ? styles.referencesList : ""}`}
         key={`list-${items[0].id}`}
       >
@@ -589,7 +597,7 @@ function reportContent(
             </span>
           </li>
         ))}
-      </ul>
+      </List>
     );
     if (briefHeadingIndex !== undefined && briefHeadingIndex === content.length - 1) {
       const heading = content.pop();
@@ -800,7 +808,7 @@ export function ReportRenderer(props: ReportRendererProps) {
             readTimeMinutes={readTimeMinutes}
             sections={sectionHeadings.map((heading) => ({
               href: `#report-block-${heading.id}`,
-              label: heading.text,
+              label: headingLabel(heading),
             }))}
           />
         </div>

@@ -184,7 +184,7 @@ try {
       sourceImages++;
     }
   }
-  assert.equal(sourceImages, 18);
+  assert.equal(sourceImages, 20);
   const axe = await readFile(path.join(root, "node_modules/axe-core/axe.min.js"), "utf8");
   for (const width of [320, 390, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 1000, deviceScaleFactor: 1, mobile: false });
@@ -221,6 +221,10 @@ try {
           if (!scope) throw Error("Missing catalog");
           for (const report of ${JSON.stringify(reports.map((report) => report.catalog))}) {
             const headings = [...scope.querySelectorAll("article h2, article h3")].filter(el => el.textContent === report.title);
+            if (${route === "/"} && !report.featured) {
+              if (headings.length) throw Error("Reports-only drop appeared on Home: " + report.title);
+              continue;
+            }
             if (headings.length !== 1) throw Error("Missing or duplicate launch card: " + report.title);
             const card = headings[0].closest("article");
             const image = card.querySelector('img[src^="/glintlabs/figma/illustrations/blue/"]');
@@ -238,9 +242,23 @@ try {
         await evaluate(`(() => {
           const report = ${JSON.stringify({
             ids: [...report.referenceBlockIds],
+            orderedIds: [...report.orderedListBlockIds],
+            briefId: report.manifest.blocks.find(block => block.type === "heading" && /^Research Drop in Brief:?$/i.test(block.text))?.id,
             hero: report.manifest.blocks.find((block) => block.type === "image" && block.placement === "hero").dataUrl,
           })};
           if (!document.querySelector('header img[src="/glintlabs' + report.hero + '"]')) throw Error("Original hero was replaced");
+          for (const id of report.orderedIds) {
+            const item = document.getElementById("report-block-" + id);
+            if (!item || item.tagName !== "LI" || item.parentElement.tagName !== "OL") throw Error("Lost numbered finding: " + id);
+          }
+          const sections = [...document.querySelectorAll('nav[aria-label="Report sections"] a')];
+          const briefHeading = document.getElementById("report-block-" + report.briefId)?.querySelector("h2");
+          const briefLink = sections.find(link => link.getAttribute("href") === "#report-block-" + report.briefId);
+          if (briefHeading?.textContent !== "Research Drop in Brief" || briefLink?.textContent !== "Research Drop in Brief") throw Error("Brief heading or navigation retained its colon");
+          for (const link of sections) {
+            const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+            if (!target || target.innerText.replace(/\\s+/g, " ").trim() !== link.innerText.replace(/\\s+/g, " ").trim()) throw Error("Section label does not match its heading");
+          }
           const title = getComputedStyle(document.querySelector("h1"));
           if (title.fontSize !== (innerWidth <= 600 ? "40px" : "48px") || title.lineHeight !== (innerWidth <= 600 ? "48px" : "59px")) throw Error("Wrong hero scale");
           for (const id of report.ids) {

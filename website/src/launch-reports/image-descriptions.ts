@@ -1,6 +1,13 @@
 type ImageDescription = { alt: string; description?: string };
 
 export const launchImageDescriptions: Record<string, Record<string, ImageDescription>> = {
+  "the-human-conditions-behind-ai-value-at-work": {
+    "image1.jpeg": { alt: "A person working on a laptop in a sunlit room." },
+    "image2.png": {
+      alt: "Relationships between seven employee experience factors and realized AI value across three survey snapshots.",
+      description: "Standardized regression coefficients for April 2024, July 2025, and November 2025, respectively: psychological safety, not available, .147, .231; role clarity, not available, .222, .250; individual productivity, .237, .261, .240; team productivity, .274, .277, .218; intent to stay, .212, .224, .219; recommend, .307, .245, .303; eSat, .265, .170, .265. Source: Microsoft People Science research across three independent panel surveys of managers and individual contributors who use AI at work, total N = 2,331. April and July samples are global; November is US-only. Samples do not include repeated participants, and comparisons across time are directional only. Separate cross-sectional OLS regressions predict realized AI value from each employee experience factor, controlling for job level and AI usage frequency.",
+    },
+  },
   "empowering-managers-for-an-ai-first-future": {
     "image1.jpeg": { alt: "Colleagues discussing work around a laptop." },
     "image2.png": {

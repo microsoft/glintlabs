@@ -480,6 +480,7 @@ test("only lists in the Research Drop in Brief section get a card", () => {
     },
   };
   scope.reportReferenceMarkers = componentFunction("reportReferenceMarkers", scope, rendererSource);
+  scope.headingLabel = componentFunction("headingLabel", scope, rendererSource);
   const render = componentFunction("reportContent", scope, rendererSource);
   const heading = (text, level = 2) => ({ type: "heading", text, level });
   const item = () => ({ type: "list-item", text: "Unchanged finding", level: 0 });
@@ -523,13 +524,21 @@ test("only lists in the Research Drop in Brief section get a card", () => {
     isCanonicalVisualBlock: () => false,
     headingTag: componentFunction("headingTag", {}, rendererSource),
   }, rendererSource);
-  for (const [text, compact] of [
-    ["Research Drop in Brief:", true], ["Other section", false], ["Research Drop in Briefish", false],
+  for (const [text, compact, expected] of [
+    ["Research Drop in Brief:", true, "Research Drop in Brief"],
+    ["Research Drop in Brief", true, "Research Drop in Brief"],
+    ["Research Drop in Brief : ", true, "Research Drop in Brief"],
+    ["Other section:", false, "Other section:"],
+    ["Research Drop in Briefish", false, "Research Drop in Briefish"],
   ]) {
-    const rendered = renderHeading({ ...heading(text), source: { part: "word/document.xml", index: 0 } }, {});
+    const block = Object.freeze({ ...heading(text), id: "heading", source: { part: "word/document.xml", index: 0 } });
+    const rendered = renderHeading(block, {});
     assert.equal(rendered.type, "h2");
     assert.equal(rendered.props.className.includes("brief-heading"), compact);
-    assert.equal(rendered.props.children, text);
+    assert.equal(rendered.props.children, expected);
+    assert.equal(block.text, text);
+    const override = jsx("span", { children: text });
+    assert.equal(renderHeading(block, { textOverrides: { heading: override } }).props.children, compact ? expected : override);
   }
 });
 

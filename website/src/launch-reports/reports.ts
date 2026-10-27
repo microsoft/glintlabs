@@ -10,6 +10,7 @@ const catalogIllustrations: Record<string, string> = {
   "empowering-managers-for-an-ai-first-future": "people",
   "fighting-ai-slop-with-meta-cognition-around-ai": "document-edit-text",
   "tracking-the-rise-of-perceived-ai-value-at-work": "data",
+  "the-human-conditions-behind-ai-value-at-work": "sign-in",
 };
 
 const reports = launchReportSources.map(source => {
@@ -30,6 +31,8 @@ const reports = launchReportSources.map(source => {
   const textRuns: Record<string, WordTextRun[]> = {};
   const descriptions: Record<string, string> = {};
   const referenceBlockIds = new Set<string>();
+  const orderedListBlockIds = new Set<string>();
+  const marks = { bold: false, italic: false, superscript: false };
   let hero = true;
   const blocks: ReportBlock[] = [];
   for (const block of original.blocks) {
@@ -47,7 +50,14 @@ const reports = launchReportSources.map(source => {
       continue;
     }
     if (!("text" in block)) throw new Error(`Unmapped source block: ${source.slug}/${block.id}`);
-    const runs = wordTextRuns(block);
+    const runs = wordTextRuns(block, marks);
+    // Author-confirmed reference correction; preserve the original Word evidence.
+    if (source.slug === "the-human-conditions-behind-ai-value-at-work" && block.id === "block-45") {
+      const citation = runs.find((run, index) => run.superscript && run.text === "2" &&
+        runs[index - 1]?.text.endsWith("AI optimism and adoption"));
+      if (!citation) throw new Error("Missing May citation selected for the author-confirmed correction.");
+      citation.text = "3";
+    }
     const text = runs.map(run => run.text).join("");
     if (!text) continue;
     textRuns[block.id] = runs;
@@ -59,8 +69,9 @@ const reports = launchReportSources.map(source => {
     });
     if (block.type === "heading" || /\[open H3\]/i.test(block.text) || /^(?:Research Drop in Brief:|References)$/i.test(text)) {
       blocks.push({ ...block, type: "heading", level: 2, text });
-    } else if (/^\[open (?:bullet|bullets|sub-bullet)(?:\]|\s)/i.test(block.text)) {
+    } else if (/^\[open (?:bullet|bullets|sub-bullet|numeric bullet)(?:\]|\s)/i.test(block.text)) {
       blocks.push({ ...block, type: "list-item", level: /^\[open sub-bullet\]/i.test(block.text) ? 1 : 0, text, links });
+      if (/^\[open numeric bullet\]/i.test(block.text)) orderedListBlockIds.add(block.id);
     } else {
       blocks.push({ ...block, type: "paragraph", text, links });
       if (runs[0]?.superscript && /^\d+$/.test(runs[0].text)) referenceBlockIds.add(block.id);
@@ -87,10 +98,10 @@ const reports = launchReportSources.map(source => {
     badge: `${source.privatePreview ? "Private preview • " : ""}${month} ${year} • Research Drop`,
     employeeCount: Number(employees.replaceAll(",", "")),
     href: `/reports/${source.slug}`,
-    featured: true,
+    featured: source.featured,
     thumbnail: { src: illustration.src, alt: illustration.description, presentation: "illustration" },
   };
-  return { slug: source.slug, privatePreview: source.privatePreview, manifest, textRuns, descriptions, referenceBlockIds, coverDetails, catalog, isoDate };
+  return { slug: source.slug, privatePreview: source.privatePreview, manifest, textRuns, descriptions, referenceBlockIds, orderedListBlockIds, coverDetails, catalog, isoDate };
 }).toSorted((left, right) => right.isoDate.localeCompare(left.isoDate));
 
 function canonicalSlug(slug: string) {

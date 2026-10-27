@@ -9,11 +9,13 @@ export type WordTextRun = {
 };
 
 type TextBlock = Extract<ReportBlock, { type: "paragraph" | "list-item" | "heading" }>;
-const markup = /\[(open|close) (bold|italics|superscript|H3|bullet|bullets|sub-bullet|image insert)\]|\[open bullet(?=\s)/gi;
+const markup = /\[(open|close) (bold|italics|superscript|H3|bullet|bullets|sub-bullet|numeric bullet|image insert)\]|\[open bullet(?=\s)/gi;
 
-export function wordTextRuns(block: TextBlock): WordTextRun[] {
+export function wordTextRuns(
+  block: TextBlock,
+  marks = { bold: false, italic: false, superscript: false },
+): WordTextRun[] {
   const runs: WordTextRun[] = [];
-  const marks = { bold: false, italic: false, superscript: false };
   const links = "links" in block ? block.links ?? [] : [];
   let cursor = 0;
   function append(end: number) {

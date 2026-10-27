@@ -1,8 +1,9 @@
-// Generated from the P0 Word originals; retain source hashes and editorial markup for fidelity checks.
+// Generated from the P0 and P1 Word originals; retain source hashes and editorial markup for fidelity checks.
 export const launchReportSources = [
   {
     "slug": "empowering-managers-for-an-ai-first-future",
     "privatePreview": false,
+    "featured": true,
     "manifest": {
       "schemaVersion": "0.1.0",
       "source": {
@@ -927,6 +928,7 @@ export const launchReportSources = [
   {
     "slug": "fighting-ai-slop-with-meta-cognition-around-ai",
     "privatePreview": false,
+    "featured": true,
     "manifest": {
       "schemaVersion": "0.1.0",
       "source": {
@@ -2090,6 +2092,7 @@ export const launchReportSources = [
   {
     "slug": "tracking-the-rise-of-perceived-ai-value-at-work",
     "privatePreview": false,
+    "featured": true,
     "manifest": {
       "schemaVersion": "0.1.0",
       "source": {
@@ -3355,6 +3358,1087 @@ export const launchReportSources = [
     },
     "publicationSourceEvidence": {
       "sourceSha256": "ada87229c122545428a73dfa14e321c94b2f6b7853c20a2cbd6d2d46a384738c",
+      "hyperlinkCount": 7,
+      "representedHyperlinkCount": 7
+    }
+  },
+  {
+    "slug": "the-human-conditions-behind-ai-value-at-work",
+    "privatePreview": false,
+    "featured": false,
+    "manifest": {
+      "schemaVersion": "0.1.0",
+      "source": {
+        "fileName": "GLPS_RD_May '26.docx",
+        "sizeBytes": 337010,
+        "sha256": "14aaf4097ab8ae3d4af6c8b70f95ea1202168a9f10577d7c005df5921315d0cf"
+      },
+      "metadata": {
+        "title": "GLPS_RD_May '26",
+        "status": "draft"
+      },
+      "blocks": [
+        {
+          "id": "block-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 0,
+            "paragraphId": "19F6D258"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[The Human Conditions Behind AI Value at Work]"
+        },
+        {
+          "id": "block-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 1,
+            "paragraphId": "2CF02820"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[May 12, 2026 • Research Drop] [2,331 Employees]"
+        },
+        {
+          "id": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "14FF9896"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image1.jpeg",
+          "dataUrl": "/launch-report-assets/the-human-conditions-behind-ai-value-at-work/9108073823fe302f9050222df007b60d6fdfa962393901b2cbc5dc1b397f8876.jpeg",
+          "width": 439,
+          "height": 293,
+          "sourceAssetSha256": "9108073823fe302f9050222df007b60d6fdfa962393901b2cbc5dc1b397f8876",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 3,
+            "paragraphId": "3F6137D5"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Research Drop in Brief:"
+        },
+        {
+          "id": "block-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 4,
+            "paragraphId": "0D1B4AE3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Across three surveys, the employee experience factors most predictive of AI value (assessed via Realized Individual Value of AI scale, known as RIVA) haven't behaved uniformly, and as AI embeds deeper into work, the conditions surrounding its use increasingly determine whether it delivers value. [close bullet]"
+        },
+        {
+          "id": "block-5",
+          "source": {
+            "part": "word/document.xml",
+            "index": 5,
+            "paragraphId": "481E9C0F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Psychological safety and role clarity are growing as correlates of AI value, yet most employees are navigating the human-machine boundary without organizational guidance. [close bullet]"
+        },
+        {
+          "id": "block-6",
+          "source": {
+            "part": "word/document.xml",
+            "index": 6,
+            "paragraphId": "508C361C"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]The engagement-RIVA relationship proved the most volatile, mapping to the emotional arc of AI adoption: early excitement, mid-period job security concerns, and a rebound grounded in agency and mastery. [close bullet]"
+        },
+        {
+          "id": "block-8",
+          "source": {
+            "part": "word/document.xml",
+            "index": 8,
+            "paragraphId": "6207F721"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Among organizations that are integrating AI, many are still grappling with how to explain why some employees are getting real value while others are not. Our research shows that the first chapter of AI transformation has been about access: deploying tools, driving adoption, and tracking usage. The next chapter is now figuring out not just whether employees are using AI but whether that use is translating into something meaningful. Perceived value, not just adoption rate, is a metric that will determine whether AI investments hold for the long-term."
+        },
+        {
+          "id": "block-9",
+          "source": {
+            "part": "word/document.xml",
+            "index": 9,
+            "paragraphId": "17585A82"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "We know perceived AI value is rising. In our April Research Drop, we found a consistent climb in how employees perceive the realized value of AI in their work – a metric we call RIVA (Realized Individual Value of AI). But knowing that value is increasing is just one piece of the story, we also want to better understand why it might be increasing and what organizations can do to sustain and accelerate it."
+        },
+        {
+          "id": "block-10",
+          "source": {
+            "part": "word/document.xml",
+            "index": 10,
+            "paragraphId": "1BE5AF24"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "That question requires a different lens. Rather than asking who finds AI valuable, this month we asked: [open italics]what conditions make AI valuable?[close italics] Specifically, we examine how seven employee experience factors relate to RIVA across our three survey snapshots, and how the strength of those relationships has shifted as AI has become more embedded in everyday work."
+        },
+        {
+          "id": "block-11",
+          "source": {
+            "part": "word/document.xml",
+            "index": 11,
+            "paragraphId": "723B0985"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "The story is moving from outputs to inputs, and what we’re finding is that the human conditions surrounding AI use are becoming more critical than before. Microsoft’s 2026 Work Trend Index research found that organizational climate and leadership factors contribute over twice as much to AI’s impact as individual user behavior[open superscript]1[close superscript]. In other words, an employee’s ability to realize AI’s value hinges more on the environment their leaders create than on personal initiative alone, making these conditions essential to understand."
+        },
+        {
+          "id": "block-13",
+          "source": {
+            "part": "word/document.xml",
+            "index": 13,
+            "paragraphId": "1DC6AEF3"
+          },
+          "type": "heading",
+          "level": 2,
+          "text": "[open H3]The EX factors behind AI value and how they’ve shifted[close H3]"
+        },
+        {
+          "id": "block-14",
+          "source": {
+            "part": "word/document.xml",
+            "index": 14,
+            "paragraphId": "3255F696"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Humans themselves are central to AI transformation. To understand how to best evolve work processes and practices, we need to understand the human side of that transformation. Across our three panel surveys, we measured seven employee experience (EX) factors spanning three domains"
+        },
+        {
+          "id": "block-15",
+          "source": {
+            "part": "word/document.xml",
+            "index": 15,
+            "paragraphId": "3E6AD072"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Work enablement/Culture: [close bold]"
+        },
+        {
+          "id": "block-16",
+          "source": {
+            "part": "word/document.xml",
+            "index": 16,
+            "paragraphId": "1921F734"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Psychological Safety (\"[open italics]I feel free to speak my mind without fear of negative consequences[close italics]\")[close bullet]"
+        },
+        {
+          "id": "block-17",
+          "source": {
+            "part": "word/document.xml",
+            "index": 17,
+            "paragraphId": "3F32ABBC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Role Clarity (\"[open italics]I clearly understand what is expected of me in my role[close italics]\")[close bullet]"
+        },
+        {
+          "id": "block-18",
+          "source": {
+            "part": "word/document.xml",
+            "index": 18,
+            "paragraphId": "1609E885"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Productivity: [close bold]"
+        },
+        {
+          "id": "block-19",
+          "source": {
+            "part": "word/document.xml",
+            "index": 19,
+            "paragraphId": "04BE2158"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Individual Productivity (\"[open italics]I feel like I am productive at work[close italics]\")[close bullet]"
+        },
+        {
+          "id": "block-20",
+          "source": {
+            "part": "word/document.xml",
+            "index": 20,
+            "paragraphId": "0635746D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Team Productivity (\"[open italics]I feel like my team is productive at work[close italics]\")[close bullet]"
+        },
+        {
+          "id": "block-21",
+          "source": {
+            "part": "word/document.xml",
+            "index": 21,
+            "paragraphId": "0101D0EB"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Engagement/Retention: [close bold]"
+        },
+        {
+          "id": "block-22",
+          "source": {
+            "part": "word/document.xml",
+            "index": 22,
+            "paragraphId": "1A9465DF"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Intent to Stay (\"[open italics]I plan to be working at my company two years from now[close italics]\")[close bullet]"
+        },
+        {
+          "id": "block-23",
+          "source": {
+            "part": "word/document.xml",
+            "index": 23,
+            "paragraphId": "2CAC3519"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Recommend (\"[open italics]I would recommend my company as a great place to work[close italics]\")[close bullet]"
+        },
+        {
+          "id": "block-24",
+          "source": {
+            "part": "word/document.xml",
+            "index": 24,
+            "paragraphId": "101CBD0B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]eSat (\"[open italics]How happy are you working at your current company? [close italics]\") [close bullet]"
+        },
+        {
+          "id": "block-25",
+          "source": {
+            "part": "word/document.xml",
+            "index": 25,
+            "paragraphId": "40FAC61A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "We examined how each of these factors related to RIVA scores, controlling for job level and AI usage frequency. Three patterns emerge when looking across time:"
+        },
+        {
+          "id": "block-26",
+          "source": {
+            "part": "word/document.xml",
+            "index": 26,
+            "paragraphId": "6F8EA3FE"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open numeric bullet]Productivity items show a structurally stable relationship with RIVA across all three surveys[close numeric bullet]"
+        },
+        {
+          "id": "block-27",
+          "source": {
+            "part": "word/document.xml",
+            "index": 27,
+            "paragraphId": "4E36423B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open numeric bullet]Work enablement/culture factors are rising in importance, as psychological safety and role clarity have grown as correlates of RIVA in the most recent snapshot[close numeric bullet]"
+        },
+        {
+          "id": "block-28",
+          "source": {
+            "part": "word/document.xml",
+            "index": 28,
+            "paragraphId": "0216D51F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open numeric bullet]Engagement factors fluctuate, appearing to be context-sensitive rather than structurally fixed[close numeric bullet]"
+        },
+        {
+          "id": "block-29",
+          "source": {
+            "part": "word/document.xml",
+            "index": 29,
+            "paragraphId": "6D3EEC1B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-30-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 30,
+            "paragraphId": "5DA9D013"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image2.png",
+          "dataUrl": "/launch-report-assets/the-human-conditions-behind-ai-value-at-work/97469739e8882e8c37aa5500cc18e9e6232fd4f2f46d82534623538bf9fc95d8.png",
+          "width": 624,
+          "height": 380,
+          "sourceAssetSha256": "97469739e8882e8c37aa5500cc18e9e6232fd4f2f46d82534623538bf9fc95d8",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-31",
+          "source": {
+            "part": "word/document.xml",
+            "index": 31,
+            "paragraphId": "3DC17363"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-32",
+          "source": {
+            "part": "word/document.xml",
+            "index": 32,
+            "paragraphId": "021324D1"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "The standardized regression coefficients above reflect the strength of each relationship. Following conventional benchmarks[open superscript]2[close superscript], values around .100 indicate a small association, .300 a moderate one, and .500 a large one. The relationships observed here range from small to moderate, meaningful in the context of real-world employee data, where large effects are rare and even modest coefficients can carry practical significance."
+        },
+        {
+          "id": "block-33",
+          "source": {
+            "part": "word/document.xml",
+            "index": 33,
+            "paragraphId": "4905BBD4"
+          },
+          "type": "heading",
+          "level": 2,
+          "text": "[open H3]Productivity: A reliable, consistent correlate of AI value[close H3]"
+        },
+        {
+          "id": "block-34",
+          "source": {
+            "part": "word/document.xml",
+            "index": 34,
+            "paragraphId": "1DCF8DA3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "The connection between AI and productivity has been central to the technology’s promise since the start[open superscript]3[close superscript]. AI is marketed as a tool to help employees perform better and faster – and as it has expanded from a personal tool to a team-level one, the expectation has grown that it will help entire teams function more effectively[open superscript]4[close superscript]."
+        },
+        {
+          "id": "block-35",
+          "source": {
+            "part": "word/document.xml",
+            "index": 35,
+            "paragraphId": "3C134A40"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "It’s no surprise, then, that perceptions of both individual and team productivity have held a consistent relationship with RIVA across all three surveys. This stability is meaningful, suggesting that the productivity-value link isn’t a moment-in-time finding, but a structural feature of how employees experience AI at work, and one organizations can build on."
+        },
+        {
+          "id": "block-36",
+          "source": {
+            "part": "word/document.xml",
+            "index": 36,
+            "paragraphId": "00A82940"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "That said, the relationship comes with a caveat worth watching. Across our surveys, no more than 50% of employees reporting using AI daily – a reminder that AI augments productivity rather than replacing it. If the productivity-RIVA relationship becomes too strong, it may signal that employees feel their sense of contribution is becoming overly tied to AI assistance, at the expense of the creative, independent work that drives quality and innovation."
+        },
+        {
+          "id": "block-37",
+          "source": {
+            "part": "word/document.xml",
+            "index": 37,
+            "paragraphId": "604516B1"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Looking ahead, an important open question is emerging: as AI agents increasingly function alongside human employees, how will the concept of “team productivity” evolve? If employees begin to mentally include agentic teammates in their perception of team performance, the construct itself may shift, and with it how we interpret this relationship."
+        },
+        {
+          "id": "block-38",
+          "source": {
+            "part": "word/document.xml",
+            "index": 38,
+            "paragraphId": "200391DC"
+          },
+          "type": "heading",
+          "level": 2,
+          "text": "[open H3]Workplace environment: Rising in importance as AI embeds deeper[close H3]"
+        },
+        {
+          "id": "block-39",
+          "source": {
+            "part": "word/document.xml",
+            "index": 39,
+            "paragraphId": "43AC4D01"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Two factors that strengthened notably as correlates of RIVA in our most recent survey were psychological safety and role clarity – both foundational to healthy, high-performing work. Their rise suggests that the conditions in which employees work are increasingly shaping whether they realize value from AI."
+        },
+        {
+          "id": "block-40",
+          "source": {
+            "part": "word/document.xml",
+            "index": 40,
+            "paragraphId": "3309B7FD"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "In our previous research, psychological safety has consistently surfaced as relevant to AI-related outcomes[open superscript]5[close superscript]. This makes intuitive sense: experimenting with AI, taking risks on new workflows, and pushing beyond familiar approaches all require an environment where employees feel free to try and fail. But there’s a ‘Transformation Paradox’ at play: 65% of AI users fear falling behind if they don’t adopt AI quickly, yet almost half (45%) feel it’s safer to stick with current goals rather than change how they work[open superscript]1[close superscript]. This tension underscores why creating psychological safety is crucial, without it, employees may default to the safe road instead of the transformative one[open superscript]6[close superscript]."
+        },
+        {
+          "id": "block-41",
+          "source": {
+            "part": "word/document.xml",
+            "index": 41,
+            "paragraphId": "2C7650D0"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Role clarity is facing its own inflection point. As AI agents absorb tasks once owned by employees, the boundaries of individual roles are shifting. Without a clear understanding of what to automate versus what to augment, employees face growing cognitive load – too many decisions about how to divide work between human and machine, with too little organizational guidance. This is not a niche problem as only 16% of organizations have comprehensively redesigned roles and processes to integrate AI, meaning most employees are navigating these boundaries largely on their own[open superscript]7[close superscript]. Our data suggests that when employees have that clarity, they’re better positioned to extract real value from AI. When they don’t, even capable tools go underutilized."
+        },
+        {
+          "id": "block-42",
+          "source": {
+            "part": "word/document.xml",
+            "index": 42,
+            "paragraphId": "6B926C9B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "The rise of these two factors as stronger RIVA correlates reflects the broader shift in the question organizations need to ask: not just who has access to AI, but what environment are they working in when they try to use it?"
+        },
+        {
+          "id": "block-43",
+          "source": {
+            "part": "word/document.xml",
+            "index": 43,
+            "paragraphId": "3612DF28"
+          },
+          "type": "heading",
+          "level": 2,
+          "text": "[open H3]Engagement: A barometer of AI value that shifts with organizational climate[close H3]"
+        },
+        {
+          "id": "block-44",
+          "source": {
+            "part": "word/document.xml",
+            "index": 44,
+            "paragraphId": "3294F8D4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "The relationship between engagement and RIVA tells a different story. Unlike the consistency of productivity or the steady rise of culture factors, engagement metrics (eSat and Recommend) fluctuated substantially – dropping as correlates in July 2025 before rebounding to among the strongest in November 2025."
+        },
+        {
+          "id": "block-45",
+          "source": {
+            "part": "word/document.xml",
+            "index": 45,
+            "paragraphId": "52B5C26E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "One hypothesis is that this pattern reflects the emotional arc of AI adoption. In the first snapshot, employees gaining AI access were energized. Excitement about new tools may have reinforced both perceived value and general engagement, the two rising together – or engaged employees may have simply been first in line, the first to seek access, raise their hand for pilots, and push their organizations toward adoption. Many articles in 2024 cited employees outpacing their organizations in AI optimism and adoption[open superscript]2[close superscript]. But by July 2025, a more complicated organizational climate had emerged, where concerns about job security and change may have decoupled the two signals. Whether someone felt good about their company became less related to whether they found value in AI, and one research article found that while AI anxiety can boost initial usage metrics/value, it eventually stalls as resistance grows[open superscript]8[close superscript]."
+        },
+        {
+          "id": "block-46",
+          "source": {
+            "part": "word/document.xml",
+            "index": 46,
+            "paragraphId": "553B4717"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "By November 2025, something shifted again – as agentic AI entered the workplace and employees began developing real agency over AI tools, a new source of engagement may have taken hold, one grounded in mastery and capability rather than just access. Almost halfway through 2026, we will need to watch for the same pattern to emerge as excitement may potentially stall."
+        },
+        {
+          "id": "block-47",
+          "source": {
+            "part": "word/document.xml",
+            "index": 47,
+            "paragraphId": "45014E2A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "The engagement-value relationship is not a fixed feature of AI at work. It bends with organizational context, emotional climate, and where employees are on their AI journey. And the November rebound carries a clear implication – engaged employees are positioned to get more from AI. Employees who feel connected to their work and organization are better positioned to translate AI into meaningful outcomes. When that connection is weaker, the same tools may deliver less impact, not because of the technology itself but because the conditions to fully leverage it aren’t in place for individuals."
+        },
+        {
+          "id": "block-48",
+          "source": {
+            "part": "word/document.xml",
+            "index": 48,
+            "paragraphId": "219B381F"
+          },
+          "type": "heading",
+          "level": 2,
+          "text": "[open H3]Building the conditions for sustained AI value[close H3]"
+        },
+        {
+          "id": "block-49",
+          "source": {
+            "part": "word/document.xml",
+            "index": 49,
+            "paragraphId": "693E9EB3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "The data across three surveys points to a consistent and evolving signal that AI value is not solely of function of quality or access. It is shaped by the human conditions surrounding use."
+        },
+        {
+          "id": "block-50",
+          "source": {
+            "part": "word/document.xml",
+            "index": 50,
+            "paragraphId": "0BEE119A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Build on the productivity-AI link deliberately.[close bold] The relationship is stable and a foundation you can trust. But ensure employees retain a meaningful sense of individual contribution and creative ownership alongside AI assistance; over-reliance on AI as a productivity source is worth monitoring. [close bullet]"
+        },
+        {
+          "id": "block-51",
+          "source": {
+            "part": "word/document.xml",
+            "index": 51,
+            "paragraphId": "3ECC9901"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Treat psychological safety and role clarity as AI infrastructure.[close bold] As AI embeds deeper into work, the quality of the environment employees operate in will increasingly determine whether AI delivers value. Cultural readiness is not a soft priority, it’s a structural one. [close bullet]"
+        },
+        {
+          "id": "block-52",
+          "source": {
+            "part": "word/document.xml",
+            "index": 52,
+            "paragraphId": "512E2087"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Track engagement as a leading indicator of AI ROI.[close bold] The engagement-value relationship fluctuates with organizational context, but the pattern is clear: when employees are genuinely engaged, they extract more from AI. Organizations that treat employee experience as separate from their AI strategy are leaving measurable value unrealized. [close bullet]"
+        },
+        {
+          "id": "block-55",
+          "source": {
+            "part": "word/document.xml",
+            "index": 55,
+            "paragraphId": "41870660"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open italics]This month’s Research Drop analyzed data from 2,331 employees across three separate panel surveys: the AI Readiness Study (n = 910, global), the Agentic Teaming & Trust Study (n = 811, global), and the AI Outcome Study (n = 610, US-only). Participants were included if they were managers or individual contributors who reported using AI at work, even if less than once a month. These samples consist of independent, point‑in‑time snapshots and do not include repeated participants; as a result, any comparisons across samples are directional only and do not imply causal effects or changes within individuals over time. Employees responded to realized AI value (RIVA) items on a 5‑point Likert scale from “Strongly disagree” to “Strongly agree”; RIVA favorability was calculated by averaging the favorability percentages (“Agree” and “Strongly agree”) across six RIVA items. In addition to descriptive comparisons, we estimated separate cross‑sectional OLS regressions predicting RIVA from each employee experience factor (one at a time), controlling for job level and AI usage frequency. The following survey items were analyzed to conduct this research, with many as composite scales that we validated through factor analysis. All items were presented on a 5-point Likert scale ranging from strongly disagree to strongly agree."
+        },
+        {
+          "id": "block-57",
+          "source": {
+            "part": "word/document.xml",
+            "index": 57,
+            "paragraphId": "673290CE"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Psychological Safety: I feel free to speak my mind without fear of negative consequences"
+        },
+        {
+          "id": "block-58",
+          "source": {
+            "part": "word/document.xml",
+            "index": 58,
+            "paragraphId": "19EA22D4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Role Clarity: I clearly understand what is expected of me in my role"
+        },
+        {
+          "id": "block-59",
+          "source": {
+            "part": "word/document.xml",
+            "index": 59,
+            "paragraphId": "270E718D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Individual Productivity: I feel like I am productive at work"
+        },
+        {
+          "id": "block-60",
+          "source": {
+            "part": "word/document.xml",
+            "index": 60,
+            "paragraphId": "7026E5BE"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Team Productivity: I feel like my team is productive at work"
+        },
+        {
+          "id": "block-61",
+          "source": {
+            "part": "word/document.xml",
+            "index": 61,
+            "paragraphId": "3F643F83"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Intent to Stay: I plan to be working at my company two years from now"
+        },
+        {
+          "id": "block-62",
+          "source": {
+            "part": "word/document.xml",
+            "index": 62,
+            "paragraphId": "03E5670D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Recommend: I would recommend my company as a great place to work"
+        },
+        {
+          "id": "block-63",
+          "source": {
+            "part": "word/document.xml",
+            "index": 63,
+            "paragraphId": "12AF04C3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "eSat: \"How happy are you working at your current company?"
+        },
+        {
+          "id": "block-65",
+          "source": {
+            "part": "word/document.xml",
+            "index": 65,
+            "paragraphId": "7C7D04CD"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Realized Individual Value of AI (RIVA)"
+        },
+        {
+          "id": "block-66",
+          "source": {
+            "part": "word/document.xml",
+            "index": 66,
+            "paragraphId": "632E36F0"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]AI helps reduce my overall work-related stress[close bullet]"
+        },
+        {
+          "id": "block-67",
+          "source": {
+            "part": "word/document.xml",
+            "index": 67,
+            "paragraphId": "7EFE88CC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]AI helps me be more productive at work[close bullet]"
+        },
+        {
+          "id": "block-68",
+          "source": {
+            "part": "word/document.xml",
+            "index": 68,
+            "paragraphId": "05D304BB"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]AI improves the quality of my work or output[close bullet]"
+        },
+        {
+          "id": "block-69",
+          "source": {
+            "part": "word/document.xml",
+            "index": 69,
+            "paragraphId": "0B692EE9"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]AI allows me to complete tasks faster[close bullet]"
+        },
+        {
+          "id": "block-70",
+          "source": {
+            "part": "word/document.xml",
+            "index": 70,
+            "paragraphId": "5D39643A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]AI helps me make better decisions[close bullet]"
+        },
+        {
+          "id": "block-71",
+          "source": {
+            "part": "word/document.xml",
+            "index": 71,
+            "paragraphId": "303DD9BE"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]AI simplifies my complex work tasks[close bullet]"
+        },
+        {
+          "id": "block-72",
+          "source": {
+            "part": "word/document.xml",
+            "index": 72,
+            "paragraphId": "1ECB4359"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Note: The referent for this item changed slightly between snapshots. The items said “generative AI” for the AI Readiness Study and the Agentic Teaming & Trust Study, and the items said “AI” for the AI Outcomes Study. [close italics]"
+        },
+        {
+          "id": "block-74",
+          "source": {
+            "part": "word/document.xml",
+            "index": 74,
+            "paragraphId": "66D2DBB0"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]1[close superscript]Microsoft. (May 5, 2026). Agents, human agency, and the opportunity for every organization. [open italics]2026 Work Trend Index Annual Report. [close italics]",
+          "links": [
+            {
+              "start": 64,
+              "end": 128,
+              "href": "https://www.microsoft.com/en-us/worklab/work-trend-index/agents-human-agency-and-the-opportunity-for-every-organization?apcid=00685188c451d73b8169ab00"
+            }
+          ]
+        },
+        {
+          "id": "block-75",
+          "source": {
+            "part": "word/document.xml",
+            "index": 75,
+            "paragraphId": "04F8D3E3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]2[close superscript]Cohen, J. (1988). Statistical power analysis for the behavioral sciences (2nd ed.). Lawrence Erlbaum Associates."
+        },
+        {
+          "id": "block-76",
+          "source": {
+            "part": "word/document.xml",
+            "index": 76,
+            "paragraphId": "6A18146B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]3[close superscript]Microsoft and LinkedIn. (May 8, 2024). AI at Work is Here. Now Comes the Hard Part. [open italics]2024 Work Trend Index Annual Report. [close italics]",
+          "links": [
+            {
+              "start": 77,
+              "end": 120,
+              "href": "https://www.microsoft.com/en-us/worklab/work-trend-index/ai-at-work-is-here-now-comes-the-hard-part"
+            }
+          ]
+        },
+        {
+          "id": "block-77",
+          "source": {
+            "part": "word/document.xml",
+            "index": 77,
+            "paragraphId": "1B37C91E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]4[close superscript]Dell'Acqua, F., Ayoubi, C., Lifshitz-Assaf, H., Sadun, R., Mollick, E., Mollick, L., ... & Lakhani, K. (2025). The cybernetic teammate: A field experiment on generative AI reshaping teamwork and expertise (No. w33641). [open italics]National Bureau of Economic Research. [close italics]",
+          "links": [
+            {
+              "start": 149,
+              "end": 242,
+              "href": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5188231"
+            }
+          ]
+        },
+        {
+          "id": "block-78",
+          "source": {
+            "part": "word/document.xml",
+            "index": 78,
+            "paragraphId": "37F811A8"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]5[close superscript]Benzing, M. (November 11, 2025). Research Drop: Empowering Managers for an AI-First Future. [open italics]Microsoft Viva Blog. [close italics]",
+          "links": [
+            {
+              "start": 71,
+              "end": 128,
+              "href": "https://aka.ms/researchdrop_nov2025"
+            }
+          ]
+        },
+        {
+          "id": "block-79",
+          "source": {
+            "part": "word/document.xml",
+            "index": 79,
+            "paragraphId": "6BAF71C3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]6[close superscript]Seth, J. & Edmondson, A. C. (February 4, 2026). How to Foster Psychological Safety When AI Erodes Trust on Your Team. [open italics]Harvard Business Review. [close italics]",
+          "links": [
+            {
+              "start": 86,
+              "end": 154,
+              "href": "https://hbr.org/2026/02/how-to-foster-psychological-safety-when-ai-erodes-trust-on-your-team"
+            }
+          ]
+        },
+        {
+          "id": "block-80",
+          "source": {
+            "part": "word/document.xml",
+            "index": 80,
+            "paragraphId": "0D0D606B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]7[close superscript]Deloitte. (October 27, 2025). Work Design Essential to Realize AI Return on Investment.",
+          "links": [
+            {
+              "start": 68,
+              "end": 124,
+              "href": "https://www.deloitte.com/us/en/about/press-room/work-design-essential-to-ai-roi.html"
+            }
+          ]
+        },
+        {
+          "id": "block-81",
+          "source": {
+            "part": "word/document.xml",
+            "index": 81,
+            "paragraphId": "4C8FBB99"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]8[close superscript]Eatough, E., Ferrazzi, K., Smith, W., & Waters, S. (February 17, 2026). Why AI Adoption Stalls, According to Industry Data. [open italics]Harvard Business Review. [close italics]",
+          "links": [
+            {
+              "start": 110,
+              "end": 160,
+              "href": "https://hbr.org/2026/02/why-ai-adoption-stalls-according-to-industry-data"
+            }
+          ]
+        }
+      ],
+      "reviewItems": [
+        {
+          "id": "review-0",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image1.jpeg does not have an image description.",
+          "blockId": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "14FF9896"
+          }
+        },
+        {
+          "id": "review-1",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image2.png does not have an image description.",
+          "blockId": "block-30-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 30,
+            "paragraphId": "5DA9D013"
+          }
+        }
+      ],
+      "extraction": {
+        "paragraphCount": 82,
+        "imageCount": 2,
+        "unsupportedCount": 0
+      }
+    },
+    "publicationSourceEvidence": {
+      "sourceSha256": "14aaf4097ab8ae3d4af6c8b70f95ea1202168a9f10577d7c005df5921315d0cf",
       "hyperlinkCount": 7,
       "representedHyperlinkCount": 7
     }
