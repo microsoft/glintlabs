@@ -603,6 +603,12 @@ test("right-fit principle labels use canonical padding and corner radius", () =>
   assert.match(diagrams, /The goal is not maximum listening\. It is enough credible understanding to support a consequential choice\./);
 });
 
+test("the survey expansion citation uses the canonical small superscript before the sentence punctuation", () => {
+  assert.match(snapshot, /25% are even expanding them<sup className=\{styles\.frame7\} style=\{\{ fontVariationSettings: '"opsz" 8' \}\}>1<\/sup>\. The goal is not to dethrone the survey\./);
+  assert.match(figmaStyles, /\.frame7 \{[^}]*font-size:10\.32px;/);
+  assert.doesNotMatch(snapshot, /expanding them1\./);
+});
+
 test("report citations align to the text top without enlarging line spacing", () => {
   assert.match(figmaStyles, /\.body sup \{ position:relative; top:-0\.55em; vertical-align:baseline; line-height:0; \}/);
   assert.match(interactionStyles, /\.dialog sup, \.panel sup \{ position: relative; top: -0\.55em; font-size: 0\.65em; line-height: 0; vertical-align: baseline; \}/);
