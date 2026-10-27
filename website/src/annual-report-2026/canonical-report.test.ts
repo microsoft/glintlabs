@@ -636,6 +636,18 @@ test("canonical source has eight unique report sections in order and retains ill
   assert.match(snapshot, /<ListeningPriorityShift canonical\s*\/>/);
 });
 
+test("the sidebar matches every current page section heading in order and preserves the retired deep link", () => {
+  const sections = snapshot.match(/export const canonicalSections = (\[[\s\S]*?\n\]);/)?.[1];
+  assert.ok(sections);
+  const headings = [...snapshot.matchAll(/<h2 [^>]*id="(annual-section-\d+)"[^>]*>([\s\S]*?)<\/h2>/g)];
+  assert.equal(headings.length, 8);
+  assert.deepEqual(JSON.parse(sections), headings.map(([, id, content]) => ({
+    href: `#${id}`,
+    label: content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim(),
+  })));
+  assert.match(snapshot, /<p className=\{styles\.frame195\} id="annual-human-judgment" tabIndex=\{-1\}>/);
+});
+
 test("canonical headings contain phrasing content rather than nested paragraphs", () => {
   assert.doesNotMatch(snapshot, /<h[1-6][^>]*>\s*<p\b/);
 });

@@ -3605,8 +3605,8 @@
       "source": "src/annual-report-2026/canonical-figma.tsx",
       "destination": "website/src/annual-report-2026/canonical-figma.tsx",
       "sourceSha256": "9e08de47ab039c4137e18d356f220021393891e49acd65b3e93fd1c76a2c43e9",
-      "destinationSha256": "cf14ff600aebfcc104f8a26dc977ca33bd75b2b150e0c1c8cab4b2ee37a59879",
-      "intentionalDifference": "Correct Chad Bennett's LinkedIn profile slug to the user-confirmed chadlbennett; preserve team content, layout, accessible labeling and external-link safeguards. Replace the withdrawn collaboration placeholder with the owner-supplied approved Caribay Garcia quote, heading and attribution using existing report-card styles; preserve surrounding analysis, author credits and historical source content. Render the survey expansion citation after them as semantic superscript 1 with the existing small frame7 citation style, preserving the paragraph text and all other citation styling."
+      "destinationSha256": "85a78ef6e426e6fca893c6d4bda282b80d792796dd8eceb6207276e85e6b2f81",
+      "intentionalDifference": "Correct Chad Bennett's LinkedIn profile slug to the user-confirmed chadlbennett; preserve team content, layout, accessible labeling and external-link safeguards. Replace the withdrawn collaboration placeholder with the owner-supplied approved Caribay Garcia quote, heading and attribution using existing report-card styles; preserve surrounding analysis, author credits and historical source content. Render the survey expansion citation after them as semantic superscript 1 with the existing small frame7 citation style, preserving the paragraph text and all other citation styling. Align sidebar labels and entries with all eight current page section headings; retain the retired human-judgment deep-link target and all report body content."
     },
     {
       "source": "src/annual-report-2026/canonical-interactions.module.css",
@@ -3654,8 +3654,8 @@
       "source": "src/annual-report-2026/canonical-report.test.ts",
       "destination": "website/src/annual-report-2026/canonical-report.test.ts",
       "sourceSha256": "523b6ea2cc284516e5cb58e76d118082d50aea5a7f207c6f2c3035d7f66ab7e2",
-      "destinationSha256": "32ff69a5d1f7526b7dae2d34a66a5a0a8461105f7cc371fac18c27389725411b",
-      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and the approved Caribay quote while retaining placeholder-absence and author-credit checks. Add mobile Figma topics-matrix spacing and natural-row-height coverage while retaining desktop-layout, native-header and nine-cell checks. Verify the survey expansion citation uses the existing 10.32px frame7 superscript style before the sentence punctuation rather than an inline digit. Verify exact wording and scoped emphasis for the three disclaimer sentences in References. Verify all eight decorative quote marks share the local font-independent Figma vector with unchanged 27x26 layout and forced-color-safe inherited color."
+      "destinationSha256": "ce79f6f6993333e030bc67c36b96e64cdf105e653a0de384834a6c32283d2571",
+      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and the approved Caribay quote while retaining placeholder-absence and author-credit checks. Add mobile Figma topics-matrix spacing and natural-row-height coverage while retaining desktop-layout, native-header and nine-cell checks. Verify the survey expansion citation uses the existing 10.32px frame7 superscript style before the sentence punctuation rather than an inline digit. Verify exact wording and scoped emphasis for the three disclaimer sentences in References. Verify all eight decorative quote marks share the local font-independent Figma vector with unchanged 27x26 layout and forced-color-safe inherited color. Require exact sidebar label, destination and order parity with every current page section heading while preserving the retired deep link."
     },
     {
       "source": "src/annual-report-2026/channel-portfolio.tsx",
