@@ -3598,8 +3598,8 @@
       "source": "src/annual-report-2026/canonical-figma.module.css",
       "destination": "website/src/annual-report-2026/canonical-figma.module.css",
       "sourceSha256": "615eb49811c1321f552b69e00ee98cfe0332e8b0b85273fb07fb3422fcb63dfa",
-      "destinationSha256": "615eb49811c1321f552b69e00ee98cfe0332e8b0b85273fb07fb3422fcb63dfa",
-      "intentionalDifference": ""
+      "destinationSha256": "4a42fcc775bb0558ad05b7f3e760efe96ea35ee57de11448d4b6052f410c43b2",
+      "intentionalDifference": "BUG-001: use the existing annual accent token for both Some exposure outline declarations; preserve dot colors, geometry and layout."
     },
     {
       "source": "src/annual-report-2026/canonical-figma.tsx",
@@ -3654,8 +3654,8 @@
       "source": "src/annual-report-2026/canonical-report.test.ts",
       "destination": "website/src/annual-report-2026/canonical-report.test.ts",
       "sourceSha256": "523b6ea2cc284516e5cb58e76d118082d50aea5a7f207c6f2c3035d7f66ab7e2",
-      "destinationSha256": "523b6ea2cc284516e5cb58e76d118082d50aea5a7f207c6f2c3035d7f66ab7e2",
-      "intentionalDifference": ""
+      "destinationSha256": "23dcab328959890dceb370b05a874cca042fcdd30d7535e8262dfb44e38e7291",
+      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment."
     },
     {
       "source": "src/annual-report-2026/channel-portfolio.tsx",

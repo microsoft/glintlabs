@@ -276,6 +276,14 @@ test("Caribay retains the remaining bright red pending-approval attribution", ()
   assert.match(figmaStyles, /\.body \.pendingApproval \{ color:#ff0000; \}/);
 });
 
+test("some exposure uses the blue accent outline without changing its grid or yellow dots", () => {
+  assert.match(themeStyles, /--annual-accent: #5c8df8;/);
+  assert.match(snapshot, /className=\{styles\.frame124\} data-node-id="1581:67763"/);
+  assert.match(figmaStyles, /\.body \.frame124 \{ border:0; padding:3\.75px; box-shadow:inset 0 0 0 0\.75px var\(--annual-accent\); \}/);
+  assert.match(figmaStyles, /\.frame124 \{ border-width:0\.75px;border-color:var\(--annual-accent\);[^}]*gap:1\.5px;[^}]*padding:3px;[^}]*border-radius:6px;/);
+  assert.match(figmaStyles, /\.frame125 \{ background:var\(--annual-highlight\);[^}]*width:3px;height:3px;/);
+});
+
 test("broad exposure keeps the dot grid with blue outer rows and the central yellow band", () => {
   assert.match(snapshot, /className=\{`\$\{styles\.frame116\} \$\{styles\.broadExposure\}`\} data-node-id="1581:68194"/);
   assert.match(figmaStyles, /\.broadExposure \.frame117:is\(:nth-child\(-n\+4\),:nth-child\(n\+11\)\) \.frame125 \{ background:var\(--annual-rule\); \}/);
