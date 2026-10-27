@@ -27,11 +27,11 @@ export const canonicalSections = [
   },
   {
     "href": "#annual-section-4",
-    "label": "Building a listening agenda that can evolve"
+    "label": "From program-centered to need-centered listening"
   },
   {
     "href": "#annual-section-5",
-    "label": "Three assumptions to reconsider"
+    "label": "Rethinking the rules of listening"
   },
   {
     "href": "#annual-section-6",
@@ -40,10 +40,6 @@ export const canonicalSections = [
   {
     "href": "#annual-section-7",
     "label": "AI raises the stakes for right-fit listening"
-  },
-  {
-    "href": "#annual-human-judgment",
-    "label": "Human judgment needs a job description"
   },
   {
     "href": "#annual-section-8",
