@@ -13,11 +13,15 @@ const fingerprints: Record<string, { paragraphs: number; text: string; source: s
   "GLPS_RD_Nov '25.docx": { paragraphs: 46, text: "91f964dbb930b729efce75de978bef747862969c62fe0cbf8248cfff14d27da7", source: "cc5e764f88ebc1a0ce56c03008ad447e7ce92816fbbe45b703a60ba79f5ff080" },
   "GLPS_RD_May '26.docx": { paragraphs: 70, text: "40ddbca29c94aaef15c28e7694068595f8e69528e03917d9f7709d2f9ac0915c", source: "14aaf4097ab8ae3d4af6c8b70f95ea1202168a9f10577d7c005df5921315d0cf" },
   "GLPS_RD_Oct '25.docx": { paragraphs: 29, text: "75080d9a43a05cc54be2607bd1a444ded9b643e83c31e1e691154eb662a8e2e0", source: "0a03f7ff1430334d05361dce8b0b064535b53de6f7e9981f6d8a9b1fe01e360d" },
+  "GLPS_RD_March '26.docx": { paragraphs: 49, text: "b23b8ab37fe784a0b3a0c9bccbf9edcd7afe37931b25aca66a626fd683eee963", source: "8877b26ade045fabfb07c403c89201b487f5025aaaebb87db22d62d0f4f6bb69" },
+  "GLPS_RD_Jan '26.docx": { paragraphs: 40, text: "8295ea2c6bef5947ff08dfe65d60d9b71716fdd51d497da93e59a3003c0961c4", source: "646d0354dc35433109ec3911bf46cc24248b8472ac378efb1374dbc11351ab72" },
+  "GLPS_RD_Dec '25.docx": { paragraphs: 46, text: "3bcde14960309e40dd7c2e2ab13808491c7dc30adfe285d24ca7d6248894ba9a", source: "7767b61e0ecf89b620e9fdf2f7ef32aee29187a7d366bce214ea145b2a1f219d" },
 };
 const allReports = getLaunchReports({ includePrivatePreview: true });
 const november = allReports.find(report => report.slug === "empowering-managers-for-an-ai-first-future")!;
 const may = allReports.find(report => report.slug === "the-human-conditions-behind-ai-value-at-work")!;
 const october = allReports.find(report => report.slug === "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes")!;
+const march = allReports.find(report => report.slug === "evolving-transformational-leadership-in-the-age-of-ai")!;
 const p0Slugs = new Set([
   "empowering-managers-for-an-ai-first-future",
   "fighting-ai-slop-with-meta-cognition-around-ai",
@@ -25,7 +29,7 @@ const p0Slugs = new Set([
 ]);
 
 test("all direct Research Drops retain independently verified Word text and source hashes", () => {
-  assert.equal(allReports.length, 5);
+  assert.equal(allReports.length, 8);
   for (const report of allReports) {
     const expected = fingerprints[report.manifest.source.fileName];
     const text = report.manifest.blocks.flatMap(block => "text" in block ? [block.text] : []);
@@ -52,7 +56,7 @@ test("every source image remains byte-identical, with its Word dimensions and a 
       assert.equal(block.presentation?.crop ?? "original", "original");
     }
   }
-  assert.equal(imageCount, 25);
+  assert.equal(imageCount, 38);
 });
 
 test("Research Drop cards use existing Blue illustrations without replacing the original report heroes", async () => {
@@ -62,6 +66,9 @@ test("Research Drop cards use existing Blue illustrations without replacing the 
     "tracking-the-rise-of-perceived-ai-value-at-work": { id: "data", alt: "Data illustration." },
     "the-human-conditions-behind-ai-value-at-work": { id: "sign-in", alt: "Sign in illustration." },
     "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes": { id: "agents-workflow", alt: "Agents workflow illustration." },
+    "evolving-transformational-leadership-in-the-age-of-ai": { id: "compass", alt: "Compass illustration." },
+    "designing-ai-feedback-systems-by-industry": { id: "chat", alt: "Chat illustration." },
+    "reframing-ai-friction-as-a-mastery-challenge-to-drive-impact": { id: "trophy", alt: "Trophy illustration." },
   };
   for (const report of allReports) {
     const { id, alt } = expected[report.slug];
@@ -83,6 +90,9 @@ test("all source reference lists receive reference styling, including reports wi
     "tracking-the-rise-of-perceived-ai-value-at-work": ["block-81", "block-82", "block-83", "block-84", "block-85", "block-86"],
     "the-human-conditions-behind-ai-value-at-work": ["block-74", "block-75", "block-76", "block-77", "block-78", "block-79", "block-80", "block-81"],
     "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes": ["block-46", "block-47"],
+    "evolving-transformational-leadership-in-the-age-of-ai": ["block-65", "block-66", "block-67", "block-68", "block-69", "block-70"],
+    "designing-ai-feedback-systems-by-industry": ["block-55", "block-56", "block-57"],
+    "reframing-ai-friction-as-a-mastery-challenge-to-drive-impact": ["block-56", "block-57", "block-58", "block-59"],
   };
   for (const report of allReports) {
     assert.deepEqual([...report.referenceBlockIds], expected[report.slug]);
@@ -140,7 +150,7 @@ test("Word link targets and linked wording survive removal of editorial formatti
       }
     }
   }
-  assert.equal(linkCount, 23);
+  assert.equal(linkCount, 34);
 });
 
 test("April uses the corrected 2026 publication year without rewriting source evidence", () => {
@@ -153,7 +163,48 @@ test("April uses the corrected 2026 publication year without rewriting source ev
   const source = launchReportSources.find(item => item.slug === report.slug)!;
   assert.ok(source.manifest.blocks.some(block => "text" in block &&
     block.text === "[April 14, 2025 • Research Drop] [2,331 Employees]"));
-  assert.deepEqual(allReports.map(item => item.isoDate), ["2026-05-12", "2026-04-14", "2026-02-10", "2025-11-11", "2025-10-14"]);
+  assert.deepEqual(allReports.map(item => item.isoDate), ["2026-05-12", "2026-04-14", "2026-03-10", "2026-02-10", "2026-01-13", "2025-12-09", "2025-11-11", "2025-10-14"]);
+});
+
+test("January and December preserve original wording, archival context and study population", () => {
+  for (const [slug, count, hash, nextMonth] of [
+    ["designing-ai-feedback-systems-by-industry", 47, "43d9c9088ed3536521d316646edef255f8bfc7c3909cfa10c906d4c1b56fac9a", "February"],
+    ["reframing-ai-friction-as-a-mastery-challenge-to-drive-impact", 52, "cee37243a508a46af8568ed7f9ed920f294d387be342deaf59f7e530e0b06748", "January"],
+  ] as const) {
+    const source = launchReportSources.find(item => item.slug === slug)!;
+    const report = allReports.find(item => item.slug === slug)!;
+    const text = source.manifest.blocks.flatMap(block => "text" in block ? [block.text] : []);
+    assert.equal(text.length, count);
+    assert.equal(createHash("sha256").update(text.join("\n")).digest("hex"), hash);
+    assert.equal(report.catalog.title, text[0].slice(1, -1));
+    assert.equal(report.catalog.employeeCount, 1800);
+    assert.equal(report.catalog.featured, false);
+    assert.ok(report.manifest.blocks.some(block => "text" in block && block.text.startsWith(`Stay tuned for our ${nextMonth} Research Drop`)));
+    assert.equal(report.manifest.blocks.filter(block => block.type === "image").length, 4);
+  }
+});
+
+test("March preserves its complete original table, source wording and formatting without Home featuring", () => {
+  const source = launchReportSources.find(item => item.slug === march.slug)!;
+  const rawText = source.manifest.blocks.flatMap(block => "text" in block ? [block.text] : []);
+  assert.equal(rawText.length, 60);
+  assert.equal(createHash("sha256").update(rawText.join("\n")).digest("hex"), "b9cfa26492a6ba4e486585f3959d72f90a219283a3ae02899822a4790624a5c6");
+  assert.equal(march.catalog.title, "Evolving Transformational Leadership in the Age of AI");
+  assert.equal(march.catalog.employeeCount, 1800);
+  assert.equal(march.catalog.featured, false);
+  assert.deepEqual(march.coverDetails, ["March 10, 2026 • Research Drop", "1,800 Employees"]);
+  assert.deepEqual([...march.rowHeaderTableBlockIds], ["block-14"]);
+  const table = march.manifest.blocks.find(block => block.id === "block-14");
+  assert.ok(table?.type === "data-visual-source");
+  assert.deepEqual(table, source.manifest.blocks.find(block => block.id === table.id));
+  assert.deepEqual([table.data.columns, ...table.data.rows.map(row => row.cells)], [
+    ["Intellectual Stimulation", "Encouraging critical thinking and novel problem-solving"],
+    ["Individualized Consideration", "Personalizing coaching and developmental support"],
+    ["Inspirational Motivation", "Communicating a compelling vision and organizational direction"],
+    ["Idealized Influence", "Modeling values and taking principled positions"],
+  ]);
+  assert.ok(march.manifest.blocks.every(block => !("text" in block) || !/\[(?:open|close) /i.test(block.text)));
+  assert.equal(source.publicationSourceEvidence.hyperlinkCount, 8);
 });
 
 test("October preserves its source wording, figures, Wipro spotlight and archival context without Home featuring", () => {
@@ -249,6 +300,12 @@ test("numbered markers normalize without losing text and emphasis can span parag
   assert.ok(wordTextRuns(paragraph("[open italics]Methodology"), marks).every(run => run.italic));
   assert.ok(wordTextRuns(paragraph("Continued methodology[close italics]"), marks).every(run => run.italic));
   assert.ok(wordTextRuns(paragraph("References"), marks).every(run => !run.italic));
+  const repaired = wordTextRuns(paragraph("[open italics]what[close italics[ and [open italics]how[close italics]"), marks);
+  assert.equal(repaired.map(run => run.text).join(""), "what and how");
+  assert.equal(repaired[0].italic, true);
+  assert.equal(repaired[1].italic, false);
+  assert.equal(repaired[2].italic, true);
+  assert.equal(wordPlainText(paragraph("[open table formatting]")), "");
 });
 
 test("editorial marks preserve words, emphasis, citations, and the malformed November bullet", () => {
@@ -278,7 +335,7 @@ async function withPreview(enabled: boolean, action: () => void | Promise<void>)
 
 test("November clearance makes its catalog entry and assets public without private-preview mode", async () => {
   await withPreview(false, async () => {
-    assert.equal(getLaunchReports().length, 5);
+    assert.equal(getLaunchReports().length, 8);
     assert.equal(getLaunchReport(november.slug), november);
     assert.equal(launchSourceVisible(november.slug, november.manifest.source.fileName), true);
     assert.equal(launchSourceVisible("legacy-address", november.manifest.source.fileName), true);
@@ -292,7 +349,7 @@ test("November clearance makes its catalog entry and assets public without priva
 
 test("November remains publicly cleared when the connected Studio uses preview mode", async () => {
   await withPreview(true, async () => {
-    assert.equal(getLaunchReports().length, 5);
+    assert.equal(getLaunchReports().length, 8);
     const hero = november.manifest.blocks.find(block => block.type === "image")!;
     const response = await launchReportAsset(new Request(`http://localhost${hero.dataUrl}`), november.slug, hero.dataUrl.split("/").pop()!);
     assert.equal(response.status, 200);

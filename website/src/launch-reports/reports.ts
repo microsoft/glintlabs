@@ -12,6 +12,9 @@ const catalogIllustrations: Record<string, string> = {
   "tracking-the-rise-of-perceived-ai-value-at-work": "data",
   "the-human-conditions-behind-ai-value-at-work": "sign-in",
   "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes": "agents-workflow",
+  "evolving-transformational-leadership-in-the-age-of-ai": "compass",
+  "designing-ai-feedback-systems-by-industry": "chat",
+  "reframing-ai-friction-as-a-mastery-challenge-to-drive-impact": "trophy",
 };
 
 const reports = launchReportSources.map(source => {
@@ -36,6 +39,7 @@ const reports = launchReportSources.map(source => {
   const descriptions: Record<string, string> = {};
   const referenceBlockIds = new Set<string>();
   const orderedListBlockIds = new Set<string>();
+  const rowHeaderTableBlockIds = new Set<string>();
   const marks = { bold: false, italic: false, superscript: false };
   let hero = true;
   const blocks: ReportBlock[] = [];
@@ -45,6 +49,12 @@ const reports = launchReportSources.map(source => {
       continue;
     }
     if (block.id === metadataBlock.id) continue;
+    if (source.slug === "evolving-transformational-leadership-in-the-age-of-ai" &&
+      block.type === "data-visual-source" && block.id === "block-14" && block.data.sourceKind === "word-table") {
+      blocks.push(block);
+      rowHeaderTableBlockIds.add(block.id);
+      continue;
+    }
     if (block.type === "image") {
       const description = launchImageDescriptions[source.slug]?.[block.fileName];
       if (!description) throw new Error(`Missing image description: ${source.slug}/${block.fileName}`);
@@ -105,7 +115,7 @@ const reports = launchReportSources.map(source => {
     featured: source.featured,
     thumbnail: { src: illustration.src, alt: illustration.description, presentation: "illustration" },
   };
-  return { slug: source.slug, privatePreview: source.privatePreview, manifest, textRuns, descriptions, referenceBlockIds, orderedListBlockIds, coverDetails, catalog, isoDate };
+  return { slug: source.slug, privatePreview: source.privatePreview, manifest, textRuns, descriptions, referenceBlockIds, orderedListBlockIds, rowHeaderTableBlockIds, coverDetails, catalog, isoDate };
 }).toSorted((left, right) => right.isoDate.localeCompare(left.isoDate));
 
 function canonicalSlug(slug: string) {

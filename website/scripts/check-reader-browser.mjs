@@ -184,7 +184,7 @@ try {
       sourceImages++;
     }
   }
-  assert.equal(sourceImages, 25);
+  assert.equal(sourceImages, 38);
   const axe = await readFile(path.join(root, "node_modules/axe-core/axe.min.js"), "utf8");
   for (const width of [320, 390, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 1000, deviceScaleFactor: 1, mobile: false });
@@ -244,6 +244,9 @@ try {
         await evaluate(`(() => {
           const report = ${JSON.stringify({
             title: report.catalog.title,
+            tables: report.manifest.blocks.filter(block => block.type === "data-visual-source" && report.rowHeaderTableBlockIds.has(block.id)).map(block => ({
+              id: block.id, rows: [block.data.columns, ...block.data.rows.map(row => row.cells)],
+            })),
             ids: [...report.referenceBlockIds],
             orderedIds: [...report.orderedListBlockIds],
             textBlocks: report.manifest.blocks.filter(block => "text" in block && !(block.type === "heading" && block.level === 1)),
@@ -254,6 +257,11 @@ try {
             hero: report.manifest.blocks.find((block) => block.type === "image" && block.placement === "hero").dataUrl,
           })};
           if (document.querySelector("h1")?.textContent !== report.title || document.title !== report.title + " | Glint Labs") throw Error("Inconsistent report title");
+          for (const table of report.tables) {
+            const target = document.getElementById("report-block-" + table.id);
+            const rows = [...target.querySelectorAll("tbody tr")].map(row => [...row.cells].map(cell => cell.textContent));
+            if (JSON.stringify(rows) !== JSON.stringify(table.rows) || target.querySelectorAll('th[scope="row"]').length !== table.rows.length) throw Error("Lost source table rows or row-header semantics");
+          }
           if (!document.querySelector('header img[src="/glintlabs' + report.hero + '"]')) throw Error("Original hero was replaced");
           const normalize = text => text.replace(/\\s+/g, " ").trim();
           for (const block of report.textBlocks) {
@@ -318,6 +326,21 @@ try {
         await send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value: "active" }] });
         assert.equal(await evaluate(`getComputedStyle(document.querySelector('details[class*="figureDescription"] summary')).borderTopWidth`), "1px");
         await send("Emulation.setEmulatedMedia", { features: [] });
+        for (const id of report.rowHeaderTableBlockIds) {
+          const region = `document.getElementById("report-block-${id}").querySelector('[role="region"]')`;
+          const scrollable = await evaluate(`(() => {
+            const region = ${region};
+            if (region.tabIndex !== 0 || !region.getAttribute("aria-label")) throw Error("Source table is not keyboard accessible");
+            region.scrollIntoView({block:"center"}); region.scrollLeft = 0; region.focus();
+            return region.scrollWidth > region.clientWidth;
+          })()`);
+          assert.deepEqual(await evaluate(`(async () =>
+            (await axe.run(${region}, {runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21aa"]}})).violations)()`), []);
+          if (scrollable) {
+            await key("ArrowRight", "ArrowRight", 39);
+            await waitFor(() => evaluate(`${region}.scrollLeft > 0`), "Source table does not scroll with the keyboard");
+          }
+        }
       }
       if (route === "/annual-report-2026") {
         const grids = await evaluate(`(() => {

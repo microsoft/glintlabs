@@ -1,6 +1,55 @@
 type ImageDescription = { alt: string; description?: string };
 
 export const launchImageDescriptions: Record<string, Record<string, ImageDescription>> = {
+  "designing-ai-feedback-systems-by-industry": {
+    "image1.jpeg": { alt: "Colleagues collaborating around a tablet, notes and sticky notes at a table." },
+    "image2.png": {
+      alt: "High-frequency AI users are more likely to receive feedback requests.",
+      description: "High-frequency versus low-frequency AI users receiving feedback requests: company-wide AI surveys quarterly or more, 93% versus 71%; AI pulse surveys monthly or more, 83% versus 50%; in-product AI feedback requests weekly or more, 53% versus 23%. Source: Microsoft People Science Agentic Teaming & Trust Survey, 1,624 global, full-time, English-speaking employees who use AI at work, July 2025.",
+    },
+    "image3.png": {
+      alt: "Satisfaction with AI feedback opportunities varies across industries.",
+      description: "Percent favorable: construction, 83%; financial and professional services, 67%; healthcare, 52%; manufacturing, 68%; retail, food, and beverage, 65%; technology, 68%; transportation, travel, and hospitality, 62%. Source: Microsoft People Science Agentic Teaming & Trust Survey, 1,800 global, full-time, English-speaking employees, July 2025.",
+    },
+    "image4.png": {
+      alt: "Top-utilized AI feedback channels by industry, with informal conversations and team meetings leading.",
+      description: "Channels ranked first through fourth. Construction: informal conversation; team meeting (T2); internal social forum (T2); in-product feedback tool. Financial and professional services: team meeting; informal conversation; in-product feedback tool; manager 1:1. Healthcare: informal conversation; team meeting; internal social forum; manager 1:1. Manufacturing: informal conversation; team meeting; manager 1:1; short, ad hoc/pulse survey. Retail, food, and beverage: informal conversation; team meeting; manager 1:1; in-product feedback tool. Technology: team meeting; informal conversation; in-product feedback tool; manager 1:1. Transportation, travel, and hospitality: informal conversation (T1); team meeting (T1); short, ad hoc/pulse survey; internal social forum. Source: Microsoft People Science Agentic Teaming & Trust Survey, 1,800 global, full-time, English-speaking employees, July 2025.",
+    },
+  },
+  "reframing-ai-friction-as-a-mastery-challenge-to-drive-impact": {
+    "image1.jpeg": { alt: "A person working at a laptop beside a notebook." },
+    "image2.png": {
+      alt: "Employees wrestling with new AI tools report higher readiness and realized value.",
+      description: "When employees are wrestling with new tools and ways of working, they report up to 23 percentage points higher agentic AI readiness and 18 percentage points higher realized individual value of agentic AI (RIVA). Source: Microsoft People Science Agentic Teaming & Trust Survey, 1,529 global, full-time, English-speaking employees who use agentic AI at work, July 2025.",
+    },
+    "image3.png": {
+      alt: "Overwhelmed employees who still report high AI value are more likely to report trust, recognition and adequate training.",
+      description: "Compared with employees who are overwhelmed and not reporting high RIVA, overwhelmed employees still reporting high RIVA are 1.7 times as likely to trust AI agents, 1.7 times as likely to be recognized for using AI, and 1.8 times as likely to be adequately trained in AI. Source: Microsoft People Science Agentic Teaming & Trust Survey, 1,529 global, full-time, English-speaking employees who use agentic AI at work, July 2025.",
+    },
+    "image4.png": {
+      alt: "Reframing AI friction from hindrance to challenge, with practical recommendations.",
+      description: "Hindrance: I don't know how to use these new AI features; it feels like a burden. Challenge: upskilling on AI features is an opportunity to expand expertise and future-proof my role. Recommendations: pair training with coaching or peer shadowing; spotlight employees who embrace learning and grow their impact. Hindrance: the pace of AI change is overwhelming. Challenge: rapid change means I am at the forefront of innovation, shaping new ways of working. Recommendations: frame change as a strategic advantage in team updates; provide clarity on priorities so employees know where to focus. Hindrance: AI is replacing tasks I used to own. Challenge: delegating routine tasks to AI frees me to focus on strategic, high-impact work. Recommendations: help employees identify higher-value work they can now prioritize; recognize contributions in new areas. Hindrance: integrating AI into workflows disrupts my habits. Challenge: experimenting with new workflows helps me develop adaptability and creative problem-solving. Recommendations: encourage pilot participation and celebrate experimentation; provide forums for sharing workflow hacks.",
+    },
+  },
+  "evolving-transformational-leadership-in-the-age-of-ai": {
+    "image1.jpeg": { alt: "Two colleagues reviewing a tablet together beside a laptop." },
+    "image2.png": {
+      alt: "Clear leadership expectations and example AI scenarios are associated with higher meta-cognition around AI.",
+      description: "Average percent favorable meta-cognition around AI: 48% when leaders did not set clear expectations about AI use at work versus 88% when they did, a 40-percentage-point difference. When the organization does not provide example AI scenarios or prompts, 47%, versus 88% when it does, a 41-percentage-point difference. Source: Microsoft People Science Agentic Teaming & Trust Survey, 1,800 global, full-time, English-speaking employees, July 2025.",
+    },
+    "image3.png": {
+      alt: "Perceived support for integrating agentic AI varies by job level.",
+      description: "Average percent favorable for having the support needed to integrate agentic AI into work: leaders, 78%; managers, 56%; individual contributors, 50%. Source: Microsoft People Science Agentic Teaming & Trust Survey, 1,800 global, full-time, English-speaking employees, July 2025.",
+    },
+    "image4.png": {
+      alt: "AI optimism is higher among employees with greater readiness for AI agents.",
+      description: "Average AI optimism favorability: high agentic AI readiness, 83%; neutral readiness, 47%; low readiness, 13%. Source: Microsoft People Science Agentic Teaming & Trust Survey, 1,800 global, full-time, English-speaking employees, July 2025.",
+    },
+    "image5.png": {
+      alt: "Leading through AI: evolving the four dimensions of transformational leadership.",
+      description: "Intellectual Stimulation. Core principle: encouraging critical thinking and novel problem-solving. Example in AI-enabled work: modeling how to question and interpret AI outputs, driving accountability, and setting team norms around AI slop. Individualized Consideration. Core principle: personalizing coaching and developmental support. Example: have transparent and authentic conversations around AI, connect the dots to individual goals and growth. Inspirational Motivation. Core principle: communicating a compelling vision and organizational direction. Example: sharing authentic personal conviction, such as the why, not just the what, connecting AI to purpose, progress, and meaningful work. Idealized Influence. Core principle: modeling values and taking principled positions. Example: role model human-AI collaboration, decision making processes, and override scenarios.",
+    },
+  },
   "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes": {
     "image1.jpeg": { alt: "Two colleagues discussing work around a laptop in a sunlit workspace." },
     "image2.png": {
