@@ -243,6 +243,7 @@ try {
       if (report) {
         await evaluate(`(() => {
           const report = ${JSON.stringify({
+            title: report.catalog.title,
             ids: [...report.referenceBlockIds],
             orderedIds: [...report.orderedListBlockIds],
             textBlocks: report.manifest.blocks.filter(block => "text" in block && !(block.type === "heading" && block.level === 1)),
@@ -252,6 +253,7 @@ try {
             briefId: report.manifest.blocks.find(block => block.type === "heading" && /^Research Drop in Brief:?$/i.test(block.text))?.id,
             hero: report.manifest.blocks.find((block) => block.type === "image" && block.placement === "hero").dataUrl,
           })};
+          if (document.querySelector("h1")?.textContent !== report.title || document.title !== report.title + " | Glint Labs") throw Error("Inconsistent report title");
           if (!document.querySelector('header img[src="/glintlabs' + report.hero + '"]')) throw Error("Original hero was replaced");
           const normalize = text => text.replace(/\\s+/g, " ").trim();
           for (const block of report.textBlocks) {
