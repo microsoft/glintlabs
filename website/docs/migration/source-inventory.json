@@ -3878,8 +3878,8 @@
       "source": "src/app/favicon.ico",
       "destination": "website/src/app/favicon.ico",
       "sourceSha256": "c28fdd2a4f31e2dc64f653962286da5c82a4cdfc518b242d32812c624e9a19a4",
-      "destinationSha256": "c28fdd2a4f31e2dc64f653962286da5c82a4cdfc518b242d32812c624e9a19a4",
-      "intentionalDifference": ""
+      "destinationSha256": "6f4865c07c5faac6da7a30dd8ae9d508faaab00510e1e7f2c9b15b00950671ba",
+      "intentionalDifference": "Replace the Next.js starter favicon with 16/32/48px PNG frames of the requested Fluent beaker on a pale-gray circle; add the same treatment as an automatically linked SVG browser icon."
     },
     {
       "source": "src/app/globals.css",
