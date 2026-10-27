@@ -184,7 +184,7 @@ try {
       sourceImages++;
     }
   }
-  assert.equal(sourceImages, 20);
+  assert.equal(sourceImages, 25);
   const axe = await readFile(path.join(root, "node_modules/axe-core/axe.min.js"), "utf8");
   for (const width of [320, 390, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 1000, deviceScaleFactor: 1, mobile: false });
@@ -243,10 +243,34 @@ try {
           const report = ${JSON.stringify({
             ids: [...report.referenceBlockIds],
             orderedIds: [...report.orderedListBlockIds],
+            textBlocks: report.manifest.blocks.filter(block => "text" in block && !(block.type === "heading" && block.level === 1)),
+            figures: report.manifest.blocks.filter(block => block.type === "image" && block.placement !== "hero").map(block => ({
+              id: block.id, description: report.descriptions[block.id],
+            })),
             briefId: report.manifest.blocks.find(block => block.type === "heading" && /^Research Drop in Brief:?$/i.test(block.text))?.id,
             hero: report.manifest.blocks.find((block) => block.type === "image" && block.placement === "hero").dataUrl,
           })};
           if (!document.querySelector('header img[src="/glintlabs' + report.hero + '"]')) throw Error("Original hero was replaced");
+          const normalize = text => text.replace(/\\s+/g, " ").trim();
+          for (const block of report.textBlocks) {
+            const target = document.getElementById("report-block-" + block.id);
+            if (!target) throw Error("Missing source block: " + block.id);
+            if (/^-{3,}$/.test(block.text.trim())) {
+              if (target.getAttribute("role") !== "separator" || target.textContent.trim() || getComputedStyle(target).borderTopWidth !== "1px") throw Error("Source divider was lost");
+              if (target.nextElementSibling?.querySelector("h2") && getComputedStyle(target.nextElementSibling).borderTopWidth !== "0px") throw Error("Duplicated source divider");
+              continue;
+            }
+            const expected = block.id === report.briefId ? "Research Drop in Brief" : block.text;
+            if (normalize(target.textContent) !== normalize(expected)) throw Error("Changed source text: " + block.id);
+          }
+          for (const figure of report.figures) {
+            const target = document.getElementById("report-block-" + figure.id);
+            const image = target?.querySelector("img");
+            const description = target?.querySelector('details[class*="figureDescription"] p');
+            if (!image || description?.textContent !== figure.description) throw Error("Missing original figure or accessible description: " + figure.id);
+            const rect = image.getBoundingClientRect();
+            if (Math.abs(rect.width / rect.height - image.naturalWidth / image.naturalHeight) > .015) throw Error("Distorted original figure: " + figure.id);
+          }
           for (const id of report.orderedIds) {
             const item = document.getElementById("report-block-" + id);
             if (!item || item.tagName !== "LI" || item.parentElement.tagName !== "OL") throw Error("Lost numbered finding: " + id);
