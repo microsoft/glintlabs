@@ -3528,8 +3528,8 @@
       "source": "scripts/studio-editing.test.mjs",
       "destination": "website/scripts/studio-editing.test.mjs",
       "sourceSha256": "444b0ba27fc04939b715287253a2b59efb6ea09329e21f775f30e31b044cf631",
-      "destinationSha256": "25b50a08e9f22ec1dd762d6b2746533bba43a778bec2a0c1316b0d82e1677bb1",
-      "intentionalDifference": "Extends the existing reader-renderer test to verify colon-free brief headings, unchanged source blocks and other heading punctuation, consistent rich-text overrides, and semantic source dividers using existing section rules without duplicate heading borders."
+      "destinationSha256": "3343573caa64cb4e224644a77be25ada6725ca2fa7f13ae768880352771d9949",
+      "intentionalDifference": "Extends reader-renderer tests for colon-free brief headings, unchanged source blocks and punctuation, rich-text overrides, semantic source dividers using existing rules, and category-correct card icons: Research Drops use the histogram, Annual Reports keep the calendar."
     },
     {
       "source": "scripts/studio-owner-key.ts",
@@ -3794,8 +3794,8 @@
       "source": "src/app/_components/study-card.tsx",
       "destination": "website/src/app/_components/study-card.tsx",
       "sourceSha256": "e51dc55e85ceafb4fb6918e0f171349ddaa4343ead66773067ddafc317f2d98e",
-      "destinationSha256": "e51dc55e85ceafb4fb6918e0f171349ddaa4343ead66773067ddafc317f2d98e",
-      "intentionalDifference": ""
+      "destinationSha256": "b630282581ea6cc375c72944abdaec70286e26bbfb818a8e3141a42237d3723f",
+      "intentionalDifference": "Select the existing histogram icon by research-drop category instead of placeholder state; published and preview Research Drop cards now match, while Annual Reports retain their calendar icons. Layout, labels and illustrations are unchanged."
     },
     {
       "source": "src/app/_components/under-construction-page.tsx",

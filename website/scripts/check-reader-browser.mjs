@@ -227,6 +227,8 @@ try {
             }
             if (headings.length !== 1) throw Error("Missing or duplicate launch card: " + report.title);
             const card = headings[0].closest("article");
+            const badge = card.querySelector('[class*="cardBadges"] [class*="badge"]');
+            if (report.category === "research-drop" && (!badge?.querySelector('svg[aria-hidden="true"]') || badge.querySelector("img"))) throw Error("Research Drop retained a calendar icon");
             const image = card.querySelector('img[src^="/glintlabs/figma/illustrations/blue/"]');
             if (!image || image.getAttribute("src") !== "/glintlabs" + report.thumbnail.src || image.alt !== report.thumbnail.alt) throw Error("Wrong card illustration");
             const rect = image.getBoundingClientRect();

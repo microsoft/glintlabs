@@ -460,6 +460,40 @@ test("mobile navigation dismisses outside the header and restores focus on Escap
   assert.deepEqual(states, [false, false]);
 });
 
+test("Research Drop cards use the histogram icon while Annual Reports retain the calendar", () => {
+  const cardSource = ts.createSourceFile(
+    "study-card.tsx",
+    readFileSync(new URL("../src/app/_components/study-card.tsx", import.meta.url), "utf8"),
+    ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
+  );
+  const jsx = (type, props, key) => ({ type, props, key });
+  const scope = {
+    exports: {},
+    require() { return { jsx, jsxs: jsx }; },
+    Image: "image", Link: "link", EmployeeCountBadge: "employee-count",
+    DataHistogram16Regular: "histogram", Calendar16Regular: "calendar",
+    PersonCircle16Regular: "person", People16Regular: "people",
+    styles: { badge: "badge" },
+  };
+  const render = componentFunction("StudyCard", scope, cardSource);
+  for (const category of ["research-drop", "annual"]) {
+    for (const placeholder of [false, true]) {
+      for (const preview of [false, true]) {
+        const report = { category, title: "Source title", badge: "Source badge", description: "Source summary", href: "/reports/source" };
+        const card = render({ report, placeholder, preview });
+        const badge = card.props.children[0].props.children[1].props.children[0];
+        const icon = badge.props.children[0];
+        assert.equal(badge.props.children[1], report.badge);
+        assert.equal(icon.type, category === "research-drop" ? "histogram" : "image");
+        if (category === "research-drop") assert.equal(icon.props["aria-hidden"], "true");
+        else assert.equal(icon.props.src, "/figma/site-canonical/home/study-card-calendar.svg");
+      }
+    }
+  }
+  const annual = componentFunction("AnnualStudyBadges", scope, cardSource)();
+  assert.equal(annual.props.children[0].props.children[0].type, "calendar");
+});
+
 test("only lists in the Research Drop in Brief section get a card", () => {
   const rendererSource = ts.createSourceFile(
     "report-renderer.tsx",
