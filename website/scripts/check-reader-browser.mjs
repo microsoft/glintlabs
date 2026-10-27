@@ -184,7 +184,7 @@ try {
       sourceImages++;
     }
   }
-  assert.equal(sourceImages, 30);
+  assert.equal(sourceImages, 38);
   const axe = await readFile(path.join(root, "node_modules/axe-core/axe.min.js"), "utf8");
   for (const width of [320, 390, 768, 1440]) {
     await send("Emulation.setDeviceMetricsOverride", { width, height: 1000, deviceScaleFactor: 1, mobile: false });
@@ -326,6 +326,21 @@ try {
         await send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value: "active" }] });
         assert.equal(await evaluate(`getComputedStyle(document.querySelector('details[class*="figureDescription"] summary')).borderTopWidth`), "1px");
         await send("Emulation.setEmulatedMedia", { features: [] });
+        for (const id of report.rowHeaderTableBlockIds) {
+          const region = `document.getElementById("report-block-${id}").querySelector('[role="region"]')`;
+          const scrollable = await evaluate(`(() => {
+            const region = ${region};
+            if (region.tabIndex !== 0 || !region.getAttribute("aria-label")) throw Error("Source table is not keyboard accessible");
+            region.scrollIntoView({block:"center"}); region.scrollLeft = 0; region.focus();
+            return region.scrollWidth > region.clientWidth;
+          })()`);
+          assert.deepEqual(await evaluate(`(async () =>
+            (await axe.run(${region}, {runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21aa"]}})).violations)()`), []);
+          if (scrollable) {
+            await key("ArrowRight", "ArrowRight", 39);
+            await waitFor(() => evaluate(`${region}.scrollLeft > 0`), "Source table does not scroll with the keyboard");
+          }
+        }
       }
       if (route === "/annual-report-2026") {
         const grids = await evaluate(`(() => {

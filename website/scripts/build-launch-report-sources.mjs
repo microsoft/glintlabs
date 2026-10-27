@@ -14,6 +14,8 @@ const reports = [
   { fileName: "GLPS_RD_May '26.docx", slug: "the-human-conditions-behind-ai-value-at-work", directory: p1Directory, privatePreview: false, featured: false },
   { fileName: "GLPS_RD_Oct '25.docx", slug: "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes", directory: p1Directory, privatePreview: false, featured: false },
   { fileName: "GLPS_RD_March '26.docx", slug: "evolving-transformational-leadership-in-the-age-of-ai", directory: p1Directory, privatePreview: false, featured: false },
+  { fileName: "GLPS_RD_Jan '26.docx", slug: "designing-ai-feedback-systems-by-industry", directory: p1Directory, privatePreview: false, featured: false },
+  { fileName: "GLPS_RD_Dec '25.docx", slug: "reframing-ai-friction-as-a-mastery-challenge-to-drive-impact", directory: p1Directory, privatePreview: false, featured: false },
 ];
 const generated = [];
 for (const { fileName, slug, directory, privatePreview, featured } of reports) {

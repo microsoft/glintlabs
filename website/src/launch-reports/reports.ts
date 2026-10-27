@@ -13,6 +13,8 @@ const catalogIllustrations: Record<string, string> = {
   "the-human-conditions-behind-ai-value-at-work": "sign-in",
   "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes": "agents-workflow",
   "evolving-transformational-leadership-in-the-age-of-ai": "compass",
+  "designing-ai-feedback-systems-by-industry": "chat",
+  "reframing-ai-friction-as-a-mastery-challenge-to-drive-impact": "trophy",
 };
 
 const reports = launchReportSources.map(source => {

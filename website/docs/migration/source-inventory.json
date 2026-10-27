@@ -3479,8 +3479,8 @@
       "source": "scripts/build-launch-report-sources.mjs",
       "destination": "website/scripts/build-launch-report-sources.mjs",
       "sourceSha256": "625f8f1363e2a6109e639fd0ad1b9353631bedc785c44d9a0c55716e803ca566",
-      "destinationSha256": "ccf38dd0f9e4b70714c39c3383123fa73bde71c5ef0628bb9b771c61be006b2a",
-      "intentionalDifference": "Adds May, October and March P1 imports and explicit Home feature flags. Preserves existing import snapshots when originals are resaved; all published manifests, assets and evidence remain unchanged."
+      "destinationSha256": "2dd4f49bd90ed6ab6ba33ef1891c0745f5994c00e53907b9d28c34dd2c028045",
+      "intentionalDifference": "Adds all five P1 imports and explicit Reports-only feature flags. Preserves existing import snapshots when originals are resaved; all published manifests, assets and evidence remain unchanged."
     },
     {
       "source": "scripts/connected-build-config.test.mjs",
@@ -4354,8 +4354,8 @@
       "source": "src/launch-reports/image-descriptions.ts",
       "destination": "website/src/launch-reports/image-descriptions.ts",
       "sourceSha256": "f24d9937cf401189909b1eb5fa5f83a7655bdc360d1b7d522b81eaf861af0565",
-      "destinationSha256": "e0cbc1b35d3c63b530f78db920a2dd3033714ce2435cec415c72ad62fc8b8d5a",
-      "intentionalDifference": "Adds original-photo alt text and source-faithful descriptions for May's coefficient figure, October's statistics and Wipro quotation, and March's three charts and leadership summary. Preserves study limitations and all existing P0 descriptions."
+      "destinationSha256": "704ebeb7b138440642ed8c8fd7960fac0c623137bfa23ab921f0e3576f46caa9",
+      "intentionalDifference": "Adds original-photo alt text and source-faithful figure descriptions for all five P1 reports, including January's complete industry-channel matrix and December's reframing recommendations. Preserves original statistics, study limitations and existing P0 descriptions."
     },
     {
       "source": "src/launch-reports/launch-report.tsx",
@@ -4368,22 +4368,22 @@
       "source": "src/launch-reports/reports.test.ts",
       "destination": "website/src/launch-reports/reports.test.ts",
       "sourceSha256": "6dfc354d95b1d7d670f1e42a312a856670a83f2deb9e993b6574f3e2cfbc4de6",
-      "destinationSha256": "a20a260cffe4173d3c8865a823ccaeeb097da53994ccdad386613628a414a108",
+      "destinationSha256": "18b46e7e52129b42af3888e73a56ae0f5fea43183ef376dff9542addb0189631",
       "intentionalDifference": "Retains original fidelity checks and the April year correction. Adds independently verified P1 text/image evidence, Reports-only placement, selected illustrations, source links, ordered findings, spanning italics, unchanged P0 formatting, May's author-confirmed citation correction, colon-free brief labels, October's approved title and March's complete original table and malformed editorial-marker normalization. Original Word evidence is retained."
     },
     {
       "source": "src/launch-reports/reports.ts",
       "destination": "website/src/launch-reports/reports.ts",
       "sourceSha256": "994ed10ecc42c729a52b287a5dca7656d4be2e0f21d12020435c96602970c613",
-      "destinationSha256": "6a558ddda58cb28e4f93dc28a40031df7d9cfa99d8fd9a41ffb63e07496b1088",
-      "intentionalDifference": "Preserves April's corrected year, May's selected sign-in artwork and author-confirmed citation correction, explicit feature flags, ordered lists, spanning formatting, and October's approved title/artwork. Adds March's existing compass artwork and explicitly audited row-header table. Original Word evidence, URLs and P0 records are retained."
+      "destinationSha256": "96069009e955bee47be8e6ea274f83277aeb49e7a5dcc466226674fb5f84ad63",
+      "intentionalDifference": "Preserves April's corrected year, May's selected artwork and citation correction, explicit feature flags, ordered lists, spanning formatting and October's approved title/artwork. Adds existing compass, chat and trophy artwork for March, January and December, plus March's audited row-header table. Original Word evidence, URLs and P0 records are retained."
     },
     {
       "source": "src/launch-reports/source-data.ts",
       "destination": "website/src/launch-reports/source-data.ts",
       "sourceSha256": "e95299b9f2dc4e882602c9e57c27fca3522b91675b853cc3c2c1bd036184fdc5",
-      "destinationSha256": "0ce59314e2c3e3bb01c863ac249cb04e7bbcd5cec0db3085391629f8290fec7d",
-      "intentionalDifference": "Adds source-mapped May, October and March P1 manifests/evidence with featured false, retaining explicit P0 featured true flags. All five already-published source records remain unchanged when March is added."
+      "destinationSha256": "3fb7c2fa62eaf68f8aa75c5593bfb85d29ef028acf73e0b5d2390328f762eed0",
+      "intentionalDifference": "Adds source-mapped manifests and evidence for all five P1 reports with featured false, retaining P0 featured true flags. All five previously published source records remain unchanged when March, January and December are added."
     },
     {
       "source": "src/launch-reports/word-format.ts",
@@ -4585,8 +4585,8 @@
       "source": "src/publishing/publication-preview.test.ts",
       "destination": "website/src/publishing/publication-preview.test.ts",
       "sourceSha256": "3ae9fc599384ac299041054983d66ea3bec75c61d778e6cc8d079efc79b37f11",
-      "destinationSha256": "a64cfc06b9d463d544aa5fff71b3c222158ca98cc8b2dc8d71f43945b2929d04",
-      "intentionalDifference": "Retains exact-revision approvals, staged-only rejection, declared-asset copying, tamper detection and corrected April feature order; requires May, October and March once each in Reports and never Home Featured."
+      "destinationSha256": "23e28401193ebbaf386f044ba10251cfe3b72874a780f99e1a24daca25a75818",
+      "intentionalDifference": "Retains exact-revision approvals, staged-only rejection, declared-asset copying, tamper detection and corrected April feature order; requires all five P1 reports once each in Reports and never Home Featured."
     },
     {
       "source": "src/publishing/publication-preview.ts",

@@ -6187,5 +6187,1613 @@ export const launchReportSources = [
       "hyperlinkCount": 8,
       "representedHyperlinkCount": 8
     }
+  },
+  {
+    "slug": "designing-ai-feedback-systems-by-industry",
+    "privatePreview": false,
+    "featured": false,
+    "manifest": {
+      "schemaVersion": "0.1.0",
+      "source": {
+        "fileName": "GLPS_RD_Jan '26.docx",
+        "sizeBytes": 877176,
+        "sha256": "646d0354dc35433109ec3911bf46cc24248b8472ac378efb1374dbc11351ab72"
+      },
+      "metadata": {
+        "title": "GLPS_RD_Jan '26",
+        "status": "draft"
+      },
+      "blocks": [
+        {
+          "id": "block-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 0,
+            "paragraphId": "633B0B89"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[Designing AI Feedback Systems by Industry]"
+        },
+        {
+          "id": "block-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 1,
+            "paragraphId": "6B366361"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[January 13, 2026 • Research Drop] [1,800 Employees]"
+        },
+        {
+          "id": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "6A1C9754"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image1.jpeg",
+          "dataUrl": "/launch-report-assets/designing-ai-feedback-systems-by-industry/6016f6cb6521252c07a15a6c064297adaae3d3b31765d12d4052c988bafba045.jpeg",
+          "width": 608,
+          "height": 406,
+          "sourceAssetSha256": "6016f6cb6521252c07a15a6c064297adaae3d3b31765d12d4052c988bafba045",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 3,
+            "paragraphId": "2271104C"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Research Drop in Brief:"
+        },
+        {
+          "id": "block-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 4,
+            "paragraphId": "4115F240"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Employees want to meaningfully shape AI transformation, yet 34% still lack opportunities to give feedback on their AI experience[close bullet]"
+        },
+        {
+          "id": "block-5",
+          "source": {
+            "part": "word/document.xml",
+            "index": 5,
+            "paragraphId": "2AFEE03F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]High frequency AI users are more likely than low frequency AI users to report regular requests for input, suggesting that listening and adoption positively reinforce each other[close bullet]"
+        },
+        {
+          "id": "block-6",
+          "source": {
+            "part": "word/document.xml",
+            "index": 6,
+            "paragraphId": "457C9ED6"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]AI feedback is social: Informal conversation and team meetings are the most utilized feedback channels across industries, making them critical early-signal channels for AI rollout success[close bullet]"
+        },
+        {
+          "id": "block-8",
+          "source": {
+            "part": "word/document.xml",
+            "index": 8,
+            "paragraphId": "2892F4E8"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Big transformations don’t stick by default; they stick by active listening and iteration. Organizations are networks of distinct communities and workflows, so a onesizefitsall change rollout rarely lands. The fastest way to derisk change is to give employees real ways to shape it: invite feedback early, often, and in the flow of work. Research shows that employee voice and involvement are significant drivers of change readiness and commitment to change – and their resistance and cynicism around the change is reduced[open superscript]1[close superscript]."
+        },
+        {
+          "id": "block-9",
+          "source": {
+            "part": "word/document.xml",
+            "index": 9,
+            "paragraphId": "36C2F258"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "The opportunity for listening in AI transformation is vast. [open bold]In our research, 66% of employees feel they have adequate opportunities to share feedback on their AI experience and specifically among individual contributors (ICs), that drops to 52%.[close bold] Increasing feedback opportunities matter as high frequency AI users (use AI daily) are more likely than low frequency AI users (use AI monthly) to report regular requests for input (e.g., company‑wide surveys, in‑product prompts), signaling that listening and adoption positively reinforce each other."
+        },
+        {
+          "id": "block-10",
+          "source": {
+            "part": "word/document.xml",
+            "index": 10,
+            "paragraphId": "18F6B67B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Integrating employee feedback can be a multiplier on change ROI. When organizations listen across channels and act on what they hear, they can accelerate AI from pilot programs to organizational value at scale. This level of iteration creates an agile change process that can adapt to the consistent technology and culture changes associated with AI transformation."
+        },
+        {
+          "id": "block-11",
+          "source": {
+            "part": "word/document.xml",
+            "index": 11,
+            "paragraphId": "76854B82"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This month’s Research Drop dives into building an AI feedback system for transformation and outlines various feedback channels to explore. We’ll also map industry differences in preferred feedback channels to learn how different industries are meeting employees where they are in the flow of work. Because integrating AI tools is fundamentally a behavioral change[open superscript]2[close superscript], not just a technological one, context matters: the right channel in one industry may be the wrong one in another."
+        },
+        {
+          "id": "block-13",
+          "source": {
+            "part": "word/document.xml",
+            "index": 13,
+            "paragraphId": "206DC306"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]High frequency AI users have a feedback advantage[close H3]"
+        },
+        {
+          "id": "block-14",
+          "source": {
+            "part": "word/document.xml",
+            "index": 14,
+            "paragraphId": "3C52BE6A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "When you involve employees in change, you signal their experience matters and earn buy‑in as the transformation unfolds. The question is: [open bold]how well are organizations actually doing this?[close bold]"
+        },
+        {
+          "id": "block-15",
+          "source": {
+            "part": "word/document.xml",
+            "index": 15,
+            "paragraphId": "79667921"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "The answer depends on who you ask. Seventy-five percent of executives say their company is employee‑centric, yet only 23% of individual contributors (ICs) agree[open superscript]3[close superscript]. In our 2025 Agentic Teaming & Trust Research Report, this leader-IC gap shows up in enablement too: 78% of leaders report feeling supported to integrate AI agents into their work, compared to 50% of ICs. Closing this gap is critical, as employee‑centric organizations were found to be 7x more likely to succeed with AI[open superscript]3[close superscript].",
+          "links": [
+            {
+              "start": 207,
+              "end": 251,
+              "href": "https://aka.ms/agentresearch2025"
+            }
+          ]
+        },
+        {
+          "id": "block-16",
+          "source": {
+            "part": "word/document.xml",
+            "index": 16,
+            "paragraphId": "7E0A9DB0"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "A practical way to narrow that gap is to build a positive feedback loop. The more avenues employees have to share their experience, the more involved they feel, and the faster teams can iterate toward fit. In our data, high frequency AI users are markedly more likely than low frequency users to report receiving:"
+        },
+        {
+          "id": "block-17",
+          "source": {
+            "part": "word/document.xml",
+            "index": 17,
+            "paragraphId": "3F76E07B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Quarterly company‑wide surveys on AI (93% vs. 71%)[close bullet]"
+        },
+        {
+          "id": "block-18",
+          "source": {
+            "part": "word/document.xml",
+            "index": 18,
+            "paragraphId": "4E8EAA05"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Monthly pulse surveys on AI (83% vs. 50%)[close bullet]"
+        },
+        {
+          "id": "block-19",
+          "source": {
+            "part": "word/document.xml",
+            "index": 19,
+            "paragraphId": "508F4062"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Weekly in‑product feedback requests (53% vs. 23%)[close bullet]"
+        },
+        {
+          "id": "block-20",
+          "source": {
+            "part": "word/document.xml",
+            "index": 20,
+            "paragraphId": "6D985F4A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-21-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 21,
+            "paragraphId": "6435FBA0"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image2.png",
+          "dataUrl": "/launch-report-assets/designing-ai-feedback-systems-by-industry/78ea697d7f4c959baaf61b9ee002581b835b120469a6464d27bf5a6823963c3f.png",
+          "width": 624,
+          "height": 303,
+          "sourceAssetSha256": "78ea697d7f4c959baaf61b9ee002581b835b120469a6464d27bf5a6823963c3f",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-22",
+          "source": {
+            "part": "word/document.xml",
+            "index": 22,
+            "paragraphId": "41BA4B9E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-23",
+          "source": {
+            "part": "word/document.xml",
+            "index": 23,
+            "paragraphId": "40E1E3EF"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This is how the flywheel turns: listen → act → adoption → deeper listening. By asking people to reflect on what’s working (and what isn’t), organizations uncover friction early, improve the rollout, and strengthen the employee experience, especially for ICs who often feel least supported in agentic AI integration."
+        },
+        {
+          "id": "block-25",
+          "source": {
+            "part": "word/document.xml",
+            "index": 25,
+            "paragraphId": "1918AE5B"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Listening where work happens: Industry patterns in AI feedback[close H3]"
+        },
+        {
+          "id": "block-26",
+          "source": {
+            "part": "word/document.xml",
+            "index": 26,
+            "paragraphId": "7329E800"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Workflow redesign – and the value AI ultimately delivers – will look different across workplaces and industries. Roles, risk profiles, and communication norms vary widely, so the feedback system that informs change should vary, too. Think deskbased flows and scheduled meetings in one sector versus shiftbased, patient or customerfacing work in another."
+        },
+        {
+          "id": "block-27",
+          "source": {
+            "part": "word/document.xml",
+            "index": 27,
+            "paragraphId": "37142762"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Depending on existing workflows, different industries lean on different ways of gathering employee input. Some rely more on traditional online surveys, while others surface feedback organically through standups, team huddles, or informal conversations. The point: there’s no one ‘right’ channel – what matters is building consistent, reliable ways for employees to signal what’s working and what isn’t. To understand how this plays out across industries in our sample, we examined industry-level patterns in feedback channel usage. In our data, most industries cluster around [open bold]twothirds of employees[close bold] who feel they have adequate opportunities to give feedback on their AI experience. By contrast, healthcare sits closer to half, underscoring the need for innovative channels tailored to shift‑based routines, clinical workflows, and higher privacy constraints."
+        },
+        {
+          "id": "block-28",
+          "source": {
+            "part": "word/document.xml",
+            "index": 28,
+            "paragraphId": "6A0263FD"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-29-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 29,
+            "paragraphId": "4AA70493"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image3.png",
+          "dataUrl": "/launch-report-assets/designing-ai-feedback-systems-by-industry/26484231ec274c49a4ca1f057aa3238d649c8d1efcab87823420ce9a7f73b420.png",
+          "width": 624,
+          "height": 323,
+          "sourceAssetSha256": "26484231ec274c49a4ca1f057aa3238d649c8d1efcab87823420ce9a7f73b420",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-30",
+          "source": {
+            "part": "word/document.xml",
+            "index": 30,
+            "paragraphId": "040EF5D2"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-31",
+          "source": {
+            "part": "word/document.xml",
+            "index": 31,
+            "paragraphId": "65A9AF60"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Differences by industry likely reflect frontline mix, regulatory burden, and maturity of AI transformation as some sectors simply started experimenting earlier and have more established listening practices."
+        },
+        {
+          "id": "block-32",
+          "source": {
+            "part": "word/document.xml",
+            "index": 32,
+            "paragraphId": "5D4D3ACF"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "So, what changes by industry? It’s not just the cadence; it’s the mix of channels that meet employees where work actually happens."
+        },
+        {
+          "id": "block-33",
+          "source": {
+            "part": "word/document.xml",
+            "index": 33,
+            "paragraphId": "3E6D9421"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "We found differences in top‑utilized AI feedback channels across industries. The headline: [open bold]AI feedback is social[close bold]. Informal conversations and team meetings rank #1 and #2 nearly everywhere – teams process change together, and quick back‑and‑forths create the fastest path to signal and iteration."
+        },
+        {
+          "id": "block-34",
+          "source": {
+            "part": "word/document.xml",
+            "index": 34,
+            "paragraphId": "733BB7F1"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-35-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 35,
+            "paragraphId": "4982C2D7"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image4.png",
+          "dataUrl": "/launch-report-assets/designing-ai-feedback-systems-by-industry/1aef15071fb5284d30890ac85b43e72e666754a9ef2186d5643ad2c145404250.png",
+          "width": 624,
+          "height": 203,
+          "sourceAssetSha256": "1aef15071fb5284d30890ac85b43e72e666754a9ef2186d5643ad2c145404250",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-36",
+          "source": {
+            "part": "word/document.xml",
+            "index": 36,
+            "paragraphId": "662F4317"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-37",
+          "source": {
+            "part": "word/document.xml",
+            "index": 37,
+            "paragraphId": "3FF6C87A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Other interesting patterns:"
+        },
+        {
+          "id": "block-38",
+          "source": {
+            "part": "word/document.xml",
+            "index": 38,
+            "paragraphId": "38A24867"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Internal social forums[close bold] are popular in construction, healthcare, and transportation/travel/hospitality. These are frontline‑heavy sectors where mobile‑friendly, non‑desk access makes forums easy to reach between tasks or at shift hand‑offs. [close bullet]"
+        },
+        {
+          "id": "block-39",
+          "source": {
+            "part": "word/document.xml",
+            "index": 39,
+            "paragraphId": "44C064AB"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Pulse surveys[close bold] show up strongly in manufacturing and transportation/travel/hospitality. A potential explanation is that short, targeted check‑ins fit shift schedules, can be team specific, and support rapid action loops without burden. [close bullet]"
+        },
+        {
+          "id": "block-40",
+          "source": {
+            "part": "word/document.xml",
+            "index": 40,
+            "paragraphId": "63C3B668"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]In‑product feedback tools[close bold] are common in construction, financial & professional services, retail/food/beverage, and technology. Their workflows are often anchored in specific applications that make embedded prompts at the point of experience both relevant and efficient. [close bullet]"
+        },
+        {
+          "id": "block-41",
+          "source": {
+            "part": "word/document.xml",
+            "index": 41,
+            "paragraphId": "4AA23CDA"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Different work, different ways to listen. Build a channel mix employees will actually use, one that is fast, familiar, and in the flow. This meets people where they work so feedback follows. Keep it easy, visible, and routine; these small, habitual touchpoints beat big, occasional asks."
+        },
+        {
+          "id": "block-43",
+          "source": {
+            "part": "word/document.xml",
+            "index": 43,
+            "paragraphId": "273034CB"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Make employee feedback the engine of AI change[close H3]"
+        },
+        {
+          "id": "block-44",
+          "source": {
+            "part": "word/document.xml",
+            "index": 44,
+            "paragraphId": "7F661D85"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Change succeeds when we understand employees and their experience. Providing listening opportunities also enables employees to lean into the change by feeling involved and actively participating in the change. This process also helps change leaders learn in real time where AI initiatives are landing versus where they’re struggling."
+        },
+        {
+          "id": "block-45",
+          "source": {
+            "part": "word/document.xml",
+            "index": 45,
+            "paragraphId": "27FE05E3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Our data shows that feedback is social – so it’s time to build systems around social feedback. Treat hallway conversations, team huddles, and quick chats as consistent signal:"
+        },
+        {
+          "id": "block-46",
+          "source": {
+            "part": "word/document.xml",
+            "index": 46,
+            "paragraphId": "33EECED4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Capture it[close bold] in the moment with lightweight prompts (e.g., “what’s one friction point you’ve had with this tool today?”) or notes tied to the task/tool. [close bullet]"
+        },
+        {
+          "id": "block-47",
+          "source": {
+            "part": "word/document.xml",
+            "index": 47,
+            "paragraphId": "6B815AB4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Route it[close bold] automatically to the owners of AI transformation (product, IT, HR) with the context needed to act. [close bullet]"
+        },
+        {
+          "id": "block-48",
+          "source": {
+            "part": "word/document.xml",
+            "index": 48,
+            "paragraphId": "2FF62633"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Close the loop[close bold] visibly so employees see their input become decisions. [close bullet]"
+        },
+        {
+          "id": "block-49",
+          "source": {
+            "part": "word/document.xml",
+            "index": 49,
+            "paragraphId": "3164A4BB"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Change moves faster when listening is woven into how work gets done. Surveys and pulses provide the backbone of organizational memory, while social feedback in meetings and everyday conversations adds the nuance that keeps AI transformation grounded in reality. Keep those signals connected in the flow of work, and the transformation becomes something employees actively shape, not something that just happens to them."
+        },
+        {
+          "id": "block-51",
+          "source": {
+            "part": "word/document.xml",
+            "index": 51,
+            "paragraphId": "4883F4F9"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Stay tuned for our February Research Drop to keep up with what the Microsoft People Science team is learning![close bold]"
+        },
+        {
+          "id": "block-53",
+          "source": {
+            "part": "word/document.xml",
+            "index": 53,
+            "paragraphId": "57FB17D6"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open italics]This month’s Research Drop analyzed 1,800 global employees from the Microsoft People Science Agentic Teaming & Trust Survey from July 2025. Leaders, managers, and individual contributors were represented across the industries included in this blog: Construction, Financial & Professional Services, Healthcare, Manufacturing, Retail, Food, & Beverage, Technology, and Transportation, Travel, & Hospitality.[close italics]"
+        },
+        {
+          "id": "block-55",
+          "source": {
+            "part": "word/document.xml",
+            "index": 55,
+            "paragraphId": "63319F4F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]1[close superscript]Potnuru, R. K. G., Sharma, R., & Sahoo, C. K. (2021). Employee voice, employee involvement, and organizational change readiness: Mediating role of commitment-to-change and moderating role of transformational leadership. [open italics]Business Perspectives and Research, 11[close italics] (3), 355-371."
+        },
+        {
+          "id": "block-56",
+          "source": {
+            "part": "word/document.xml",
+            "index": 56,
+            "paragraphId": "11724523"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]2[close superscript]De Cremer, D., Schweitzer, S., McGuire, J. J., & Narayanan, D. (November 19, 2025). How behavioral science can improve the return on AI investments. [open italics]Harvard Business Review.[close italics]"
+        },
+        {
+          "id": "block-57",
+          "source": {
+            "part": "word/document.xml",
+            "index": 57,
+            "paragraphId": "2C078E63"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]3[close superscript]Lovich, D., Meier, S., & Taylor, C. (November 26, 2025). Leaders assume employees are excited about AI: They’re wrong. [open italics]Harvard Business Review.[close italics]"
+        }
+      ],
+      "reviewItems": [
+        {
+          "id": "review-0",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image1.jpeg does not have an image description.",
+          "blockId": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "6A1C9754"
+          }
+        },
+        {
+          "id": "review-1",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image2.png does not have an image description.",
+          "blockId": "block-21-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 21,
+            "paragraphId": "6435FBA0"
+          }
+        },
+        {
+          "id": "review-2",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image3.png does not have an image description.",
+          "blockId": "block-29-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 29,
+            "paragraphId": "4AA70493"
+          }
+        },
+        {
+          "id": "review-3",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image4.png does not have an image description.",
+          "blockId": "block-35-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 35,
+            "paragraphId": "4982C2D7"
+          }
+        }
+      ],
+      "extraction": {
+        "paragraphCount": 58,
+        "imageCount": 4,
+        "unsupportedCount": 0
+      }
+    },
+    "publicationSourceEvidence": {
+      "sourceSha256": "646d0354dc35433109ec3911bf46cc24248b8472ac378efb1374dbc11351ab72",
+      "hyperlinkCount": 1,
+      "representedHyperlinkCount": 1
+    }
+  },
+  {
+    "slug": "reframing-ai-friction-as-a-mastery-challenge-to-drive-impact",
+    "privatePreview": false,
+    "featured": false,
+    "manifest": {
+      "schemaVersion": "0.1.0",
+      "source": {
+        "fileName": "GLPS_RD_Dec '25.docx",
+        "sizeBytes": 938053,
+        "sha256": "7767b61e0ecf89b620e9fdf2f7ef32aee29187a7d366bce214ea145b2a1f219d"
+      },
+      "metadata": {
+        "title": "GLPS_RD_Dec '25",
+        "status": "draft"
+      },
+      "blocks": [
+        {
+          "id": "block-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 0,
+            "paragraphId": "73C4677D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[Reframing AI Friction as a Mastery Challenge to Drive Impact]"
+        },
+        {
+          "id": "block-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 1,
+            "paragraphId": "50C3124E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[December 9, 2025 • Research Drop] [1,800 Employees]"
+        },
+        {
+          "id": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "1F7D6C74"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image1.jpeg",
+          "dataUrl": "/launch-report-assets/reframing-ai-friction-as-a-mastery-challenge-to-drive-impact/d75ba20a2eb2c05d335d604368925a59abd28e83069be744522bc56b8015f5f6.jpeg",
+          "width": 624,
+          "height": 416,
+          "sourceAssetSha256": "d75ba20a2eb2c05d335d604368925a59abd28e83069be744522bc56b8015f5f6",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 3,
+            "paragraphId": "1EAD8F2E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Research Drop in Brief:"
+        },
+        {
+          "id": "block-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 4,
+            "paragraphId": "14D5DAA4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]More than half of employees say agentic AI integration feels overwhelming and that they are struggling with the pace of change. [close bullet]"
+        },
+        {
+          "id": "block-5",
+          "source": {
+            "part": "word/document.xml",
+            "index": 5,
+            "paragraphId": "7C595A4E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Employees who lean into friction – navigating new AI tools even when it feels overwhelming – show up to +23pp agentic AI readiness, +18pp realized value, and are 1.9x as likely to be high-frequency AI users. [close bullet]"
+        },
+        {
+          "id": "block-6",
+          "source": {
+            "part": "word/document.xml",
+            "index": 6,
+            "paragraphId": "1E2A2280"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Viewing friction as a mastery challenge versus a barrier hindrance can shape AI adoption outcomes and building trust, increasing recognition, and providing training can support this mindset shift. [close bullet]"
+        },
+        {
+          "id": "block-8",
+          "source": {
+            "part": "word/document.xml",
+            "index": 8,
+            "paragraphId": "5297D9A2"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Integrating AI and AI agents isn’t just a technical upgrade – it’s a cultural shift. Organizations are rethinking workflows, decision-making, and even what knowledge and expertise looks like in human-AI teams. This transition is likely to feel messy. [open bold]It challenges deeply ingrained habits and mental models, creating inevitable friction.[close bold] One way this friction shows up is with employees who struggle with the speed and complexity of AI adoption and integration. In our data we found that:"
+        },
+        {
+          "id": "block-9",
+          "source": {
+            "part": "word/document.xml",
+            "index": 9,
+            "paragraphId": "247E1DBF"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]57% of employees feel overwhelmed by the idea of integrating agentic AI into their work[close bullet]"
+        },
+        {
+          "id": "block-10",
+          "source": {
+            "part": "word/document.xml",
+            "index": 10,
+            "paragraphId": "0AE6DB62"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]55% of employees struggle to keep up with the pace of change around agentic AI[close bullet]"
+        },
+        {
+          "id": "block-11",
+          "source": {
+            "part": "word/document.xml",
+            "index": 11,
+            "paragraphId": "58161E1C"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This month’s Research Drop explores how to balance these feelings of strain with continued growth and impact."
+        },
+        {
+          "id": "block-12",
+          "source": {
+            "part": "word/document.xml",
+            "index": 12,
+            "paragraphId": "3DFC0B44"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]The unexpected benefit of AI adoption friction[close H3]"
+        },
+        {
+          "id": "block-13",
+          "source": {
+            "part": "word/document.xml",
+            "index": 13,
+            "paragraphId": "2EF541C4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "While we may initially assume that friction in AI transformation is something to be avoided, not all friction is equal. Technical breakdowns? Bad friction. Employees stretching beyond their comfort zone? Good friction."
+        },
+        {
+          "id": "block-14",
+          "source": {
+            "part": "word/document.xml",
+            "index": 14,
+            "paragraphId": "556F905F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Employees who are reporting this friction while navigating new AI tools and ways of working [open bold]report up to 23 percentage points higher agentic AI readiness[close bold]. They’re more likely to understand how to integrate agentic AI, feel motivated and confident in their skills, have opportunities to apply it, and perceive greater value in doing so. Interestingly, those feeling overwhelmed and struggling with the pace are often the ones facing these changes head-on – making them more ready to integrate AI agents, even when the process feels daunting. In fact, they’re [open bold]1.9x as likely to be high-frequency agentic AI users[close bold], showing that leaning into friction can accelerate adoption and impact."
+        },
+        {
+          "id": "block-15",
+          "source": {
+            "part": "word/document.xml",
+            "index": 15,
+            "paragraphId": "01D3510D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "These employees also report up to [open bold]18 percentage points higher realized individual value of agentic AI (RIVA)[close bold]. In other words, leaning into the challenge pays off: when employees avoid engaging with AI tools, they miss opportunities to build readiness and capture value. “Ignorance is bliss” may feel easier, but it delivers less impact."
+        },
+        {
+          "id": "block-16",
+          "source": {
+            "part": "word/document.xml",
+            "index": 16,
+            "paragraphId": "773F20AC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-17-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 17,
+            "paragraphId": "20ECB72D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image2.png",
+          "dataUrl": "/launch-report-assets/reframing-ai-friction-as-a-mastery-challenge-to-drive-impact/3e4f9f1560cab7fc4eb45457713bc292d1ed5dbbf700a30d086fd1742325641f.png",
+          "width": 624,
+          "height": 98,
+          "sourceAssetSha256": "3e4f9f1560cab7fc4eb45457713bc292d1ed5dbbf700a30d086fd1742325641f",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-18",
+          "source": {
+            "part": "word/document.xml",
+            "index": 18,
+            "paragraphId": "0731A859"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-19",
+          "source": {
+            "part": "word/document.xml",
+            "index": 19,
+            "paragraphId": "7475DBBC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This dynamic maps onto well‑established theory. Flow theory[open superscript]1[close superscript] suggests learning happens at the edge of our comfort zones; we need genuine challenge to grow. When employees encounter complexity and uncertainty, they are developing a new capacity to build relevant skills and knowledge. Mastery emerges when challenge meets skill, so without this friction, AI transformation might stall."
+        },
+        {
+          "id": "block-20",
+          "source": {
+            "part": "word/document.xml",
+            "index": 20,
+            "paragraphId": "4E4A8C4A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "But not all friction and stress are created equal. Research shows there’s a difference between [open bold]stressors that energize and signal opportunity versus those that drain and feel like obstacles[close bold]. This distinction is called the Challenge–Hindrance Stressor Framework[open superscript]2[close superscript]. When employees encounter friction with AI, they can interpret it as either type of stress – and that perception shapes whether they lean in or disengage."
+        },
+        {
+          "id": "block-21",
+          "source": {
+            "part": "word/document.xml",
+            "index": 21,
+            "paragraphId": "1CF4D471"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "A recent study[open superscript]3[close superscript]  applying this framework to AI found early signals that these interpretations matter:"
+        },
+        {
+          "id": "block-22",
+          "source": {
+            "part": "word/document.xml",
+            "index": 22,
+            "paragraphId": "7786B98E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Mastery challenge stressors[close bold] (e.g., learning new skills, tackling complex problems with AI) spark positive emotions, which [open bold]boost adoption intention[close bold]. [close bullet]"
+        },
+        {
+          "id": "block-23",
+          "source": {
+            "part": "word/document.xml",
+            "index": 23,
+            "paragraphId": "5596E08C"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet][open bold]Barrier hindrance stressors[close bold] (e.g., technical breakdowns, unclear requirements) drive AI anxiety and [open bold]reduce adoption intention[close bold]. [close bullet]"
+        },
+        {
+          "id": "block-24",
+          "source": {
+            "part": "word/document.xml",
+            "index": 24,
+            "paragraphId": "1CDE7081"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "If we want employees to move from overwhelmed to ready and confident, we need to shape the experience so agentic AI is perceived as a challenge (growth, mastery, value) rather than a hindrance (block, threat, anxiety)."
+        },
+        {
+          "id": "block-25",
+          "source": {
+            "part": "word/document.xml",
+            "index": 25,
+            "paragraphId": "5F4B03FF"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Helping employees frame AI transformation as a mastery challenge[close H3]"
+        },
+        {
+          "id": "block-26",
+          "source": {
+            "part": "word/document.xml",
+            "index": 26,
+            "paragraphId": "0BACD09F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "To better understand how to support employees facing friction during AI transformation, we dove deeper into the data and found three main levers that leaders and transformation change agents can pull: build trust, increase recognition, and provide training opportunities."
+        },
+        {
+          "id": "block-27",
+          "source": {
+            "part": "word/document.xml",
+            "index": 27,
+            "paragraphId": "397C7ABA"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-28-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 28,
+            "paragraphId": "043E696A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image3.png",
+          "dataUrl": "/launch-report-assets/reframing-ai-friction-as-a-mastery-challenge-to-drive-impact/4b5f39b3fb3cf3506230d758091c4405b7dd668490e93df68ce58973bebac704.png",
+          "width": 624,
+          "height": 241,
+          "sourceAssetSha256": "4b5f39b3fb3cf3506230d758091c4405b7dd668490e93df68ce58973bebac704",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-29",
+          "source": {
+            "part": "word/document.xml",
+            "index": 29,
+            "paragraphId": "190744ED"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-30",
+          "source": {
+            "part": "word/document.xml",
+            "index": 30,
+            "paragraphId": "652C49D4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Build trust in the systems and the journey[close bold]"
+        },
+        {
+          "id": "block-31",
+          "source": {
+            "part": "word/document.xml",
+            "index": 31,
+            "paragraphId": "25E8B59E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Employees who are overwhelmed but still seeing value from AI agents are [open bold]1.7x as likely to trust AI agents[close bold] than those who are overwhelmed and not seeing value. This higher level of trust may reduce employees’ tendency to categorize AI as a hindrance (e.g., fewer structural barriers, less anxiety). In the 2025 Agentic Teaming & Trust Report, we found that trust can be built by leadership role modeling, reliable systems, and peer advocacy. When we think about building trust in the face of challenge, consider:",
+          "links": [
+            {
+              "start": 328,
+              "end": 363,
+              "href": "https://aka.ms/agentresearch2025"
+            }
+          ]
+        },
+        {
+          "id": "block-32",
+          "source": {
+            "part": "word/document.xml",
+            "index": 32,
+            "paragraphId": "53905817"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Encourage leaders and peers to share clear “why” and “how” stories of AI use that include failures and lean into continuous role modeling [close bullet]"
+        },
+        {
+          "id": "block-33",
+          "source": {
+            "part": "word/document.xml",
+            "index": 33,
+            "paragraphId": "639044DE"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Invest in reliability and structure (e.g., consistent, well‑documented workflows and guardrails) [close bullet]"
+        },
+        {
+          "id": "block-34",
+          "source": {
+            "part": "word/document.xml",
+            "index": 34,
+            "paragraphId": "69EA8B87"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Create peer advocacy opportunities, such as shadowing or live/recorded demonstrations, so employees see the “line of sight” from effort to outcome[close bullet]"
+        },
+        {
+          "id": "block-35",
+          "source": {
+            "part": "word/document.xml",
+            "index": 35,
+            "paragraphId": "42458541"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Reliable systems and social proof can help shift employee appraisals from hindrance to challenge, increasing agentic AI adoption, readiness, and value."
+        },
+        {
+          "id": "block-36",
+          "source": {
+            "part": "word/document.xml",
+            "index": 36,
+            "paragraphId": "79D05AFD"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Recognize and reward investing in development/upskilling[close bold]"
+        },
+        {
+          "id": "block-37",
+          "source": {
+            "part": "word/document.xml",
+            "index": 37,
+            "paragraphId": "63319F4F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "We found that employees who are overwhelmed but still seeing value from AI agents are [open bold]also 1.7x as likely to report they are recognized or rewarded for using AI[close bold] compared with those who are overwhelmed and not seeing value. For these employees, this level of recognition and incentives can increase positivity around experimenting, trying new things, and pushing themselves out of their comfort zone. For rewards and recognition, consider:"
+        },
+        {
+          "id": "block-38",
+          "source": {
+            "part": "word/document.xml",
+            "index": 38,
+            "paragraphId": "1C307767"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Spotlighting success stories that celebrate learning and progress, not just perfection[close bullet]"
+        },
+        {
+          "id": "block-39",
+          "source": {
+            "part": "word/document.xml",
+            "index": 39,
+            "paragraphId": "5D13444F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Rewarding employees who get involved in peer learning groups or pilot cohorts that test out new features and processes[close bullet]"
+        },
+        {
+          "id": "block-40",
+          "source": {
+            "part": "word/document.xml",
+            "index": 40,
+            "paragraphId": "3B1B9273"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Tying recognition to experimentation, not just “getting it right” (e.g., “tried X, learned Y, improved Z”)[close bullet]"
+        },
+        {
+          "id": "block-41",
+          "source": {
+            "part": "word/document.xml",
+            "index": 41,
+            "paragraphId": "1111F73F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Recognition acts as a powerful signal, as it tells employees that effort matters as much as outcomes. When people see that experimenting and learning are valued, they’re more likely to embrace discomfort as part of growth rather than interpret it as risk."
+        },
+        {
+          "id": "block-42",
+          "source": {
+            "part": "word/document.xml",
+            "index": 42,
+            "paragraphId": "46ACBE30"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Provide training that feels like a bridge, not a burden[close bold]"
+        },
+        {
+          "id": "block-43",
+          "source": {
+            "part": "word/document.xml",
+            "index": 43,
+            "paragraphId": "46D40666"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Lastly, employees who are overwhelmed but are still seeing value from AI agents are [open bold]1.8x as likely to say they are adequately trained in how to use AI[close bold] compared with those who are overwhelmed and not seeing value. Having training opportunities can support employees in understanding AI agents and their capabilities, which may turn the tide from an employee perceiving this transformation as a hindrance to a surmountable challenge. When considering training in the face of friction, consider:"
+        },
+        {
+          "id": "block-44",
+          "source": {
+            "part": "word/document.xml",
+            "index": 44,
+            "paragraphId": "12EDEBBC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Delivering just‑in‑time, role‑specific learning modules/opportunities tied to real work outcomes (demonstrating the “why” and long-term ROI)[close bullet]"
+        },
+        {
+          "id": "block-45",
+          "source": {
+            "part": "word/document.xml",
+            "index": 45,
+            "paragraphId": "4C794C42"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Pairing training with coaching and on‑the‑job use, so the “learn” and “do” loops are closely intertwined[close bullet]"
+        },
+        {
+          "id": "block-46",
+          "source": {
+            "part": "word/document.xml",
+            "index": 46,
+            "paragraphId": "56D5CF2F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Offering skill ladders/micro‑credentials that let people see and celebrate progress[close bullet]"
+        },
+        {
+          "id": "block-47",
+          "source": {
+            "part": "word/document.xml",
+            "index": 47,
+            "paragraphId": "6CC1FECC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Closing the AI skill gap is critical. Training helps employees feel supported as they stretch into new technology and ways of working. One research study found that 3 in 5 employees reported being more likely to use AI at work if proper training were available[open superscript]4[close superscript]  and technical self-efficacy was found to strengthen adoption pathways so increasing self-efficacy should also further push AI adoption and impact[open superscript]3[close superscript]."
+        },
+        {
+          "id": "block-48",
+          "source": {
+            "part": "word/document.xml",
+            "index": 48,
+            "paragraphId": "7B956B96"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-49-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 49,
+            "paragraphId": "62E3A65C"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image4.png",
+          "dataUrl": "/launch-report-assets/reframing-ai-friction-as-a-mastery-challenge-to-drive-impact/b527d474f15ae877271d89e8af1e4149f476ce64bf95915f3ce712b51cf9c3ce.png",
+          "width": 624,
+          "height": 364,
+          "sourceAssetSha256": "b527d474f15ae877271d89e8af1e4149f476ce64bf95915f3ce712b51cf9c3ce",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-50",
+          "source": {
+            "part": "word/document.xml",
+            "index": 50,
+            "paragraphId": "39289508"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]Think about friction as fuel for growth, rather than failure. Organizations that frame AI as a challenge, not a threat, and reinforce trust, recognition, and training can turn moments of strain into opportunities for readiness and impact."
+        },
+        {
+          "id": "block-52",
+          "source": {
+            "part": "word/document.xml",
+            "index": 52,
+            "paragraphId": "7F801D75"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Stay tuned for our January Research Drop to keep up with what the Microsoft People Science team is learning![close bold]"
+        },
+        {
+          "id": "block-54",
+          "source": {
+            "part": "word/document.xml",
+            "index": 54,
+            "paragraphId": "66DBDF65"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open italics]This month’s Research Drop analyzed 1,800 global employees from the Microsoft People Science Agentic Teaming & Trust Survey from July 2025. Employees were grouped in this analysis based on their favorability on two survey items (“I am overwhelmed by the idea of integrating agentic AI into my work” and “I am struggling to keep up with the pace of change surrounding agentic AI at work”) and composite scores on our Realized Individual Value of Agentic AI scale. [close italics]"
+        },
+        {
+          "id": "block-56",
+          "source": {
+            "part": "word/document.xml",
+            "index": 56,
+            "paragraphId": "7D991B1F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]1[close superscript] Csikszentmihalyi, M. (1990). Flow: The Psychology of Optimal Experience. New York: Harper & Row."
+        },
+        {
+          "id": "block-57",
+          "source": {
+            "part": "word/document.xml",
+            "index": 57,
+            "paragraphId": "0FB6FF20"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]2[close superscript] Cavanaugh, M. A., Boswell, W. R., Roehling, M. V., & Boudreau, J. W. (2000). An empirical examination of self-reported work stress among US managers. [open italics]Journal of Applied Psychology, 85[close italics] (1), 65."
+        },
+        {
+          "id": "block-58",
+          "source": {
+            "part": "word/document.xml",
+            "index": 58,
+            "paragraphId": "2CC6A0FB"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]3[close superscript] Chang, P. C., Zhang, W., Cai, Q., & Guo, H. (2024). Does AI-driven technostress promote or hinder employees’ artificial intelligence adoption intention? A moderated mediation model of affective reactions and technical self-efficacy. Psychology Research and Behavior Management, 413-427."
+        },
+        {
+          "id": "block-59",
+          "source": {
+            "part": "word/document.xml",
+            "index": 59,
+            "paragraphId": "50E8C0DC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]4[close superscript] BBC. (May 18, 2025). Workers optimistic but overwhelmed by AI – study.",
+          "links": [
+            {
+              "start": 39,
+              "end": 109,
+              "href": "https://www.pewresearch.org/social-trends/2025/02/25/workers-views-of-ai-use-in-the-workplace/"
+            }
+          ]
+        }
+      ],
+      "reviewItems": [
+        {
+          "id": "review-0",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image1.jpeg does not have an image description.",
+          "blockId": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "1F7D6C74"
+          }
+        },
+        {
+          "id": "review-1",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image2.png does not have an image description.",
+          "blockId": "block-17-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 17,
+            "paragraphId": "20ECB72D"
+          }
+        },
+        {
+          "id": "review-2",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image3.png does not have an image description.",
+          "blockId": "block-28-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 28,
+            "paragraphId": "043E696A"
+          }
+        },
+        {
+          "id": "review-3",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image4.png does not have an image description.",
+          "blockId": "block-49-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 49,
+            "paragraphId": "62E3A65C"
+          }
+        }
+      ],
+      "extraction": {
+        "paragraphCount": 60,
+        "imageCount": 4,
+        "unsupportedCount": 0
+      }
+    },
+    "publicationSourceEvidence": {
+      "sourceSha256": "7767b61e0ecf89b620e9fdf2f7ef32aee29187a7d366bce214ea145b2a1f219d",
+      "hyperlinkCount": 2,
+      "representedHyperlinkCount": 2
+    }
   }
 ];
