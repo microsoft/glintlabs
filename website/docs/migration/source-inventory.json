@@ -3605,8 +3605,8 @@
       "source": "src/annual-report-2026/canonical-figma.tsx",
       "destination": "website/src/annual-report-2026/canonical-figma.tsx",
       "sourceSha256": "9e08de47ab039c4137e18d356f220021393891e49acd65b3e93fd1c76a2c43e9",
-      "destinationSha256": "b85257bc0d0251c085f30875442fd9bcc65cba612a9be8cb31faaa3a89fe3955",
-      "intentionalDifference": "Correct Chad Bennett's LinkedIn profile slug to the user-confirmed chadlbennett; preserve team content, layout, accessible labeling and external-link safeguards. Replace the withdrawn collaboration placeholder with the owner-supplied approved Caribay Garcia quote, heading and attribution using existing report-card styles; preserve surrounding analysis, author credits and historical source content."
+      "destinationSha256": "9fe7d1bba1409dea2a8c6bc6ed2e8e9ab6a4b6714198528b5bb3c6eafc2c337a",
+      "intentionalDifference": "Correct Chad Bennett's LinkedIn profile slug to the user-confirmed chadlbennett; preserve team content, layout, accessible labeling and external-link safeguards. Replace the withdrawn collaboration placeholder with the owner-supplied approved Caribay Garcia quote, heading and attribution using existing report-card styles; preserve surrounding analysis, author credits and historical source content. Render the survey expansion citation after them as semantic superscript 1, preserving the paragraph text and existing citation styling."
     },
     {
       "source": "src/annual-report-2026/canonical-interactions.module.css",
@@ -3654,8 +3654,8 @@
       "source": "src/annual-report-2026/canonical-report.test.ts",
       "destination": "website/src/annual-report-2026/canonical-report.test.ts",
       "sourceSha256": "523b6ea2cc284516e5cb58e76d118082d50aea5a7f207c6f2c3035d7f66ab7e2",
-      "destinationSha256": "a71142ca7b2c036cf485c992123ade8223750dca0ab1fba11e02241be2a0604c",
-      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and the approved Caribay quote while retaining placeholder-absence and author-credit checks. Add mobile Figma topics-matrix spacing and natural-row-height coverage while retaining desktop-layout, native-header and nine-cell checks."
+      "destinationSha256": "d6276f01c64878cf58fbab88dac062ce47869c2b11667c94ba0519b10e0360ce",
+      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and the approved Caribay quote while retaining placeholder-absence and author-credit checks. Add mobile Figma topics-matrix spacing and natural-row-height coverage while retaining desktop-layout, native-header and nine-cell checks. Verify the survey expansion citation is superscript before the sentence punctuation rather than an inline digit."
     },
     {
       "source": "src/annual-report-2026/channel-portfolio.tsx",

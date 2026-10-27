@@ -595,7 +595,7 @@ export function CanonicalReportBody() {
             </blockquote>
           </div>
           <div className={styles.frame78} data-node-id="1451:11597" style={{ fontVariationSettings: '"opsz" 8' }}>
-            <p className={styles.frame79}>To be clear, surveys are not going away. Sixty-nine percent of listening leaders are maintaining their company-wide surveys and 25% are even expanding them1. The goal is not to dethrone the survey. It is to remove its automatic claim on the question. In a need-centered listening system, the information need comes first and the method follows.</p>
+            <p className={styles.frame79}>To be clear, surveys are not going away. Sixty-nine percent of listening leaders are maintaining their company-wide surveys and 25% are even expanding them<sup>1</sup>. The goal is not to dethrone the survey. It is to remove its automatic claim on the question. In a need-centered listening system, the information need comes first and the method follows.</p>
             <p className={styles.frame8}></p>
             <p className={styles.frame61}>Before commissioning another survey, teams can test the default with two questions: <strong>What are we trying to understand, and what would we lose if a survey were unavailable?</strong> The answer may call for a survey, a conversation, signals already generated through the flow of work, or some combination of these.</p>
           </div>
