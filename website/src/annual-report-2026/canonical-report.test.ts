@@ -118,9 +118,10 @@ test("canonical team credits match the reviewed roles, colors, layout, and confi
   assert.match(team, /Senior People Scientist, Microsoft/);
   assert.match(team, /styles\.teamContent/);
   assert.match(team, /styles\.teamContributions/);
-  for (const profile of ["megan-benzing", "caribaygarcia", "crustephanie", "chadbennett", "ericschroen"]) {
+  for (const profile of ["megan-benzing", "caribaygarcia", "crustephanie", "chadlbennett", "ericschroen"]) {
     assert.ok(team.includes(`href="https://www.linkedin.com/in/${profile}"`));
   }
+  assert.match(team, /href="https:\/\/www\.linkedin\.com\/in\/chadlbennett" target="_blank" rel="noopener noreferrer" aria-label="View on LinkedIn: Chad Bennett \(opens in a new tab\)"/);
   assert.equal([...team.matchAll(/target="_blank" rel="noopener noreferrer" aria-label="View on LinkedIn: [^"]+ \(opens in a new tab\)"/g)].length, 5);
   assert.match(figmaStyles, /\.team \{[^}]*grid-template-columns:minmax\(0,1fr\) minmax\(0,558px\)/);
   assert.match(figmaStyles, /\.teamContributions \{ grid-column:1 \/ -1; \}/);
