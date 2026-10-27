@@ -52,6 +52,12 @@ jobs:
 
       - name: Build public GitHub Pages reader
         run: npm run pages:build
+        env:
+          GLINTLABS_PAGES_TELEMETRY: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.GLINTLABS_PAGES_TELEMETRY == 'true' && 'true' || 'false' }}
+
+      - name: Verify consent before releasing enabled analytics
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.GLINTLABS_PAGES_TELEMETRY == 'true'
+        run: npm run pages:test:telemetry
 
       - name: Upload public reader only
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

@@ -9,6 +9,7 @@
     "start": "next start",
     "pages:build": "node --experimental-strip-types scripts/build-pages.mjs",
     "pages:test:browser": "node --experimental-strip-types scripts/check-reader-browser.mjs",
+    "pages:test:telemetry": "node --experimental-strip-types scripts/check-telemetry-browser.mjs",
     "pages:export": "node --experimental-strip-types scripts/export-pages-publication.ts",
     "pages:preview": "node scripts/serve-pages.mjs",
     "content:annual-report": "node --experimental-strip-types scripts/generate-annual-report-content.mjs",
@@ -24,7 +25,7 @@
     "assets:annual-report": "node scripts/verify-annual-report-assets.mjs",
     "assets:annual-report:update": "node scripts/verify-annual-report-assets.mjs --write",
     "lint": "eslint",
-    "test": "node --experimental-strip-types --test scripts/connected-build-config.test.mjs scripts/studio-editing.test.mjs scripts/build-pages.test.mjs src/app/site-palette.test.ts src/annual-report-2026/approved-content.test.ts src/annual-report-2026/canonical-report.test.ts src/manifest/report-manifest.test.ts src/extraction/extract-docx.test.ts src/extraction/word-text-links.test.ts src/integrity/approved-content.test.ts src/project/report-block-history.test.ts src/project/studio-project.test.ts src/project/bulk-report-import.test.ts src/project/publication-package.test.ts src/project/publication-flow.test.ts src/project/accessible-chart-data.test.ts src/publishing/publication-preview.test.ts src/publishing/owner-access.test.ts src/publishing/publish-report.test.ts src/review/fidelity-review.test.ts src/visualization/verified-data-visual.test.ts src/app/tools/analyze-survey/analyze-survey-details.test.ts src/launch-reports/reports.test.ts"
+    "test": "node --experimental-strip-types --test scripts/connected-build-config.test.mjs scripts/studio-editing.test.mjs scripts/build-pages.test.mjs src/app/site-palette.test.ts src/annual-report-2026/approved-content.test.ts src/annual-report-2026/canonical-report.test.ts src/manifest/report-manifest.test.ts src/extraction/extract-docx.test.ts src/extraction/word-text-links.test.ts src/integrity/approved-content.test.ts src/project/report-block-history.test.ts src/project/studio-project.test.ts src/project/bulk-report-import.test.ts src/project/publication-package.test.ts src/project/publication-flow.test.ts src/project/accessible-chart-data.test.ts src/publishing/publication-preview.test.ts src/publishing/owner-access.test.ts src/publishing/publish-report.test.ts src/review/fidelity-review.test.ts src/visualization/verified-data-visual.test.ts src/app/tools/analyze-survey/analyze-survey-details.test.ts src/launch-reports/reports.test.ts src/telemetry/telemetry.test.ts src/telemetry/database.test.ts"
   },
   "dependencies": {
     "@fluentui/react-icons": "^2.0.341",
@@ -40,6 +41,7 @@
     "zod": "^4.6.6"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

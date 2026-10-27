@@ -7,7 +7,13 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import ts from "typescript";
 import vm from "node:vm";
-import { readerFile, readerSource } from "./build-pages.mjs";
+import { readerFile, readerSource, readerTelemetryConfig } from "./build-pages.mjs";
+
+test("analytics requires an explicit public-reader build flag and rejects ambiguous configuration", () => {
+  for (const value of [undefined, "", "false"]) assert.match(readerTelemetryConfig(value), / = false;/);
+  assert.match(readerTelemetryConfig("true"), / = true;/);
+  assert.throws(() => readerTelemetryConfig("yes"), /must be true or false/);
+});
 
 test("browser icon uses the Fluent beaker and the requested gray-circle treatment", async () => {
   const icon = await readFile(new URL("../src/app/icon.svg", import.meta.url), "utf8");

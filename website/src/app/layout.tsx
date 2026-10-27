@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 import { Providers } from "./providers";
 import { parseSitePalette } from "./site-palette";
+import { SiteTelemetry } from "@/telemetry/site-telemetry";
 import "@glint-labs/data-visuals/styles.css";
 import "./globals.css";
 import "./site-theme.css";
@@ -34,7 +35,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <Providers>{children}</Providers>
+        <Providers>{children}<SiteTelemetry /></Providers>
       </body>
     </html>
   );

@@ -63,6 +63,7 @@ export function AnalyzeSurveyModalTrigger({
   return (
     <>
       <button
+        data-glintlabs-event="analyze_survey_click"
         aria-expanded={open}
         aria-haspopup="dialog"
         className={className}
