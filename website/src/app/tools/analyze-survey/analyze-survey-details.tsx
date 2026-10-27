@@ -175,7 +175,7 @@ export function AnalyzeSurveyDetails({ onClose }: { onClose?: () => void }) {
               <p>Turn employee survey data into advanced analysis with an AI-guided, no-code workflow. Explore inter-item correlations, factor analysis, attrition analysis, and comparisons across surveys in an interactive report you can filter, export, and share.</p>
               <span>By Microsoft People Science</span>
             </div>
-            <a className={styles.githubAction} href={skillUrl} rel="noreferrer" target="_blank"><Open20Regular aria-hidden="true" />View on GitHub</a>
+            {!onClose ? <a className={styles.githubAction} href={skillUrl} rel="noreferrer" target="_blank"><Open20Regular aria-hidden="true" />View on GitHub</a> : null}
           </div>
         </div>
         {onClose ? <button aria-label="Close Analyze Survey details" data-dialog-initial-focus className={styles.closeAction} onClick={onClose} type="button"><Dismiss24Regular aria-hidden="true" /></button> : null}
@@ -198,14 +198,14 @@ export function AnalyzeSurveyDetails({ onClose }: { onClose?: () => void }) {
               <div className={styles.copyBlock}>
                 <code>{skillUrl}</code>
                 <div className={styles.copyActions}>
-                  <button className={styles.primaryCopyAction} onClick={() => copyText("skill")} type="button">{copied === "skill" ? <Checkmark16Regular aria-hidden="true" /> : <Copy20Regular aria-hidden="true" />}{copied === "skill" ? "Copied" : "Copy skill link"}</button>
+                  <button onClick={() => copyText("skill")} type="button">{copied === "skill" ? <Checkmark16Regular aria-hidden="true" /> : <Copy20Regular aria-hidden="true" />}{copied === "skill" ? "Copied" : "Copy skill link"}</button>
                   <a href={skillUrl} rel="noreferrer" target="_blank"><Open20Regular aria-hidden="true" />Visit GitHub</a>
                 </div>
                 {copyError?.target === "skill" ? <p className={styles.copyError} role="alert">{copyError.message}</p> : null}
               </div>
             </li>
             <li>
-              <div className={styles.stepHeading}><span aria-hidden="true">2</span><div><h3>Start an analysis</h3><p>Once Copilot has loaded the skill, paste this prompt. The skill will ask how you want to provide survey data before it runs.</p></div></div>
+              <div className={styles.stepHeading}><span aria-hidden="true">2</span><div><h3>Start an analysis</h3><p>When Copilot opens, paste this prompt. The skill will ask how you want to provide survey data before it runs.</p></div></div>
               <div className={styles.copyBlock}>
                 <code>{starterPrompt}</code>
                 <button onClick={() => copyText("prompt")} type="button">{copied === "prompt" ? <Checkmark16Regular aria-hidden="true" /> : <Copy20Regular aria-hidden="true" />}{copied === "prompt" ? "Copied" : "Copy starter prompt"}</button>
@@ -217,7 +217,7 @@ export function AnalyzeSurveyDetails({ onClose }: { onClose?: () => void }) {
         </section>
         <section className={styles.section} id="overview">
           <h2 tabIndex={-1}>Overview</h2>
-          <p className={styles.sectionLead}>The Analyze Survey skill leverages the advanced statistical methods in our <a href="https://github.com/microsoft/vivaglint_py" rel="noreferrer" target="_blank">VivaGlint_py public analytics</a> repository. Every run of Analyze Survey is inspected and evaluated for accuracy and repeatability.</p>
+          <p className={styles.sectionLead}>The Analyze Survey skill uses advanced statistical methods from our <a href="https://github.com/microsoft/vivaglint_py" rel="noreferrer" target="_blank">Viva Glint Analytics Library</a>. Every run of Analyze Survey is inspected and evaluated for accuracy and repeatability.</p>
           <div className={styles.analysisList}>
             {analyses.map(({ Icon, title, questions }) => <article className={styles.analysis} key={title}>
               <h3><Icon aria-hidden="true" />{title}</h3>

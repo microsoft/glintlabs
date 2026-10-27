@@ -4102,29 +4102,29 @@
       "source": "src/app/tools/analyze-survey/analyze-survey-details.module.css",
       "destination": "website/src/app/tools/analyze-survey/analyze-survey-details.module.css",
       "sourceSha256": "c8c606c052dc5425465afe28d04ea9f435e307d335cff20641bb6fe12ac09ef3",
-      "destinationSha256": "c8c606c052dc5425465afe28d04ea9f435e307d335cff20641bb6fe12ac09ef3",
-      "intentionalDifference": ""
+      "destinationSha256": "d30c73a58370442d91a6c5b7b197f2f58a75b54f773c6897a18e5a5ec07c25cd",
+      "intentionalDifference": "Use compact setup code, outlined copy actions and the site accent for the three safeguard icons; preserve wrapping, control targets, focus states, forced-color borders and icon dimensions."
     },
     {
       "source": "src/app/tools/analyze-survey/analyze-survey-details.test.ts",
       "destination": "website/src/app/tools/analyze-survey/analyze-survey-details.test.ts",
       "sourceSha256": "62e5f466b96c070b75a48cc29ba94bb641d074b26f3698787d435dc39712f8bc",
-      "destinationSha256": "62e5f466b96c070b75a48cc29ba94bb641d074b26f3698787d435dc39712f8bc",
-      "intentionalDifference": ""
+      "destinationSha256": "02fc8c7676561e13f90980a0e3af97db4a22e3f8488395a729780ec83a7a8231",
+      "intentionalDifference": "Update and extend regressions for canonical terminal instructions, outlined actions, compact text, approved wording, modal-only header-action omission, accent safeguard icons and preserving/restoring an existing scrollbar gutter."
     },
     {
       "source": "src/app/tools/analyze-survey/analyze-survey-details.tsx",
       "destination": "website/src/app/tools/analyze-survey/analyze-survey-details.tsx",
       "sourceSha256": "9ddb1b87bbb5f63dbc7357a5e245f8694ad1078a63921c2f3e709cf91933a6e7",
-      "destinationSha256": "9ddb1b87bbb5f63dbc7357a5e245f8694ad1078a63921c2f3e709cf91933a6e7",
-      "intentionalDifference": ""
+      "destinationSha256": "bdca92002972ca22174b99830db5d9b04bf08773437f9e5b999b1cffb3f0e4fa",
+      "intentionalDifference": "Apply the approved Overview and prompt wording, use outlined setup actions and omit the GitHub header action only in the modal; retain terminal instructions, original URLs and exact clipboard values."
     },
     {
       "source": "src/app/tools/analyze-survey/analyze-survey-modal-trigger.tsx",
       "destination": "website/src/app/tools/analyze-survey/analyze-survey-modal-trigger.tsx",
       "sourceSha256": "f9d483205ea5c812c77bb011a117fb4583a126cd6114ef59cb007693f84d6145",
-      "destinationSha256": "f9d483205ea5c812c77bb011a117fb4583a126cd6114ef59cb007693f84d6145",
-      "intentionalDifference": ""
+      "destinationSha256": "61eb5a938b1c793e47411d2b9c906b92f0b9b2b823f02af5d40faab8b3d684ca",
+      "intentionalDifference": "Preserve an existing classic-scrollbar gutter while the Analyze Survey modal locks scrolling, then restore its original inline style; do not introduce a gutter on pages without one or override an existing stable gutter."
     },
     {
       "source": "src/app/tools/analyze-survey/page.module.css",

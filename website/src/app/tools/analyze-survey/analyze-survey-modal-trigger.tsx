@@ -33,7 +33,11 @@ export function AnalyzeSurveyModalTrigger({
     const body = document.body;
     const previousRootOverflow = root.style.overflow;
     const previousRootOverscroll = root.style.overscrollBehavior;
+    const previousRootScrollbarGutter = root.style.scrollbarGutter;
     const previousBodyOverflow = body.style.overflow;
+    if (window.innerWidth > root.clientWidth && getComputedStyle(root).scrollbarGutter === "auto") {
+      root.style.scrollbarGutter = "stable";
+    }
     dialog.showModal();
     dialog.querySelector<HTMLElement>("[data-dialog-initial-focus]")?.focus({ preventScroll: true });
     root.style.overflow = "hidden";
@@ -43,6 +47,7 @@ export function AnalyzeSurveyModalTrigger({
     return () => {
       root.style.overflow = previousRootOverflow;
       root.style.overscrollBehavior = previousRootOverscroll;
+      root.style.scrollbarGutter = previousRootScrollbarGutter;
       body.style.overflow = previousBodyOverflow;
       dialog.close();
     };
