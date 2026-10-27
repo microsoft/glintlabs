@@ -252,6 +252,17 @@ test("canonical report primary navigation remains fixed to the viewport", () => 
   assert.match(navigationStyles, /\.navigation \{[^}]*position: fixed;/);
 });
 
+test("all eight decorative quote marks use the exact local Figma vector rather than an installed font", () => {
+  assert.match(figmaStyles, /\.frame47 \{[^}]*height:26px;[^}]*font-size:0;[^}]*width:27px;/);
+  assert.match(figmaStyles, /\.frame47::before \{[^}]*width:27px;height:26px;background:currentColor;mask:url\("\/figma\/annual-canonical\/quote-mark\.svg"\) center no-repeat;forced-color-adjust:none;/);
+  assert.match(figmaStyles, /@media \(forced-colors: active\) \{[^}]*\}[^}]*\.body \.frame47::before \{ background:CanvasText; \}/);
+  assert.equal([...snapshot.matchAll(/className=\{styles\.frame47\}/g)].length, 8);
+  const mark = readFileSync(new URL("../../public/figma/annual-canonical/quote-mark.svg", import.meta.url), "utf8");
+  assert.match(mark, /<svg width="27" height="26" viewBox="0 0 27 26"/);
+  assert.match(mark, /<path /);
+  assert.doesNotMatch(mark, /<text|font-family|(?:href|src)="https?:/);
+});
+
 test("the approved LSEG quotation preserves the supplied wording and named white attribution", () => {
   const quote = snapshot.slice(snapshot.indexOf('data-node-id="1584:78682"'), snapshot.indexOf('data-node-id="1451:11489"'));
   assert.match(quote, /The rate of change across our organisation and the markets we operate in means employee experience cannot be understood through periodic snapshots alone\. We need a more continuous understanding of what employees are experiencing as change unfolds\./);
