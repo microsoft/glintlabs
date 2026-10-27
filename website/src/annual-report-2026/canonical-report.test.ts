@@ -270,13 +270,24 @@ test("the approved Technology quotation matches the final canonical wording and 
   assert.match(figmaStyles, /\.frame70 \{[^}]*color:#fff;/);
 });
 
-test("the withdrawn collaboration quote and pending attribution are absent without removing author credits", () => {
+test("the approved Caribay quote replaces the withdrawn placeholder in the AI section", () => {
+  const start = snapshot.indexOf('data-node-id="1535:38911"');
+  const end = snapshot.indexOf('data-node-id="1451:11988"');
+  assert.ok(start > snapshot.indexOf('id="annual-section-7"'));
+  assert.ok(end > start);
+  const quote = snapshot.slice(start, end);
+  assert.match(quote, /<h3 className=\{styles\.frame80\}>Putting human judgment at the forefront<\/h3>/);
+  assert.ok(quote.includes("As AI takes on more of the mechanics of listening, human judgment becomes critical in asking harder questions: Why do we listen this way? Which practices are grounded in good science, and which are simply habits? What problems can we now solve that we couldn't before?"));
+  assert.match(quote, /<blockquote className=\{styles\.frame43\}>/);
+  assert.match(quote, /<p className=\{styles\.frame83\}>\s*Caribay Garcia \/ Head of People Science<br \/>\s*Microsoft\s*<\/p>/);
+  assert.match(snapshot, /className=\{styles\.frame87\} data-node-id="1535:38911"/);
   assert.doesNotMatch(snapshot, /General topic is that team collaboration|Potentially connect to our earlier agentic teaming work/);
   assert.doesNotMatch(snapshot, /Caribay Garcia \/ Head of People Science at Microsoft \(pending approval\)/);
-  assert.doesNotMatch(snapshot, /data-node-id="1535:38911"|styles\.pendingApproval/);
+  assert.doesNotMatch(snapshot, /styles\.pendingApproval/);
   assert.match(snapshot, /For listening teams, the question to tackle is where AI can help them understand employee needs/);
   assert.match(snapshot, /<h5>Caribay Garcia, PhD<\/h5>/);
   assert.doesNotMatch(snapshot, />PLACEHOLDER</);
+  assert.equal([...snapshot.matchAll(/<blockquote\b/g)].length, 8);
 });
 
 test("some exposure uses the blue accent outline without changing its grid or yellow dots", () => {
