@@ -20,6 +20,7 @@ export function LaunchReport({ report }: { report: NonNullable<ReturnType<typeof
     figureDescriptions={report.descriptions}
     manifest={report.manifest}
     mode="read"
+    orderedListBlockIds={report.orderedListBlockIds}
     referenceBlockIds={report.referenceBlockIds}
     reportStyle="new-fluent-colors"
     textOverrides={Object.fromEntries(Object.entries(report.textRuns).map(([id, runs]) => [id, <SourceText runs={runs} key={id} />]))}

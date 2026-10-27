@@ -75,7 +75,7 @@ test("Home and Reports consume the validated catalog, with Home limited to featu
   assert.match(reports, /<ReportsCatalog reports=\{reports\} \/>/);
 });
 
-test("all three P0 reports are featured on Home while retaining one illustrated Reports entry each", async () => {
+test("Home keeps exactly the three P0s featured while May appears only in Reports", async () => {
   const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-p0-featured-"));
   try {
     const catalog = await loadReportCatalog({ rootDirectory });
@@ -85,6 +85,10 @@ test("all three P0 reports are featured on Home while retaining one illustrated 
       "/reports/fighting-ai-slop-with-meta-cognition-around-ai",
       "/reports/empowering-managers-for-an-ai-first-future",
     ]);
+    const may = catalog.filter(report => report.href === "/reports/the-human-conditions-behind-ai-value-at-work");
+    assert.equal(may.length, 1);
+    assert.equal(may[0].featured, false);
+    assert.equal(catalog.length, 5);
     for (const report of featured) {
       assert.equal(catalog.filter(item => item.id === report.id).length, 1);
       assert.ok(report.thumbnail);

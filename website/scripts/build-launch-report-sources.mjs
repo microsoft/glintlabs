@@ -4,14 +4,16 @@ import path from "node:path";
 import { extractDocx } from "../src/extraction/extract-docx.ts";
 
 const directory = process.argv[2];
-if (!directory) throw new Error("Pass the directory containing the three P0 Word documents.");
+const p1Directory = process.argv[3];
+if (!directory || !p1Directory) throw new Error("Pass the P0 and P1 Word document directories.");
 const reports = [
-  ["GLPS_RD_Nov '25.docx", "empowering-managers-for-an-ai-first-future", false],
-  ["GLPS_RD_Feb '26.docx", "fighting-ai-slop-with-meta-cognition-around-ai", false],
-  ["GLPS_RD_April '26.docx", "tracking-the-rise-of-perceived-ai-value-at-work", false],
+  { fileName: "GLPS_RD_Nov '25.docx", slug: "empowering-managers-for-an-ai-first-future", directory, privatePreview: false, featured: true },
+  { fileName: "GLPS_RD_Feb '26.docx", slug: "fighting-ai-slop-with-meta-cognition-around-ai", directory, privatePreview: false, featured: true },
+  { fileName: "GLPS_RD_April '26.docx", slug: "tracking-the-rise-of-perceived-ai-value-at-work", directory, privatePreview: false, featured: true },
+  { fileName: "GLPS_RD_May '26.docx", slug: "the-human-conditions-behind-ai-value-at-work", directory: p1Directory, privatePreview: false, featured: false },
 ];
 const generated = [];
-for (const [fileName, slug, privatePreview] of reports) {
+for (const { fileName, slug, directory, privatePreview, featured } of reports) {
   const bytes = await readFile(path.join(directory, fileName));
   const { manifest, publicationSourceEvidence } = await extractDocx(fileName, new Uint8Array(bytes));
   const assets = path.resolve("src/launch-reports/assets", slug);
@@ -25,9 +27,9 @@ for (const [fileName, slug, privatePreview] of reports) {
     await writeFile(path.join(assets, asset), image);
     block.dataUrl = `/launch-report-assets/${slug}/${asset}`;
   }
-  generated.push({ slug, privatePreview, manifest, publicationSourceEvidence });
+  generated.push({ slug, privatePreview, featured, manifest, publicationSourceEvidence });
 }
 await writeFile(
   "src/launch-reports/source-data.ts",
-  "// Generated from the P0 Word originals; retain source hashes and editorial markup for fidelity checks.\nexport const launchReportSources = " + JSON.stringify(generated, null, 2) + ";\n",
+  "// Generated from the P0 and P1 Word originals; retain source hashes and editorial markup for fidelity checks.\nexport const launchReportSources = " + JSON.stringify(generated, null, 2) + ";\n",
 );

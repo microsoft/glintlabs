@@ -11,12 +11,19 @@ const fingerprints: Record<string, { paragraphs: number; text: string; source: s
   "GLPS_RD_April '26.docx": { paragraphs: 63, text: "4602b759865eca070a4eb5717520d326393917fd80438e9ffab4cacf1b18a46a", source: "ada87229c122545428a73dfa14e321c94b2f6b7853c20a2cbd6d2d46a384738c" },
   "GLPS_RD_Feb '26.docx": { paragraphs: 60, text: "beb7f8d391490722216f77487590d4a852671e9c04f0b171761df1c3874678d1", source: "7212e84cd07793b3a0066f493d9d735e2d0047fa327138a589053c14c650938d" },
   "GLPS_RD_Nov '25.docx": { paragraphs: 46, text: "91f964dbb930b729efce75de978bef747862969c62fe0cbf8248cfff14d27da7", source: "cc5e764f88ebc1a0ce56c03008ad447e7ce92816fbbe45b703a60ba79f5ff080" },
+  "GLPS_RD_May '26.docx": { paragraphs: 70, text: "40ddbca29c94aaef15c28e7694068595f8e69528e03917d9f7709d2f9ac0915c", source: "14aaf4097ab8ae3d4af6c8b70f95ea1202168a9f10577d7c005df5921315d0cf" },
 };
 const allReports = getLaunchReports({ includePrivatePreview: true });
 const november = allReports.find(report => report.slug === "empowering-managers-for-an-ai-first-future")!;
+const may = allReports.find(report => report.slug === "the-human-conditions-behind-ai-value-at-work")!;
+const p0Slugs = new Set([
+  "empowering-managers-for-an-ai-first-future",
+  "fighting-ai-slop-with-meta-cognition-around-ai",
+  "tracking-the-rise-of-perceived-ai-value-at-work",
+]);
 
-test("all three required launch reports retain independently verified Word text and source hashes", () => {
-  assert.equal(allReports.length, 3);
+test("all direct Research Drops retain independently verified Word text and source hashes", () => {
+  assert.equal(allReports.length, 4);
   for (const report of allReports) {
     const expected = fingerprints[report.manifest.source.fileName];
     const text = report.manifest.blocks.flatMap(block => "text" in block ? [block.text] : []);
@@ -25,7 +32,7 @@ test("all three required launch reports retain independently verified Word text 
     assert.equal(report.manifest.source.sha256, expected.source);
     assert.equal(report.manifest.reviewItems.length, 0);
     assert.ok(report.manifest.blocks.every(block => block.type !== "unsupported" && block.type !== "visual-placeholder"));
-    assert.equal(report.catalog.featured, true);
+    assert.equal(report.catalog.featured, p0Slugs.has(report.slug));
     assert.equal(report.privatePreview, false);
   }
 });
@@ -43,14 +50,15 @@ test("every source image remains byte-identical, with its Word dimensions and a 
       assert.equal(block.presentation?.crop ?? "original", "original");
     }
   }
-  assert.equal(imageCount, 18);
+  assert.equal(imageCount, 20);
 });
 
-test("P0 cards use existing Blue illustrations without replacing the original report heroes", async () => {
+test("Research Drop cards use existing Blue illustrations without replacing the original report heroes", async () => {
   const expected: Record<string, { id: string; alt: string }> = {
     "empowering-managers-for-an-ai-first-future": { id: "people", alt: "People illustration." },
     "fighting-ai-slop-with-meta-cognition-around-ai": { id: "document-edit-text", alt: "Document edit text illustration." },
     "tracking-the-rise-of-perceived-ai-value-at-work": { id: "data", alt: "Data illustration." },
+    "the-human-conditions-behind-ai-value-at-work": { id: "sign-in", alt: "Sign in illustration." },
   };
   for (const report of allReports) {
     const { id, alt } = expected[report.slug];
@@ -70,6 +78,7 @@ test("all source reference lists receive reference styling, including reports wi
     "empowering-managers-for-an-ai-first-future": ["block-62", "block-63", "block-64", "block-65"],
     "fighting-ai-slop-with-meta-cognition-around-ai": ["block-78", "block-79", "block-80", "block-81"],
     "tracking-the-rise-of-perceived-ai-value-at-work": ["block-81", "block-82", "block-83", "block-84", "block-85", "block-86"],
+    "the-human-conditions-behind-ai-value-at-work": ["block-74", "block-75", "block-76", "block-77", "block-78", "block-79", "block-80", "block-81"],
   };
   for (const report of allReports) {
     assert.deepEqual([...report.referenceBlockIds], expected[report.slug]);
@@ -99,6 +108,19 @@ test("figure descriptions retain native disclosure semantics with a branded Flue
   assert.match(css, /@container report \(max-width: 600px\)\s*\{\s*\.figureDescription summary\s*\{\s*min-height: 44px;/);
 });
 
+test("brief headings and side-nav labels share colon-free presentation without rewriting Word evidence", async () => {
+  const renderer = await readFile(new URL("../report-system/report-renderer.tsx", import.meta.url), "utf8");
+  assert.match(renderer, /function headingLabel\(/);
+  assert.match(renderer, /isResearchBriefHeading\(block\) \? headingLabel\(block\) : props\.textOverrides/);
+  assert.match(renderer, /label: headingLabel\(heading\)/);
+  assert.match(renderer, /href: `#report-block-\$\{heading\.id\}`/);
+  for (const source of launchReportSources) {
+    assert.ok(source.manifest.blocks.some(block => "text" in block && block.text === "Research Drop in Brief:"));
+    const report = allReports.find(item => item.slug === source.slug)!;
+    assert.ok(report.manifest.blocks.some(block => block.type === "heading" && block.text === "Research Drop in Brief:"));
+  }
+});
+
 test("Word link targets and linked wording survive removal of editorial formatting tags", () => {
   let linkCount = 0;
   for (const source of launchReportSources) {
@@ -114,7 +136,7 @@ test("Word link targets and linked wording survive removal of editorial formatti
       }
     }
   }
-  assert.equal(linkCount, 15);
+  assert.equal(linkCount, 22);
 });
 
 test("April uses the corrected 2026 publication year without rewriting source evidence", () => {
@@ -127,7 +149,63 @@ test("April uses the corrected 2026 publication year without rewriting source ev
   const source = launchReportSources.find(item => item.slug === report.slug)!;
   assert.ok(source.manifest.blocks.some(block => "text" in block &&
     block.text === "[April 14, 2025 • Research Drop] [2,331 Employees]"));
-  assert.deepEqual(allReports.map(item => item.isoDate), ["2026-04-14", "2026-02-10", "2025-11-11"]);
+  assert.deepEqual(allReports.map(item => item.isoDate), ["2026-05-12", "2026-04-14", "2026-02-10", "2025-11-11"]);
+});
+
+test("May retains Word evidence, original dates, numbered findings and multi-paragraph italics", () => {
+  const source = launchReportSources.find(item => item.slug === may.slug)!;
+  const rawText = source.manifest.blocks.flatMap(block => "text" in block ? [block.text] : []);
+  assert.equal(rawText.length, 73);
+  assert.equal(createHash("sha256").update(rawText.join("\n")).digest("hex"), "5d311aa971c454008f5ad761b9b240a75b4de53877414a2ac34c6a484260d2fb");
+  assert.equal(may.catalog.title, "The Human Conditions Behind AI Value at Work");
+  assert.equal(may.catalog.employeeCount, 2331);
+  assert.equal(may.catalog.featured, false);
+  assert.deepEqual(may.coverDetails, ["May 12, 2026 • Research Drop", "2,331 Employees"]);
+  assert.deepEqual([...may.orderedListBlockIds], ["block-26", "block-27", "block-28"]);
+  for (const id of may.orderedListBlockIds) {
+    assert.equal(may.manifest.blocks.find(block => block.id === id)?.type, "list-item");
+  }
+  for (const block of may.manifest.blocks) {
+    if (!("text" in block) || block.source.index < 55 || block.source.index > 72) continue;
+    assert.ok(may.textRuns[block.id].every(run => run.italic), block.id);
+  }
+  assert.equal(may.textRuns["block-74"][0].italic, false);
+  assert.equal(may.manifest.blocks.some(block => "text" in block && /\[(?:open|close) /i.test(block.text)), false);
+});
+
+test("P0 rich-text formatting remains unchanged when document-spanning marks are supported", () => {
+  for (const source of launchReportSources.filter(item => p0Slugs.has(item.slug))) {
+    const report = allReports.find(item => item.slug === source.slug)!;
+    assert.equal(report.orderedListBlockIds.size, 0);
+    for (const block of source.manifest.blocks) {
+      if (!("text" in block) || !report.textRuns[block.id]) continue;
+      assert.deepEqual(report.textRuns[block.id], wordTextRuns(block), `${source.slug}/${block.id}`);
+    }
+  }
+});
+
+test("May applies only the author-confirmed 2024 AI-adoption citation correction and preserves source evidence", () => {
+  const source = launchReportSources.find(item => item.slug === may.slug)!;
+  const original = source.manifest.blocks.find(block => block.id === "block-45")!;
+  assert.ok("text" in original);
+  assert.match(original.text, /AI optimism and adoption\[open superscript\]2\[close superscript\]/);
+  const displayed = may.manifest.blocks.find(block => block.id === original.id)!;
+  assert.ok("text" in displayed);
+  assert.equal(displayed.text, wordPlainText(original).replace("AI optimism and adoption2.", "AI optimism and adoption3."));
+  assert.deepEqual(may.textRuns[original.id].filter(run => run.superscript).map(run => run.text), ["3", "8"]);
+  assert.deepEqual(may.textRuns["block-32"].filter(run => run.superscript).map(run => run.text), ["2"]);
+  const reference = may.manifest.blocks.find(block => block.id === "block-76")!;
+  assert.ok("text" in reference && reference.text.includes("2024 Work Trend Index Annual Report"));
+});
+
+test("numbered markers normalize without losing text and emphasis can span paragraphs without leaking", () => {
+  const source = { part: "word/document.xml", index: 0 };
+  const marks = { bold: false, italic: false, superscript: false };
+  const paragraph = (text: string) => ({ type: "paragraph" as const, id: "test", source, text });
+  assert.equal(wordPlainText(paragraph("[open numeric bullet]First finding[close numeric bullet]")), "First finding");
+  assert.ok(wordTextRuns(paragraph("[open italics]Methodology"), marks).every(run => run.italic));
+  assert.ok(wordTextRuns(paragraph("Continued methodology[close italics]"), marks).every(run => run.italic));
+  assert.ok(wordTextRuns(paragraph("References"), marks).every(run => !run.italic));
 });
 
 test("editorial marks preserve words, emphasis, citations, and the malformed November bullet", () => {
@@ -157,7 +235,7 @@ async function withPreview(enabled: boolean, action: () => void | Promise<void>)
 
 test("November clearance makes its catalog entry and assets public without private-preview mode", async () => {
   await withPreview(false, async () => {
-    assert.equal(getLaunchReports().length, 3);
+    assert.equal(getLaunchReports().length, 4);
     assert.equal(getLaunchReport(november.slug), november);
     assert.equal(launchSourceVisible(november.slug, november.manifest.source.fileName), true);
     assert.equal(launchSourceVisible("legacy-address", november.manifest.source.fileName), true);
@@ -171,7 +249,7 @@ test("November clearance makes its catalog entry and assets public without priva
 
 test("November remains publicly cleared when the connected Studio uses preview mode", async () => {
   await withPreview(true, async () => {
-    assert.equal(getLaunchReports().length, 3);
+    assert.equal(getLaunchReports().length, 4);
     const hero = november.manifest.blocks.find(block => block.type === "image")!;
     const response = await launchReportAsset(new Request(`http://localhost${hero.dataUrl}`), november.slug, hero.dataUrl.split("/").pop()!);
     assert.equal(response.status, 200);
