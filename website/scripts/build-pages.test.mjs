@@ -2,19 +2,20 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
+import { Beaker20Regular } from "@fluentui/react-icons/svg/beaker";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import ts from "typescript";
 import vm from "node:vm";
 import { readerFile, readerSource } from "./build-pages.mjs";
 
-test("browser icon reuses the tracked Viva Glint mark on a light background", async () => {
-  const [icon, mark] = await Promise.all([
-    readFile(new URL("../src/app/icon.svg", import.meta.url), "utf8"),
-    readFile(new URL("../public/figma/nav-viva-glint-core.svg", import.meta.url), "utf8"),
-  ]);
-  assert.equal(icon.match(/\bd="([^"]+)"/)?.[1], mark.match(/\bd="([^"]+)"/)?.[1]);
-  assert.match(icon, /viewBox="0 0 20 20"/);
-  assert.match(icon, /<rect width="20" height="20" fill="#fff"\s*\/>/);
-  assert.match(icon, /fill="black" fill-opacity="0\.858824"/);
+test("browser icon uses the Fluent beaker and the requested gray-circle treatment", async () => {
+  const icon = await readFile(new URL("../src/app/icon.svg", import.meta.url), "utf8");
+  const beaker = renderToStaticMarkup(createElement(Beaker20Regular));
+  assert.equal(icon.match(/\bd="([^"]+)"/)?.[1], beaker.match(/\bd="([^"]+)"/)?.[1]);
+  assert.match(icon, /viewBox="0 0 26 26"/);
+  assert.match(icon, /<circle cx="13" cy="13" r="13" fill="#f3f3f3"\s*\/>/);
+  assert.match(icon, /transform="translate\(3 3\)" fill="#222"/);
 });
 
 test("favicon fallback contains PNG frames at standard browser tab sizes", async () => {
