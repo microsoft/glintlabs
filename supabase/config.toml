@@ -1,0 +1,4 @@
+project_id = "glintlabs-telemetry"
+
+[functions.glintlabs-telemetry]
+verify_jwt = false

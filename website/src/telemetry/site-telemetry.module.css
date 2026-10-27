@@ -1,0 +1,39 @@
+.root {
+  position: fixed;
+  z-index: 100;
+  inset-inline-start: 12px;
+  bottom: 12px;
+  max-width: calc(100vw - 24px);
+  color: var(--site-ink);
+  font-family: "Segoe UI", sans-serif;
+}
+
+.settings, .panel button {
+  border: 1px solid var(--site-line);
+  border-radius: 8px;
+  background: var(--site-paper);
+  color: var(--site-ink);
+  padding: 8px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.panel {
+  width: min(480px, calc(100vw - 24px));
+  max-height: 70vh;
+  overflow: auto;
+  margin-top: 8px;
+  padding: 24px;
+  border: 1px solid var(--site-line);
+  border-radius: 8px;
+  background: var(--site-paper);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.panel h2 { margin: 0 0 12px; font-size: 18px; }
+.panel p { margin: 0 0 12px; }
+.panel a { color: var(--site-accent-ink); text-decoration: underline; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.panel button:disabled { cursor: not-allowed; }
+.root :is(button, a):focus-visible { outline: 2px solid var(--site-focus); outline-offset: 3px; }

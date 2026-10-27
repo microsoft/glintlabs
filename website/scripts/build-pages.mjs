@@ -7,9 +7,16 @@ import ts from "typescript";
 import { getLaunchReports } from "../src/launch-reports/reports.ts";
 import { launchReportAsset } from "../src/launch-reports/assets.ts";
 import { copyApprovedReports } from "../src/publishing/pages-export.ts";
+import { listApprovedPublications } from "../src/publishing/approved-publication.ts";
+import { publicPath } from "../src/telemetry/contract.ts";
 import { verifyPages } from "./verify-pages.mjs";
 
 export const pagesBasePath = "/glintlabs";
+export function readerTelemetryConfig(value) {
+  assert(value === undefined || value === "" || value === "false" || value === "true",
+    "GLINTLABS_PAGES_TELEMETRY must be true or false.");
+  return `export const telemetryEnabled = ${value === "true"};\n`;
+}
 const root = fileURLToPath(new URL("../", import.meta.url));
 const excludedRoutes = new Set([
   "api", "studio", "preview", "published", "report-preview-assets",
@@ -114,6 +121,19 @@ export async function buildPages() {
       await cp(path.join(root, "public", name), path.join(reader, "public", name), { recursive: true });
     }
     await copyApprovedReports(path.join(root, "pages-publications"), reader);
+    if (process.env.GLINTLABS_PAGES_TELEMETRY === "true") {
+      const reports = [
+        ...getLaunchReports({ includePrivatePreview: false }).map(report => report.slug),
+        ...(await listApprovedPublications({ rootDirectory: path.join(root, "pages-publications") }))
+          .map(report => report.publication.slug),
+      ];
+      for (const slug of reports) {
+        assert(publicPath(`/reports/${slug}`),
+          `Review this public identifier in the shared telemetry contract before enabling analytics: ${slug}`);
+      }
+    }
+    await writeFile(path.join(reader, "src", "telemetry", "config.ts"),
+      readerTelemetryConfig(process.env.GLINTLABS_PAGES_TELEMETRY));
     for (const report of getLaunchReports({ includePrivatePreview: false })) {
       for (const block of report.manifest.blocks.filter(block => block.type === "image")) {
         assert.equal(block.type, "image");

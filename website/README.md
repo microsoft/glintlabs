@@ -29,6 +29,113 @@ Private drafts, staging output, and local review evidence remain excluded from
 Git. Explicitly approved Studio exports can be reviewed and committed through
 the [Pages publication workflow](pages-publications/README.md).
 
+## Optional Supabase site analytics
+
+Analytics is **off by default** in both Supabase and Pages. Ordinary Next builds,
+Studio, previews, localhost, and other origins never collect. The only approved
+collector is `glintlabs-telemetry` in project `kkthgbgkzzkfpmnbjmro`.
+
+The public reader asks for opt-in consent before sending page views, Analyze
+Survey opens, skill-link clicks, and report-download clicks. Opening a report is
+a page view, not a second event. Download clicks measure intent, not completed
+downloads; there are no invented download controls. Tool interest is not survey
+execution. Counts are events, never unique visitors, adoption, or conversions.
+No events are queued before consent. Browser DNT/GPC signals override consent.
+Analytics settings allow withdrawal; withdrawal aborts pending requests but
+cannot recall events already received. Only a choice and 180-day expiry are
+stored in localStorage; storage failure leaves the choice page-session-only.
+
+The shared contract in `src/telemetry/contract.ts` permits only reviewed public
+paths, four event names, and predefined referral/campaign-source categories.
+Queries, fragments, referrer URLs, survey data, employee data, free text,
+timestamps supplied by visitors, and visitor identifiers are never sent.
+Add newly approved public report paths to that contract when publishing; an
+enabled Pages build refuses to ship unknown public report identifiers.
+
+### Deploy safely to the approved existing project
+
+Use the Supabase CLI from the repository root. Authenticate locally with
+`npx supabase login`; never paste access tokens or privileged keys into chat,
+source, GitHub variables, or browser code.
+On Windows PowerShell, use `npx.cmd` if its execution policy blocks the
+`npx.ps1` launcher; changing the execution policy is unnecessary.
+
+1. Confirm project access/region with `npx supabase projects list`, then run
+   `npx supabase link --project-ref kkthgbgkzzkfpmnbjmro`.
+   Check for name conflicts with the new `glintlabs_telemetry` schema,
+   `public.glintlabs_record_event` function, and function/job names before applying.
+   Do not reset the database or reconcile another application's migrations.
+2. Set `GLINTLABS_TELEMETRY_ENABLED=false` and a newly generated random
+   `GLINTLABS_RATE_LIMIT_SECRET` (at least 32 characters) using the project's
+   Edge Function secrets UI. The runtime supplies `SUPABASE_URL` and
+   `SUPABASE_SERVICE_ROLE_KEY`; neither belongs in the site.
+3. This is a shared project: inspect its migration history first. Apply only
+   the two reviewed `supabase/migrations/*glintlabs_telemetry*.sql` files through
+   the restricted SQL editor if its existing history differs. Do not blindly
+   run `db push`, `migration repair`, or apply unrelated pending migrations.
+   The first file creates isolated tables/RPC; the second requires `pg_cron`
+   and schedules an hourly cleanup without modifying other jobs.
+   The authenticated CLI alternative is `supabase db query --linked
+   --project-ref kkthgbgkzzkfpmnbjmro --file <reviewed-migration.sql>`.
+   Direct SQL application does not modify shared Supabase migration history;
+   check for already-applied resources before any later CLI migration operation.
+4. Deploy `npx supabase functions deploy glintlabs-telemetry --project-ref
+   kkthgbgkzzkfpmnbjmro`. `verify_jwt=false` is deliberate: this public event
+   endpoint accepts unsigned visitors, not authenticated users. Origin checks
+   and CORS are not authentication. Public roles cannot execute the ingestion
+   RPC or read/write tables/views. Reporting is SQL-editor-only.
+   Add `--use-api` to deploy without a local Docker daemon.
+5. While the browser flag is still off, enable the backend secret and send one
+   synthetic event using the shared contract. Verify its stored columns,
+   rejection of invalid bodies, anonymous read/write/RPC denial, limits, and
+   the retention job/run in `supabase/reports/telemetry.sql`. Remove the known
+   synthetic test row by its returned SQL-editor row ID; do not delete real
+   rows by broad date range. Only then enable Pages.
+6. Set repository **Actions variable** `GLINTLABS_PAGES_TELEMETRY=true` and run
+   Site CI on `main` after merging. Only this public Pages build replaces the
+   disabled config module, and the flag is never enabled for PR builds.
+   Check reject/allow/withdraw choices and one navigation/click with the browser
+   Network panel. Never include a service key or access token in that build.
+
+To stop collection immediately, set the backend secret to `false`. To remove
+the prompt too, set the Actions variable to `false` and rebuild Pages.
+Deployments do not automatically enable collection.
+
+### Retention, operations, and interpretation
+
+The private `glintlabs_telemetry` schema keeps raw events for 90 days, with hourly
+deletion (expired rows may remain until the next successful run, at most an
+hour during normal operation). Views always exclude events older than 90 days.
+The hourly job removes rate counters older than 48 hours. No longer-lived
+aggregates are created. Check cron run failures and Edge Function diagnostics;
+a failed retention job must be fixed, not treated as a successful purge.
+Supabase infrastructure/access logs, backups, and point-in-time recovery have
+their own project-level retention. Confirm their policy with the shared-project
+owner; deleting application rows does not erase provider backups or logs.
+
+The gateway necessarily sees network addresses. The collector does not log
+bodies, addresses, user agents, or credentials. A secret-keyed HMAC changes daily
+and is stored only in separate rate counters, never linked to event rows.
+Limits are 30 submissions/address/minute, 300 globally/minute, and 10,000
+globally/day, atomically enforced in PostgreSQL. Rejected address-level attempts
+also consume global quota. These bound database writes/counter growth, not
+Edge Function invocations or malicious traffic costs. CORS can be spoofed by
+nonbrowser callers; forwarded address controls depend on the trusted gateway.
+Bots, shared NATs, consent, blockers, caps, and failures make these approximate
+opt-in event counts, not a census or bot-proof attribution system.
+
+Run `npm test` and `npm run lint`. Telemetry database tests use embedded
+PostgreSQL (PGlite) to execute the real schema, RPC, RLS/permissions, limits,
+retention function, and reporting queries without Docker or production access.
+They do not emulate the hosted gateway or run `pg_cron`; verify the schedule
+and actual execution in the approved project before enabling production.
+`GLINTLABS_PAGES_TELEMETRY=true npm run pages:build` (set the variable using your
+shell syntax) validates the enabled static build. `npm run pages:test:browser`
+checks the exported reader; `npm run pages:test:telemetry` checks the enabled
+reader at its production origin using browser request interception. The test
+serves every production request locally and intercepts all collector requests;
+it never sends test visits to the real project. Set `CHROME_PATH` if needed.
+
 ## Prototype contract
 
 Word starts the report; Publishing Studio becomes the approved web version.
