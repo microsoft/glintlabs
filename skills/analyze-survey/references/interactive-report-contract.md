@@ -11,7 +11,7 @@ golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`89f50c00728f01f3ad078835e935414007075b33401f80dbe932b3cd2228bc09`.
+`f62f14dfb24c7431fbd01155262ade1e5779e9633dac2b9b1044561ec2d2dc41`.
 Generated reports in `required` mode must match its static HTML shell exactly.
 The intended substitution is the JSON value assigned to `const D`. In `off`
 mode, the seven empty AI summary containers are also removed from the generated
@@ -115,9 +115,11 @@ analyses continue; omissions are not silently treated as completed analyses.
   marketing copy. It must update with the shared report filter and show:
   latest privacy-eligible cycle and response count, the
   three high-scoring items, the three low-scoring items, privacy-safe aggregate
-  comment themes for each item when available, and average/leading movement
-  from the prior cycle when available. Do not show an overall average-score
-  number in the report header.
+  comment themes for each item when available, and leading item-level movement
+  from the prior cycle when available. Do not present survey-wide average
+  scores, composite scores averaged across items, or average score changes
+  across items anywhere in the report or its interpretation. Keep individual
+  item scores, item-level changes, and eligible group comparisons.
 - Prefer score-ranked items with sufficient linked comment coverage when at
   least six are available. Otherwise retain the full score ranking and state
   when an item has no privacy-eligible linked themes. Describe all results as

@@ -21,11 +21,11 @@ This plugin provides a set of focused skills that share a common analysis contra
    standard set of `vivaglint` codebooks, writes an `analysis-manifest.json`,
    and packages the required interactive HTML report and privacy-safe ZIP
    without embedded AI-generated summaries. It also interprets new or existing
-   codebook outputs into People Science findings and caveats after QA.
+   codebook outputs into People Science findings and caveats, with built-in
+   validity, privacy, and interpretation-readiness QA.
 2. `analyze-survey-ai-preview` adds staged, evidence-grounded People Science
    summaries to the same shared report pipeline.
-3. `analysis-qa` reviews output validity, privacy thresholds, and interpretation readiness.
-4. `people-science-knowledge-vault` finds and synthesizes externally published People Science knowledge using a strict two-tier source hierarchy.
+3. `people-science-knowledge-vault` finds and synthesizes externally published People Science knowledge using a strict two-tier source hierarchy.
 
 The plugin deliberately does not duplicate the `vivaglint` analysis package. It calls a pinned package version and treats the output manifest as the stable interface between execution and interpretation.
 
@@ -61,8 +61,8 @@ python .\scripts\local_runtime.py setup --env-dir "$HOME\.glintlabs\survey-runti
 This installs `requirements-runtime.txt` into an isolated environment outside
 the plugin, checks dependencies, and runs an installation-only smoke test of
 the real report pipeline. It does not modify global Python. Use the resulting
-environment interpreter for readiness checks and analysis. Repeat the smoke
-test after plugin/dependency updates.
+environment interpreter for readiness checks and analysis. Follow the local
+runtime guide for when checks and smoke tests must be repeated.
 
 See [local runtime setup](skills/analyze-survey/references/local-runtime.md)
 for readiness commands, host limitations, safe updates, and troubleshooting.
@@ -125,9 +125,8 @@ Schema: `schemas/analysis-manifest.schema.json`
 
 | Skill | Use when |
 |---|---|
-| `analyze-survey` | The user wants the standard survey analysis package or People Science interpretation of existing output files/manifests. |
+| `analyze-survey` | The user wants the standard survey analysis package, QA of output validity/privacy/readiness, or People Science interpretation of existing outputs. |
 | `analyze-survey-ai-preview` | The user explicitly wants the staged AI-summary report experience. |
-| `analysis-qa` | The user needs to know whether outputs are valid and safe to interpret. |
 | `people-science-knowledge-vault` | The user wants externally shareable People Science articles or an evidence-backed synthesis of published guidance. |
 
 ### Knowledge vault status

@@ -409,7 +409,6 @@ def test_each_skill_has_first_priority_reference_folder():
     skill_names = sorted(path.name for path in skills_dir.iterdir() if path.is_dir())
 
     assert skill_names == [
-        "analysis-qa",
         "analyze-survey",
         "analyze-survey-ai-preview",
         "people-science-knowledge-vault",
@@ -449,7 +448,7 @@ def test_analyze_survey_required_grounding_paths_are_skill_relative():
     assert all((skill_dir / path).resolve().exists() for path in required)
 
 
-def test_survey_interpretation_workflow_is_consolidated():
+def test_survey_interpretation_and_qa_workflow_is_consolidated():
     skill_dir = ROOT / "skills/analyze-survey"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     interpretation_path = skill_dir / "references/interpretation.md"
@@ -467,6 +466,26 @@ def test_survey_interpretation_workflow_is_consolidated():
     assert "Only after QA passes (Ready or Use with caveats)" in interpretation_text
     assert "knowledge-vault handoff" in existing_outputs
     assert "Purely conceptual" in existing_outputs
+    assert "QA-only" in existing_outputs
+    assert not (ROOT / "skills" / "analysis-qa").exists()
+    qa = skill.split("## Analysis QA", 1)[1].split("## Primary workflow", 1)[0]
+    for requirement in (
+        "Execution completeness",
+        "Input adequacy",
+        "Privacy",
+        "Statistical caution",
+        "Comparison validity",
+        "Interpretation readiness",
+        "Ready / Use with caveats / Not ready",
+        "outputs cannot be inspected",
+        "repeatability failed",
+        "required segment suppression is absent",
+        "re-identification risk",
+        "incompatible wording",
+        "unstable factors",
+        "Reuse QA already established",
+    ):
+        assert requirement in qa
     assert "../../people-science-knowledge-vault/SKILL.md" in interpretation
     assert "Use the vault's complete retrieval process" in interpretation_text
     assert "without requiring a manifest, survey data, QA, or a new analysis" in interpretation_text
@@ -485,8 +504,8 @@ def test_survey_interpretation_workflow_is_consolidated():
     ):
         assert section in interpretation
     for safeguard in (
-        "repeatability fails",
-        "QA identifies a hard stop",
+        "Analysis QA",
+        "hard stops",
         "Do not overstate causality",
         "Do not name small groups",
         "Do not create manager-facing action plans in this workflow",
@@ -1326,7 +1345,7 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     assert "2025-12-15" in report
 
 
-def test_survey_summary_omits_average_badge_but_keeps_item_scores_and_movement():
+def test_survey_summary_omits_cross_item_averages_but_keeps_item_scores_and_movement():
     node = shutil.which("node")
     if node is None:
         pytest.skip("Node.js is required to exercise the survey summary.")
@@ -1361,10 +1380,19 @@ for(const filtered of [false,true]){
   assert.ok(root.innerHTML.includes("40 responses"));
   assert.ok(root.innerHTML.includes("<strong>80</strong>"));
   assert.ok(root.innerHTML.includes("<strong>70</strong>"));
-  assert.ok(root.innerHTML.includes("average item score increased by 8 points"));
+  assert.ok(!root.innerHTML.toLowerCase().includes("average"));
+  assert.ok(root.innerHTML.includes("The largest improvement was Career (+10)."));
   assert.ok(root.innerHTML.includes("High scoring items"));
   assert.ok(root.innerHTML.includes("Low scoring items"));
 }
+cycleValues.Latest.items[1]=[50,20,40];
+renderSurveySummary();
+assert.ok(root.innerHTML.includes("The largest decline was Career (-10)."));
+cycleValues.Latest.items=[[75,20,40],[60,20,40]];
+renderSurveySummary();
+assert.ok(root.innerHTML.includes("Comparable item scores were unchanged from Earlier."));
+assert.ok(!root.innerHTML.toLowerCase().includes("average"));
+cycleValues.Latest.items=[[80,20,40],[70,20,40]];
 cycleValues.Latest.items[1]=[null,null,null];
 cycleValues.Earlier.items[0]=[null,null,null];
 renderSurveySummary();

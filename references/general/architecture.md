@@ -17,19 +17,20 @@ The core separation is:
 
 ## Why not one giant skill
 
-A single skill that also owns independent QA and all customer artifacts would
-be difficult to route, test, and maintain. Analysis execution and interpretation
-share one entry point, with detailed interpretation guidance kept in a
-colocated reference. QA remains a separate composable skill:
+A single skill that owns all customer artifacts would be difficult to route,
+test, and maintain. Survey execution, output QA, and interpretation share one
+entry point, with detailed interpretation guidance kept in a colocated
+reference:
 
 1. `analyze-survey` produces outputs or accepts existing manifests and codebooks.
-2. `analysis-qa` determines whether outputs are safe to interpret.
+2. Its **Analysis QA** section determines whether outputs are safe to interpret
+   and is the single source for readiness criteria, verdicts, and hard stops.
 3. `analyze-survey` produces People Science findings using
    `skills/analyze-survey/references/interpretation.md` after readiness is
    established, carrying forward QA caveats.
 
-Interpretation-only requests do not require new ingestion, codebook execution,
-or report packaging. Standard reports remain free of embedded AI summaries;
+QA-only and interpretation-only requests do not require new ingestion, codebook
+execution, or report packaging. Standard reports remain free of embedded AI summaries;
 `analyze-survey-ai-preview` remains the explicit opt-in for those summaries.
 
 Each skill should know its job, the shared contract, and which references to load.

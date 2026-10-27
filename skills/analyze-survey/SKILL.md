@@ -1,6 +1,6 @@
 ---
 name: analyze-survey
-description: "Analyze a CSV or Excel employee survey export into an interactive HTML report and privacy-safe share ZIP, or interpret existing vivaglint outputs. Use for survey analysis, analysis-manifest.json, descriptives, correlations, factors, cycle comparisons, segments, or attrition findings, caveats, hypotheses, and next analysis questions."
+description: "Analyze a CSV or Excel employee survey export into an interactive HTML report and privacy-safe share ZIP, or QA and interpret existing vivaglint outputs. Use for survey analysis, analysis-manifest.json, output validity and privacy checks, interpretation readiness, descriptives, correlations, factors, cycle comparisons, segments, or attrition findings, caveats, hypotheses, and next analysis questions."
 allowed-tools: Bash, Read, Write, Glob, Grep, WebFetch
 ---
 
@@ -9,14 +9,14 @@ allowed-tools: Bash, Read, Write, Glob, Grep, WebFetch
 Turn a provided survey export into a repeatable local analysis and the standard
 interactive report. The skill owns export inspection, safe configuration,
 `vivaglint` execution, repeatability validation, HTML generation, packaging,
-and People Science interpretation of new or existing analysis outputs.
+QA, and People Science interpretation of new or existing analysis outputs.
 Interpretation is a narrative response, not AI summary cards in the standard
 report. A broader customer readout or manager action plan is outside this
 skill's scope.
 
 ## Start here
 
-First distinguish a new analysis from interpretation of existing outputs.
+First distinguish a new analysis from QA or interpretation of existing outputs.
 
 ### Existing analysis outputs
 
@@ -24,12 +24,17 @@ When the user asks to interpret survey results, explain codebooks, summarize
 findings, identify themes, or explain correlations, factors, cycle changes,
 segments, or attrition patterns, start with their `analysis-manifest.json`
 and its relevant artifacts. If their location is missing, ask for the output
-folder or manifest.
+folder or manifest. If the manifest is absent, inspect the available aggregate
+outputs and make any missing execution evidence explicit.
 
-Follow `references/interpretation.md` for grounding, QA readiness, synthesis,
+When the user asks whether results are valid, safe to interpret, or ready for
+manager guidance or a customer readout, use **Analysis QA** below. For QA-only
+requests, return the verdict and stop; do not generate findings or new reports.
+
+For interpretation, follow `references/interpretation.md` for grounding, synthesis,
 output format, and guardrails. Do not ask for a new ingest
 method, rerun codebooks, or require HTML/ZIP generation for an
-interpretation-only request.
+interpretation-only or QA-only request.
 
 For detailed People Science questions or research-backed follow-ups, use the
 knowledge-vault handoff in `references/interpretation.md`. Purely conceptual
@@ -119,39 +124,85 @@ navigation, filters, tab behavior, analytical thresholds, score units,
 privacy, and packaging. Use the checked-in `golden-report.html` through the
 shared builder, not a manually recreated report.
 
+Reuse grounding already read in the current session when its relevant content
+is unchanged. Read changed or missing references, not the same files again
+because a command is retried or an unrelated repository file changed.
+
+The report contract defines score presentation for reports and interpretations;
+use item-level scores and changes, not cross-item averages.
+
+## Analysis QA
+
+Apply this gate before interpreting new or existing outputs, or on its own
+when the user requests QA. Start from the manifest and the relevant aggregate
+artifacts in the shared codebook catalog. Use this skill's references first,
+then the shared codebook catalog, privacy/minimum-N guidance, and interpretation
+guardrails. Do not request respondent-level rows for QA.
+
+| Dimension | Check |
+|---|---|
+| Execution completeness | Required codebooks and artifacts are present; failures, skips, and repeatability status are explicit. |
+| Input adequacy | Response and item counts, cycle availability, and required inputs support the requested analyses. |
+| Privacy | Minimum-N suppression is enforced before sharing; small cells and sensitive combinations are not disclosive. |
+| Statistical caution | Correlations are non-causal, factors are stable enough for their intended use, and attrition results remain aggregate associations. |
+| Comparison validity | Item wording, scale, and populations are comparable across cycles. |
+| Interpretation readiness | Inspected outputs support the requested narrative, with limitations carried forward. |
+
+Return **Not ready** and stop interpretation when outputs cannot be inspected,
+repeatability failed, required segment suppression is absent, attrition results
+create likely re-identification risk, cycle comparisons use incompatible wording
+or scales, or unstable factors are central to the intended story.
+Otherwise use **Ready**, or **Use with caveats** for disclosed non-blocking
+limitations. A successful runner alone does not establish readiness.
+
+Reuse QA already established in the current session when its input artifacts,
+configuration, and intended use are unchanged. Recheck affected dimensions after
+changes rather than repeating an unchanged full review.
+
+For QA-only requests, return:
+
+```markdown
+## Analysis QA
+**Verdict:** Ready / Use with caveats / Not ready
+**What passed:** ...
+**Issues to fix before interpretation:** ...
+**Caveats to carry into interpretation:** ...
+**Recommended next step:** ...
+```
+
+For an analysis or interpretation request, state the verdict and material
+caveats before the findings; do not duplicate a full QA report.
+
 ## Primary workflow
 
 ### Local runtime readiness
 
 After data-source selection, before loading respondent data or starting the
-runner, follow `references/local-runtime.md`:
+runner, follow the fast path in `references/local-runtime.md`. That reference
+owns interpreter discovery, source freshness, setup approval, output access,
+and when readiness checks or smoke tests must be repeated. Do not duplicate
+its checks or setup's successful smoke test.
 
-1. Confirm local command execution and permission to read the chosen input
-   and write outputs. Reading a GitHub skill link is not a runtime installation.
-2. Locate the complete plugin and check its actual source revision/content
-   against the supported upstream version. Obtain approval for updates,
-   preserve local changes, and update all assets together, never just the data.
-3. Run `scripts/local_runtime.py check` using the intended analysis Python,
-   including `--output-dir` to check output access.
-4. If setup is missing, obtain approval before environment creation or
-   dependency downloads, then use `scripts/local_runtime.py setup` with an
-   approved `--env-dir`. Pass `--yes` only after approval. Use the isolated
-   environment, not global Python or ad hoc package installation.
-5. Require `scripts/local_runtime.py smoke` after setup, plugin updates, or
-   dependency changes. Its synthetic installation fixture is never a substitute
-   for the user's input or the registered demo workbook.
-6. Run the official analysis with that same verified interpreter and fixed
-   plugin revision. Each manifest records privacy-safe `runtime_provenance`.
+Run the official analysis with the same verified isolated interpreter and fixed
+runtime assets for both passes. Each manifest records privacy-safe
+`runtime_provenance`. The installation fixture is never an analysis dataset.
 
 If execution is unavailable or readiness fails, stop with the specific blocker
 and supported setup instructions. Never substitute AI-written analysis code,
 silently switch runtimes, or claim the official pipeline completed.
-Interpretation-only requests using existing outputs do not require local setup.
+Interpretation-only and QA-only requests using existing outputs do not require
+local setup.
 
 Before starting the runner, give the user a concise estimated completion time.
 Base the estimate on the export size and prior runs when available, and state
 that correlation clustering, attrition-alert aggregation, and repeatability are the
 most variable phases. Do this in the first response that starts the run.
+
+Record the task start before preflight and the pipeline start separately.
+When reporting duration, give end-to-end elapsed time through final validation,
+including setup, checks, troubleshooting, and reruns. Label pipeline-only time
+separately; never present it as total completion time. Identify time waiting
+for user input separately when material.
 
 ### Attrition discovery and missing-data follow-up
 
@@ -304,9 +355,10 @@ completed aggregate artifacts listed in the manifest
 <output-directory-name>-share.zip
 ```
 
-After repeatability passes, open the HTML report before finishing. Then follow
-`references/interpretation.md` for QA and People Science findings.
-For interpretation-only requests, return its narrative format instead.
+After repeatability passes, open the HTML report before finishing. Apply
+**Analysis QA**, then follow `references/interpretation.md` for People Science
+findings. For existing outputs, return only the requested QA or interpretation;
+do not require new packaging.
 
 ### Post-analysis adaptation
 

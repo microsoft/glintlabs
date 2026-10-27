@@ -160,6 +160,8 @@ def dataframe_to_jsonable_summary(frame: pd.DataFrame) -> dict[str, Any]:
 
 
 def parse_termination_dates(values: pd.Series) -> pd.Series:
+    if pd.api.types.is_datetime64_any_dtype(values):
+        return pd.to_datetime(values, errors="coerce")
     numeric = pd.to_numeric(values, errors="coerce")
     if numeric.notna().sum() == values.notna().sum() and numeric.notna().any():
         return pd.to_datetime(
