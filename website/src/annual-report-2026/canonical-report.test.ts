@@ -603,8 +603,9 @@ test("right-fit principle labels use canonical padding and corner radius", () =>
   assert.match(diagrams, /The goal is not maximum listening\. It is enough credible understanding to support a consequential choice\./);
 });
 
-test("the survey expansion citation is superscript before the sentence punctuation", () => {
-  assert.match(snapshot, /25% are even expanding them<sup>1<\/sup>\. The goal is not to dethrone the survey\./);
+test("the survey expansion citation uses the canonical small superscript before the sentence punctuation", () => {
+  assert.match(snapshot, /25% are even expanding them<sup className=\{styles\.frame7\} style=\{\{ fontVariationSettings: '"opsz" 8' \}\}>1<\/sup>\. The goal is not to dethrone the survey\./);
+  assert.match(figmaStyles, /\.frame7 \{[^}]*font-size:10\.32px;/);
   assert.doesNotMatch(snapshot, /expanding them1\./);
 });
 
