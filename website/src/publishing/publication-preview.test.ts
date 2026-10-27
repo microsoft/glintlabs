@@ -81,9 +81,9 @@ test("all three P0 reports are featured on Home while retaining one illustrated 
     const catalog = await loadReportCatalog({ rootDirectory });
     const featured = catalog.filter(report => report.featured);
     assert.deepEqual(featured.map(report => report.href), [
+      "/reports/tracking-the-rise-of-perceived-ai-value-at-work",
       "/reports/fighting-ai-slop-with-meta-cognition-around-ai",
       "/reports/empowering-managers-for-an-ai-first-future",
-      "/reports/tracking-the-rise-of-perceived-ai-value-at-work",
     ]);
     for (const report of featured) {
       assert.equal(catalog.filter(item => item.id === report.id).length, 1);

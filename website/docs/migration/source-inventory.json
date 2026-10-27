@@ -4368,15 +4368,15 @@
       "source": "src/launch-reports/reports.test.ts",
       "destination": "website/src/launch-reports/reports.test.ts",
       "sourceSha256": "6dfc354d95b1d7d670f1e42a312a856670a83f2deb9e993b6574f3e2cfbc4de6",
-      "destinationSha256": "6dfc354d95b1d7d670f1e42a312a856670a83f2deb9e993b6574f3e2cfbc4de6",
-      "intentionalDifference": ""
+      "destinationSha256": "f96b12f62c858f874754733ec089d1503ae46b12a1c0f2ac41ff78cdd2b79ac5",
+      "intentionalDifference": "Replaces the prior 2025 publication-date expectation with owner-confirmed 2026 cover, catalog and metadata dates, original Word-evidence retention and newest-first ordering; content and asset fidelity checks retained."
     },
     {
       "source": "src/launch-reports/reports.ts",
       "destination": "website/src/launch-reports/reports.ts",
       "sourceSha256": "994ed10ecc42c729a52b287a5dca7656d4be2e0f21d12020435c96602970c613",
-      "destinationSha256": "994ed10ecc42c729a52b287a5dca7656d4be2e0f21d12020435c96602970c613",
-      "intentionalDifference": ""
+      "destinationSha256": "bd080275f244903ab502b07e2af64e8e12f164132dccda41dfcd9e99723995f0",
+      "intentionalDifference": "Applies the owner-confirmed 2026 publication-year correction for the April Research Drop across cover, catalog and derived dates; imported Word evidence and study years remain unchanged."
     },
     {
       "source": "src/launch-reports/source-data.ts",
@@ -4585,8 +4585,8 @@
       "source": "src/publishing/publication-preview.test.ts",
       "destination": "website/src/publishing/publication-preview.test.ts",
       "sourceSha256": "3ae9fc599384ac299041054983d66ea3bec75c61d778e6cc8d079efc79b37f11",
-      "destinationSha256": "a5a0457b3f5773e65bba99455fe6451644e384624750198465d0fc16c2d5ed43",
-      "intentionalDifference": "Adds one test for explicit exact-revision approved export, staged-only rejection, declared-assets-only copying and tamper detection; all source tests/assertions retained."
+      "destinationSha256": "5d98ff5c3fb3e78dbc87084f5648eada1645dcca7e6a5f474d9f04869453b393",
+      "intentionalDifference": "Adds one test for explicit exact-revision approved export, staged-only rejection, declared-assets-only copying and tamper detection; updates featured-report order for the corrected April 2026 publication date. Other source tests/assertions retained."
     },
     {
       "source": "src/publishing/publication-preview.ts",
