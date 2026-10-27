@@ -3598,8 +3598,8 @@
       "source": "src/annual-report-2026/canonical-figma.module.css",
       "destination": "website/src/annual-report-2026/canonical-figma.module.css",
       "sourceSha256": "615eb49811c1321f552b69e00ee98cfe0332e8b0b85273fb07fb3422fcb63dfa",
-      "destinationSha256": "4a42fcc775bb0558ad05b7f3e760efe96ea35ee57de11448d4b6052f410c43b2",
-      "intentionalDifference": "BUG-001: use the existing annual accent token for both Some exposure outline declarations; preserve dot colors, geometry and layout."
+      "destinationSha256": "dbff4f4cd85f326484843a172323458b32120b45ea87a3895dc0909f5a307e97",
+      "intentionalDifference": "BUG-001: use the existing annual accent token for both Some exposure outline declarations; preserve dot colors, geometry and layout. Match the topics matrix to mobile Figma node 1860:38674 using balanced columns, natural row heights, original-size text, cell gaps and panel insets, with reduced insets on compact phones; preserve native table semantics and desktop styles."
     },
     {
       "source": "src/annual-report-2026/canonical-figma.tsx",
@@ -3654,8 +3654,8 @@
       "source": "src/annual-report-2026/canonical-report.test.ts",
       "destination": "website/src/annual-report-2026/canonical-report.test.ts",
       "sourceSha256": "523b6ea2cc284516e5cb58e76d118082d50aea5a7f207c6f2c3035d7f66ab7e2",
-      "destinationSha256": "6da39b928fbfe2b3bf23fb72bb9f5adb341dd3ff119342041127b6d88939cedb",
-      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and verify the approved Caribay quote's exact wording, heading, attribution, placement and semantic quotation while retaining placeholder-absence and author-credit checks."
+      "destinationSha256": "a71142ca7b2c036cf485c992123ade8223750dca0ab1fba11e02241be2a0604c",
+      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and the approved Caribay quote while retaining placeholder-absence and author-credit checks. Add mobile Figma topics-matrix spacing and natural-row-height coverage while retaining desktop-layout, native-header and nine-cell checks."
     },
     {
       "source": "src/annual-report-2026/channel-portfolio.tsx",
