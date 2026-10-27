@@ -9,6 +9,13 @@ type Dependencies = {
   log: (message: string) => void;
 };
 
+async function keyedHash(secret: string, value: string) {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const digest = await crypto.subtle.sign("HMAC", key, encoder.encode(value));
+  return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
 export function createHandler(deps: Dependencies) {
   return async (request: Request): Promise<Response> => {
     if (request.headers.get("origin") !== productionOrigin) return new Response(null, { status: 403 });
@@ -64,16 +71,22 @@ export function createHandler(deps: Dependencies) {
       deps.log("gateway_address_missing");
       return reply(503, "collector_unavailable");
     }
-    const encoder = new TextEncoder();
-    const key = await crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
-    const digest = await crypto.subtle.sign("HMAC", key, encoder.encode(`${new Date().toISOString().slice(0, 10)}|${ip}`));
-    const rateKey = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
+    const rateKey = await keyedHash(secret, `${new Date().toISOString().slice(0, 10)}|${ip}`);
+    let databaseEvent = event;
+    if (event.v === 2) {
+      const visitorSecret = deps.env("GLINTLABS_VISITOR_ID_SECRET");
+      if (!visitorSecret || visitorSecret.length < 32) {
+        deps.log("visitor_hash_configuration_missing");
+        return reply(503, "collector_unavailable");
+      }
+      databaseEvent = { ...event, visitor_id: await keyedHash(visitorSecret, `glintlabs-browser-v1|${event.visitor_id}`) };
+    }
     try {
       const response = await deps.fetch(`${supabaseUrl}/rest/v1/rpc/glintlabs_record_event`, {
         method: "POST",
         redirect: "error",
         headers: { "Content-Type": "application/json", "apikey": serviceKey, "Authorization": `Bearer ${serviceKey}` },
-        body: JSON.stringify({ p_event: event, p_rate_key: rateKey }),
+        body: JSON.stringify({ p_event: databaseEvent, p_rate_key: rateKey }),
         signal: AbortSignal.timeout(5000),
       });
       if (!response.ok) {

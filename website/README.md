@@ -39,16 +39,36 @@ The public reader asks for opt-in consent before sending page views, Analyze
 Survey opens, skill-link clicks, and report-download clicks. Opening a report is
 a page view, not a second event. Download clicks measure intent, not completed
 downloads; there are no invented download controls. Tool interest is not survey
-execution. Counts are events, never unique visitors, adoption, or conversions.
+execution. Event counts are not adoption or completed conversions.
 No events are queued before consent. Browser DNT/GPC signals override consent.
 Analytics settings allow withdrawal; withdrawal aborts pending requests but
-cannot recall events already received. Only a choice and 180-day expiry are
-stored in localStorage; storage failure leaves the choice page-session-only.
+cannot recall events already received. A choice and 180-day expiry are stored
+in localStorage. After the updated notice is accepted, a random UUID also
+identifies that consenting browser/device for a fixed 18 calendar months,
+clamped to the target month's final day when needed. Use does not extend its
+expiry. It is not created or read for tracking without active consent; rejection
+deletes it. Consent expires independently after 180 days and must be renewed.
+The new consent version requires previous visitors to opt in again rather than
+silently changing the original no-identifier agreement.
+
+The collector HMAC-hashes the random ID with a separate server-only secret
+before database insertion; it never stores the original UUID in event rows.
+`glintlabs_telemetry.page_visitors` counts distinct browser hashes per page over
+the retained 90-day event window. These are approximate consenting browsers,
+not verified people or accounts. Changing devices/browsers, clearing storage,
+ID expiry, or withdrawing/re-granting consent can increase counts. Old anonymous
+events remain usable for event totals but cannot be retroactively deduplicated.
+If ID storage is unavailable, an explicit diagnostic is logged and anonymous
+version-1 events continue; those events do not contribute to browser counts.
+Compute distinct counts for the whole desired window; never sum daily distinct
+counts. Use `supabase/reports/telemetry.sql` in the restricted SQL editor.
 
 The shared contract in `src/telemetry/contract.ts` permits only reviewed public
 paths, four event names, and predefined referral/campaign-source categories.
 Queries, fragments, referrer URLs, survey data, employee data, free text,
-timestamps supplied by visitors, and visitor identifiers are never sent.
+timestamps supplied by visitors, and employee/account identifiers are never sent.
+Version 2 additionally permits only a random UUID browser identifier; version 1
+remains accepted for anonymous events from older pages.
 Add newly approved public report paths to that contract when publishing; an
 enabled Pages build refuses to ship unknown public report identifiers.
 
@@ -66,15 +86,21 @@ On Windows PowerShell, use `npx.cmd` if its execution policy blocks the
    `public.glintlabs_record_event` function, and function/job names before applying.
    Do not reset the database or reconcile another application's migrations.
 2. Set `GLINTLABS_TELEMETRY_ENABLED=false` and a newly generated random
-   `GLINTLABS_RATE_LIMIT_SECRET` (at least 32 characters) using the project's
+   `GLINTLABS_RATE_LIMIT_SECRET` and a separate `GLINTLABS_VISITOR_ID_SECRET`
+   (each at least 32 random characters) using the project's
    Edge Function secrets UI. The runtime supplies `SUPABASE_URL` and
    `SUPABASE_SERVICE_ROLE_KEY`; neither belongs in the site.
 3. This is a shared project: inspect its migration history first. Apply only
-   the two reviewed `supabase/migrations/*glintlabs_telemetry*.sql` files through
+   the reviewed telemetry migrations, in timestamp order, through
    the restricted SQL editor if its existing history differs. Do not blindly
    run `db push`, `migration repair`, or apply unrelated pending migrations.
    The first file creates isolated tables/RPC; the second requires `pg_cron`
    and schedules an hourly cleanup without modifying other jobs.
+   The third adds only the nullable keyed visitor-hash column, compatible
+   ingestion and the restricted distinct-browser view. Do not reapply the first
+   two to an already-deployed schema. Provision the visitor-hash secret, apply
+   the third migration, deploy the compatible collector, then release the new
+   consented client. Old version-1 events continue to work throughout.
    The authenticated CLI alternative is `supabase db query --linked
    --project-ref kkthgbgkzzkfpmnbjmro --file <reviewed-migration.sql>`.
    Direct SQL application does not modify shared Supabase migration history;
@@ -112,6 +138,9 @@ a failed retention job must be fixed, not treated as a successful purge.
 Supabase infrastructure/access logs, backups, and point-in-time recovery have
 their own project-level retention. Confirm their policy with the shared-project
 owner; deleting application rows does not erase provider backups or logs.
+An 18-month browser-ID lifetime does not extend raw-event retention beyond
+90 days. Keep the visitor-hash secret stable; rotating it changes hash identity
+and can count a returning browser again within the retained reporting window.
 
 The gateway necessarily sees network addresses. The collector does not log
 bodies, addresses, user agents, or credentials. A secret-keyed HMAC changes daily

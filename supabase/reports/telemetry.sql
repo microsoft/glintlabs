@@ -13,6 +13,12 @@ where event_name = 'page_view'
 group by page_path
 order by report_opens desc;
 
+-- Approximate distinct consenting browsers, not people. Legacy anonymous events are excluded.
+-- Compute the whole window once; do not sum daily distinct counts.
+select page_path, distinct_browsers
+from glintlabs_telemetry.page_visitors
+order by distinct_browsers desc, page_path;
+
 select jobname, schedule, active
 from cron.job
 where jobname = 'glintlabs-telemetry-retention';

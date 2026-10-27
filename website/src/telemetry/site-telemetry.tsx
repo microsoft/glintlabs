@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { telemetryEnabled } from "./config";
 import {
-  actionEvent, consentKey, createTelemetryClient, isProductionLocation,
+  actionEvent, consentKey, createBrowserIdentity, createTelemetryClient, isProductionLocation,
   readConsent, saveConsent, type Consent,
 } from "./client";
 import styles from "./site-telemetry.module.css";
@@ -32,14 +32,17 @@ export function SiteTelemetry() {
     const tracker = createTelemetryClient({
       enabled: true, location: () => window.location, referrer: () => document.referrer,
       privacyRequested, fetch: window.fetch.bind(window), warn: message => console.warn(message),
+      identity: createBrowserIdentity({
+        storage: () => window.localStorage, warn: message => console.warn(message),
+      }),
     });
     client.current = tracker;
     const load = () => {
-      let saved: Consent = null;
+      let saved: ReturnType<typeof readConsent> = null;
       try { saved = readConsent(window.localStorage); }
       catch { console.warn("[Glint Labs analytics] Preferences unavailable; analytics stays off until you choose."); }
-      tracker.setConsent(saved);
-      setChoice(saved);
+      tracker.setConsent(saved?.choice ?? null, saved?.expires);
+      setChoice(saved?.choice ?? null);
       setOpen(!saved && !requested);
     };
     load();
@@ -88,10 +91,16 @@ export function SiteTelemetry() {
       {open && <section id="analytics-preferences" className={styles.panel} aria-labelledby="analytics-heading">
         <h2 id="analytics-heading">Optional site analytics</h2>
         <p>With your permission, Glint Labs counts public page views and tool, skill-link, and report-download clicks
-          using Supabase. We do not send survey data, names, email addresses, full URLs, or visitor identifiers.</p>
+          using Supabase. A random browser ID helps count distinct browsers/devices, not verified people.
+          We do not send survey data, names, email addresses, or full URLs.</p>
+        <p>The browser ID is created only after you allow analytics and expires after 18 calendar months.
+          Rejecting analytics deletes it. Supabase stores only a secret-keyed hash of the ID with events.
+          Clearing browser data or changing browsers/devices can cause additional counts.</p>
         <p>Events are retained for 90 days. Supabase receives your IP address to handle requests; a daily-changing
           hash is used separately for short-lived rate limits, not to identify visitors in events.
-          Your choice is saved on this browser for 180 days and can be changed here.</p>
+          Your choice is saved on this browser for 180 days and can be changed here.
+          The browser ID is not used while consent is absent or expired; withdrawing consent stops new events
+          but cannot recall events already received.</p>
         <p><a href="https://privacy.microsoft.com/privacystatement">Microsoft Privacy Statement</a></p>
         {privacy && <p>Your browser privacy signal keeps analytics off.</p>}
         <div className={styles.actions}>

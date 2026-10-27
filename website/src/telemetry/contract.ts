@@ -23,13 +23,20 @@ const campaignSources = ["none", "github", "linkedin", "newsletter", "teams", "o
 
 export type EventName = typeof eventNames[number];
 export type PublicPath = typeof publicPaths[number];
-export type TelemetryEvent = {
-  v: 1;
+type EventProperties = {
   event: EventName;
   page_path: PublicPath;
   referrer: typeof referrers[number];
   campaign_source: typeof campaignSources[number];
 };
+export type TelemetryEvent = EventProperties & (
+  { v: 1 } | { v: 2; visitor_id: string }
+);
+
+export function isVisitorId(value: unknown): value is string {
+  return typeof value === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
 
 function isOneOf<T extends string>(values: readonly T[], value: unknown): value is T {
   return typeof value === "string" && values.some(item => item === value);
@@ -46,16 +53,22 @@ export function parseEvent(value: unknown): TelemetryEvent | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
   const record = value as Record<string, unknown>;
   const keys = ["v", "event", "page_path", "referrer", "campaign_source"];
+  if (record.v === 2) keys.push("visitor_id");
   if (Object.keys(record).length !== keys.length || !keys.every(key => Object.hasOwn(record, key))) return null;
-  if (record.v !== 1 || !isOneOf(eventNames, record.event) ||
+  if ((record.v !== 1 && record.v !== 2) || !isOneOf(eventNames, record.event) ||
       !isOneOf(publicPaths, record.page_path) || !isOneOf(referrers, record.referrer) ||
       !isOneOf(campaignSources, record.campaign_source)) return null;
   if (record.event === "report_download_click" &&
       record.page_path !== "/annual-report-2026" && !record.page_path.startsWith("/reports/")) return null;
-  return {
-    v: 1, event: record.event, page_path: record.page_path,
+  const properties: EventProperties = {
+    event: record.event, page_path: record.page_path,
     referrer: record.referrer, campaign_source: record.campaign_source,
   };
+  if (record.v === 2) {
+    if (!isVisitorId(record.visitor_id)) return null;
+    return { ...properties, v: 2, visitor_id: record.visitor_id.toLowerCase() };
+  }
+  return { ...properties, v: 1 };
 }
 
 export function referralCategory(referrer: string): TelemetryEvent["referrer"] {

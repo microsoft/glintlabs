@@ -49,8 +49,8 @@
       "source": "README.md",
       "destination": "website/README.md",
       "sourceSha256": "5d8bf5442839d7989a24a82b72496f407066ecd3381247fdfe35d4995571e0a2",
-      "destinationSha256": "2cb6d34bfb08583b6ffcf8a63fe9cbd2c09a915fac250eff0d92ee75d1815c89",
-      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents opt-in/privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback."
+      "destinationSha256": "6da6f0ba3e1a04b0a4ae8310fc7a9587a728c59587fcf9971f0b9b0b73701906",
+      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents opt-in/privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback. The approved distinct-browser extension documents renewed consent, fixed 18-calendar-month random browser IDs, separate server-side keyed hashing, compatible anonymous events and restricted 90-day distinct counts."
     },
     {
       "source": "artifacts/README.md",
