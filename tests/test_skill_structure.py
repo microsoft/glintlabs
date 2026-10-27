@@ -537,13 +537,14 @@ def test_analyze_survey_points_to_linked_dataset():
         "Demo Viva Glint Dataset with Attributes - Exit survey research guided.xlsx"
     )
 
-    assert "Upload my own CSV/XLSX export" in skill
-    assert "Pull live data from the Glint API" in skill
-    assert "Use the demo/sample dataset to test the skill" in skill
+    assert re.findall(r"^> \d+\. (.+)$", skill, re.MULTILINE) == [
+        "Demo Analysis",
+        "CSV Upload",
+    ]
     assert "Do not proceed past this question with an assumed default" in skill
-    assert "vivaglint-configure_api_credentials" in skill
-    assert "vivaglint-import_survey_api" in skill
-    assert "save_zip_to" in skill
+    assert "Never recommend modifying the skill" in skill
+    assert "vivaglint-configure_api_credentials" not in skill
+    assert "vivaglint-import_survey_api" not in skill
     assert source["source_url"] == source_url
     assert source["source_path"] == source_file_path
     assert source["worksheet"] == "Sheet1"
@@ -580,7 +581,7 @@ def test_analyze_survey_points_to_linked_dataset():
         "Correlation",
         "Factors",
         "Attrition analysis",
-        "Attrition alerts",
+        "Attrition insights",
         "Scores change",
         "Downloads",
         "Methodology",
@@ -1282,7 +1283,9 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     assert "capture?.remove()" in report
     assert "downloadCsv(`attrition-analysis-${days}days.csv`,rows)" in report
     assert "id=alertsList" in report
-    assert ">Attrition alerts</button>" in report
+    assert ">Attrition insights</button>" in report
+    assert "<h2>Attrition insights</h2>" in report
+    assert "Attrition alerts" not in report
     assert ">Methodology</button>" in report
     assert 'data-methodology-section="attrition-analysis"' in report
     assert 'data-methodology-section="attrition-alerts"' in report
@@ -2092,7 +2095,7 @@ def test_interactive_report_builder_creates_dashboard_and_safe_zip(tmp_path):
         "Methodology",
     ):
         assert f">{tab}</button>" in report_text
-    for unavailable_tab in ("Attrition analysis", "Attrition alerts", "Alerts"):
+    for unavailable_tab in ("Attrition analysis", "Attrition insights", "Alerts"):
         assert f">{unavailable_tab}</button>" not in report_text
     assert 'data-methodology-section="scores-change"' in report_text
     assert 'data-methodology-section="correlation"' in report_text

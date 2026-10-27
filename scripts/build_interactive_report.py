@@ -1354,7 +1354,7 @@ def prepare_report_shell(html: str, has_attrition: bool) -> str:
     html = replace_live_alert_summary(html)
     html = remove_section(html, "alerts", "attrition")
     html = html.replace(
-        '<button class="tab" data-id="alerts" aria-selected="false">Attrition alerts</button>',
+        '<button class="tab" data-id="alerts" aria-selected="false">Attrition insights</button>',
         "",
         1,
     )
@@ -1377,7 +1377,7 @@ def prepare_report_shell(html: str, has_attrition: bool) -> str:
             '<button class="tab" data-id="attrition" aria-selected="false">'
             'Attrition analysis</button>'
             '<button class="tab" data-id="alerts" aria-selected="false">'
-            'Attrition alerts</button>'
+            'Attrition insights</button>'
         )
         return html.replace(old_navigation, new_navigation, 1)
 
@@ -1484,7 +1484,7 @@ def inject_attrition_report(
     )
     alerts_section = (
         '<section class=panel id=alerts role=tabpanel hidden>'
-        '<div class=alert-heading><div><h2>Attrition alerts</h2>'
+        '<div class=alert-heading><div><h2>Attrition insights</h2>'
         '<p class=muted>Find low-scoring groups on the items most associated '
         'with later attrition.</p></div></div><p class=tab-intro>'
         'Find privacy-eligible groups '

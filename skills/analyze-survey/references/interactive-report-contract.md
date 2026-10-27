@@ -11,7 +11,7 @@ golden-report.html
 ```
 
 Its SHA-256 at adoption, calculated from canonical LF-normalized bytes, is
-`f62f14dfb24c7431fbd01155262ade1e5779e9633dac2b9b1044561ec2d2dc41`.
+`e7fa865ba9c081d8c4c969f49ee4dedcae731f9a67914837710cf8803312c003`.
 Generated reports in `required` mode must match its static HTML shell exactly.
 The intended substitution is the JSON value assigned to `const D`. In `off`
 mode, the seven empty AI summary containers are also removed from the generated
@@ -43,7 +43,7 @@ completed analysis can be reused by the preview workflow without rerunning the
 codebooks. When summaries are enabled:
 
 - Require six summary objects for schema stability: Scores change,
-  Correlation (`relationships`), Attrition alerts (`alerts`), Factors,
+  Correlation (`relationships`), Attrition insights (`alerts`), Factors,
   Attrition analysis, and Downloads. Render only summaries for tabs present in
   the report.
 - Each summary must contain a headline, observed evidence, professional
@@ -166,7 +166,7 @@ Keep this tab order and naming:
 1. **Correlation**
 2. **Factors**
 3. **Attrition analysis** (only when attrition completes)
-4. **Attrition alerts** (only when attrition completes)
+4. **Attrition insights** (only when attrition completes)
 5. **Scores change**
 6. **Downloads**
 7. **Methodology**
@@ -191,7 +191,7 @@ whose underlying data is computed per survey cycle. Hiding that selector in
 other tabs must not reset its selection.
 
 - Apply the attribute/value filter to Scores change, Correlation, Attrition
-  analysis, and Attrition alerts.
+  analysis, and Attrition insights.
 - Apply the separate Survey cycle selector to Correlation and Factors. It
   defaults to the most recently completed cycle.
 - Exclude `survey_cycle_title` from the generic report-attribute dropdown;
@@ -201,11 +201,11 @@ other tabs must not reset its selection.
   and Factors to the precomputed attribute-value-by-cycle cross-cut. Never
   disable one control because the other has a value. State this additive
   behavior in on-page help text next to the filters.
-- Scores change, Attrition analysis, Attrition alerts, and Downloads do not
-  wire into the Survey cycle selector: Scores change and Attrition alerts
+- Scores change, Attrition analysis, Attrition insights, and Downloads do not
+  wire into the Survey cycle selector: Scores change and Attrition insights
   already manage explicit cycle-pair comparisons, and Attrition analysis is
   anchored to one fixed baseline cycle by construction.
-- Treat it as a parent filter. Attrition alerts must select their displayed
+- Treat it as a parent filter. Attrition insights must select their displayed
   dimensions within the selected segment.
 - Use saved aggregate values in the browser. Do not embed or recalculate from
   respondent-level rows.
@@ -280,7 +280,7 @@ exploratory, and attrition results are not individual predictions.
 - Emphasize practical magnitude when large N makes most results significant.
 - Save segment matrices only where there are at least 30 response rows.
 
-### Attrition alerts
+### Attrition insights
 
 - For each report attribute and outcome window, calculate each item's median
   attrition multiplier across privacy-eligible attribute values.
@@ -356,7 +356,7 @@ exploratory, and attrition results are not individual predictions.
 - Do not display favorable or unfavorable counts or percentages in the report.
   Retain them only in the privacy-safe aggregate artifact for auditability and
   suppression enforcement.
-- If attrition cannot run, omit both Attrition analysis and Attrition alerts.
+- If attrition cannot run, omit both Attrition analysis and Attrition insights.
 - Never generate synthetic attrition outcomes.
 - Calculate a two-sided Fisher exact test from the favorable and unfavorable
   exit counts. Visually flag multipliers with `p < .05`, show the p-value, and
@@ -406,7 +406,7 @@ and cycle-percentage-change semantics.
   report's analyses work so analysts can interpret and explain results.
 - Render one subsection for every analysis present in the report, in the same
   order as the report tabs: Correlation, Factors, Attrition analysis,
-  Attrition alerts, and Scores change. Match the jump-link order to the
+  Attrition insights, and Scores change. Match the jump-link order to the
   subsection order. Do not number subsection headings. Use 22px subsection
   headings, larger than the previous 20px headings but below the 32px
   Methodology title.
@@ -448,7 +448,7 @@ and cycle-percentage-change semantics.
   reference line, minimum-category suppression, the
   two-sided Fisher exact test at `p < .05`, and the non-causal, non-predictive
   framing.
-- For Attrition alerts, document ranking by the median privacy-eligible
+- For Attrition insights, document ranking by the median privacy-eligible
   attrition multiplier across groups per attribute and window, retention of the
   top five items per attribute, the company view's lowest-scoring group logic,
   the filtered view's selected-group logic, and the same non-causal framing.
