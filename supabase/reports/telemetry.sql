@@ -13,7 +13,7 @@ where event_name = 'page_view'
 group by page_path
 order by report_opens desc;
 
--- Approximate distinct consenting browsers, not people. Legacy anonymous events are excluded.
+-- Approximate distinct tracked browsers, not people. Legacy anonymous events are excluded.
 -- Compute the whole window once; do not sum daily distinct counts.
 select page_path, distinct_browsers
 from glintlabs_telemetry.page_visitors

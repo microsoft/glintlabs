@@ -4,8 +4,8 @@ import {
   campaignCategory, parseEvent, publicPath, referralCategory, type TelemetryEvent,
 } from "./contract.ts";
 import {
-  actionEvent, consentKey, createBrowserIdentity, createTelemetryClient, readConsent, saveConsent,
-  visitorExpiry, visitorKey,
+  actionEvent, createBrowserIdentity, createTelemetryClient, hasLegacyRefusal,
+  legacyConsentKeys, visitorExpiry, visitorKey,
 } from "./client.ts";
 import { createHandler } from "../../../supabase/functions/glintlabs-telemetry/handler.ts";
 import { getLaunchReports } from "../launch-reports/reports.ts";
@@ -44,24 +44,26 @@ test("referral/campaign categories never preserve URLs, search terms or arbitrar
   assert.equal(campaignCategory(""), "none");
 });
 
-test("consent persists only a versioned choice/expiry; expired and malformed preferences never grant consent", () => {
+test("automatic analytics preserves unexpired refusals from both prior policies without writing consent", () => {
   const values = new Map<string, string>();
-  const storage = {
-    getItem: (key: string) => values.get(key) ?? null,
-    setItem: (key: string, value: string) => { values.set(key, value); },
-    removeItem: (key: string) => { values.delete(key); },
-  };
-  values.set("glintlabs.analytics-consent.v1", JSON.stringify({ choice: "granted", expires: 2000 }));
-  assert.equal(readConsent(storage, 1000), null);
-  saveConsent(storage, "granted", 1000);
-  assert.equal(readConsent(storage, 1001)?.choice, "granted");
-  assert.equal(values.has("glintlabs.analytics-consent.v1"), false);
-  assert.deepEqual(Object.keys(JSON.parse(values.get(consentKey)!)).sort(), ["choice", "expires"]);
-  assert.equal(readConsent(storage, 1000 + 181 * 86400000), null);
-  values.set(consentKey, JSON.stringify({ choice: "yes", expires: 2000 }));
-  assert.equal(readConsent(storage, 1000), null);
-  saveConsent(storage, "denied", 1000);
-  assert.equal(readConsent(storage, 1001)?.choice, "denied");
+  const storage = { getItem: (key: string) => values.get(key) ?? null };
+  assert.equal(hasLegacyRefusal(storage, 1000), false);
+  for (const key of legacyConsentKeys) {
+    values.clear();
+    values.set(key, JSON.stringify({ choice: "denied", expires: 2000 }));
+    assert.equal(hasLegacyRefusal(storage, 1000), true);
+    assert.equal(hasLegacyRefusal(storage, 2000), false);
+    values.set(key, JSON.stringify({ choice: "granted", expires: 2000 }));
+    assert.equal(hasLegacyRefusal(storage, 1000), false);
+    values.set(key, "{");
+    assert.throws(() => hasLegacyRefusal(storage, 1000));
+    values.set(key, JSON.stringify({ choice: "yes", expires: 2000 }));
+    assert.throws(() => hasLegacyRefusal(storage, 1000));
+  }
+  values.set(legacyConsentKeys[0], JSON.stringify({ choice: "denied", expires: 2000 }));
+  values.set(legacyConsentKeys[1], JSON.stringify({ choice: "granted", expires: 2000 }));
+  assert.equal(hasLegacyRefusal(storage, 1000), true);
+  assert.throws(() => hasLegacyRefusal({ getItem: () => { throw new Error("Storage unavailable"); } }));
 });
 
 test("browser IDs persist without sliding expiry for 18 calendar months, rotate on expiry and clear on withdrawal", () => {
@@ -98,20 +100,19 @@ test("browser IDs persist without sliding expiry for 18 calendar months, rotate 
   assert.equal(warnings.length, 1);
 });
 
-test("client gates production, explicit consent, known pages and browser privacy signals, with no replay", async () => {
+test("client tracks by default only on enabled public production pages and honors privacy signals and refusals", async () => {
   const calls: RequestInit[] = [];
   let url = new URL("https://microsoft.github.io/glintlabs/reports/?email=private&utm_source=private");
   let privacy = false;
+  let blocked = false;
   const client = createTelemetryClient({
     enabled: true, location: () => url, referrer: () => "https://github.com/?private",
     privacyRequested: () => privacy,
+    preferenceBlocked: () => blocked,
     identity,
     fetch: async (_url, init) => { calls.push(init!); return new Response(null, { status: 202 }); },
     warn: message => assert.fail(message),
   });
-  assert.equal(await client.track("page_view"), false);
-  assert.equal(await client.track("skill_link_click"), false);
-  client.setConsent("granted");
   assert.equal(await client.track("page_view"), true);
   assert.equal(await client.track("page_view"), false);
   assert.equal(calls.length, 1);
@@ -122,9 +123,9 @@ test("client gates production, explicit consent, known pages and browser privacy
   assert.equal(await client.track("page_view"), true);
   url = new URL("https://microsoft.github.io/glintlabs/reports/");
   assert.equal(await client.track("page_view"), true);
-  client.setConsent("denied");
+  blocked = true;
   assert.equal(await client.track("skill_link_click"), false);
-  client.setConsent("granted");
+  blocked = false;
   privacy = true;
   assert.equal(await client.track("page_view"), false);
   privacy = false;
@@ -139,45 +140,54 @@ test("client gates production, explicit consent, known pages and browser privacy
   const disabled = createTelemetryClient({
     enabled: false, location: () => new URL("https://microsoft.github.io/glintlabs/"),
     referrer: () => "", privacyRequested: () => false,
+    preferenceBlocked: () => assert.fail("disabled client accessed preferences"),
     identity: { getId: () => assert.fail("disabled client accessed a browser ID"), clear: () => {} },
     fetch: async () => { assert.fail("disabled client sent data"); }, warn: assert.fail,
   });
-  disabled.setConsent("granted");
   assert.equal(await disabled.track("page_view"), false);
 });
 
-test("an open page stops using browser IDs and collecting events at the stored consent expiry", async () => {
-  let now = 1000;
+test("privacy signals and existing refusals stop an open page before ID access; disposal stops further events", async () => {
+  let blocked = true;
+  let privacy = false;
   let reads = 0;
   const client = createTelemetryClient({
     enabled: true, location: () => new URL("https://microsoft.github.io/glintlabs/"),
-    referrer: () => "", privacyRequested: () => false, warn: assert.fail, now: () => now,
+    referrer: () => "", privacyRequested: () => privacy, preferenceBlocked: () => blocked, warn: assert.fail,
     identity: { getId: () => { reads++; return browserId; }, clear: () => {} },
     fetch: async () => new Response(null, { status: 202 }),
   });
-  client.setConsent("granted", 2000);
+  assert.equal(await client.track("page_view"), false);
+  assert.equal(reads, 0);
+  blocked = false;
   assert.equal(await client.track("page_view"), true);
-  now = 2000;
+  privacy = true;
+  assert.equal(await client.track("skill_link_click"), false);
+  assert.equal(reads, 1);
+  privacy = false;
+  client.dispose();
   assert.equal(await client.track("skill_link_click"), false);
   assert.equal(reads, 1);
 });
 
-test("revoking consent aborts pending requests; network/HTTP failures are diagnostic and never escape", async () => {
+test("a refusal aborts pending requests; network/HTTP failures are diagnostic and never escape", async () => {
   const warnings: string[] = [];
   let signal: AbortSignal | undefined;
   let finish: ((response: Response) => void) | undefined;
+  let blocked = false;
   const client = createTelemetryClient({
     enabled: true, location: () => new URL("https://microsoft.github.io/glintlabs/"),
     referrer: () => "", privacyRequested: () => false, warn: message => warnings.push(message),
+    preferenceBlocked: () => blocked,
     identity,
     fetch: async (_url, init) => {
       signal = init?.signal ?? undefined;
       return new Promise<Response>(resolve => { finish = resolve; });
     },
   });
-  client.setConsent("granted");
   const pending = client.track("page_view");
-  client.setConsent("denied");
+  blocked = true;
+  assert.equal(await client.track("skill_link_click"), false);
   assert.equal(signal?.aborted, true);
   finish!(new Response(null, { status: 503 }));
   assert.equal(await pending, false);
@@ -185,10 +195,10 @@ test("revoking consent aborts pending requests; network/HTTP failures are diagno
   const failing = createTelemetryClient({
     enabled: true, location: () => new URL("https://microsoft.github.io/glintlabs/"),
     referrer: () => "", privacyRequested: () => false, warn: message => warnings.push(message),
+    preferenceBlocked: () => false,
     identity,
     fetch: async () => { throw new TypeError("network unavailable"); },
   });
-  failing.setConsent("granted");
   assert.equal(await failing.track("page_view"), false);
   assert.equal(warnings.length, 2);
 });
