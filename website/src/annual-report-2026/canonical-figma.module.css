@@ -17,6 +17,7 @@
 .body .frame87 { --annual-panel-surface:#000; }
 @media (forced-colors: active) {
   .body :is(.frame18,.frame37,.frame87,.frame108,.frame135,.frame148,.frame153) { border-color:CanvasText; background:Canvas; }
+  .body .frame47::before { background:CanvasText; }
 }
 .body :where(p,h2,h3,blockquote,ul,ol) { margin:0; }
 .body :where(ul,ol) { padding:0; }
@@ -172,7 +173,8 @@
 .frame44 { background:var(--annual-accent);position:relative;border-radius:100px;align-self:stretch;flex-shrink:0;width:2px; }
 .frame45 { overflow-wrap:break-word;align-content:stretch;display:flex;flex:1 0 0;flex-direction:column;gap:24px;align-items:flex-start;min-width:1px;position:relative; }
 .frame46 { align-content:stretch;display:flex;flex-direction:column;gap:6px;align-items:flex-start;line-height:normal;position:relative;flex-shrink:0;color:#fff;width:100%; }
-.frame47 { font-family:Consolas,monospace;height:26px;font-style:normal;position:relative;flex-shrink:0;font-size:36px;letter-spacing:var(----gnrc-letter-spacing-content-code,0px);width:27px; }
+.frame47 { height:26px;position:relative;flex-shrink:0;font-size:0;width:27px; }
+.frame47::before { content:"";display:block;width:27px;height:26px;background:currentColor;mask:url("/figma/annual-canonical/quote-mark.svg") center no-repeat;forced-color-adjust:none; }
 .frame48 { font-family:Georgia,serif;font-weight:var(----gnrc-font-weight-content-editorial-regular,420);min-width:100%;position:relative;flex-shrink:0;font-size:20px;letter-spacing:var(----gnrc-letter-spacing-content-expressive-small,-0.15px);width:min-content; }
 .frame49 { font-family:'Segoe UI',Arial,sans-serif;font-weight:var(----gnrc-font-weight-content-bold,625);line-height:var(----gnrc-line-height-content-paragraph-medium,28px);position:relative;flex-shrink:0;font-size:var(----gnrc-font-size-content-paragraph-medium,16px);color:#fff;letter-spacing:var(----gnrc-letter-spacing-content-paragraph-medium,0px);width:100%; }
 .frame50 { align-content:stretch;display:flex;flex-direction:column;gap:32px;align-items:flex-start;position:relative;flex-shrink:0;width:100%; }
