@@ -4368,15 +4368,15 @@
       "source": "src/launch-reports/reports.test.ts",
       "destination": "website/src/launch-reports/reports.test.ts",
       "sourceSha256": "6dfc354d95b1d7d670f1e42a312a856670a83f2deb9e993b6574f3e2cfbc4de6",
-      "destinationSha256": "2354c33dcc17c2c3d5e8acdfe2373346e7671f8e321b9936950e729017d9b1f0",
-      "intentionalDifference": "Retains the owner-confirmed April 2026 date correction and all original fidelity checks; adds independently verified May text/image evidence, Reports-only placement, selected sign-in artwork, source links, numbered findings, document-spanning italics, unchanged P0 formatting, the author-confirmed reference 2-to-3 correction and shared colon-free brief heading/navigation presentation. Adds independently verified October text/image fingerprints, Reports-only placement, existing agents-workflow artwork, source references, archival wording and Wipro spotlight; original Word evidence is retained."
+      "destinationSha256": "28110be485466f2c469cb522e27efdc91f622ae3619ee809110242e0ec9f6894",
+      "intentionalDifference": "Retains the owner-confirmed April 2026 date correction and all original fidelity checks; adds independently verified May text/image evidence, Reports-only placement, selected sign-in artwork, source links, numbered findings, document-spanning italics, unchanged P0 formatting, the author-confirmed reference 2-to-3 correction and shared colon-free brief heading/navigation presentation. Adds independently verified October text/image fingerprints, Reports-only placement, existing agents-workflow artwork, source references, archival wording, Wipro spotlight and owner-approved display-title consistency with an unchanged URL; original Word evidence is retained."
     },
     {
       "source": "src/launch-reports/reports.ts",
       "destination": "website/src/launch-reports/reports.ts",
       "sourceSha256": "994ed10ecc42c729a52b287a5dca7656d4be2e0f21d12020435c96602970c613",
-      "destinationSha256": "262e08d46725b96eb7a7a979d47213254754ebd9e6f7d2eec9a6d6a983261a99",
-      "intentionalDifference": "Preserves the owner-confirmed April 2026 date correction; adds May's selected sign-in illustration, explicit source feature flags, numbered findings, document-spanning formatting and the author-confirmed reference 2-to-3 correction in the 2024 AI-adoption claim, plus October's existing Blue agents-workflow illustration. Original Word evidence and exact P0 manifests, rich text and catalog entries are retained."
+      "destinationSha256": "f8d31bf3e917ca67deebed8a881543c83a2d96acc97837f89977da7ed81cdf16",
+      "intentionalDifference": "Preserves the owner-confirmed April 2026 date correction; adds May's selected sign-in illustration, explicit source feature flags, numbered findings, document-spanning formatting and the author-confirmed reference 2-to-3 correction in the 2024 AI-adoption claim, plus October's existing Blue agents-workflow illustration and owner-approved display title, AI agents: Clear outcomes, greater impact. Original Word evidence, URLs and exact P0 manifests, rich text and catalog entries are retained."
     },
     {
       "source": "src/launch-reports/source-data.ts",

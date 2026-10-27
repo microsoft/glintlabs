@@ -20,7 +20,10 @@ const reports = launchReportSources.map(source => {
   const titleBlock = textBlocks[0];
   const metadataBlock = textBlocks[1];
   if (!titleBlock || !metadataBlock) throw new Error(`Missing source metadata: ${source.slug}`);
-  const title = titleBlock.text.replace(/^\[|\]$/g, "");
+  // Preserve the Word evidence while using the owner-approved October display title.
+  const title = source.slug === "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes"
+    ? "AI agents: Clear outcomes, greater impact"
+    : titleBlock.text.replace(/^\[|\]$/g, "");
   const metadata = metadataBlock.text.match(/^\[([A-Za-z]+) (\d+), (\d{4}) • Research Drop\] \[([\d,]+) Employees\]$/);
   if (!metadata || !months.includes(metadata[1])) throw new Error(`Unrecognized source date: ${source.slug}`);
   const [, month, day, sourceYear, employees] = metadata;

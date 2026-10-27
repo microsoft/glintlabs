@@ -12,7 +12,7 @@ const fingerprints: Record<string, { paragraphs: number; text: string; source: s
   "GLPS_RD_Feb '26.docx": { paragraphs: 60, text: "beb7f8d391490722216f77487590d4a852671e9c04f0b171761df1c3874678d1", source: "7212e84cd07793b3a0066f493d9d735e2d0047fa327138a589053c14c650938d" },
   "GLPS_RD_Nov '25.docx": { paragraphs: 46, text: "91f964dbb930b729efce75de978bef747862969c62fe0cbf8248cfff14d27da7", source: "cc5e764f88ebc1a0ce56c03008ad447e7ce92816fbbe45b703a60ba79f5ff080" },
   "GLPS_RD_May '26.docx": { paragraphs: 70, text: "40ddbca29c94aaef15c28e7694068595f8e69528e03917d9f7709d2f9ac0915c", source: "14aaf4097ab8ae3d4af6c8b70f95ea1202168a9f10577d7c005df5921315d0cf" },
-  "GLPS_RD_Oct '25.docx": { paragraphs: 29, text: "5893ee6259a0d07c8bab84d18b3d76fd79027f7bf251793d2b9d095397d641e5", source: "0a03f7ff1430334d05361dce8b0b064535b53de6f7e9981f6d8a9b1fe01e360d" },
+  "GLPS_RD_Oct '25.docx": { paragraphs: 29, text: "efa3fe6750538a8ec80b2681ab23b5ee173e5eb242b9e559a5406ca568fe884c", source: "0a03f7ff1430334d05361dce8b0b064535b53de6f7e9981f6d8a9b1fe01e360d" },
 };
 const allReports = getLaunchReports({ includePrivatePreview: true });
 const november = allReports.find(report => report.slug === "empowering-managers-for-an-ai-first-future")!;
@@ -161,7 +161,13 @@ test("October preserves its source wording, figures, Wipro spotlight and archiva
   const rawText = source.manifest.blocks.flatMap(block => "text" in block ? [block.text] : []);
   assert.equal(rawText.length, 38);
   assert.equal(createHash("sha256").update(rawText.join("\n")).digest("hex"), "f143947b3637d255daa110e2f5c514cba4224cfe61cf10a03682ac1c784634d5");
-  assert.equal(october.catalog.title, "Amplifying Clarity and Impact of AI Agents by Aligning on Desired Outcomes");
+  assert.equal(rawText[0], "[Amplifying Clarity and Impact of AI Agents by Aligning on Desired Outcomes]");
+  assert.equal(october.catalog.title, "AI agents: Clear outcomes, greater impact");
+  assert.equal(october.manifest.metadata.title, october.catalog.title);
+  const title = october.manifest.blocks[0];
+  assert.ok(title.type === "heading");
+  assert.equal(title.text, october.catalog.title);
+  assert.equal(october.catalog.href, "/reports/amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes");
   assert.equal(october.catalog.employeeCount, 1800);
   assert.equal(october.catalog.featured, false);
   assert.deepEqual(october.coverDetails, ["October 14, 2025 • Research Drop", "1,800 Employees"]);
