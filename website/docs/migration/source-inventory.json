@@ -3605,8 +3605,8 @@
       "source": "src/annual-report-2026/canonical-figma.tsx",
       "destination": "website/src/annual-report-2026/canonical-figma.tsx",
       "sourceSha256": "9e08de47ab039c4137e18d356f220021393891e49acd65b3e93fd1c76a2c43e9",
-      "destinationSha256": "9e08de47ab039c4137e18d356f220021393891e49acd65b3e93fd1c76a2c43e9",
-      "intentionalDifference": ""
+      "destinationSha256": "f7947f768ff8652b784e9eeed7b3b142fc5d409de19e14c96a87fde693b18268",
+      "intentionalDifference": "Correct Chad Bennett's LinkedIn profile slug to the user-confirmed chadlbennett; preserve team content, layout, accessible labeling and external-link safeguards."
     },
     {
       "source": "src/annual-report-2026/canonical-interactions.module.css",
@@ -3654,8 +3654,8 @@
       "source": "src/annual-report-2026/canonical-report.test.ts",
       "destination": "website/src/annual-report-2026/canonical-report.test.ts",
       "sourceSha256": "523b6ea2cc284516e5cb58e76d118082d50aea5a7f207c6f2c3035d7f66ab7e2",
-      "destinationSha256": "23dcab328959890dceb370b05a874cca042fcdd30d7535e8262dfb44e38e7291",
-      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment."
+      "destinationSha256": "4989f76f32664a80b386d173a5d516a540876df871498e1fac073ee3051a5c62",
+      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and associated accessible label."
     },
     {
       "source": "src/annual-report-2026/channel-portfolio.tsx",

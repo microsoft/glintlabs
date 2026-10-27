@@ -1711,7 +1711,7 @@ export function CanonicalReportBody() {
                   </div>
                   <div className={styles.teamCard} data-contribution="contributor">
                     <h5>Chad Bennett</h5><p>Global Glint Services Leader, Microsoft</p>
-                    <a href="https://www.linkedin.com/in/chadbennett" target="_blank" rel="noopener noreferrer" aria-label="View on LinkedIn: Chad Bennett (opens in a new tab)">View on LinkedIn</a>
+                    <a href="https://www.linkedin.com/in/chadlbennett" target="_blank" rel="noopener noreferrer" aria-label="View on LinkedIn: Chad Bennett (opens in a new tab)">View on LinkedIn</a>
                   </div>
                 </div>
               </div>
