@@ -310,17 +310,32 @@ test("the Microsoft quote attribution places the organization on a separate line
   assert.match(snapshot, /letting employees decide when to engage, skip, or pause\./);
 });
 
-test("the complete decision authority matrix has equal-height rows and fits without an internal scroller", () => {
+test("the complete decision authority matrix retains native headers and the desktop layout without a scroller", () => {
   assert.match(figmaStyles, /\.tableScroller \{ width:100%; container-type:inline-size; \}/);
   assert.match(figmaStyles, /\.responsibility \{[^}]*width:100%; margin:0; table-layout:fixed;/);
   assert.match(figmaStyles, /\.responsibility th:first-child \{[^}]*width:38%;/);
   assert.match(figmaStyles, /\.responsibility tbody tr \{ height:56px; \}/);
   assert.match(figmaStyles, /\.responsibility tbody th, \.responsibility td \{[^}]*padding:6px 12px;/);
   assert.match(figmaStyles, /\.responsibility :is\(th,td\) \{ overflow-wrap:anywhere; \}/);
-  assert.match(figmaStyles, /@container \(max-width:480px\) \{\s*\.responsibility \{ border-spacing:2px 8px; font-size:12px; line-height:18px; \}/);
   assert.doesNotMatch(snapshot, /className=\{styles\.tableScroller\} tabIndex/);
-  assert.doesNotMatch(figmaStyles, /\.responsibility \{[^}]*(?:min-width:684px|margin:-12px|width:calc)/);
+  assert.doesNotMatch(figmaStyles, /^\.responsibility \{[^}]*(?:min-width:684px|margin:-12px|width:calc)/m);
+  assert.match(snapshot, /<table className=\{styles\.responsibility\} aria-labelledby="decision-authority-caption">/);
+  assert.equal([...snapshot.matchAll(/<th scope="col">/g)].length, 4);
+  assert.equal([...snapshot.matchAll(/<th scope="row">/g)].length, 3);
   assert.equal([...snapshot.matchAll(/<td data-level=/g)].length, 9);
+});
+
+test("the mobile topics matrix follows the Figma spacing and lets topic labels determine row height", () => {
+  const mobile = figmaStyles.slice(figmaStyles.indexOf("@container (max-width:480px)"), figmaStyles.indexOf("/* Decoration bleed"));
+  assert.match(mobile, /\.responsibility \{ border-spacing:8px 10px; width:calc\(100% \+ 16px\); margin:-10px -8px; font-size:12px; line-height:16px; \}/);
+  assert.match(mobile, /\.responsibility th:first-child \{ width:28%; text-align:center; \}/);
+  assert.match(mobile, /\.responsibility thead th \{ padding:8px; font-size:12px; line-height:16px; \}/);
+  assert.match(mobile, /\.responsibility tbody tr \{ height:auto; \}/);
+  assert.match(mobile, /\.responsibility tbody th \{ padding:8px; border-radius:10px; \}/);
+  assert.match(mobile, /\.responsibility td \{ padding:4px; border-radius:10px; \}/);
+  assert.match(mobile, /\.matrixHeader \{ flex-direction:column; \}/);
+  assert.match(figmaStyles, /@media \(max-width:600px\) \{\s*\.body \.frame148 \{ padding:28px 24px; gap:32px; \}\s*\.body \.frame149 \{ text-align:center; \}/);
+  assert.match(figmaStyles, /@media \(max-width:360px\) \{\s*\.body \.frame148 \{ padding-inline:8px; \}\s*\.responsibility td \{ padding-inline:2px; \}/);
 });
 
 test("light and dark navigation brands share reviewed spacing while preserving the dark divider color", () => {

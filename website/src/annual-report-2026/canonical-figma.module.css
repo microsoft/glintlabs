@@ -44,9 +44,14 @@
 .matrixHeader { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:4px; }
 .matrixHeader img { width:16px; height:16px; flex:none; }
 @container (max-width:480px) {
-  .responsibility { border-spacing:2px 8px; font-size:12px; line-height:18px; }
-  .responsibility thead th { font-size:11px; }
-  .responsibility tbody th, .responsibility td { padding:8px 2px; border-radius:8px; }
+  /* Cancel the outer table gutters while retaining native semantics and interior gaps. */
+  .responsibility { border-spacing:8px 10px; width:calc(100% + 16px); margin:-10px -8px; font-size:12px; line-height:16px; }
+  .responsibility th:first-child { width:28%; text-align:center; }
+  .responsibility thead th { padding:8px; font-size:12px; line-height:16px; }
+  .responsibility thead th:not(:first-child) { padding:4px 0; }
+  .responsibility tbody tr { height:auto; }
+  .responsibility tbody th { padding:8px; border-radius:10px; }
+  .responsibility td { padding:4px; border-radius:10px; }
   .matrixHeader { flex-direction:column; }
 }
 /* Decoration bleed and one-pixel connectors must not inherit content-width limits. */
@@ -111,9 +116,14 @@
   .body :is([data-node-id="1535:38867"]) { white-space:normal; text-align:center; }
 }
 @media (max-width:600px) {
-  .body .frame148 { padding:24px 0; gap:32px; }
+  .body .frame148 { padding:28px 24px; gap:32px; }
+  .body .frame149 { text-align:center; }
   .teamRow, .teamCards { grid-template-columns:1fr; }
   .teamRow:first-child { padding-top:0; }
+}
+@media (max-width:360px) {
+  .body .frame148 { padding-inline:8px; }
+  .responsibility td { padding-inline:2px; }
 }
 .frame0 { align-content:stretch;display:flex;flex-direction:column;align-items:flex-start;padding-top:96px;padding-bottom:96px;position:relative;flex-shrink:0;width:100%; }
 .frame1 { align-content:stretch;display:flex;flex-direction:column;gap:56px;align-items:flex-start;position:relative;flex-shrink:0;width:100%; }
