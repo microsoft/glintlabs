@@ -270,11 +270,13 @@ test("the approved Technology quotation matches the final canonical wording and 
   assert.match(figmaStyles, /\.frame70 \{[^}]*color:#fff;/);
 });
 
-test("Caribay retains the remaining bright red pending-approval attribution", () => {
-  assert.match(snapshot, /className=\{`\$\{styles\.frame202\} \$\{styles\.pendingApproval\}`\}[^>]*>\s*<span[^>]*>Caribay Garcia \/ Head of People Science at Microsoft \(pending approval\)<\/span>/);
-  assert.equal([...snapshot.matchAll(/styles\.pendingApproval/g)].length, 1);
+test("the withdrawn collaboration quote and pending attribution are absent without removing author credits", () => {
+  assert.doesNotMatch(snapshot, /General topic is that team collaboration|Potentially connect to our earlier agentic teaming work/);
+  assert.doesNotMatch(snapshot, /Caribay Garcia \/ Head of People Science at Microsoft \(pending approval\)/);
+  assert.doesNotMatch(snapshot, /data-node-id="1535:38911"|styles\.pendingApproval/);
+  assert.match(snapshot, /For listening teams, the question to tackle is where AI can help them understand employee needs/);
+  assert.match(snapshot, /<h5>Caribay Garcia, PhD<\/h5>/);
   assert.doesNotMatch(snapshot, />PLACEHOLDER</);
-  assert.match(figmaStyles, /\.body \.pendingApproval \{ color:#ff0000; \}/);
 });
 
 test("some exposure uses the blue accent outline without changing its grid or yellow dots", () => {
@@ -580,13 +582,12 @@ test("report citations align to the text top without enlarging line spacing", ()
   assert.match(interactionStyles, /\.dialog sup, \.panel sup \{ position: relative; top: -0\.55em; font-size: 0\.65em; line-height: 0; vertical-align: baseline; \}/);
 });
 
-test("canonical source has eight unique report sections in order and retains unresolved source notes", () => {
+test("canonical source has eight unique report sections in order and retains illustrative source notes", () => {
   const headings = [...snapshot.matchAll(/<h2 [^>]*id="annual-section-(\d)"[^>]*>\s*([^<]+)</g)];
   assert.deepEqual(headings.map((match) => Number(match[1])), [1, 2, 3, 4, 5, 6, 7, 8]);
   assert.equal(headings[0][2].trim(), "Listening at the speed of change");
   assert.equal(headings[7][2].trim(), "Lead the system, not the survey");
   assert.doesNotMatch(snapshot, /ADD THIS IS ILLUSTRATIVE/);
-  assert.match(snapshot, /General topic is that team collaboration dropped six places/);
   assert.match(snapshot, /Illustrative allocation of decision authority, not a survey finding/);
   assert.equal(canonicalReportSource.defaultNode, "1584:78960");
   assert.match(snapshot, /<ListeningPriorityShift canonical\s*\/>/);

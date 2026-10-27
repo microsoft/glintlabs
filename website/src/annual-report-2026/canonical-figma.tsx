@@ -1641,22 +1641,6 @@ export function CanonicalReportBody() {
             <p className={styles.frame199}></p>
             <p className={styles.frame200}>{`For listening teams, the question to tackle is where AI can help them understand employee needs more clearly, respond more effectively, or reduce the burden of listening. And how they retain strong human judgment and cognition along the way. `}</p>
           </div>
-          <div className={styles.frame201} data-node-id="1535:38911">
-            <div className={styles.frame43} data-node-id="I1535:38911;1070:3422">
-              <div className={styles.frame44} data-node-id="I1535:38911;1070:3423" />
-              <div className={styles.frame81} data-node-id="I1535:38911;1070:3424">
-                <div className={styles.frame82} data-node-id="I1535:38911;1070:3425">
-                  <p className={styles.frame47} data-node-id="I1535:38911;1070:3426">
-                    “
-                  </p>
-                  <p className={styles.frame48} data-node-id="I1535:38911;1070:3427" style={{ fontVariationSettings: '"wdth" 100' }}>{`General topic is that team collaboration dropped six places in future priorities. Potentially connect to our earlier agentic teaming work and explore whether team dynamics may become more important as AI-enabled work moves beyond individual experiences. `}</p>
-                </div>
-                <p className={`${styles.frame202} ${styles.pendingApproval}`} data-node-id="I1535:38911;1070:3428" style={{ fontVariationSettings: '"opsz" 10.5, "opsz" 8' }}>
-                  <span className={styles.frame61}>Caribay Garcia / Head of People Science at Microsoft (pending approval)</span>
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
         <div className={styles.frame12} data-node-id="1451:11988">
           <div className={styles.frame13} data-node-id="1451:11989" />
