@@ -91,7 +91,10 @@ test("Home keeps exactly the three P0s featured while P1s appear only in Reports
     const october = catalog.filter(report => report.href === "/reports/amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes");
     assert.equal(october.length, 1);
     assert.equal(october[0].featured, false);
-    assert.equal(catalog.length, 6);
+    const march = catalog.filter(report => report.href === "/reports/evolving-transformational-leadership-in-the-age-of-ai");
+    assert.equal(march.length, 1);
+    assert.equal(march[0].featured, false);
+    assert.equal(catalog.length, 7);
     for (const report of featured) {
       assert.equal(catalog.filter(item => item.id === report.id).length, 1);
       assert.ok(report.thumbnail);

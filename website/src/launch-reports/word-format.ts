@@ -9,7 +9,7 @@ export type WordTextRun = {
 };
 
 type TextBlock = Extract<ReportBlock, { type: "paragraph" | "list-item" | "heading" }>;
-const markup = /\[(open|close) (bold|italics|superscript|H3|bullet|bullets|sub-bullet|numeric bullet|image insert)\]|\[open bullet(?=\s)/gi;
+const markup = /\[(open|close) (bold|italics|superscript|H3|bullet|bullets|sub-bullet|numeric bullet|image insert|table formatting)\]|\[close italics\[|\[open bullet(?=\s)/gi;
 
 export function wordTextRuns(
   block: TextBlock,
@@ -30,7 +30,7 @@ export function wordTextRuns(
   for (const token of block.text.matchAll(markup)) {
     append(token.index);
     const active = token[1]?.toLowerCase() === "open";
-    switch (token[2]?.toLowerCase()) {
+    switch (token[0].toLowerCase() === "[close italics[" ? "italics" : token[2]?.toLowerCase()) {
       case "bold": marks.bold = active; break;
       case "italics": marks.italic = active; break;
       case "superscript": marks.superscript = active; break;

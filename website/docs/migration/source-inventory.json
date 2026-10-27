@@ -3479,8 +3479,8 @@
       "source": "scripts/build-launch-report-sources.mjs",
       "destination": "website/scripts/build-launch-report-sources.mjs",
       "sourceSha256": "625f8f1363e2a6109e639fd0ad1b9353631bedc785c44d9a0c55716e803ca566",
-      "destinationSha256": "6a64fb480370fa1b903891d4ec332e51854151dbb2b46031632c6188c79f526e",
-      "intentionalDifference": "Adds the May and October P1 Word originals and explicit per-source Home feature flags; all three P0 manifests, assets and source evidence remain unchanged."
+      "destinationSha256": "ccf38dd0f9e4b70714c39c3383123fa73bde71c5ef0628bb9b771c61be006b2a",
+      "intentionalDifference": "Adds May, October and March P1 imports and explicit Home feature flags. Preserves existing import snapshots when originals are resaved; all published manifests, assets and evidence remain unchanged."
     },
     {
       "source": "scripts/connected-build-config.test.mjs",
@@ -3528,8 +3528,8 @@
       "source": "scripts/studio-editing.test.mjs",
       "destination": "website/scripts/studio-editing.test.mjs",
       "sourceSha256": "444b0ba27fc04939b715287253a2b59efb6ea09329e21f775f30e31b044cf631",
-      "destinationSha256": "3343573caa64cb4e224644a77be25ada6725ca2fa7f13ae768880352771d9949",
-      "intentionalDifference": "Extends reader-renderer tests for colon-free brief headings, unchanged source blocks and punctuation, rich-text overrides, semantic source dividers using existing rules, and category-correct card icons: Research Drops use the histogram, Annual Reports keep the calendar."
+      "destinationSha256": "0c00ba30e5cb16efbd0468d83597ce3db3e8a91b06e90b1728fc3321be454cf7",
+      "intentionalDifference": "Extends renderer tests for colon-free brief headings, unchanged source blocks, rich-text overrides, source dividers, histogram Research Drop versus calendar Annual icons, and faithful source tables retaining the first data row and native row-header semantics."
     },
     {
       "source": "scripts/studio-owner-key.ts",
@@ -4354,43 +4354,43 @@
       "source": "src/launch-reports/image-descriptions.ts",
       "destination": "website/src/launch-reports/image-descriptions.ts",
       "sourceSha256": "f24d9937cf401189909b1eb5fa5f83a7655bdc360d1b7d522b81eaf861af0565",
-      "destinationSha256": "37f0b2264486a5d6e322e06d50b8ed4411e13c1c823754612f9271f965894475",
-      "intentionalDifference": "Adds May's original-photo alt text and coefficient-figure description, including unavailable values and study limitations, plus October's original-photo alt text and four figure descriptions transcribing the original statistics and Wipro quotation; P0 descriptions are unchanged."
+      "destinationSha256": "e0cbc1b35d3c63b530f78db920a2dd3033714ce2435cec415c72ad62fc8b8d5a",
+      "intentionalDifference": "Adds original-photo alt text and source-faithful descriptions for May's coefficient figure, October's statistics and Wipro quotation, and March's three charts and leadership summary. Preserves study limitations and all existing P0 descriptions."
     },
     {
       "source": "src/launch-reports/launch-report.tsx",
       "destination": "website/src/launch-reports/launch-report.tsx",
       "sourceSha256": "d712770fd8356776ab2d0a637e377136a8c80ee3c5de402b50bcd74e8e4e1afa",
-      "destinationSha256": "ccfd53a9fb47f2ef5d8a78ec187a264295bf38d93a5b950d56a2f537058574e3",
-      "intentionalDifference": "Passes source-derived numbered-list IDs into the existing renderer without changing P0 presentation."
+      "destinationSha256": "5d6d336dc9bcd190e421ace324c01c14a0e787bd83346f7b516757eabae7ab61",
+      "intentionalDifference": "Passes source-derived numbered-list IDs and renders the explicitly audited March Word table with all rows and native row headers, using existing table styles and keyboard-scrollable semantics. P0 presentation is unchanged."
     },
     {
       "source": "src/launch-reports/reports.test.ts",
       "destination": "website/src/launch-reports/reports.test.ts",
       "sourceSha256": "6dfc354d95b1d7d670f1e42a312a856670a83f2deb9e993b6574f3e2cfbc4de6",
-      "destinationSha256": "5ba2ef421ebc0eaecd9c1ca94a3a47995a9c291a851420a64ab0f2c91f64ba24",
-      "intentionalDifference": "Retains the owner-confirmed April 2026 date correction and all original fidelity checks; adds independently verified May text/image evidence, Reports-only placement, selected sign-in artwork, source links, numbered findings, document-spanning italics, unchanged P0 formatting, the author-confirmed reference 2-to-3 correction and shared colon-free brief heading/navigation presentation. Adds independently verified October text/image fingerprints, Reports-only placement, existing agents-workflow artwork, source references, archival wording, Wipro spotlight and owner-approved display-title consistency with an unchanged URL; original Word evidence is retained."
+      "destinationSha256": "a20a260cffe4173d3c8865a823ccaeeb097da53994ccdad386613628a414a108",
+      "intentionalDifference": "Retains original fidelity checks and the April year correction. Adds independently verified P1 text/image evidence, Reports-only placement, selected illustrations, source links, ordered findings, spanning italics, unchanged P0 formatting, May's author-confirmed citation correction, colon-free brief labels, October's approved title and March's complete original table and malformed editorial-marker normalization. Original Word evidence is retained."
     },
     {
       "source": "src/launch-reports/reports.ts",
       "destination": "website/src/launch-reports/reports.ts",
       "sourceSha256": "994ed10ecc42c729a52b287a5dca7656d4be2e0f21d12020435c96602970c613",
-      "destinationSha256": "f8bbe2d485d2f0a3539ece9159692d5f04e8f5cbf78bd774d59cc618272e770c",
-      "intentionalDifference": "Preserves the owner-confirmed April 2026 date correction; adds May's selected sign-in illustration, explicit source feature flags, numbered findings, document-spanning formatting and the author-confirmed reference 2-to-3 correction in the 2024 AI-adoption claim, plus October's existing Blue agents-workflow illustration and owner-approved display title, Amplifying Impact of AI Agents by Aligning on Desired Outcomes. Original Word evidence, URLs and exact P0 manifests, rich text and catalog entries are retained."
+      "destinationSha256": "6a558ddda58cb28e4f93dc28a40031df7d9cfa99d8fd9a41ffb63e07496b1088",
+      "intentionalDifference": "Preserves April's corrected year, May's selected sign-in artwork and author-confirmed citation correction, explicit feature flags, ordered lists, spanning formatting, and October's approved title/artwork. Adds March's existing compass artwork and explicitly audited row-header table. Original Word evidence, URLs and P0 records are retained."
     },
     {
       "source": "src/launch-reports/source-data.ts",
       "destination": "website/src/launch-reports/source-data.ts",
       "sourceSha256": "e95299b9f2dc4e882602c9e57c27fca3522b91675b853cc3c2c1bd036184fdc5",
-      "destinationSha256": "bc6a800829bfd6e8c38338afc67335806d168a860676820311fa5d351cddb7ab",
-      "intentionalDifference": "Adds the source-mapped May and October P1 Word manifests and evidence, both with featured false and explicit existing P0 featured true flags; original P0 manifests and evidence are unchanged."
+      "destinationSha256": "0ce59314e2c3e3bb01c863ac249cb04e7bbcd5cec0db3085391629f8290fec7d",
+      "intentionalDifference": "Adds source-mapped May, October and March P1 manifests/evidence with featured false, retaining explicit P0 featured true flags. All five already-published source records remain unchanged when March is added."
     },
     {
       "source": "src/launch-reports/word-format.ts",
       "destination": "website/src/launch-reports/word-format.ts",
       "sourceSha256": "7f0dbf817e18b1256a78fcaa6345d15c33533cc1be750af443d4a23f28462f24",
-      "destinationSha256": "8c331ec6f7217c8c48bc758290390535dc7dfc2a64edb2c9c47e773fdf668197",
-      "intentionalDifference": "Recognizes May's numeric-bullet editorial markers and allows emphasis to span source paragraphs; existing standalone formatting behavior and all P0 rich-text runs are retained."
+      "destinationSha256": "f3f51ef8b25b27818d6bf3a6dd66a7b923938ae51e3edc2d4ae15e44fbafc262",
+      "intentionalDifference": "Recognizes numeric bullets and table-format editorial markers, spanning emphasis, and March's malformed closing-italics marker without changing wording. Existing standalone formatting and P0 rich-text runs are retained."
     },
     {
       "source": "src/manifest/report-manifest.test.ts",
@@ -4585,8 +4585,8 @@
       "source": "src/publishing/publication-preview.test.ts",
       "destination": "website/src/publishing/publication-preview.test.ts",
       "sourceSha256": "3ae9fc599384ac299041054983d66ea3bec75c61d778e6cc8d079efc79b37f11",
-      "destinationSha256": "6379a68b15e116ae9b909338505240deb65bf01b4ccfadd138c8aaabe605f67a",
-      "intentionalDifference": "Retains exact-revision approved-export, staged-only rejection, declared-assets-only copying, tamper detection and corrected April 2026 feature-order checks; additionally requires May and October to appear once each in Reports and never in Home Featured."
+      "destinationSha256": "a64cfc06b9d463d544aa5fff71b3c222158ca98cc8b2dc8d71f43945b2929d04",
+      "intentionalDifference": "Retains exact-revision approvals, staged-only rejection, declared-asset copying, tamper detection and corrected April feature order; requires May, October and March once each in Reports and never Home Featured."
     },
     {
       "source": "src/publishing/publication-preview.ts",

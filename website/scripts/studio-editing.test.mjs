@@ -460,6 +460,31 @@ test("mobile navigation dismisses outside the header and restores focus on Escap
   assert.deepEqual(states, [false, false]);
 });
 
+test("the source leadership table keeps its first data row and native row-header semantics", () => {
+  const tableSource = ts.createSourceFile(
+    "launch-report.tsx",
+    readFileSync(new URL("../src/launch-reports/launch-report.tsx", import.meta.url), "utf8"),
+    ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
+  );
+  const jsx = (type, props, key) => ({ type, props, key });
+  const render = componentFunction("SourceRowHeaderTable", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; },
+    styles: { accessibleData: "data", accessibleDataScroller: "scroller" },
+  }, tableSource);
+  const columns = Object.freeze(["First dimension", "First principle"]);
+  const cells = Object.freeze(["Second dimension", "Second principle"]);
+  const block = Object.freeze({ data: Object.freeze({ columns, rows: Object.freeze([{ cells }]) }) });
+  const region = render({ block }).props.children;
+  assert.equal(region.props.role, "region");
+  assert.equal(region.props.tabIndex, 0);
+  assert.ok(region.props["aria-label"]);
+  const table = region.props.children;
+  assert.equal(table.type, "table");
+  const rows = table.props.children.props.children;
+  assert.deepEqual(rows.map(row => row.props.children.map(cell => cell.props.children)), [columns, cells]);
+  assert.ok(rows.every(row => row.props.children[0].type === "th" && row.props.children[0].props.scope === "row"));
+});
+
 test("Research Drop cards use the histogram icon while Annual Reports retain the calendar", () => {
   const cardSource = ts.createSourceFile(
     "study-card.tsx",

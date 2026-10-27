@@ -5123,5 +5123,1069 @@ export const launchReportSources = [
       "hyperlinkCount": 1,
       "representedHyperlinkCount": 1
     }
+  },
+  {
+    "slug": "evolving-transformational-leadership-in-the-age-of-ai",
+    "privatePreview": false,
+    "featured": false,
+    "manifest": {
+      "schemaVersion": "0.1.0",
+      "source": {
+        "fileName": "GLPS_RD_March '26.docx",
+        "sizeBytes": 867382,
+        "sha256": "8877b26ade045fabfb07c403c89201b487f5025aaaebb87db22d62d0f4f6bb69"
+      },
+      "metadata": {
+        "title": "GLPS_RD_March '26",
+        "status": "draft"
+      },
+      "blocks": [
+        {
+          "id": "block-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 0,
+            "paragraphId": "1F6C524D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[Evolving Transformational Leadership in the Age of AI]"
+        },
+        {
+          "id": "block-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 1,
+            "paragraphId": "199E111E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[March 10, 2026 • Research Drop] [1,800 Employees]"
+        },
+        {
+          "id": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "7504EB2F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image1.jpeg",
+          "dataUrl": "/launch-report-assets/evolving-transformational-leadership-in-the-age-of-ai/a11164d56aa8c8cf6d20192f5f4da996e4cbf889c1806dc0fbcea547594431e9.jpeg",
+          "width": 415,
+          "height": 277,
+          "sourceAssetSha256": "a11164d56aa8c8cf6d20192f5f4da996e4cbf889c1806dc0fbcea547594431e9",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 3,
+            "paragraphId": "374DDA38"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Research Drop in Brief:"
+        },
+        {
+          "id": "block-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 4,
+            "paragraphId": "7ABECA84"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Employees who feel supported to integrate agentic AI are 1.8x as likely to be high-frequency AI users (use AI at least daily), yet there is a 28-percentage point gap in perceived support between leaders and ICs, a potential sign that substantive elements of support are getting lost in the rush to adopt AI. [close bullet]"
+        },
+        {
+          "id": "block-5",
+          "source": {
+            "part": "word/document.xml",
+            "index": 5,
+            "paragraphId": "6C20F066"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Transformational leadership remains a strong foundation, but effective AI leadership requires evolving how these behaviors show up in practice. [close bullet]"
+        },
+        {
+          "id": "block-6",
+          "source": {
+            "part": "word/document.xml",
+            "index": 6,
+            "paragraphId": "42C5BF6F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]When leaders encourage experimentation, offer personalized support, articulate a compelling vision, and model AI use – the four dimensions of transformational leadership – the effects are measurable: from nearly doubling employees' meta-cognition around AI to a 30-percentage point boost in trust in agentic AI. [close bullet]"
+        },
+        {
+          "id": "block-8",
+          "source": {
+            "part": "word/document.xml",
+            "index": 8,
+            "paragraphId": "4C7D26F5"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "AI is changing how work gets done, but it hasn’t changed what employees need most from their leaders. As organizations accelerate AI transformation, employees are looking for stability, clarity, and guidance to help them navigate what’s new, uncertain, and rapidly evolving. Technology may automate tasks and augment decision-making, but leadership remains the [open italics]critical human force[close italics] that shapes how change is experienced.  Employees who feel supported by their leaders to integrate agentic AI into their work are [open bold]1.8x as likely[close bold] to be high frequency AI users than those who do not feel that support."
+        },
+        {
+          "id": "block-9",
+          "source": {
+            "part": "word/document.xml",
+            "index": 9,
+            "paragraphId": "784C534D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This points to an important reality: in the AI era, the “what” of effective leadership hasn’t changed, but the “how” has. While many management processes are being automated or augmented, employees still need the personal, human side of leadership. The behaviors that help employees think critically, stay motivated, and grow through change are more important than ever."
+        },
+        {
+          "id": "block-10",
+          "source": {
+            "part": "word/document.xml",
+            "index": 10,
+            "paragraphId": "76BCBDA1"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "To understand how leadership must evolve without losing its foundation, this month’s Research Drop revisits one of the most widely studied frameworks in organizational psychology: [open bold]transformational leadership[close bold]. By examining how its core dimensions show up in the context of AI, we can better understand what leaders must double down on – and what they must adapt – to support successful, human-centered AI transformation."
+        },
+        {
+          "id": "block-11",
+          "source": {
+            "part": "word/document.xml",
+            "index": 11,
+            "paragraphId": "23B3976B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open H3]A Leadership Framework for Times of Change[close H3]"
+        },
+        {
+          "id": "block-12",
+          "source": {
+            "part": "word/document.xml",
+            "index": 12,
+            "paragraphId": "4067D2A2"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Transformational leadership is a well-established leadership approach focused on inspiring followers to perform beyond expectations by shaping how they think, feel, and act[open superscript]1[close superscript]. It provides a framework for us to guide our thinking on the changing responsibilities of leadership. Transformational leadership has four core behavioral dimensions that are empirically grounded anchors to leader and manager effectiveness:"
+        },
+        {
+          "id": "block-13",
+          "source": {
+            "part": "word/document.xml",
+            "index": 13,
+            "paragraphId": "0F7A9BA7"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open table formatting]"
+        },
+        {
+          "id": "block-14",
+          "source": {
+            "part": "word/document.xml",
+            "index": 14
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "data-visual-source",
+          "data": {
+            "sourceKind": "word-table",
+            "title": "Approved Word data table",
+            "unit": "unknown",
+            "columns": [
+              "Intellectual Stimulation",
+              "Encouraging critical thinking and novel problem-solving"
+            ],
+            "rows": [
+              {
+                "id": "row-1",
+                "cells": [
+                  "Individualized Consideration",
+                  "Personalizing coaching and developmental support"
+                ]
+              },
+              {
+                "id": "row-2",
+                "cells": [
+                  "Inspirational Motivation",
+                  "Communicating a compelling vision and organizational direction"
+                ]
+              },
+              {
+                "id": "row-3",
+                "cells": [
+                  "Idealized Influence",
+                  "Modeling values and taking principled positions"
+                ]
+              }
+            ],
+            "sha256": "dce10e451eda6104b3714dab84d4d357c5d59a6c9864bcb536b8a88c2f5eeeb6"
+          }
+        },
+        {
+          "id": "block-16",
+          "source": {
+            "part": "word/document.xml",
+            "index": 16,
+            "paragraphId": "707D3828"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close table formatting]"
+        },
+        {
+          "id": "block-17",
+          "source": {
+            "part": "word/document.xml",
+            "index": 17,
+            "paragraphId": "31B3E982"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "These dimensions describe what great leaders do to inspire strong productivity and outputs from their employees. Research debates how to measure these behaviors, but the underlying logic is robust – that leaders who challenge thinking, develop individuals, communicate purpose, and model values produce high engagement and performance[open superscript]2[close superscript]. As AI reshapes how work gets done, these four dimensions offer a useful structure for understanding how leadership behaviors must adapt, rather than disappear."
+        },
+        {
+          "id": "block-18",
+          "source": {
+            "part": "word/document.xml",
+            "index": 18,
+            "paragraphId": "349E073E"
+          },
+          "type": "heading",
+          "level": 3,
+          "text": "[open H3]Expanding Transformational Leadership in the Era of AI[close H3]"
+        },
+        {
+          "id": "block-19",
+          "source": {
+            "part": "word/document.xml",
+            "index": 19,
+            "paragraphId": "33983C11"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "As employees undergo change, they often look to their leaders to guide their own behavior. Employees may interpret their leaders’ actions and attitudes as signals of organizational expectations. There are early empirical signals that transformational leadership and perceived organizational support positively predict AI adoption[open superscript]3[close superscript], further suggesting that leadership plays a critical role not only in encouraging AI use, but in shaping [open italics]how[close italics] employees experiment with, trust, and ultimately derive value from AI tools. Yet how this leadership style shows up in practice in the AI-era is shifting, and each dimension of transformation leadership offers a distinct lens on what this looks like in practice."
+        },
+        {
+          "id": "block-20",
+          "source": {
+            "part": "word/document.xml",
+            "index": 20,
+            "paragraphId": "1B192F8E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Intellectual Stimulation: Teaching Teams How to Think With AI[close bold]"
+        },
+        {
+          "id": "block-21",
+          "source": {
+            "part": "word/document.xml",
+            "index": 21,
+            "paragraphId": "67C9AE06"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "When leaders encourage critical thinking, questioning assumptions, and novel problem-solving, it helps employees be creative and innovative at work. The intellectual stimulation dimension relies on leaders showcasing strong judgment and curiosity. The leadership task is no longer to provide answers, but to model how to question them."
+        },
+        {
+          "id": "block-22",
+          "source": {
+            "part": "word/document.xml",
+            "index": 22,
+            "paragraphId": "3CAF9424"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This approach is critical when using AI at work, as employees need to build their skills on questioning AI outputs and getting creative with AI agents. Research continues to show the potential negative impact that AI can have on human judgment, such as the concept of AI surrender[open superscript]4[close superscript], where users accept AI outputs with limited scrutiny, bypassing their own judgment entirely. We found that 60% of employees skip accuracy checks when using AI and 56% of employees close AI tools if they feel the response is inaccurate, rather than adjusting their prompt. This places leaders at the center of developing disciplined, thoughtful AI use – where curiosity and skepticism coexist."
+        },
+        {
+          "id": "block-23",
+          "source": {
+            "part": "word/document.xml",
+            "index": 23,
+            "paragraphId": "44FE6B82"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Leaders are a guidepost for thinking critically about AI, teaching followers how to evaluate AI-generated answers. Developing meta-cognition skills around AI has become a critical capability for employees at all levels. Meta-cognition around AI – the practice of both knowing how to use AI effectively and actively regulating how you execute those tasks – helps employees shift from passive AI users to deliberate cognitive partners. This can make the difference of whether AI usage consists of solely copy-pasting prompts and outputs, or intentionally questioning the use case, inputs, and desired outcome. Leaders have a strong role to play in helping their employees grow their meta-cognition. When leaders set clear expectations about how to use AI at work, [open bold]employees nearly double their self-reported meta-cognition around AI[close bold] – how they assess their own knowledge of AI methods and their habits of regulating AI use in practice.",
+          "links": [
+            {
+              "start": 126,
+              "end": 157,
+              "href": "https://aka.ms/researchdrop_feb2026"
+            }
+          ]
+        },
+        {
+          "id": "block-24",
+          "source": {
+            "part": "word/document.xml",
+            "index": 24,
+            "paragraphId": "39B56131"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-25-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 25,
+            "paragraphId": "78A1D492"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image2.png",
+          "dataUrl": "/launch-report-assets/evolving-transformational-leadership-in-the-age-of-ai/4608001611442d684e28b6382fd47e7608f613a9cdb28d2813de46ec6b76a0f7.png",
+          "width": 442,
+          "height": 390,
+          "sourceAssetSha256": "4608001611442d684e28b6382fd47e7608f613a9cdb28d2813de46ec6b76a0f7",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-26",
+          "source": {
+            "part": "word/document.xml",
+            "index": 26,
+            "paragraphId": "0DD50ED4"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-27",
+          "source": {
+            "part": "word/document.xml",
+            "index": 27,
+            "paragraphId": "23AE0B4A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Meta-cognition around AI increases when leaders share their expectations and provide examples and scenarios to guide their employees. This can look like:"
+        },
+        {
+          "id": "block-28",
+          "source": {
+            "part": "word/document.xml",
+            "index": 28,
+            "paragraphId": "0DCE1D59"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Defining what “good” AI use looks like for the team (e.g., specifying that AI should inform and draft rather than finalize, keeping human review a non-negotiable step) [close bullet]"
+        },
+        {
+          "id": "block-29",
+          "source": {
+            "part": "word/document.xml",
+            "index": 29,
+            "paragraphId": "03C327F5"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Naming the moments where human judgment should override AI (e.g., when the stakes of error are high, when outputs are plausible but unverified) [close bullet]"
+        },
+        {
+          "id": "block-30",
+          "source": {
+            "part": "word/document.xml",
+            "index": 30,
+            "paragraphId": "5F5E906A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bullet]Asking reflective questions that build habit over time (e.g., “what would you have concluded without AI?”, “what did you have to correct or reframe in this output?”) [close bullet]"
+        },
+        {
+          "id": "block-31",
+          "source": {
+            "part": "word/document.xml",
+            "index": 31,
+            "paragraphId": "68F5A345"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "These leadership behaviors demonstrate not only the [open italics]what[close italics[ behind adoption but also the [open italics]how[close italics], encouraging a culture where critical thinking and human judgment remain the centerpiece of the workplace."
+        },
+        {
+          "id": "block-32",
+          "source": {
+            "part": "word/document.xml",
+            "index": 32,
+            "paragraphId": "2A7EF478"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Individualized Consideration: Personalizing Support Beyond AI[close bold]"
+        },
+        {
+          "id": "block-33",
+          "source": {
+            "part": "word/document.xml",
+            "index": 33,
+            "paragraphId": "63756BF2"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Employees look to their leaders and managers for support across their career. Individualized consideration includes coaching, developmental attention, and attending to individual needs – where leaders take a personalized approach to supporting their employees."
+        },
+        {
+          "id": "block-34",
+          "source": {
+            "part": "word/document.xml",
+            "index": 34,
+            "paragraphId": "29996297"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "With the emergence of AI technology at work, many AI tools enable personalized delivery at scale, so the “human touch” of consideration must shift to what AI cannot replicate. Leaders can leverage AI to surface trainings, suggest readings, and recap meetings, but the unique value of leaders lies in having the context to connect those resources to their followers’ broader goals and needs, the ability to address the genuine human concerns that AI transformation can surface, and the capability to help followers make sense of where to focus their attention in the midst of AI uncertainty. Employees are concerned about job security, the pressure to learn new ways of working, and more, which are exactly the kinds of concerns that AI can surface but not sit with – they require a leader who can acknowledge fear directly, contextualize change honestly, and adapt support to where each person actually is."
+        },
+        {
+          "id": "block-35",
+          "source": {
+            "part": "word/document.xml",
+            "index": 35,
+            "paragraphId": "2F5EF73A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "AI personalization does not replace individualized consideration and direct managerial support. Few things beat your manager sponsoring you for a project that perfectly aligns with your skills or sharing an AI use case that resonated directly with a problem you have been grappling with. This level of support can ingrain you into your team and your work, feeling understood and cared for. However, AI-specific support from human leaders is uneven. When we look on the surface, we found that 65% of all levels of employees report that they have the support to integrate agentic AI. However, a deeper look reveals a 28-percentage point gap: 78% of leaders feel they have the support they need to integrate agentic AI, compared to just 50% of individual contributors. This gap suggests that substantive elements of support may be getting lost in the rush to adopt AI – and the behavior we see clearly shows that: only 19% of managers have provided 1:1 coaching or mentoring on AI use. What  leaders believe is sufficient is not always what employees experience in practice.",
+          "links": [
+            {
+              "start": 911,
+              "end": 981,
+              "href": "https://aka.ms/researchdrop_nov2025"
+            }
+          ]
+        },
+        {
+          "id": "block-36",
+          "source": {
+            "part": "word/document.xml",
+            "index": 36,
+            "paragraphId": "74CBDD46"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-37-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 37,
+            "paragraphId": "1BC4CF3D"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image3.png",
+          "dataUrl": "/launch-report-assets/evolving-transformational-leadership-in-the-age-of-ai/8808b9537d8e9addde697886110fe9f63f6b84292fd75ed1a36e0e7af9bad30f.png",
+          "width": 466,
+          "height": 330,
+          "sourceAssetSha256": "8808b9537d8e9addde697886110fe9f63f6b84292fd75ed1a36e0e7af9bad30f",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-38",
+          "source": {
+            "part": "word/document.xml",
+            "index": 38,
+            "paragraphId": "37F0B4CB"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-39",
+          "source": {
+            "part": "word/document.xml",
+            "index": 39,
+            "paragraphId": "2CC34A7F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "As the role of the manager changes with the introduction of AI, coaching, development, and mentoring from leaders becomes more important[open superscript]5[close superscript]. Yet only half of individual contributors feel supported to integrate agentic AI, individualized, human-led guidance on AI remains largely out of reach for the people who need it most."
+        },
+        {
+          "id": "block-40",
+          "source": {
+            "part": "word/document.xml",
+            "index": 40,
+            "paragraphId": "48F79B81"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "While AI can tailor content, leaders can personalize meaning and support throughout AI transformation. For example, leaders can provide structure to vibe coding experimentation sessions by helping followers channel their upskilling into something that will contribute to their personal growth or a direct value add to the business to help them shine. As AI automates personalization at scale, leaders must focus their attention on the individualized support only humans can provide."
+        },
+        {
+          "id": "block-41",
+          "source": {
+            "part": "word/document.xml",
+            "index": 41,
+            "paragraphId": "2DC16D73"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Inspirational Motivation: Creating Purpose During AI Transformation[close bold]"
+        },
+        {
+          "id": "block-42",
+          "source": {
+            "part": "word/document.xml",
+            "index": 42,
+            "paragraphId": "5A383721"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "A main responsibility of leaders is to set and communicate the strategy of the organization. Inspirational motivation includes articulating a compelling vision, conveying optimism, and expressing confidence in followers to motivate them to act and provide purpose to their work. Employees who are aligned with leadership are 78% more motivated than those who feel unaligned and employees who are highly optimistic about the future of their role are 101% more motivated than those who are not optimistic[open superscript]6[close superscript]."
+        },
+        {
+          "id": "block-43",
+          "source": {
+            "part": "word/document.xml",
+            "index": 43,
+            "paragraphId": "3AE98ACF"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Inspiration doesn’t come from more AI messages; it comes from leaders sharing how AI is changing their own work. Employees may feel overwhelmed and inundated with AI-related changes and rollouts without a clear understanding of the vision. When messaging is “lip service,” employees can see through it. They are craving tangible modeling experiences, where leaders are transparently showing the what, when, why, and how of their own AI use. The more leaders can present an authentic perspective on how AI will change the workplace, the greater the trust and buy-in from the employees. Inspirational motivation in the AI era is less about the frequency of communication and more about sharing their personal goals for AI."
+        },
+        {
+          "id": "block-44",
+          "source": {
+            "part": "word/document.xml",
+            "index": 44,
+            "paragraphId": "1E6A3B84"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "This could include leaders sharing their own AI use, their own AI uncertainty, and their own moments of discovery with AI. Leaders’ openness and authenticity can communicate compelling vision of what AI makes possible for their team and their organization – cascading motivation from leader to employee. While 85% of leaders are motivated to integrate agentic AI into their work, only 56% of individual contributors feel the same, a 29-percentage point gap that mirrors the divide in perceived support. Leaders may have better access and understanding of the vision of AI for the organization, but the limited support and vision sharing can leave employees lacking the drive to adopt AI and sustain that adoption."
+        },
+        {
+          "id": "block-45",
+          "source": {
+            "part": "word/document.xml",
+            "index": 45,
+            "paragraphId": "6C6CC94B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "When employees are motivated by their leaders, it can instill a level of optimism that is a catalyst for AI adoption. Employees with high agentic AI readiness (e.g., skills, opportunity) report high levels of AI optimism – an average of 83% favorability. This drops to 47% for neutral readiness employees, and 13% for low readiness employees."
+        },
+        {
+          "id": "block-46",
+          "source": {
+            "part": "word/document.xml",
+            "index": 46,
+            "paragraphId": "39E3832B"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-47-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 47,
+            "paragraphId": "09A7CBFC"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image4.png",
+          "dataUrl": "/launch-report-assets/evolving-transformational-leadership-in-the-age-of-ai/0f40d73327cf9e5a495f70110e3c94bfd467184a77ba374b97f88c80980a044d.png",
+          "width": 522,
+          "height": 346,
+          "sourceAssetSha256": "0f40d73327cf9e5a495f70110e3c94bfd467184a77ba374b97f88c80980a044d",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-48",
+          "source": {
+            "part": "word/document.xml",
+            "index": 48,
+            "paragraphId": "4287612E"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-49",
+          "source": {
+            "part": "word/document.xml",
+            "index": 49,
+            "paragraphId": "4EFE28DB"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "With low optimism and readiness for AI integration, employees are not set up effectively to adopt and perceive value from using AI. Leaders can try to mitigate against these downstream impacts by focusing on communicating a compelling vision for what AI makes possible and how it can elevate employees’ work, rather than replace it."
+        },
+        {
+          "id": "block-50",
+          "source": {
+            "part": "word/document.xml",
+            "index": 50,
+            "paragraphId": "7094257A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Idealized Influence: Leading by Example in HumanAI Collaboration[close bold]"
+        },
+        {
+          "id": "block-51",
+          "source": {
+            "part": "word/document.xml",
+            "index": 51,
+            "paragraphId": "7399E0A6"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Influence during change is a core mechanism for failure or success of the initiative. Idealized influence consists of displaying conviction, modeling core values, and taking principled positions on important decisions."
+        },
+        {
+          "id": "block-52",
+          "source": {
+            "part": "word/document.xml",
+            "index": 52,
+            "paragraphId": "6A68CE65"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Throughout AI transformation, employees are watching leaders closely and their AI adoption actions will mirror their leaders’ approach. Leaders need to model what credible human-AI leadership looks like: whether and when they use it, when they override it, how they acknowledge its limits, and how they openly share when it falls short. A leader who openly says “I ran this through AI, it missed the nuance, here’s how I caught it” likely does more to normalize critical AI use than any policy or training could. This can look like a leader walking through their prompting process in a team meeting, acknowledging in a 1:1 that they're still figuring out where AI fits in their own workflow, or openly crediting AI for a first draft while explaining what they changed and why. Leaders who model thoughtful, intentional AI use create the conditions for their teams to experiment with confidence, adopt AI critically rather than passively, and ultimately realize the full value of human-AI collaboration."
+        },
+        {
+          "id": "block-53",
+          "source": {
+            "part": "word/document.xml",
+            "index": 53,
+            "paragraphId": "73D1CBD3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Leadership role modeling directly shapes how much value employees realize from AI – employees who agree their leaders role model effective AI use report a 17-percentage point uplift in realized value from agentic AI. When leaders engage with AI intentionally, it creates conditions for their teams to do the same. Role modeling has always mattered and in an AI-first workplace, it's the difference between a team that experiments and one that waits.",
+          "links": [
+            {
+              "start": 146,
+              "end": 215,
+              "href": "https://aka.ms/researchdrop_nov2025"
+            }
+          ]
+        },
+        {
+          "id": "block-55",
+          "source": {
+            "part": "word/document.xml",
+            "index": 55,
+            "paragraphId": "73DF0150"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "AI transformation is not just a technological shift; it is a leadership one. The four dimensions of transformational leadership offer a powerful lens for understanding how leaders can shape not only AI adoption, but also trust, optimism, and long-term value creation. As AI becomes embedded in everyday work, leaders who intentionally model thoughtful AI use, personalize support beyond what technology can deliver, communicate purpose with authenticity, and guide employees through uncertainty will define what successful human-AI collaboration looks like."
+        },
+        {
+          "id": "block-56",
+          "source": {
+            "part": "word/document.xml",
+            "index": 56,
+            "paragraphId": "37138F77"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open image insert]"
+        },
+        {
+          "id": "block-57-image-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 57,
+            "paragraphId": "255115C3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "image",
+          "alt": "",
+          "fileName": "image5.png",
+          "dataUrl": "/launch-report-assets/evolving-transformational-leadership-in-the-age-of-ai/7e05a85230fdaa87d9b00d7dd335aa10511ee996562e099eaae1c1d528c4c761.png",
+          "width": 624,
+          "height": 329,
+          "sourceAssetSha256": "7e05a85230fdaa87d9b00d7dd335aa10511ee996562e099eaae1c1d528c4c761",
+          "assetSource": "word-import"
+        },
+        {
+          "id": "block-57",
+          "source": {
+            "part": "word/document.xml",
+            "index": 57,
+            "paragraphId": "255115C3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[close image insert]"
+        },
+        {
+          "id": "block-58",
+          "source": {
+            "part": "word/document.xml",
+            "index": 58,
+            "paragraphId": "4D424E5A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "Transformational leadership remains a strong foundation, but [open bold]effective AI leadership requires evolving how these behaviors show up in practice[close bold]. Employees are already watching how their leaders engage with AI. The question is whether what they see encourages critical thinking, confidence, and growth, or hesitation and disengagement."
+        },
+        {
+          "id": "block-59",
+          "source": {
+            "part": "word/document.xml",
+            "index": 59,
+            "paragraphId": "03C4A8F1"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "As organizations continue to navigate AI-driven change, leaders who focus not just on adoption, but on how people experience and make sense of that change, will be best positioned to unlock meaningful and lasting impact."
+        },
+        {
+          "id": "block-61",
+          "source": {
+            "part": "word/document.xml",
+            "index": 61,
+            "paragraphId": "677A5127"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open bold]Stay tuned for our April Research Drop to keep up with what the Microsoft People Science team is learning! [close bold]"
+        },
+        {
+          "id": "block-63",
+          "source": {
+            "part": "word/document.xml",
+            "index": 63,
+            "paragraphId": "5A883E53"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open italics]This month’s Research Drop analyzed 1,800 global employees from the Microsoft People Science Agentic Teaming & Trust Survey from July 2025. [close italics]"
+        },
+        {
+          "id": "block-65",
+          "source": {
+            "part": "word/document.xml",
+            "index": 65,
+            "paragraphId": "73D56089"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]1[close superscript]Bass, B. M. (1985). Leadership and Performance Beyond Expectations. Free Press."
+        },
+        {
+          "id": "block-66",
+          "source": {
+            "part": "word/document.xml",
+            "index": 66,
+            "paragraphId": "0C44D7D3"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]2[close superscript]Wang, G., Oh, I.-S., Courtright, S. H., & Colbert, A. E. (2011). Transformational leadership and performance across criteria and levels: A meta-analytic review of 25 years of research. [open italics]Group & Organization Management, 36[close italics](2), 223–270. https://doi.org/10.1177/1059601111401017",
+          "links": [
+            {
+              "start": 301,
+              "end": 341,
+              "href": "https://doi.org/10.1177/1059601111401017"
+            }
+          ]
+        },
+        {
+          "id": "block-67",
+          "source": {
+            "part": "word/document.xml",
+            "index": 67,
+            "paragraphId": "48186496"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]3[close superscript]Wang, X., Liu, Y., & Ao, M. (2025). Transformational leadership and employee AI usage: The role of perceived organizational support and competitive workplace climate. [open italics]Frontiers in Psychology, 16[close italics], Article 1581337. https://doi.org/10.3389/fpsyg.2025.1581337",
+          "links": [
+            {
+              "start": 280,
+              "end": 322,
+              "href": "https://doi.org/10.3389/fpsyg.2025.1581337"
+            }
+          ]
+        },
+        {
+          "id": "block-68",
+          "source": {
+            "part": "word/document.xml",
+            "index": 68,
+            "paragraphId": "0BACD09F"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]4[close superscript]Shaw, S. D. & Nave, G. (2026). Thinking – Fast, Slow, and Artificial: How AI is Reshaping Human Reasoning and the Rise of Cognitive Surrender. [open italics]Available at SSRN[close italics] 6097646. https://dx.doi.org/10.2139/ssrn.6097646",
+          "links": [
+            {
+              "start": 237,
+              "end": 276,
+              "href": "https://dx.doi.org/10.2139/ssrn.6097646"
+            }
+          ]
+        },
+        {
+          "id": "block-69",
+          "source": {
+            "part": "word/document.xml",
+            "index": 69,
+            "paragraphId": "1320F56A"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]5[close superscript]Deloitte. (May 9, 2025). Reinventing the manager’s role for the future of work with AI and human collaboration. 2025 Global Human Capital Trends.",
+          "links": [
+            {
+              "start": 63,
+              "end": 148,
+              "href": "https://action.deloitte.com/insight/4475/reinventing-the-managers-role-for-the-future-of-work-with-ai-and-human-collaboration"
+            }
+          ]
+        },
+        {
+          "id": "block-70",
+          "source": {
+            "part": "word/document.xml",
+            "index": 70,
+            "paragraphId": "2C078E63"
+          },
+          "provenance": {
+            "kind": "imported"
+          },
+          "type": "paragraph",
+          "text": "[open superscript]6[close superscript]PwC. (November 12, 2025). Rewiring the future of work. PwC’s Global Workforce Hopes and Fears Survey 2025.",
+          "links": [
+            {
+              "start": 64,
+              "end": 91,
+              "href": "https://www.pwc.com/gx/en/issues/workforce/hopes-and-fears.html"
+            }
+          ]
+        }
+      ],
+      "reviewItems": [
+        {
+          "id": "review-0",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image1.jpeg does not have an image description.",
+          "blockId": "block-2-image-0",
+          "source": {
+            "part": "word/document.xml",
+            "index": 2,
+            "paragraphId": "7504EB2F"
+          }
+        },
+        {
+          "id": "review-1",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image2.png does not have an image description.",
+          "blockId": "block-25-image-1",
+          "source": {
+            "part": "word/document.xml",
+            "index": 25,
+            "paragraphId": "78A1D492"
+          }
+        },
+        {
+          "id": "review-2",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image3.png does not have an image description.",
+          "blockId": "block-37-image-2",
+          "source": {
+            "part": "word/document.xml",
+            "index": 37,
+            "paragraphId": "1BC4CF3D"
+          }
+        },
+        {
+          "id": "review-3",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image4.png does not have an image description.",
+          "blockId": "block-47-image-3",
+          "source": {
+            "part": "word/document.xml",
+            "index": 47,
+            "paragraphId": "09A7CBFC"
+          }
+        },
+        {
+          "id": "review-4",
+          "code": "missing-image-description",
+          "severity": "warning",
+          "message": "image5.png does not have an image description.",
+          "blockId": "block-57-image-4",
+          "source": {
+            "part": "word/document.xml",
+            "index": 57,
+            "paragraphId": "255115C3"
+          }
+        }
+      ],
+      "extraction": {
+        "paragraphCount": 70,
+        "imageCount": 5,
+        "unsupportedCount": 0
+      }
+    },
+    "publicationSourceEvidence": {
+      "sourceSha256": "8877b26ade045fabfb07c403c89201b487f5025aaaebb87db22d62d0f4f6bb69",
+      "hyperlinkCount": 8,
+      "representedHyperlinkCount": 8
+    }
   }
 ];

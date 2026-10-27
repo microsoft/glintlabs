@@ -1,6 +1,25 @@
 type ImageDescription = { alt: string; description?: string };
 
 export const launchImageDescriptions: Record<string, Record<string, ImageDescription>> = {
+  "evolving-transformational-leadership-in-the-age-of-ai": {
+    "image1.jpeg": { alt: "Two colleagues reviewing a tablet together beside a laptop." },
+    "image2.png": {
+      alt: "Clear leadership expectations and example AI scenarios are associated with higher meta-cognition around AI.",
+      description: "Average percent favorable meta-cognition around AI: 48% when leaders did not set clear expectations about AI use at work versus 88% when they did, a 40-percentage-point difference. When the organization does not provide example AI scenarios or prompts, 47%, versus 88% when it does, a 41-percentage-point difference. Source: Microsoft People Science Agentic Teaming & Trust Survey, 1,800 global, full-time, English-speaking employees, July 2025.",
+    },
+    "image3.png": {
+      alt: "Perceived support for integrating agentic AI varies by job level.",
+      description: "Average percent favorable for having the support needed to integrate agentic AI into work: leaders, 78%; managers, 56%; individual contributors, 50%. Source: Microsoft People Science Agentic Teaming & Trust Survey, 1,800 global, full-time, English-speaking employees, July 2025.",
+    },
+    "image4.png": {
+      alt: "AI optimism is higher among employees with greater readiness for AI agents.",
+      description: "Average AI optimism favorability: high agentic AI readiness, 83%; neutral readiness, 47%; low readiness, 13%. Source: Microsoft People Science Agentic Teaming & Trust Survey, 1,800 global, full-time, English-speaking employees, July 2025.",
+    },
+    "image5.png": {
+      alt: "Leading through AI: evolving the four dimensions of transformational leadership.",
+      description: "Intellectual Stimulation. Core principle: encouraging critical thinking and novel problem-solving. Example in AI-enabled work: modeling how to question and interpret AI outputs, driving accountability, and setting team norms around AI slop. Individualized Consideration. Core principle: personalizing coaching and developmental support. Example: have transparent and authentic conversations around AI, connect the dots to individual goals and growth. Inspirational Motivation. Core principle: communicating a compelling vision and organizational direction. Example: sharing authentic personal conviction, such as the why, not just the what, connecting AI to purpose, progress, and meaningful work. Idealized Influence. Core principle: modeling values and taking principled positions. Example: role model human-AI collaboration, decision making processes, and override scenarios.",
+    },
+  },
   "amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-outcomes": {
     "image1.jpeg": { alt: "Two colleagues discussing work around a laptop in a sunlit workspace." },
     "image2.png": {
