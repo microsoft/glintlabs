@@ -21,7 +21,9 @@ const reports = launchReportSources.map(source => {
   const title = titleBlock.text.replace(/^\[|\]$/g, "");
   const metadata = metadataBlock.text.match(/^\[([A-Za-z]+) (\d+), (\d{4}) • Research Drop\] \[([\d,]+) Employees\]$/);
   if (!metadata || !months.includes(metadata[1])) throw new Error(`Unrecognized source date: ${source.slug}`);
-  const [, month, day, year, employees] = metadata;
+  const [, month, day, sourceYear, employees] = metadata;
+  // Preserve Word evidence while applying the owner-confirmed April publication year.
+  const year = source.slug === "tracking-the-rise-of-perceived-ai-value-at-work" ? "2026" : sourceYear;
   const monthNumber = String(months.indexOf(month) + 1).padStart(2, "0");
   const isoDate = `${year}-${monthNumber}-${day.padStart(2, "0")}`;
   const coverDetails = [`${month} ${day}, ${year} • Research Drop`, `${employees} Employees`];

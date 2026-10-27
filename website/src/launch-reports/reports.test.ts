@@ -117,11 +117,17 @@ test("Word link targets and linked wording survive removal of editorial formatti
   assert.equal(linkCount, 15);
 });
 
-test("April keeps the exact 2025 source date selected by the user", () => {
+test("April uses the corrected 2026 publication year without rewriting source evidence", () => {
   const report = allReports.find(item => item.slug.startsWith("tracking-"))!;
-  assert.equal(report.manifest.metadata.publishedDate, "04/14/25");
-  assert.equal(report.coverDetails[0], "April 14, 2025 • Research Drop");
+  assert.equal(report.manifest.metadata.publishedDate, "04/14/26");
+  assert.equal(report.coverDetails[0], "April 14, 2026 • Research Drop");
+  assert.equal(report.catalog.badge, "April 2026 • Research Drop");
+  assert.equal(report.isoDate, "2026-04-14");
   assert.equal(report.catalog.employeeCount, 2331);
+  const source = launchReportSources.find(item => item.slug === report.slug)!;
+  assert.ok(source.manifest.blocks.some(block => "text" in block &&
+    block.text === "[April 14, 2025 • Research Drop] [2,331 Employees]"));
+  assert.deepEqual(allReports.map(item => item.isoDate), ["2026-04-14", "2026-02-10", "2025-11-11"]);
 });
 
 test("editorial marks preserve words, emphasis, citations, and the malformed November bullet", () => {
