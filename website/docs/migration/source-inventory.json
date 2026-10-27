@@ -3640,8 +3640,8 @@
       "source": "src/annual-report-2026/canonical-report-interactions.tsx",
       "destination": "website/src/annual-report-2026/canonical-report-interactions.tsx",
       "sourceSha256": "333ba37124a6c7c3624feabbdd9d9b4f18321dd0eb88ae09640053085fc2673d",
-      "destinationSha256": "333ba37124a6c7c3624feabbdd9d9b4f18321dd0eb88ae09640053085fc2673d",
-      "intentionalDifference": ""
+      "destinationSha256": "dc9e627db48ccfb4cc3116df954d8166f5af7b206078b4e3c1d73cadf7029c88",
+      "intentionalDifference": "Italicize only the three owner-specified disclaimer sentences beginning Findings represent aggregated responses using semantic emphasis; preserve all wording, surrounding methodology, copyright and existing note typography."
     },
     {
       "source": "src/annual-report-2026/canonical-report.module.css",
@@ -3654,8 +3654,8 @@
       "source": "src/annual-report-2026/canonical-report.test.ts",
       "destination": "website/src/annual-report-2026/canonical-report.test.ts",
       "sourceSha256": "523b6ea2cc284516e5cb58e76d118082d50aea5a7f207c6f2c3035d7f66ab7e2",
-      "destinationSha256": "87a42e65ac4656515006e7362548017a6c61784da613da11b8943d0528d483ed",
-      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and the approved Caribay quote while retaining placeholder-absence and author-credit checks. Add mobile Figma topics-matrix spacing and natural-row-height coverage while retaining desktop-layout, native-header and nine-cell checks. Verify the survey expansion citation uses the existing 10.32px frame7 superscript style before the sentence punctuation rather than an inline digit."
+      "destinationSha256": "48fa2bf3e2d0fba90b409b68150f4f07a631ff777411f2543f0aae52abe87e54",
+      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and the approved Caribay quote while retaining placeholder-absence and author-credit checks. Add mobile Figma topics-matrix spacing and natural-row-height coverage while retaining desktop-layout, native-header and nine-cell checks. Verify the survey expansion citation uses the existing 10.32px frame7 superscript style before the sentence punctuation rather than an inline digit. Verify exact wording and scoped emphasis for the three disclaimer sentences in References."
     },
     {
       "source": "src/annual-report-2026/channel-portfolio.tsx",

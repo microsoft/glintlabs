@@ -784,6 +784,11 @@ test("the parent modal shows a nonblocking bottom fade only while more content r
   assert.match(interactionStyles, /@media \(forced-colors: active\) \{\s*\.demographicsDialog::after \{ display: none; \}/);
 });
 
+test("the References disclaimer italicizes only the supplied three sentences without rewriting them", () => {
+  const disclaimer = "Findings represent aggregated responses and may not reflect all organizations or industries. The practices and frameworks discussed in this report are offered for consideration and do not represent formal Microsoft policy or compliance guidance. Organizations should evaluate AI and employee-data uses based on their particular circumstances and applicable requirements.";
+  assert.ok(interactionSource.includes(`<em>${disclaimer}</em>`));
+});
+
 test("references and report-only rules follow the revised design", () => {
   assert.match(interactionSource, /<section className=\{styles\.referencesDisclosure\} aria-labelledby="annual-references-title">/);
   assert.match(interactionSource, /<h3 id="annual-references-title">References<\/h3>/);
