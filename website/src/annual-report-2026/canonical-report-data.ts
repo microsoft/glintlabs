@@ -183,7 +183,7 @@ export const listeningPortfolio = ([
   },
   {
     name: "Employee-initiated always-on feedback",
-    description: "Employee led, or always-on feedback channels that employees can initiate on their own",
+    description: "e.g., event-triggered surveys, post-meeting prompts",
     counts: [18, 6, 62, 17],
   },
   {

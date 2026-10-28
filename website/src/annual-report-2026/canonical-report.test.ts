@@ -568,6 +568,20 @@ test("listening portfolio details use the revised card and canonical proportiona
   assert.match(interactionSource, /points\[selected\]\.counts\[index\]/);
 });
 
+test("listening portfolio popouts keep the approved example-led descriptions", () => {
+  assert.deepEqual(listeningPortfolio.map((approach) => approach.description), [
+    "e.g., annual survey from HR or leadership",
+    "e.g., from manager or change leader",
+    "e.g., event-triggered surveys, post-meeting prompts",
+    "e.g., onboarding, exit, promotion",
+    "e.g., focus groups, structured interviews",
+    "e.g., event-triggered surveys, post-meeting prompts",
+    "e.g., collaboration signals, productivity data",
+    "e.g., AI assistants that proactively solicit feedback through conversation",
+  ]);
+  assert.match(interactionSource, /<p className=\{styles\.pointExample\}>\{points\[selected\]\.description\}<\/p>/);
+});
+
 test("continuous listening dialog preserves the revised explanatory hierarchy and colors", () => {
   assert.match(interactionSource, /aria-describedby=\{descriptionId\}/);
   assert.match(interactionSource, /When asked to define &quot;continuous listening&quot;, listening/);
