@@ -37,8 +37,9 @@ collector is `glintlabs-telemetry` in project `kkthgbgkzzkfpmnbjmro`.
 
 When the production flags are enabled, the public reader automatically sends
 page views, Analyze Survey opens, skill-link clicks, and report-download clicks.
-There is no consent prompt or on-site opt-out control. A read-only Site analytics
-disclosure explains collection, storage, and the Microsoft Privacy Statement.
+There is no consent prompt, floating analytics widget, or on-site opt-out control.
+The tracker renders no UI. Plain text in the existing marketing footer explains
+collection and storage beside the existing Microsoft Privacy Statement link.
 Publishing this policy requires the site's privacy/legal owner's approval;
 default-on persistent identifiers are not universally exempt from prior-consent
 requirements. Opening a report is

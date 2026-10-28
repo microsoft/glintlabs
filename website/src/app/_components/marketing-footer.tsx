@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { telemetryEnabled } from "@/telemetry/config";
 
 import styles from "./marketing-footer.module.css";
 
@@ -11,6 +12,11 @@ export function MarketingFooter() {
         <div className={styles.disclaimer}>
           <Image src="/figma/site-canonical/home/group.svg" alt="Microsoft" width={81} height={18} unoptimized />
           <p>Disclaimer: The materials on this page are provided as-is, without warranty of any kind, including merchantability or fitness for a particular purpose. Microsoft will not provide any support for these materials.</p>
+          {telemetryEnabled && <p>Public-site analytics run automatically using Supabase. Random browser IDs expire
+            after 18 calendar months; only keyed hashes are stored with events, retained for 90 days.
+            No survey data, names, email addresses, or full URLs are sent. Supabase receives IP addresses
+            to handle requests and uses a separate daily-changing hash for short-lived rate limits.
+            Browser privacy signals and existing refusals are honored. Counts represent browsers, not people.</p>}
         </div>
       </div>
 

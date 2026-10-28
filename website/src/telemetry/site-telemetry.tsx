@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { telemetryEnabled } from "./config";
 import {
   actionEvent, createBrowserIdentity, createTelemetryClient, hasLegacyRefusal,
   isProductionLocation, legacyConsentKeys,
 } from "./client";
-import styles from "./site-telemetry.module.css";
 
 function privacyRequested() {
   const browser = navigator as Navigator & { globalPrivacyControl?: boolean };
@@ -17,11 +16,9 @@ function privacyRequested() {
 export function SiteTelemetry() {
   const pathname = usePathname();
   const client = useRef<ReturnType<typeof createTelemetryClient> | null>(null);
-  const [active, setActive] = useState(false);
 
   useEffect(() => {
     if (!telemetryEnabled || !isProductionLocation(window.location)) return;
-    setActive(true);
     let warned = false;
     const tracker = createTelemetryClient({
       enabled: true, location: () => window.location, referrer: () => document.referrer,
@@ -66,29 +63,8 @@ export function SiteTelemetry() {
   }, []);
 
   useEffect(() => {
-    if (active) void client.current?.track("page_view");
-  }, [active, pathname]);
+    void client.current?.track("page_view");
+  }, [pathname]);
 
-  if (!active) return null;
-  return (
-    <aside className={styles.root} aria-label="Site analytics">
-      <details>
-        <summary>Site analytics</summary>
-        <div className={styles.panel}>
-          <h2>Automatic site analytics</h2>
-          <p>Glint Labs automatically counts public page views and tool, skill-link, and report-download clicks
-            using Supabase. A random browser ID counts distinct browsers/devices, not verified people.
-            We do not send survey data, names, email addresses, or full URLs.</p>
-          <p>The browser ID expires after 18 calendar months. Supabase stores only a secret-keyed hash with events,
-            which are retained for 90 days.
-            Clearing browser data or changing browsers/devices can cause additional counts.</p>
-          <p>Supabase receives your IP address to handle requests; a daily-changing hash is used separately
-            for short-lived rate limits, not to identify visitors in events. Browser Do Not Track and
-            Global Privacy Control signals and unexpired refusals saved under the previous policy stop
-            collection and delete the browser ID. This cannot recall events already received.</p>
-          <p><a href="https://privacy.microsoft.com/privacystatement">Microsoft Privacy Statement</a></p>
-        </div>
-      </details>
-    </aside>
-  );
+  return null;
 }

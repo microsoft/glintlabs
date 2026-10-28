@@ -161,17 +161,17 @@ try {
   await waitFor(() => events.length === 1,
     "Build with GLINTLABS_PAGES_TELEMETRY=true before running telemetry browser checks.");
   assert.equal(await evaluate(`!!document.getElementById("analytics-preferences") ||
-    !!document.querySelector('[aria-label="Analytics preferences"]')`), false, "Consent controls remain.");
-  assert.equal(await evaluate(`document.querySelector('[aria-label="Site analytics"] button')`), null, "Disclosure has an opt-out control.");
+    !!document.querySelector('[aria-label="Analytics preferences"],[aria-label="Site analytics"]')`),
+    false, "A floating analytics widget or consent panel remains.");
+  assert.equal(await evaluate(`document.querySelector("footer").textContent.includes("Public-site analytics run automatically")`),
+    true, "The non-overlay footer disclosure is missing.");
   assert.equal(await evaluate("document.documentElement.scrollWidth <= innerWidth"), true);
-  await evaluate(`document.querySelector('[aria-label="Site analytics"] summary').click()`);
   const axe = await readFile(path.join(root, "node_modules/axe-core/axe.min.js"), "utf8");
   await evaluate(`${axe}\ntrue`);
   assert.deepEqual(await evaluate(`(async () => (await axe.run(
-    document.querySelector('[aria-label="Site analytics"]'),
+    document.querySelector("footer"),
     {runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21aa"]}})).violations)()`), []);
   assert.equal(await evaluate("document.documentElement.scrollWidth <= innerWidth"), true);
-  await evaluate(`document.querySelector('[aria-label="Site analytics"] summary').click()`);
   assert.equal(events[0].event, "page_view");
   assert.equal(events[0].v, 2);
   const firstBrowser = events[0].visitor_id;
@@ -212,8 +212,9 @@ try {
   rejecting = false;
   await changePreference(legacyConsentKeys[0], "denied");
   await waitFor(() => evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)}) === null`), "Legacy refusal did not delete the browser ID.");
+  await evaluate(`localStorage.setItem(${JSON.stringify(visitorKey)},"suppression-check")`);
   await go("/about/");
-  await waitFor(() => evaluate(`!!document.querySelector('[aria-label="Site analytics"]')`), "Page did not hydrate.");
+  await waitFor(() => evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)}) === null`), "Legacy refusal did not stop the reloaded tracker.");
   await pause();
   assert.equal(events.length, 6, "Legacy refusal did not stop collection after reload.");
   await changePreference(legacyConsentKeys[1], "granted");
@@ -224,8 +225,9 @@ try {
   assert.notEqual(events[6].visitor_id, firstBrowser, "Reused a deleted browser ID.");
   await changePreference(legacyConsentKeys[1], "denied");
   await waitFor(() => evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)}) === null`), "Version-2 refusal did not delete the ID.");
+  await evaluate(`localStorage.setItem(${JSON.stringify(visitorKey)},"suppression-check")`);
   await go("/");
-  await waitFor(() => evaluate(`!!document.querySelector('[aria-label="Site analytics"]')`), "Page did not hydrate.");
+  await waitFor(() => evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)}) === null`), "Version-2 refusal did not stop the reloaded tracker.");
   await pause();
   assert.equal(events.length, 7, "Version-2 refusal did not stop collection.");
   await changePreference(legacyConsentKeys[1], null);
@@ -234,16 +236,17 @@ try {
     source: 'Object.defineProperty(navigator,"globalPrivacyControl",{get:()=>true});',
   });
   await go("/");
-  await waitFor(() => evaluate(`!!document.querySelector('[aria-label="Site analytics"]')`), "Privacy page did not hydrate.");
+  await waitFor(() => evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)}) === null`), "GPC did not stop the reloaded tracker.");
   await pause();
   assert.equal(events.length, 8, "GPC did not stop automatic collection.");
   assert.equal(await evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)})`), null, "GPC did not delete the browser ID.");
   await send("Page.removeScriptToEvaluateOnNewDocument", { identifier: privacy.identifier });
+  await evaluate(`localStorage.setItem(${JSON.stringify(visitorKey)},"suppression-check")`);
   const dnt = await send("Page.addScriptToEvaluateOnNewDocument", {
     source: 'Object.defineProperty(navigator,"doNotTrack",{get:()=>"1"});',
   });
   await go("/about/");
-  await waitFor(() => evaluate(`!!document.querySelector('[aria-label="Site analytics"]')`), "DNT page did not hydrate.");
+  await waitFor(() => evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)}) === null`), "DNT did not stop the reloaded tracker.");
   await pause();
   assert.equal(events.length, 8, "DNT did not stop automatic collection.");
   assert.equal(await evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)})`), null);
@@ -270,7 +273,7 @@ try {
   assert.equal(await evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)})`), null, "Local preview created a browser ID.");
   assert.ok(!JSON.stringify(events).includes("never-send"));
   if (failures.length) throw failures[0];
-  console.log("Telemetry browser checks passed: automatic first-visit collection without consent/opt-out controls or fabricated consent, stable browser IDs, preserved legacy refusals, ID deletion, navigation deduplication, real skill/tool clicks, GPC/DNT, unreadable preferences, anonymous fallback, local suppression, failure isolation, and 320px disclosure accessibility. All events intercepted; none sent to Supabase.");
+  console.log("Telemetry browser checks passed: no floating analytics UI, accessible inline footer disclosure, automatic first-visit collection without fabricated consent, stable browser IDs, preserved legacy refusals, ID deletion, navigation deduplication, real skill/tool clicks, GPC/DNT, unreadable preferences, anonymous fallback, local suppression, and failure isolation. All events intercepted; none sent to Supabase.");
 } finally {
   stopping = true;
   socket?.close();
