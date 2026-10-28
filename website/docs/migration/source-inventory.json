@@ -3892,8 +3892,8 @@
       "source": "src/app/home-v1.module.css",
       "destination": "website/src/app/home-v1.module.css",
       "sourceSha256": "7c2760c3fe95a4720d5a00caf94a638ad9bab7538d1153c02dda5366c4989eed",
-      "destinationSha256": "7c2760c3fe95a4720d5a00caf94a638ad9bab7538d1153c02dda5366c4989eed",
-      "intentionalDifference": ""
+      "destinationSha256": "38ca1faa08c121c6937135e02419b4bc78eeb0fc54cdf065ff096c369a8ebaad",
+      "intentionalDifference": "Match Figma node 1875:10078 for Home's View all reports secondary link: 5% neutral fill, 86% neutral ink, regular label weight, and the existing secondary actions' 10% hover fill, derived from the site ink token. Preserve its spacing, radius, focus ring, mobile touch target, and the separate primary hero action."
     },
     {
       "source": "src/app/launch-report-assets/[slug]/[fileName]/route.ts",
@@ -4053,8 +4053,8 @@
       "source": "src/app/site-palette.test.ts",
       "destination": "website/src/app/site-palette.test.ts",
       "sourceSha256": "fde336bfe353c256889a2f71720e7d8f3cfb006a1330dc65ec93fd0ba1d92266",
-      "destinationSha256": "fde336bfe353c256889a2f71720e7d8f3cfb006a1330dc65ec93fd0ba1d92266",
-      "intentionalDifference": ""
+      "destinationSha256": "3d8acb184c3dc26bad7230721831b506e458c0c706818e531188514abf34c206",
+      "intentionalDifference": "Add a regression for Home's Figma secondary View all reports treatment, retained destination, hover and keyboard-focus feedback, mobile touch target, and unchanged black primary hero action."
     },
     {
       "source": "src/app/site-palette.ts",
