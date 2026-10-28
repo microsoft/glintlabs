@@ -52,8 +52,8 @@ test("all canonical visual panels share the Figma gradient stroke and retain for
   assert.match(interactionStyles, /\.momentumPanel \{[^}]*background-color: var\(--annual-canvas\);/);
 });
 
-test("related research is a keyboard-accessible link to the confirmed AI transformation profiles article", () => {
-  assert.match(snapshot, /<a\s+className=\{styles\.frame99\}\s+href="https:\/\/techcommunity\.microsoft\.com\/blog\/microsoftvivablog\/research-drop-diving-into-ai-transformation-profiles-to-understand-unique-needs-\/4336280"\s+target="_blank"\s+rel="noopener noreferrer"\s+aria-label="Microsoft People Science research \(opens in a new tab\)"/);
+test("related research is a keyboard-accessible link using the approved November 2024 short URL", () => {
+  assert.match(snapshot, /<a\s+className=\{styles\.frame99\}\s+href="https:\/\/aka\.ms\/researchdrop_nov2024"\s+target="_blank"\s+rel="noopener noreferrer"\s+aria-label="Microsoft People Science research \(opens in a new tab\)"/);
   assert.match(figmaStyles, /\.frame99:focus-visible \{ outline:2px solid var\(--annual-accent\); outline-offset:3px; \}/);
 });
 
