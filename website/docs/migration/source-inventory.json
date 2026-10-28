@@ -49,8 +49,8 @@
       "source": "README.md",
       "destination": "website/README.md",
       "sourceSha256": "5d8bf5442839d7989a24a82b72496f407066ecd3381247fdfe35d4995571e0a2",
-      "destinationSha256": "24898f9e5a2b9df48153abf7476391284266e2dca755b55ca93b3b0e282045c2",
-      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback. The approved distinct-browser and automatic-analytics extensions document first-visit tracking without on-site consent/opt-out controls, privacy approval, preserved refusals and DNT/GPC, a read-only disclosure, fixed 18-calendar-month random browser IDs, separate server-side keyed hashing, compatible anonymous events and restricted 90-day distinct counts."
+      "destinationSha256": "f58e6f3820072aaff9b2f4753b20ddcdd109457a80a19c8ce27ff6e1e17749c9",
+      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback. The approved distinct-browser and automatic-analytics extensions document first-visit tracking without on-site consent/opt-out controls, privacy approval, preserved refusals and DNT/GPC, fixed 18-calendar-month random browser IDs, separate server-side keyed hashing, compatible anonymous events and restricted 90-day distinct counts. The requested removal of floating analytics UI moves its disclosure into plain text in the existing marketing footer."
     },
     {
       "source": "artifacts/README.md",
@@ -3710,8 +3710,8 @@
       "source": "src/app/_components/marketing-footer.tsx",
       "destination": "website/src/app/_components/marketing-footer.tsx",
       "sourceSha256": "e03e844604fab71f8025ecfd6500385e459607ef25451e7e7de318a614a309dc",
-      "destinationSha256": "e03e844604fab71f8025ecfd6500385e459607ef25451e7e7de318a614a309dc",
-      "intentionalDifference": ""
+      "destinationSha256": "f5ea85edfb747c933f13a43b5aa8bfc7566577588764ff5a5a023f3e2480ded3",
+      "intentionalDifference": "Move automatic-analytics disclosure into a noninteractive paragraph beside the existing privacy link, gated by the public Pages telemetry build flag. Reuse existing disclaimer styling without a floating widget, consent prompt, new controls or redesign."
     },
     {
       "source": "src/app/_components/public-site-design.module.css",
