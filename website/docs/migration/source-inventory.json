@@ -14,8 +14,8 @@
       "source": ".github/workflows/site-ci.yml",
       "destination": ".github/workflows/site-ci.yml",
       "sourceSha256": "21ed094e6da10c12eb4e2c9b57bbee6305a1f8fafef492661dae0c7ea6951ba0",
-      "destinationSha256": "cbedcfef431cfaaf160b98be52a0356662ce4976839f5a476c77c5dfce7fadaf",
-      "intentionalDifference": "Relocated to destination root with website working directory/npm cache, Node22.23.4 and inventory check; preserves source checks, adds verified static-reader build and explicitly authorized main-only GitHub Pages deployment. Subsequent maintainer-approved telemetry adds a disabled-by-default main-only Pages flag and an intercepted consent browser release gate when enabled."
+      "destinationSha256": "1846b4dcbebde75ffbb2ade19feb88cdf6b74b87eebd5daadb1dc485a082fb9a",
+      "intentionalDifference": "Relocated to destination root with website working directory/npm cache, Node22.23.4 and inventory check; preserves source checks, adds verified static-reader build and explicitly authorized main-only GitHub Pages deployment. Subsequent maintainer-approved telemetry adds a disabled-by-default main-only Pages flag and an intercepted browser release gate when enabled. The approved automatic-analytics policy renames that gate to match its first-visit and retained privacy-protection checks."
     },
     {
       "source": ".gitignore",
@@ -49,8 +49,8 @@
       "source": "README.md",
       "destination": "website/README.md",
       "sourceSha256": "5d8bf5442839d7989a24a82b72496f407066ecd3381247fdfe35d4995571e0a2",
-      "destinationSha256": "2cb6d34bfb08583b6ffcf8a63fe9cbd2c09a915fac250eff0d92ee75d1815c89",
-      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents opt-in/privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback."
+      "destinationSha256": "24898f9e5a2b9df48153abf7476391284266e2dca755b55ca93b3b0e282045c2",
+      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback. The approved distinct-browser and automatic-analytics extensions document first-visit tracking without on-site consent/opt-out controls, privacy approval, preserved refusals and DNT/GPC, a read-only disclosure, fixed 18-calendar-month random browser IDs, separate server-side keyed hashing, compatible anonymous events and restricted 90-day distinct counts."
     },
     {
       "source": "artifacts/README.md",

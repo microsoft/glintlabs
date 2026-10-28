@@ -15,6 +15,7 @@ const record = () => db.query<{ result: string }>(
 before(async () => {
   await db.exec("create role anon; create role authenticated; create role service_role;");
   await db.exec(await readFile(new URL("../../../supabase/migrations/20261027000100_glintlabs_telemetry.sql", import.meta.url), "utf8"));
+  await db.exec(await readFile(new URL("../../../supabase/migrations/20261027000300_glintlabs_unique_visitors.sql", import.meta.url), "utf8"));
 });
 beforeEach(async () => {
   await db.exec("reset role; truncate glintlabs_telemetry.events, glintlabs_telemetry.rate_limits;");
@@ -26,12 +27,13 @@ test("the actual migration stores only whitelisted event columns and server time
   const { rows } = await db.query<Record<string, unknown>>("select * from glintlabs_telemetry.events");
   assert.equal(rows.length, 1);
   assert.deepEqual(Object.keys(rows[0]).sort(), [
-    "campaign_source", "event_name", "id", "occurred_at", "page_path", "referrer",
+    "campaign_source", "event_name", "id", "occurred_at", "page_path", "referrer", "visitor_id",
   ]);
   assert.equal(rows[0].page_path, "/reports");
+  assert.equal(rows[0].visitor_id, null);
   await assert.rejects(() => db.query("select public.glintlabs_record_event($1::jsonb, $2)", [
     JSON.stringify({ ...JSON.parse(event), employee: "unexpected" }), rateKey,
-  ]), /Invalid telemetry event/);
+  ]), /Invalid (legacy )?telemetry event/);
 });
 
 test("anonymous/authenticated roles cannot ingest or access data; service role has only the ingestion RPC", async () => {
@@ -40,6 +42,7 @@ test("anonymous/authenticated roles cannot ingest or access data; service role h
     await db.exec(`set role ${role}`);
     await assert.rejects(() => db.query("select * from glintlabs_telemetry.events"), /permission denied/);
     await assert.rejects(() => db.query("select * from glintlabs_telemetry.daily_counts"), /permission denied/);
+    await assert.rejects(() => db.query("select * from glintlabs_telemetry.page_visitors"), /permission denied/);
     await assert.rejects(() => db.exec("delete from glintlabs_telemetry.events"), /permission denied/);
     await assert.rejects(() => db.exec("update glintlabs_telemetry.events set referrer = 'other'"), /permission denied/);
     if (role === "service_role") assert.equal((await record()).rows[0].result, "accepted");
@@ -50,6 +53,25 @@ test("anonymous/authenticated roles cannot ingest or access data; service role h
   await db.exec("begin; grant usage on schema glintlabs_telemetry to anon; grant select on glintlabs_telemetry.events to anon; set role anon;");
   assert.deepEqual((await db.query("select * from glintlabs_telemetry.events")).rows, []);
   await db.exec("reset role; rollback;");
+});
+
+test("distinct-browser reporting deduplicates per page across visits and excludes legacy and expired events", async () => {
+  const submit = (visitor: string, page = "/reports", name = "page_view") => db.query(
+    "select public.glintlabs_record_event($1::jsonb,$2)",
+    [JSON.stringify({ ...JSON.parse(event), v: 2, visitor_id: visitor, page_path: page, event: name }), rateKey],
+  );
+  await record();
+  await submit("b".repeat(64));
+  await submit("b".repeat(64));
+  await submit("b".repeat(64), "/about");
+  await submit("c".repeat(64));
+  await submit("d".repeat(64), "/reports", "skill_link_click");
+  await db.exec(`insert into glintlabs_telemetry.events (occurred_at,event_name,page_path,referrer,campaign_source,visitor_id)
+    values (now()-interval '91 days','page_view','/reports','direct','none','${"e".repeat(64)}')`);
+  assert.deepEqual((await db.query("select page_path,distinct_browsers::int from glintlabs_telemetry.page_visitors order by page_path")).rows, [
+    { page_path: "/about", distinct_browsers: 1 }, { page_path: "/reports", distinct_browsers: 2 },
+  ]);
+  await assert.rejects(() => submit("11111111-1111-4111-8111-111111111111"), /Invalid visitor hash/);
 });
 
 test("database enforces per-address and global limits atomically and bounds counter growth", async () => {

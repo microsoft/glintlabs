@@ -55,7 +55,7 @@ jobs:
         env:
           GLINTLABS_PAGES_TELEMETRY: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.GLINTLABS_PAGES_TELEMETRY == 'true' && 'true' || 'false' }}
 
-      - name: Verify consent before releasing enabled analytics
+      - name: Verify automatic analytics and privacy protections before release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.GLINTLABS_PAGES_TELEMETRY == 'true'
         run: npm run pages:test:telemetry
 

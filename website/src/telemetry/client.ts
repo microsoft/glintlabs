@@ -1,28 +1,78 @@
 import {
   campaignCategory, collectorUrl, productionBasePath, productionOrigin,
-  publicPath, referralCategory, type EventName, type TelemetryEvent,
+  publicPath, referralCategory, isVisitorId, type EventName, type TelemetryEvent,
 } from "./contract.ts";
 
-export const consentKey = "glintlabs.analytics-consent.v1";
-const consentLifetime = 180 * 24 * 60 * 60 * 1000;
-export type Consent = "granted" | "denied" | null;
-type StorageAccess = Pick<Storage, "getItem" | "setItem">;
+export const legacyConsentKeys = ["glintlabs.analytics-consent.v1", "glintlabs.analytics-consent.v2"] as const;
+export const visitorKey = "glintlabs.analytics-visitor.v1";
+type StorageAccess = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 
-export function readConsent(storage: StorageAccess, now = Date.now()): Consent {
-  const raw = storage.getItem(consentKey);
-  if (!raw) return null;
-  let record: unknown;
-  try { record = JSON.parse(raw); }
-  catch { console.warn("[Glint Labs analytics] Invalid stored preference; analytics stays off."); return null; }
-  if (!record || typeof record !== "object") return null;
-  const value = record as Record<string, unknown>;
-  return (value.choice === "granted" || value.choice === "denied") &&
-    typeof value.expires === "number" && value.expires > now && value.expires <= now + consentLifetime
-    ? value.choice : null;
+export function visitorExpiry(now: number): number {
+  const date = new Date(now);
+  const day = date.getUTCDate();
+  date.setUTCMonth(date.getUTCMonth() + 18, 1);
+  const end = new Date(date);
+  end.setUTCMonth(end.getUTCMonth() + 1, 0);
+  date.setUTCDate(Math.min(day, end.getUTCDate()));
+  return date.getTime();
 }
 
-export function saveConsent(storage: StorageAccess, choice: Exclude<Consent, null>, now = Date.now()) {
-  storage.setItem(consentKey, JSON.stringify({ choice, expires: now + consentLifetime }));
+export function createBrowserIdentity(options: {
+  storage: () => StorageAccess;
+  warn: (message: string) => void;
+  now?: () => number;
+  randomUUID?: () => string;
+}) {
+  let warned = false;
+  const warn = () => {
+    if (!warned) options.warn("[Glint Labs analytics] Browser ID storage unavailable; distinct-browser counting is unavailable.");
+    warned = true;
+  };
+  return {
+    getId(): string | null {
+      try {
+        const storage = options.storage();
+        const now = (options.now ?? Date.now)();
+        const raw = storage.getItem(visitorKey);
+        let value: unknown;
+        if (raw) {
+          try { value = JSON.parse(raw); }
+          catch { options.warn("[Glint Labs analytics] Invalid stored browser ID; replacing it."); }
+        }
+        if (value && typeof value === "object") {
+          const record = value as Record<string, unknown>;
+          if (isVisitorId(record.id) && typeof record.expires === "number" &&
+              record.expires > now && record.expires <= visitorExpiry(now)) return record.id;
+        }
+        const id = (options.randomUUID ?? (() => crypto.randomUUID()))();
+        storage.setItem(visitorKey, JSON.stringify({ id, expires: visitorExpiry(now) }));
+        return id;
+      } catch {
+        warn();
+        return null;
+      }
+    },
+    clear() {
+      try { options.storage().removeItem(visitorKey); }
+      catch { options.warn("[Glint Labs analytics] Browser ID could not be deleted. Clear this site's browser data; collection is stopped for this page session."); }
+    },
+  };
+}
+
+export function hasLegacyRefusal(storage: Pick<Storage, "getItem">, now = Date.now()): boolean {
+  for (const key of legacyConsentKeys) {
+    const raw = storage.getItem(key);
+    if (!raw) continue;
+    const record: unknown = JSON.parse(raw);
+    if (!record || typeof record !== "object") throw new Error("Invalid stored analytics preference.");
+    const value = record as Record<string, unknown>;
+    if ((value.choice !== "granted" && value.choice !== "denied") ||
+        typeof value.expires !== "number" || !Number.isFinite(value.expires)) {
+      throw new Error("Invalid stored analytics preference.");
+    }
+    if (value.choice === "denied" && value.expires > now) return true;
+  }
+  return false;
 }
 
 export function isProductionLocation(location: Pick<Location, "origin" | "pathname">) {
@@ -55,27 +105,35 @@ export function createTelemetryClient(options: {
   location: () => Pick<Location, "origin" | "pathname" | "search">;
   referrer: () => string;
   privacyRequested: () => boolean;
+  preferenceBlocked: () => boolean;
+  identity: Pick<ReturnType<typeof createBrowserIdentity>, "getId" | "clear">;
   fetch: typeof fetch;
   warn: (message: string) => void;
 }) {
-  let consent: Consent = null;
+  let disposed = false;
   let lastPage: string | null = null;
   const pending = new Set<AbortController>();
   const cancel = () => { for (const controller of pending) controller.abort(); pending.clear(); };
   return {
-    setConsent(choice: Consent) {
-      if (choice !== "granted") { cancel(); lastPage = null; }
-      consent = choice;
-    },
-    dispose: cancel,
+    reset() { cancel(); lastPage = null; },
+    dispose() { disposed = true; cancel(); },
     async track(event: EventName): Promise<boolean> {
       const location = options.location();
-      if (!options.enabled || consent !== "granted" || options.privacyRequested() || !isProductionLocation(location)) return false;
+      if (!options.enabled || disposed || !isProductionLocation(location)) return false;
       const page = locationPath(location.pathname);
-      if (!page || (event === "page_view" && page === lastPage)) return false;
+      if (!page) return false;
+      if (options.privacyRequested() || options.preferenceBlocked()) {
+        cancel();
+        lastPage = null;
+        options.identity.clear();
+        return false;
+      }
+      if (event === "page_view" && page === lastPage) return false;
       if (event === "report_download_click" && page !== "/annual-report-2026" && !page.startsWith("/reports/")) return false;
+      const visitorId = options.identity.getId();
       const payload: TelemetryEvent = {
-        v: 1, event, page_path: page,
+        ...(visitorId ? { v: 2 as const, visitor_id: visitorId } : { v: 1 as const }),
+        event, page_path: page,
         referrer: referralCategory(options.referrer()),
         campaign_source: campaignCategory(location.search),
       };
@@ -95,7 +153,9 @@ export function createTelemetryClient(options: {
         }
         return true;
       } catch {
-        if (consent === "granted") options.warn("[Glint Labs analytics] Collection unavailable; navigation is unaffected.");
+        if (!disposed && !options.privacyRequested() && !options.preferenceBlocked()) {
+          options.warn("[Glint Labs analytics] Collection unavailable; navigation is unaffected.");
+        }
         return false;
       } finally {
         clearTimeout(timeout);

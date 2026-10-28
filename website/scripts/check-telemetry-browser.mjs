@@ -6,6 +6,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { collectorUrl, parseEvent, productionOrigin } from "../src/telemetry/contract.ts";
+import { legacyConsentKeys, visitorKey } from "../src/telemetry/client.ts";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const local = "http://127.0.0.1:3011";
@@ -103,15 +104,13 @@ async function go(route, origin = productionOrigin) {
     document.readyState === "complete"`), `Page failed to load: ${route}`);
 }
 
-async function settings() {
-  await evaluate(`document.querySelector('[aria-label="Analytics preferences"] > button').click()`);
-  await waitFor(() => evaluate(`!!document.getElementById("analytics-preferences") &&
-    document.activeElement.textContent === "Reject optional analytics"`), "Settings did not open with keyboard focus.");
-}
-
-async function choose(allow) {
-  await evaluate(`document.querySelectorAll('#analytics-preferences button')[${allow ? 1 : 0}].click()`);
-  await waitFor(() => evaluate(`!document.getElementById("analytics-preferences")`), "Choice did not close settings.");
+async function changePreference(key, choice) {
+  await evaluate(`(() => {
+    const key = ${JSON.stringify(key)};
+    ${choice ? `localStorage.setItem(key,JSON.stringify({choice:${JSON.stringify(choice)},expires:Date.now()+86400000}));`
+      : "localStorage.removeItem(key);"}
+    window.dispatchEvent(new StorageEvent("storage",{key}));
+  })()`);
 }
 
 try {
@@ -159,26 +158,27 @@ try {
   ] });
   await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 900, deviceScaleFactor: 1, mobile: false });
   await go("/?email=never-send&utm_source=private-name");
-  await waitFor(() => evaluate(`!!document.getElementById("analytics-preferences")`),
+  await waitFor(() => events.length === 1,
     "Build with GLINTLABS_PAGES_TELEMETRY=true before running telemetry browser checks.");
-  assert.equal(events.length, 0, "Sent data before consent.");
+  assert.equal(await evaluate(`!!document.getElementById("analytics-preferences") ||
+    !!document.querySelector('[aria-label="Analytics preferences"]')`), false, "Consent controls remain.");
+  assert.equal(await evaluate(`document.querySelector('[aria-label="Site analytics"] button')`), null, "Disclosure has an opt-out control.");
   assert.equal(await evaluate("document.documentElement.scrollWidth <= innerWidth"), true);
+  await evaluate(`document.querySelector('[aria-label="Site analytics"] summary').click()`);
   const axe = await readFile(path.join(root, "node_modules/axe-core/axe.min.js"), "utf8");
   await evaluate(`${axe}\ntrue`);
   assert.deepEqual(await evaluate(`(async () => (await axe.run(
-    document.querySelector('[aria-label="Analytics preferences"]'),
+    document.querySelector('[aria-label="Site analytics"]'),
     {runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21aa"]}})).violations)()`), []);
-  await choose(false);
-  await go("/");
-  await waitFor(() => evaluate(`!!document.querySelector('[aria-label="Analytics preferences"]')`), "Preferences not mounted.");
-  assert.equal(await evaluate(`!!document.getElementById("analytics-preferences")`), false, "Rejection was not persisted.");
-  assert.equal(events.length, 0);
-  await settings();
-  assert.equal(await evaluate("document.activeElement.textContent"), "Reject optional analytics", "Settings lost keyboard focus.");
-  await choose(true);
-  await waitFor(() => events.length === 1, "Grant did not send the current page view.");
+  assert.equal(await evaluate("document.documentElement.scrollWidth <= innerWidth"), true);
+  await evaluate(`document.querySelector('[aria-label="Site analytics"] summary').click()`);
   assert.equal(events[0].event, "page_view");
-  assert.deepEqual(Object.keys(await evaluate(`JSON.parse(localStorage.getItem("glintlabs.analytics-consent.v1"))`)).sort(), ["choice", "expires"]);
+  assert.equal(events[0].v, 2);
+  const firstBrowser = events[0].visitor_id;
+  assert.equal(await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify(visitorKey)})).id`), firstBrowser);
+  for (const key of legacyConsentKeys) {
+    assert.equal(await evaluate(`localStorage.getItem(${JSON.stringify(key)})`), null, "Fabricated a consent record.");
+  }
   await evaluate(`(() => {
     const link = [...document.querySelectorAll("a[href]")].find(link =>
       new URL(link.href).pathname.replace(/\\/$/,"") === "/glintlabs/reports");
@@ -191,7 +191,7 @@ try {
   await pause();
   assert.equal(events.length, 2, "Hash-only navigation duplicated the page view.");
   await go("/tools/analyze-survey/");
-  await waitFor(() => events.length === 3, "Consented reload did not track.");
+  await waitFor(() => events.length === 3, "Automatic reload did not track.");
   await evaluate(`(() => {
     const link = document.querySelector('a[href="https://github.com/microsoft/glintlabs/blob/main/skills/analyze-survey/SKILL.md"]');
     if (!link) throw Error("Missing skill link");
@@ -207,38 +207,70 @@ try {
   await waitFor(() => events.length === 6 && warnings.length > 0, "Collector failure was not diagnosed.");
   await waitFor(() => evaluate(`!!document.querySelector("dialog[open]")`), "Analytics failure blocked the Analyze Survey dialog.");
   assert.equal(events[5].event, "analyze_survey_click");
+  assert.ok(events.slice(0, 6).every(event => event.visitor_id === firstBrowser), "ID changed across navigation or reload.");
   await evaluate(`document.querySelector("dialog").dispatchEvent(new Event("cancel",{cancelable:true}))`);
   rejecting = false;
-  await settings();
-  await choose(false);
+  await changePreference(legacyConsentKeys[0], "denied");
+  await waitFor(() => evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)}) === null`), "Legacy refusal did not delete the browser ID.");
   await go("/about/");
-  await waitFor(() => evaluate(`!!document.querySelector('[aria-label="Analytics preferences"]')`), "Revoked page did not load.");
+  await waitFor(() => evaluate(`!!document.querySelector('[aria-label="Site analytics"]')`), "Page did not hydrate.");
   await pause();
-  assert.equal(events.length, 6, "Withdrawal did not stop collection.");
-  await settings();
-  await choose(true);
-  await waitFor(() => events.length === 7, "Re-grant did not track the current page.");
+  assert.equal(events.length, 6, "Legacy refusal did not stop collection after reload.");
+  await changePreference(legacyConsentKeys[1], "granted");
+  await pause();
+  assert.equal(events.length, 6, "A newer grant overrode an older active refusal.");
+  await changePreference(legacyConsentKeys[0], null);
+  await waitFor(() => events.length === 7, "Clearing a refusal did not resume tracking.");
+  assert.notEqual(events[6].visitor_id, firstBrowser, "Reused a deleted browser ID.");
+  await changePreference(legacyConsentKeys[1], "denied");
+  await waitFor(() => evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)}) === null`), "Version-2 refusal did not delete the ID.");
+  await go("/");
+  await waitFor(() => evaluate(`!!document.querySelector('[aria-label="Site analytics"]')`), "Page did not hydrate.");
+  await pause();
+  assert.equal(events.length, 7, "Version-2 refusal did not stop collection.");
+  await changePreference(legacyConsentKeys[1], null);
+  await waitFor(() => events.length === 8, "Clearing the second refusal did not resume tracking.");
   const privacy = await send("Page.addScriptToEvaluateOnNewDocument", {
     source: 'Object.defineProperty(navigator,"globalPrivacyControl",{get:()=>true});',
   });
   await go("/");
-  await waitFor(() => evaluate(`!!document.querySelector('[aria-label="Analytics preferences"]')`), "Privacy page did not load.");
+  await waitFor(() => evaluate(`!!document.querySelector('[aria-label="Site analytics"]')`), "Privacy page did not hydrate.");
   await pause();
-  assert.equal(events.length, 7, "GPC did not override persisted consent.");
-  await settings();
-  assert.equal(await evaluate(`document.querySelectorAll('#analytics-preferences button')[1].disabled`), true);
+  assert.equal(events.length, 8, "GPC did not stop automatic collection.");
+  assert.equal(await evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)})`), null, "GPC did not delete the browser ID.");
   await send("Page.removeScriptToEvaluateOnNewDocument", { identifier: privacy.identifier });
-  await go("/", local);
-  await evaluate(`localStorage.setItem("glintlabs.analytics-consent.v1",JSON.stringify({
-    choice:"granted",expires:Date.now()+86400000
-  }))`);
+  const dnt = await send("Page.addScriptToEvaluateOnNewDocument", {
+    source: 'Object.defineProperty(navigator,"doNotTrack",{get:()=>"1"});',
+  });
+  await go("/about/");
+  await waitFor(() => evaluate(`!!document.querySelector('[aria-label="Site analytics"]')`), "DNT page did not hydrate.");
+  await pause();
+  assert.equal(events.length, 8, "DNT did not stop automatic collection.");
+  assert.equal(await evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)})`), null);
+  await send("Page.removeScriptToEvaluateOnNewDocument", { identifier: dnt.identifier });
+  const unavailable = await send("Page.addScriptToEvaluateOnNewDocument", {
+    source: 'Object.defineProperty(window,"localStorage",{get(){throw new DOMException("Storage unavailable","SecurityError");}});',
+  });
+  await go("/");
+  await waitFor(() => warnings.some(message => message.includes("Existing preferences unavailable")), "Unreadable preferences were not diagnosed.");
+  assert.equal(events.length, 8, "Unreadable preferences bypassed a possible refusal.");
+  await send("Page.removeScriptToEvaluateOnNewDocument", { identifier: unavailable.identifier });
+  const unwritable = await send("Page.addScriptToEvaluateOnNewDocument", {
+    source: 'Storage.prototype.setItem=function(){throw new DOMException("Storage full","QuotaExceededError");};',
+  });
+  await go("/about/");
+  await waitFor(() => events.length === 9, "Anonymous event fallback did not run when ID saving failed.");
+  assert.equal(events[8].v, 1);
+  assert.equal(events[8].visitor_id, undefined);
+  await send("Page.removeScriptToEvaluateOnNewDocument", { identifier: unwritable.identifier });
   await go("/", local);
   await pause();
-  assert.equal(await evaluate(`!!document.querySelector('[aria-label="Analytics preferences"]')`), false);
-  assert.equal(events.length, 7, "Local preview sent telemetry.");
+  assert.equal(await evaluate(`!!document.querySelector('[aria-label="Site analytics"]')`), false);
+  assert.equal(events.length, 9, "Local preview sent telemetry.");
+  assert.equal(await evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)})`), null, "Local preview created a browser ID.");
   assert.ok(!JSON.stringify(events).includes("never-send"));
   if (failures.length) throw failures[0];
-  console.log("Telemetry browser checks passed: opt-in/reject persistence, withdrawal, navigation deduplication, real skill/tool clicks, GPC, local suppression, failure isolation, and 320px consent accessibility. All events intercepted; none sent to Supabase.");
+  console.log("Telemetry browser checks passed: automatic first-visit collection without consent/opt-out controls or fabricated consent, stable browser IDs, preserved legacy refusals, ID deletion, navigation deduplication, real skill/tool clicks, GPC/DNT, unreadable preferences, anonymous fallback, local suppression, failure isolation, and 320px disclosure accessibility. All events intercepted; none sent to Supabase.");
 } finally {
   stopping = true;
   socket?.close();

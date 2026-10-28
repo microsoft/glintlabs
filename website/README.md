@@ -29,26 +29,51 @@ Private drafts, staging output, and local review evidence remain excluded from
 Git. Explicitly approved Studio exports can be reviewed and committed through
 the [Pages publication workflow](pages-publications/README.md).
 
-## Optional Supabase site analytics
+## Supabase site analytics
 
 Analytics is **off by default** in both Supabase and Pages. Ordinary Next builds,
 Studio, previews, localhost, and other origins never collect. The only approved
 collector is `glintlabs-telemetry` in project `kkthgbgkzzkfpmnbjmro`.
 
-The public reader asks for opt-in consent before sending page views, Analyze
-Survey opens, skill-link clicks, and report-download clicks. Opening a report is
+When the production flags are enabled, the public reader automatically sends
+page views, Analyze Survey opens, skill-link clicks, and report-download clicks.
+There is no consent prompt or on-site opt-out control. A read-only Site analytics
+disclosure explains collection, storage, and the Microsoft Privacy Statement.
+Publishing this policy requires the site's privacy/legal owner's approval;
+default-on persistent identifiers are not universally exempt from prior-consent
+requirements. Opening a report is
 a page view, not a second event. Download clicks measure intent, not completed
 downloads; there are no invented download controls. Tool interest is not survey
-execution. Counts are events, never unique visitors, adoption, or conversions.
-No events are queued before consent. Browser DNT/GPC signals override consent.
-Analytics settings allow withdrawal; withdrawal aborts pending requests but
-cannot recall events already received. Only a choice and 180-day expiry are
-stored in localStorage; storage failure leaves the choice page-session-only.
+execution. Event counts are not adoption or completed conversions.
+Browser DNT/GPC signals and unexpired refusals under either previous consent
+version still stop collection, abort pending requests, and delete the browser ID.
+No new consent record is written or implied. Existing refusals retain their
+original 180-day expiry. Unreadable or malformed preferences stop collection with
+an explicit diagnostic rather than silently overriding a possible refusal.
+A random UUID identifies a tracked browser/device for a fixed 18 calendar months,
+clamped to the target month's final day when needed. Use does not extend its
+expiry. It is created automatically only after the enabled-production,
+reviewed-path, browser-privacy, and existing-refusal checks pass.
+Stopping collection cannot recall events already received.
+
+The collector HMAC-hashes the random ID with a separate server-only secret
+before database insertion; it never stores the original UUID in event rows.
+`glintlabs_telemetry.page_visitors` counts distinct browser hashes per page over
+the retained 90-day event window. These are approximate tracked browsers,
+not verified people or accounts. Changing devices/browsers, clearing storage,
+ID expiry, or privacy-signal deletion and later recreation can increase counts. Old anonymous
+events remain usable for event totals but cannot be retroactively deduplicated.
+If preferences can be read but the ID cannot be saved, an explicit diagnostic is logged and anonymous
+version-1 events continue; those events do not contribute to browser counts.
+Compute distinct counts for the whole desired window; never sum daily distinct
+counts. Use `supabase/reports/telemetry.sql` in the restricted SQL editor.
 
 The shared contract in `src/telemetry/contract.ts` permits only reviewed public
 paths, four event names, and predefined referral/campaign-source categories.
 Queries, fragments, referrer URLs, survey data, employee data, free text,
-timestamps supplied by visitors, and visitor identifiers are never sent.
+timestamps supplied by visitors, and employee/account identifiers are never sent.
+Version 2 additionally permits only a random UUID browser identifier; version 1
+remains accepted for anonymous events from older pages.
 Add newly approved public report paths to that contract when publishing; an
 enabled Pages build refuses to ship unknown public report identifiers.
 
@@ -66,15 +91,21 @@ On Windows PowerShell, use `npx.cmd` if its execution policy blocks the
    `public.glintlabs_record_event` function, and function/job names before applying.
    Do not reset the database or reconcile another application's migrations.
 2. Set `GLINTLABS_TELEMETRY_ENABLED=false` and a newly generated random
-   `GLINTLABS_RATE_LIMIT_SECRET` (at least 32 characters) using the project's
+   `GLINTLABS_RATE_LIMIT_SECRET` and a separate `GLINTLABS_VISITOR_ID_SECRET`
+   (each at least 32 random characters) using the project's
    Edge Function secrets UI. The runtime supplies `SUPABASE_URL` and
    `SUPABASE_SERVICE_ROLE_KEY`; neither belongs in the site.
 3. This is a shared project: inspect its migration history first. Apply only
-   the two reviewed `supabase/migrations/*glintlabs_telemetry*.sql` files through
+   the reviewed telemetry migrations, in timestamp order, through
    the restricted SQL editor if its existing history differs. Do not blindly
    run `db push`, `migration repair`, or apply unrelated pending migrations.
    The first file creates isolated tables/RPC; the second requires `pg_cron`
    and schedules an hourly cleanup without modifying other jobs.
+   The third adds only the nullable keyed visitor-hash column, compatible
+   ingestion and the restricted distinct-browser view. Do not reapply the first
+   two to an already-deployed schema. Provision the visitor-hash secret, apply
+   the third migration, deploy the compatible collector, then release the new
+   automatic client. Old version-1 events continue to work throughout.
    The authenticated CLI alternative is `supabase db query --linked
    --project-ref kkthgbgkzzkfpmnbjmro --file <reviewed-migration.sql>`.
    Direct SQL application does not modify shared Supabase migration history;
@@ -94,11 +125,12 @@ On Windows PowerShell, use `npx.cmd` if its execution policy blocks the
 6. Set repository **Actions variable** `GLINTLABS_PAGES_TELEMETRY=true` and run
    Site CI on `main` after merging. Only this public Pages build replaces the
    disabled config module, and the flag is never enabled for PR builds.
-   Check reject/allow/withdraw choices and one navigation/click with the browser
-   Network panel. Never include a service key or access token in that build.
+   Verify first-visit collection without interaction, no consent or opt-out
+   controls, preserved refusals, DNT/GPC suppression, and navigation/click events.
+   Never include a service key or access token in that build.
 
 To stop collection immediately, set the backend secret to `false`. To remove
-the prompt too, set the Actions variable to `false` and rebuild Pages.
+the client and its disclosure, set the Actions variable to `false` and rebuild Pages.
 Deployments do not automatically enable collection.
 
 ### Retention, operations, and interpretation
@@ -112,6 +144,9 @@ a failed retention job must be fixed, not treated as a successful purge.
 Supabase infrastructure/access logs, backups, and point-in-time recovery have
 their own project-level retention. Confirm their policy with the shared-project
 owner; deleting application rows does not erase provider backups or logs.
+An 18-month browser-ID lifetime does not extend raw-event retention beyond
+90 days. Keep the visitor-hash secret stable; rotating it changes hash identity
+and can count a returning browser again within the retained reporting window.
 
 The gateway necessarily sees network addresses. The collector does not log
 bodies, addresses, user agents, or credentials. A secret-keyed HMAC changes daily
@@ -121,8 +156,8 @@ globally/day, atomically enforced in PostgreSQL. Rejected address-level attempts
 also consume global quota. These bound database writes/counter growth, not
 Edge Function invocations or malicious traffic costs. CORS can be spoofed by
 nonbrowser callers; forwarded address controls depend on the trusted gateway.
-Bots, shared NATs, consent, blockers, caps, and failures make these approximate
-opt-in event counts, not a census or bot-proof attribution system.
+Bots, shared NATs, privacy preferences, blockers, caps, and failures make these
+approximate event counts, not a census or bot-proof attribution system.
 
 Run `npm test` and `npm run lint`. Telemetry database tests use embedded
 PostgreSQL (PGlite) to execute the real schema, RPC, RLS/permissions, limits,

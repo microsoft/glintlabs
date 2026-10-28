@@ -4,7 +4,8 @@ import {
   campaignCategory, parseEvent, publicPath, referralCategory, type TelemetryEvent,
 } from "./contract.ts";
 import {
-  actionEvent, consentKey, createTelemetryClient, readConsent, saveConsent,
+  actionEvent, createBrowserIdentity, createTelemetryClient, hasLegacyRefusal,
+  legacyConsentKeys, visitorExpiry, visitorKey,
 } from "./client.ts";
 import { createHandler } from "../../../supabase/functions/glintlabs-telemetry/handler.ts";
 import { getLaunchReports } from "../launch-reports/reports.ts";
@@ -12,6 +13,9 @@ import { getLaunchReports } from "../launch-reports/reports.ts";
 const event: TelemetryEvent = {
   v: 1, event: "page_view", page_path: "/reports", referrer: "github", campaign_source: "none",
 };
+const browserId = "11111111-1111-4111-8111-111111111111";
+const secondBrowserId = "22222222-2222-4222-8222-222222222222";
+const identity = { getId: () => browserId, clear: () => {} };
 
 test("strict shared contract rejects private paths, identifiers, unknown properties and mislabeled downloads", () => {
   assert.deepEqual(parseEvent(event), event);
@@ -21,10 +25,13 @@ test("strict shared contract rejects private paths, identifiers, unknown propert
     { ...event, campaign_source: "name@example.com" }, { ...event, v: 2 },
     { ...event, event: "analysis_complete" }, { ...event, event: "report_download_click" },
     { ...event, referrer: null }, null, [],
+    { ...event, v: 2, visitor_id: "name@example.com" },
+    { ...event, visitor_id: browserId },
   ]) assert.equal(parseEvent(input), null);
   assert.equal(parseEvent({ ...event, event: "report_download_click", page_path: "/annual-report-2026" })?.event, "report_download_click");
   assert.equal(publicPath("/reports/glps-rd-feb-26/"), "/reports/fighting-ai-slop-with-meta-cognition-around-ai");
   for (const report of getLaunchReports({ includePrivatePreview: false })) assert.ok(publicPath(`/reports/${report.slug}`));
+  assert.deepEqual(parseEvent({ ...event, v: 2, visitor_id: browserId }), { ...event, v: 2, visitor_id: browserId });
 });
 
 test("referral/campaign categories never preserve URLs, search terms or arbitrary campaign text", () => {
@@ -37,49 +44,88 @@ test("referral/campaign categories never preserve URLs, search terms or arbitrar
   assert.equal(campaignCategory(""), "none");
 });
 
-test("consent persists only a versioned choice/expiry; expired and malformed preferences never grant consent", () => {
+test("automatic analytics preserves unexpired refusals from both prior policies without writing consent", () => {
+  const values = new Map<string, string>();
+  const storage = { getItem: (key: string) => values.get(key) ?? null };
+  assert.equal(hasLegacyRefusal(storage, 1000), false);
+  for (const key of legacyConsentKeys) {
+    values.clear();
+    values.set(key, JSON.stringify({ choice: "denied", expires: 2000 }));
+    assert.equal(hasLegacyRefusal(storage, 1000), true);
+    assert.equal(hasLegacyRefusal(storage, 2000), false);
+    values.set(key, JSON.stringify({ choice: "granted", expires: 2000 }));
+    assert.equal(hasLegacyRefusal(storage, 1000), false);
+    values.set(key, "{");
+    assert.throws(() => hasLegacyRefusal(storage, 1000));
+    values.set(key, JSON.stringify({ choice: "yes", expires: 2000 }));
+    assert.throws(() => hasLegacyRefusal(storage, 1000));
+  }
+  values.set(legacyConsentKeys[0], JSON.stringify({ choice: "denied", expires: 2000 }));
+  values.set(legacyConsentKeys[1], JSON.stringify({ choice: "granted", expires: 2000 }));
+  assert.equal(hasLegacyRefusal(storage, 1000), true);
+  assert.throws(() => hasLegacyRefusal({ getItem: () => { throw new Error("Storage unavailable"); } }));
+});
+
+test("browser IDs persist without sliding expiry for 18 calendar months, rotate on expiry and clear on withdrawal", () => {
   const values = new Map<string, string>();
   const storage = {
     getItem: (key: string) => values.get(key) ?? null,
     setItem: (key: string, value: string) => { values.set(key, value); },
+    removeItem: (key: string) => { values.delete(key); },
   };
-  assert.equal(readConsent(storage, 1000), null);
-  saveConsent(storage, "granted", 1000);
-  assert.equal(readConsent(storage, 1001), "granted");
-  assert.deepEqual(Object.keys(JSON.parse(values.get(consentKey)!)).sort(), ["choice", "expires"]);
-  assert.equal(readConsent(storage, 1000 + 181 * 86400000), null);
-  values.set(consentKey, JSON.stringify({ choice: "yes", expires: 2000 }));
-  assert.equal(readConsent(storage, 1000), null);
-  saveConsent(storage, "denied", 1000);
-  assert.equal(readConsent(storage, 1001), "denied");
+  let now = Date.parse("2026-08-31T12:30:00Z");
+  let next = browserId;
+  const options = { storage: () => storage, warn: assert.fail, now: () => now, randomUUID: () => next };
+  const first = createBrowserIdentity(options);
+  assert.equal(values.size, 0);
+  assert.equal(first.getId(), browserId);
+  const expires = Date.parse("2028-02-29T12:30:00Z");
+  assert.equal(visitorExpiry(now), expires);
+  assert.deepEqual(JSON.parse(values.get(visitorKey)!), { id: browserId, expires });
+  now += 90 * 86400000;
+  next = secondBrowserId;
+  assert.equal(createBrowserIdentity(options).getId(), browserId);
+  assert.equal(JSON.parse(values.get(visitorKey)!).expires, expires);
+  now = expires;
+  assert.equal(first.getId(), secondBrowserId);
+  first.clear();
+  assert.equal(values.has(visitorKey), false);
+  const warnings: string[] = [];
+  const unavailable = createBrowserIdentity({
+    storage: () => { throw new DOMException("Storage unavailable", "SecurityError"); },
+    warn: message => warnings.push(message),
+  });
+  assert.equal(unavailable.getId(), null);
+  assert.equal(unavailable.getId(), null);
+  assert.equal(warnings.length, 1);
 });
 
-test("client gates production, explicit consent, known pages and browser privacy signals, with no replay", async () => {
+test("client tracks by default only on enabled public production pages and honors privacy signals and refusals", async () => {
   const calls: RequestInit[] = [];
   let url = new URL("https://microsoft.github.io/glintlabs/reports/?email=private&utm_source=private");
   let privacy = false;
+  let blocked = false;
   const client = createTelemetryClient({
     enabled: true, location: () => url, referrer: () => "https://github.com/?private",
     privacyRequested: () => privacy,
+    preferenceBlocked: () => blocked,
+    identity,
     fetch: async (_url, init) => { calls.push(init!); return new Response(null, { status: 202 }); },
     warn: message => assert.fail(message),
   });
-  assert.equal(await client.track("page_view"), false);
-  assert.equal(await client.track("skill_link_click"), false);
-  client.setConsent("granted");
   assert.equal(await client.track("page_view"), true);
   assert.equal(await client.track("page_view"), false);
   assert.equal(calls.length, 1);
-  assert.deepEqual(JSON.parse(String(calls[0].body)), { ...event, campaign_source: "other" });
+  assert.deepEqual(JSON.parse(String(calls[0].body)), { ...event, v: 2, visitor_id: browserId, campaign_source: "other" });
   assert.equal(calls[0].credentials, "omit");
   assert.equal(calls[0].referrerPolicy, "no-referrer");
   url = new URL("https://microsoft.github.io/glintlabs/about/");
   assert.equal(await client.track("page_view"), true);
   url = new URL("https://microsoft.github.io/glintlabs/reports/");
   assert.equal(await client.track("page_view"), true);
-  client.setConsent("denied");
+  blocked = true;
   assert.equal(await client.track("skill_link_click"), false);
-  client.setConsent("granted");
+  blocked = false;
   privacy = true;
   assert.equal(await client.track("page_view"), false);
   privacy = false;
@@ -94,27 +140,54 @@ test("client gates production, explicit consent, known pages and browser privacy
   const disabled = createTelemetryClient({
     enabled: false, location: () => new URL("https://microsoft.github.io/glintlabs/"),
     referrer: () => "", privacyRequested: () => false,
+    preferenceBlocked: () => assert.fail("disabled client accessed preferences"),
+    identity: { getId: () => assert.fail("disabled client accessed a browser ID"), clear: () => {} },
     fetch: async () => { assert.fail("disabled client sent data"); }, warn: assert.fail,
   });
-  disabled.setConsent("granted");
   assert.equal(await disabled.track("page_view"), false);
 });
 
-test("revoking consent aborts pending requests; network/HTTP failures are diagnostic and never escape", async () => {
+test("privacy signals and existing refusals stop an open page before ID access; disposal stops further events", async () => {
+  let blocked = true;
+  let privacy = false;
+  let reads = 0;
+  const client = createTelemetryClient({
+    enabled: true, location: () => new URL("https://microsoft.github.io/glintlabs/"),
+    referrer: () => "", privacyRequested: () => privacy, preferenceBlocked: () => blocked, warn: assert.fail,
+    identity: { getId: () => { reads++; return browserId; }, clear: () => {} },
+    fetch: async () => new Response(null, { status: 202 }),
+  });
+  assert.equal(await client.track("page_view"), false);
+  assert.equal(reads, 0);
+  blocked = false;
+  assert.equal(await client.track("page_view"), true);
+  privacy = true;
+  assert.equal(await client.track("skill_link_click"), false);
+  assert.equal(reads, 1);
+  privacy = false;
+  client.dispose();
+  assert.equal(await client.track("skill_link_click"), false);
+  assert.equal(reads, 1);
+});
+
+test("a refusal aborts pending requests; network/HTTP failures are diagnostic and never escape", async () => {
   const warnings: string[] = [];
   let signal: AbortSignal | undefined;
   let finish: ((response: Response) => void) | undefined;
+  let blocked = false;
   const client = createTelemetryClient({
     enabled: true, location: () => new URL("https://microsoft.github.io/glintlabs/"),
     referrer: () => "", privacyRequested: () => false, warn: message => warnings.push(message),
+    preferenceBlocked: () => blocked,
+    identity,
     fetch: async (_url, init) => {
       signal = init?.signal ?? undefined;
       return new Promise<Response>(resolve => { finish = resolve; });
     },
   });
-  client.setConsent("granted");
   const pending = client.track("page_view");
-  client.setConsent("denied");
+  blocked = true;
+  assert.equal(await client.track("skill_link_click"), false);
   assert.equal(signal?.aborted, true);
   finish!(new Response(null, { status: 503 }));
   assert.equal(await pending, false);
@@ -122,9 +195,10 @@ test("revoking consent aborts pending requests; network/HTTP failures are diagno
   const failing = createTelemetryClient({
     enabled: true, location: () => new URL("https://microsoft.github.io/glintlabs/"),
     referrer: () => "", privacyRequested: () => false, warn: message => warnings.push(message),
+    preferenceBlocked: () => false,
+    identity,
     fetch: async () => { throw new TypeError("network unavailable"); },
   });
-  failing.setConsent("granted");
   assert.equal(await failing.track("page_view"), false);
   assert.equal(warnings.length, 2);
 });
@@ -144,6 +218,7 @@ function fixture(overrides: Record<string, string> = {}) {
   const logs: string[] = [];
   const env: Record<string, string> = {
     GLINTLABS_TELEMETRY_ENABLED: "true", GLINTLABS_RATE_LIMIT_SECRET: "test-only-not-a-real-secret-32-characters",
+    GLINTLABS_VISITOR_ID_SECRET: "test-only-visitor-hash-secret-32-characters",
     SUPABASE_SERVICE_ROLE_KEY: "test-only-not-a-real-key", SUPABASE_URL: "https://test.invalid",
     ...overrides,
   };
@@ -180,6 +255,24 @@ test("ingestion rejects wrong origins, disabled collection, privacy signals, met
   assert.equal(f.calls.length, 0);
   assert.equal((await fixture({ GLINTLABS_TELEMETRY_ENABLED: "false" }).request()).status, 503);
   assert.equal((await fixture({ GLINTLABS_RATE_LIMIT_SECRET: "" }).request()).status, 503);
+});
+
+test("ingestion stores a stable keyed browser hash unrelated to IP, never the raw browser ID", async () => {
+  const f = fixture();
+  const v2 = { ...event, v: 2, visitor_id: browserId };
+  assert.equal((await f.request(v2)).status, 202);
+  assert.equal((await f.request(v2, { "X-Forwarded-For": "192.0.2.2" })).status, 202);
+  assert.equal((await f.request({ ...v2, visitor_id: secondBrowserId })).status, 202);
+  const bodies = f.calls.map(call => JSON.parse(String(call.init?.body)));
+  assert.match(bodies[0].p_event.visitor_id, /^[0-9a-f]{64}$/);
+  assert.equal(bodies[0].p_event.visitor_id, bodies[1].p_event.visitor_id);
+  assert.notEqual(bodies[0].p_rate_key, bodies[1].p_rate_key);
+  assert.notEqual(bodies[0].p_event.visitor_id, bodies[2].p_event.visitor_id);
+  assert.ok(!JSON.stringify(bodies).includes(browserId));
+  const missing = fixture({ GLINTLABS_VISITOR_ID_SECRET: "" });
+  assert.equal((await missing.request(v2)).status, 503);
+  assert.equal(missing.calls.length, 0);
+  assert.equal((await missing.request(event)).status, 202);
 });
 
 test("ingestion writes only approved fields, keeps addresses separate, and exposes no secret to the caller", async () => {
