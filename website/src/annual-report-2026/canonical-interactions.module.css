@@ -235,7 +235,7 @@
   .quadrants span:nth-child(even) { padding-left: 8px; }
   .point { width: 32px; height: 32px; font-size: 14px; }
   .momentumKey { grid-template-columns: 1fr; grid-template-rows: none; grid-auto-flow: row; }
-  .momentumKey button { min-height: 44px; }
+  .momentumKey button { align-items: center; min-height: 44px; }
   .pointDetails { padding: 16px; }
   .pointSummary div { padding: 12px 8px; }
   .metrics { gap: 10px; }

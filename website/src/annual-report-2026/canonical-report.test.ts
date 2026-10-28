@@ -523,9 +523,11 @@ test("canonical preview preserves the screenshot-supplied capability distributio
   assert.doesNotMatch(interactionSource, /Sample rating colors/);
 });
 
-test("listening approach keys match the compact desktop rows while retaining mobile touch targets", () => {
-  assert.match(interactionStyles, /\.momentumKey button \{[^}]*min-height: 30px;[^}]*padding: 4px 10px;/);
-  assert.match(interactionStyles, /@media \(max-width: 600px\) \{[\s\S]*?\.momentumKey button \{ min-height: 44px; \}/);
+test("listening approach keys keep compact desktop rows and vertically centered mobile touch targets", () => {
+  assert.match(interactionStyles, /\.momentumKey button \{[^}]*align-items: baseline;[^}]*min-height: 30px;[^}]*padding: 4px 10px;/);
+  const mobileStyles = interactionStyles.split("@media (max-width: 600px) {")[1]?.split("@media")[0];
+  assert.ok(mobileStyles);
+  assert.match(mobileStyles, /\.momentumKey button \{ align-items: center; min-height: 44px; \}/);
 });
 
 test("listening portfolio matches the revised Figma plot geometry, axes and selection", () => {
