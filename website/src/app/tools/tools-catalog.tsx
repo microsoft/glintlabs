@@ -15,7 +15,7 @@ export function ToolsCatalog() {
         <div className={styles.grid}>
           <article className={styles.card}>
             <div className={styles.cardVisual}>
-              <Image src="/figma/site-canonical/tools/create.svg" alt="" aria-hidden="true" width={170} height={170} unoptimized />
+              <Image src="/figma/illustrations/blue/report.png" alt="" aria-hidden="true" width={170} height={170} unoptimized />
             </div>
             <div className={styles.cardContent}>
               <div>

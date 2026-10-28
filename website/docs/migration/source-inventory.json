@@ -4109,8 +4109,8 @@
       "source": "src/app/tools/analyze-survey/analyze-survey-details.test.ts",
       "destination": "website/src/app/tools/analyze-survey/analyze-survey-details.test.ts",
       "sourceSha256": "62e5f466b96c070b75a48cc29ba94bb641d074b26f3698787d435dc39712f8bc",
-      "destinationSha256": "02fc8c7676561e13f90980a0e3af97db4a22e3f8488395a729780ec83a7a8231",
-      "intentionalDifference": "Update and extend regressions for canonical terminal instructions, outlined actions, compact text, approved wording, modal-only header-action omission, accent safeguard icons and preserving/restoring an existing scrollbar gutter."
+      "destinationSha256": "6cdcc6dda6250436ed37c0fe39bd8dad07721743d878f180fd12d4d56ed772c2",
+      "intentionalDifference": "Update and extend regressions for canonical terminal instructions, outlined actions, compact text, approved wording, modal-only header-action omission, accent safeguard icons and preserving/restoring an existing scrollbar gutter. Verify the shared Home and Tools card uses the approved existing clipboard illustration while retaining its size and decorative semantics."
     },
     {
       "source": "src/app/tools/analyze-survey/analyze-survey-details.tsx",
@@ -4158,8 +4158,8 @@
       "source": "src/app/tools/tools-catalog.tsx",
       "destination": "website/src/app/tools/tools-catalog.tsx",
       "sourceSha256": "0b92989dd11d9f401c796cb3f1880608041c25658783d9219acf455fef925214",
-      "destinationSha256": "0b92989dd11d9f401c796cb3f1880608041c25658783d9219acf455fef925214",
-      "intentionalDifference": ""
+      "destinationSha256": "2b75c1b84fa41789fe4e20d486827582dff51e96f0b67785c51d4fefc101cf16",
+      "intentionalDifference": "Use the owner-selected existing Blue report clipboard illustration for the shared Analyze Survey card on Home and Tools; preserve the 170px image box, decorative semantics, layout, copy, modal trigger and all styles."
     },
     {
       "source": "src/app/tools/tools-page.module.css",

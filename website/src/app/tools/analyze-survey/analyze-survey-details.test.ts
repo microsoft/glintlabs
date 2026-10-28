@@ -6,6 +6,16 @@ const source = await readFile(new URL("./analyze-survey-details.tsx", import.met
 const styles = await readFile(new URL("./analyze-survey-details.module.css", import.meta.url), "utf8");
 const modalSource = await readFile(new URL("./analyze-survey-modal-trigger.tsx", import.meta.url), "utf8");
 
+test("the shared Analyze Survey card uses the approved clipboard illustration without changing its size or decorative semantics", async () => {
+  const catalog = await readFile(new URL("../tools-catalog.tsx", import.meta.url), "utf8");
+  assert.match(catalog, /<Image src="\/figma\/illustrations\/blue\/report\.png" alt="" aria-hidden="true" width=\{170\} height=\{170\} unoptimized \/>/);
+  assert.doesNotMatch(catalog, /\/figma\/site-canonical\/tools\/create\.svg/);
+  assert.ok((await readFile(new URL("../../../../public/figma/illustrations/blue/report.png", import.meta.url))).length > 0);
+  for (const page of ["../../page.tsx", "../page.tsx"]) {
+    assert.match(await readFile(new URL(page, import.meta.url), "utf8"), /<ToolsCatalog \/>/);
+  }
+});
+
 test("Analyze Survey retains the canonical terminal instructions with outlined copy actions", () => {
   assert.ok(source.includes("<h3>Open Copilot in your terminal</h3>"));
   assert.ok(source.includes("Open your terminal and start GitHub Copilot CLI. Copy the link below, paste it into Copilot, and ask it to use the Analyze Survey skill."));
