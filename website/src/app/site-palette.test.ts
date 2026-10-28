@@ -44,6 +44,20 @@ test("the hero's warm edge glow continues seamlessly into Featured using the sam
   assert.match(component, /^\s*<span className=\{styles\.glowTop\} \/>$/m);
 });
 
+test("Home's reports link uses the Figma secondary treatment without changing its primary hero action", () => {
+  const home = readFileSync(new URL("./page.tsx", import.meta.url), "utf8");
+  const styles = readFileSync(new URL("./home-v1.module.css", import.meta.url), "utf8");
+  const hero = readFileSync(new URL("./_components/annual-study-hero.module.css", import.meta.url), "utf8");
+  assert.match(home, /<Link className=\{styles\.viewAll\} href="\/reports">View all reports<\/Link>/);
+  assert.match(styles, /\.viewAll \{[^}]*min-height: 40px;[^}]*padding: 8px 12px;[^}]*border-radius: 16px;[^}]*color: color-mix\(in srgb, var\(--site-ink\) 86%, transparent\);[^}]*background: color-mix\(in srgb, var\(--site-ink\) 5%, transparent\);[^}]*font-size: 16px; font-weight: 400; line-height: 22px;/);
+  assert.match(styles, /\.viewAll:hover \{ background: color-mix\(in srgb, var\(--site-ink\) 10%, transparent\); \}/);
+  assert.match(styles, /\.viewAll:focus-visible \{ outline: 3px solid var\(--site-focus\); outline-offset: 4px; \}/);
+  assert.match(styles, /@media \(max-width: 600px\) \{[^@]*\.viewAll \{ min-height: 44px; \}/);
+  assert.match(home, /<HeroTransitionLink className=\{heroStyles\.action\} href="\/annual-report-2026">/);
+  assert.match(hero, /\.action \{[^}]*color: #fff; background: #000;/);
+  assert.ok(contrast("#222222", "#e5e5e5") >= 4.5);
+});
+
 function contrast(first: string, second: string) {
   const luminance = (color: string) => color.match(/[\da-f]{2}/gi)!.map((channel) => {
     const value = parseInt(channel, 16) / 255;
