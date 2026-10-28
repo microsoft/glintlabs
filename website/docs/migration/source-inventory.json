@@ -3612,8 +3612,8 @@
       "source": "src/annual-report-2026/canonical-interactions.module.css",
       "destination": "website/src/annual-report-2026/canonical-interactions.module.css",
       "sourceSha256": "5f3c0dded48e83800687919e2241b079dd3a7a38193348e7a390c6723b83d0dc",
-      "destinationSha256": "5f3c0dded48e83800687919e2241b079dd3a7a38193348e7a390c6723b83d0dc",
-      "intentionalDifference": ""
+      "destinationSha256": "d94ac7d0a702cbb6f2434c5bfd970144a9a3a48b844ee3ec2e734a5c512dad4e",
+      "intentionalDifference": "Vertically center listening-portfolio key button numbers and labels only at viewport widths of 600px or narrower; preserve the existing 44px mobile touch targets, wrapping, padding and desktop baseline alignment."
     },
     {
       "source": "src/annual-report-2026/canonical-report-data.ts",
@@ -3654,8 +3654,8 @@
       "source": "src/annual-report-2026/canonical-report.test.ts",
       "destination": "website/src/annual-report-2026/canonical-report.test.ts",
       "sourceSha256": "523b6ea2cc284516e5cb58e76d118082d50aea5a7f207c6f2c3035d7f66ab7e2",
-      "destinationSha256": "1f846116458c3e544af5b73acf98b852e4f94f26f6cf52aa451176ddbccd8a0c",
-      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and the approved Caribay quote while retaining placeholder-absence and author-credit checks. Add mobile Figma topics-matrix spacing and natural-row-height coverage while retaining desktop-layout, native-header and nine-cell checks. Verify the survey expansion citation uses the existing 10.32px frame7 superscript style before the sentence punctuation rather than an inline digit. Verify exact wording and scoped emphasis for the three disclaimer sentences in References. Verify all eight decorative quote marks share the local font-independent Figma vector with unchanged 27x26 layout and forced-color-safe inherited color. Require exact sidebar label, destination and order parity with every current page section heading while preserving the retired deep link. Require the approved November 2024 related-research short URL while retaining the external-link accessibility regression. Verify every listening-portfolio popout description, including the owner-requested employee-initiated feedback example, and its use by the shared renderer."
+      "destinationSha256": "abd2f724979012bddacc05dacd223e240d271597f4fb4180d0689afbadcb7e57",
+      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and the approved Caribay quote while retaining placeholder-absence and author-credit checks. Add mobile Figma topics-matrix spacing and natural-row-height coverage while retaining desktop-layout, native-header and nine-cell checks. Verify the survey expansion citation uses the existing 10.32px frame7 superscript style before the sentence punctuation rather than an inline digit. Verify exact wording and scoped emphasis for the three disclaimer sentences in References. Verify all eight decorative quote marks share the local font-independent Figma vector with unchanged 27x26 layout and forced-color-safe inherited color. Require exact sidebar label, destination and order parity with every current page section heading while preserving the retired deep link. Require the approved November 2024 related-research short URL while retaining the external-link accessibility regression. Verify every listening-portfolio popout description, including the owner-requested employee-initiated feedback example, and its use by the shared renderer. Require scoped mobile button centering while preserving compact desktop baseline alignment and mobile touch-target height."
     },
     {
       "source": "src/annual-report-2026/channel-portfolio.tsx",
