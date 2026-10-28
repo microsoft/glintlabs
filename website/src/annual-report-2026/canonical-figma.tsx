@@ -515,7 +515,7 @@ export function CanonicalReportBody() {
                 <span className={styles.frame98} style={{ fontVariationSettings: '"opsz" 8' }}>{`Related research: `}</span>
                 <a
                   className={styles.frame99}
-                  href="https://techcommunity.microsoft.com/blog/microsoftvivablog/research-drop-diving-into-ai-transformation-profiles-to-understand-unique-needs-/4336280"
+                  href="https://aka.ms/researchdrop_nov2024"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Microsoft People Science research (opens in a new tab)"
