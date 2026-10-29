@@ -44,13 +44,19 @@ assume their units from the report alone.
 
 ## Analysis selection rules
 
+- For new `analyze-survey` runs, ask for the five optional report selections
+  before data intake. Item scores always run, with supporting attribute scores
+  for shared filters. Run other codebooks only when their report is selected.
+  Scores change uses the report builder's cycle/repeat-respondent calculations;
+  it does not require the separate cycle-CSV codebook. Attrition selection also
+  enables Attrition insights. Downloads and Methodology are always generated.
 - Always run descriptives first. Most interpretation depends on item-level response patterns.
 - Run response distribution when favorability or polarization matters.
 - Run correlations when prioritizing drivers, redundancy, or potential themes.
 - Run factor analysis only when there are enough respondents and items to support stable extraction.
 - Run cycle comparison only when ordered cycle inputs are provided.
 - Run by-attribute analysis only when attributes are present and minimum group-size suppression is configured.
-- Run attrition only when attrition data is present and the termination date column is explicitly named.
+- Run attrition only when selected, attrition data is present, and the termination date column is explicitly named.
 
 ## Default guardrails
 

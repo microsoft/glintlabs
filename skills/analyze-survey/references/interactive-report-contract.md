@@ -17,6 +17,16 @@ The intended substitution is the JSON value assigned to `const D`. In `off`
 mode, the seven empty AI summary containers are also removed from the generated
 report.
 
+For an explicit `selected_analyses` configuration, the builder also removes
+unselected analysis navigation buttons, selects the first remaining tab, and
+adds Item distribution when requested. Methodology retains explanatory blurbs
+for every available analysis; unrun methods are marked **Not run** and retain
+their **Example interpretation** and **Example action**. Clearly distinguish
+these hypothetical examples from computed findings. Static methodology sections
+never trigger analysis. Hidden legacy control shells may remain for template
+initialization, but contain no unselected results.
+No unselected analytical computations or stale artifacts enter the report or ZIP.
+
 The live Attrition analysis section reuses its introduction from the golden
 template instead of maintaining separate runtime wording. Its suppression
 threshold text follows the configured minimum category size. Separate all
@@ -168,13 +178,25 @@ Keep this tab order and naming:
 3. **Attrition analysis** (only when attrition completes)
 4. **Attrition insights** (only when attrition completes)
 5. **Scores change**
-6. **Downloads**
-7. **Methodology**
+6. **Item distribution** (only when explicitly selected)
+7. **Downloads**
+8. **Methodology**
 
 Do not add Overview, Item results, or Heatmap tabs.
 
-If attrition cannot run, omit both attrition tabs. Never fabricate attrition
-data. For other analyses, keep the tab and explain why results are unavailable.
+For explicit selections, omit unselected analysis tabs. Always retain Downloads
+and Methodology and the current-survey item-score summary. Attrition analysis
+also enables Attrition insights; omit both if attrition cannot run. Never
+fabricate attrition data. For other selected analyses, keep the tab and explain
+why results are unavailable. Existing configurations without a selection retain
+legacy navigation and computations.
+
+Item distribution shows percentages for each native response point labeled on
+the 0-100 scale, excludes missing answers, follows the shared attribute/value
+filter, and suppresses items/groups below minimum N before serialization.
+Its aggregate codebook remains available in Downloads. Unselected Scores change
+must not calculate repeat-respondent comparisons or present movement findings;
+basic cycle-level item scores remain available for the summary and cycle filters.
 
 ## Shared report filter
 
@@ -191,7 +213,7 @@ whose underlying data is computed per survey cycle. Hiding that selector in
 other tabs must not reset its selection.
 
 - Apply the attribute/value filter to Scores change, Correlation, Attrition
-  analysis, and Attrition insights.
+  analysis, Attrition insights, and Item distribution.
 - Apply the separate Survey cycle selector to Correlation and Factors. It
   defaults to the most recently completed cycle.
 - Exclude `survey_cycle_title` from the generic report-attribute dropdown;
@@ -404,16 +426,21 @@ and cycle-percentage-change semantics.
   documentation for analysts, not a filter-reactive data tab.
 - Begin the tab with one short sentence explaining that it documents how the
   report's analyses work so analysts can interpret and explain results.
-- Render one subsection for every analysis present in the report, in the same
-  order as the report tabs: Correlation, Factors, Attrition analysis,
-  Attrition insights, and Scores change. Match the jump-link order to the
+- For explicit selections, render a methodology subsection for every available
+  analysis, not only those run: Correlation, Factors, Attrition analysis,
+  Attrition insights, Scores change, and Item distribution. Mark unrun analyses
+  **Not run** and retain their method explanation, **Example interpretation**,
+  and **Example action**, clearly hypothetical rather than computed results.
+  Retain the same sections when selected attrition cannot run. Keep unselected
+  result tabs and computation disabled. Match the jump-link order to the
   subsection order. Do not number subsection headings. Use 22px subsection
   headings, larger than the previous 20px headings but below the 32px
   Methodology title.
-  Omit the two attrition methodology subsections when attrition tabs are not
-  present in that report instance.
+  For legacy configurations without a selection, keep the existing methodology
+  behavior, omitting attrition subsections when attrition tabs are absent.
 - Begin each subsection with an unlabeled explanation of its method, followed
   by labeled **Example interpretation** and **Example action** callouts.
+  Include these examples for both selected and unrun analyses.
   Do not display a redundant **Method** subheader.
 - Keep the prose concise but analyst-depth: a few sentences for the method and one
   realistic sentence each for the interpretation and action example.

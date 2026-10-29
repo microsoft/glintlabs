@@ -17,12 +17,16 @@ this repository. The plugin installation and analysis instructions follow.
 
 This plugin provides a set of focused skills that share a common analysis contract:
 
-1. `analyze-survey` accepts CSV or Excel survey exports directly, runs a
-   standard set of `vivaglint` codebooks, writes an `analysis-manifest.json`,
+1. `analyze-survey` first asks which analyses to run using a multi-select:
+   Correlation, Factor analysis, Attrition analysis (including insights),
+   Scores change, and Item distribution. It then accepts CSV or Excel survey
+   exports or the registered demo, runs item scores plus the selected
+   `vivaglint` codebooks, writes an `analysis-manifest.json`,
    and packages the required interactive HTML report and privacy-safe ZIP
    without embedded AI-generated summaries. It also interprets new or existing
    codebook outputs into People Science findings and caveats, with built-in
-   validity, privacy, and interpretation-readiness QA.
+   validity, privacy, and interpretation-readiness QA. Item scores, Downloads,
+   and Methodology are always included.
 2. `analyze-survey-ai-preview` adds staged, evidence-grounded People Science
    summaries to the same shared report pipeline.
 3. `people-science-knowledge-vault` finds and synthesizes externally published People Science knowledge using a strict two-tier source hierarchy.

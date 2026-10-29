@@ -148,6 +148,182 @@ def test_wide_items_with_a_completion_date_keep_existing_ingestion(platform_inpu
     assert not config_path.with_name("preparation-audit.json").exists()
 
 
+@pytest.mark.parametrize("native", [False, True])
+@pytest.mark.parametrize("selected", [[], ["correlations"], ["scores_change", "response_distribution"]])
+def test_export_selection_limits_codebooks_and_skips_unrequested_outcomes(
+    platform_input, monkeypatch, native, selected,
+):
+    module, _, options = platform_input
+    options.analyses = selected
+    monkeypatch.setattr(
+        module, "inspect_source",
+        lambda *_: pytest.fail("Unselected attrition must not inspect outcomes"),
+    )
+    if native:
+        config_path = approve_platform(module, options)
+    else:
+        module.pd.DataFrame({
+            "user_id": range(20), "Q_ONE": [1, 2, 3, 4, 5] * 4,
+            "Department": ["Engineering"] * 10 + ["Sales"] * 10,
+        }).to_csv(options.survey_export, index=False)
+        options.inspect_only = False
+        config_path = module.build_config(options, Path(options.output_dir))
+    config = json.loads(config_path.read_text(encoding="utf-8"))
+    assert config["selected_analyses"] == selected
+    assert set(config["analyses"]) == {"descriptives", "by_attribute", *(
+        analysis for analysis in selected if analysis != "scores_change"
+    )}
+    assert "embedded_attrition" not in config
+    assert not config.get("analysis_limitations")
+    assert not config_path.with_name("attrition-discovery.json").exists()
+
+
+def test_builder_does_not_compute_or_share_unselected_results(custom_exit_export, tmp_path, monkeypatch):
+    export, _, options = custom_exit_export
+    options.analyses = []
+    output = tmp_path / "selected"
+    config_path = export.build_config(options, output)
+    (output / "analysis-manifest.json").write_text(json.dumps({
+        "analyses": [{"name": "descriptives", "status": "completed", "artifact": "descriptives.csv"}],
+        "artifacts": {"descriptives": "descriptives.csv"},
+        "repeatability_check": {"status": "passed"},
+    }), encoding="utf-8")
+    (output / "descriptives.csv").write_text("question,mean\nQ_ONE,50\n", encoding="utf-8")
+    for name in ("factor_analysis_summary.csv", "correlations.csv", "attrition.csv", "response_distribution.csv"):
+        (output / name).write_text("STALE_UNSELECTED_SENTINEL\n", encoding="utf-8")
+    builder = load_script("build_interactive_report")
+    monkeypatch.setattr(builder, "args", lambda: SimpleNamespace(
+        config=str(config_path), output_dir=str(output), summary_mode=None,
+        progress_start=0, progress_end=100, progress_started_at=None,
+    ))
+    def unselected(*_args, **_kwargs):
+        pytest.fail("Unselected optional analysis was computed")
+    for name in ("relationship_cube", "factor_cube", "attrition_payload", "attrition_alert_payload", "distribution_cube"):
+        monkeypatch.setattr(builder, name, unselected)
+    assert builder.main() == 0
+    report = (output / "selected-report.html").read_text(encoding="utf-8")
+    assert re.findall(r'<button class="tab"[^>]*>(.*?)</button>', report) == ["Downloads", "Methodology"]
+    assert 'data-id="downloads" aria-selected="true"' in report
+    assert "<section class=panel id=downloads role=tabpanel>" in report
+    payload = json.JSONDecoder().raw_decode(report.split("<script>const D=", 1)[1])[0]
+    assert payload["overall"]
+    assert payload["factors"] == payload["relationships"] == {}
+    assert payload["cycles"]["repeat"] == {"overall": {}, "segments": {
+        attribute: {} for attribute in payload["segments"]
+    }}
+    assert re.findall(r'data-methodology-section="([^"]+)"', report) == [
+        "correlation", "factors", "attrition-analysis", "attrition-alerts",
+        "scores-change", "item-distribution",
+    ]
+    assert report.count("(Not run)</span></h3>") == 6
+    assert report.count("class=methodology-callout") == 12
+    with zipfile.ZipFile(output / "selected-share.zip") as archive:
+        assert not any(name in archive.namelist() for name in (
+            "factor_analysis_summary.csv", "correlations.csv", "attrition.csv", "response_distribution.csv",
+        ))
+        assert "STALE_UNSELECTED_SENTINEL" not in archive.read("OPEN_REPORT.html").decode()
+        context = json.loads(archive.read("people-science-summary-context.json"))
+        assert context["tabs"]["changes"] == {"status": "not_selected"}
+
+
+@pytest.mark.parametrize("selected,expected_tabs", [
+    ([], ["Downloads", "Methodology"]),
+    (["correlations"], ["Correlation", "Downloads", "Methodology"]),
+    (["factor_analysis"], ["Factors", "Downloads", "Methodology"]),
+    (["attrition"], ["Attrition analysis", "Attrition insights", "Downloads", "Methodology"]),
+    (["scores_change", "response_distribution"], ["Scores change", "Item distribution", "Downloads", "Methodology"]),
+    (["correlations", "factor_analysis", "attrition", "scores_change", "response_distribution"],
+     ["Correlation", "Factors", "Attrition analysis", "Attrition insights", "Scores change",
+      "Item distribution", "Downloads", "Methodology"]),
+])
+def test_selected_reports_repeat_and_package_only_requested_analyses(
+    custom_exit_export, tmp_path, selected, expected_tabs,
+):
+    _, _, options = custom_exit_export
+    output = tmp_path / "selected"
+    result = subprocess.run([
+        sys.executable, str(ROOT / "scripts/analyze_survey_export.py"),
+        "--survey-export", options.survey_export, "--output-dir", str(output),
+        "--analyses", *selected,
+    ], capture_output=True, text=True, encoding="utf-8")
+    assert result.returncode == 0, result.stdout + result.stderr
+    with zipfile.ZipFile(output / "selected-share.zip") as archive:
+        report = archive.read("OPEN_REPORT.html").decode("utf-8")
+        manifest = json.loads(archive.read("analysis-manifest.json"))
+        assert manifest["selected_analyses"] == selected
+        assert manifest["repeatability_check"]["status"] == "passed"
+        assert all(item["status"] == "completed" for item in manifest["analyses"])
+        assert {item["name"] for item in manifest["analyses"]} == {
+            "descriptives", "by_attribute", *(name for name in selected if name != "scores_change"),
+        }
+        assert re.findall(r'<button class="tab"[^>]*>(.*?)</button>', report) == expected_tabs
+        assert f'aria-selected="true">{expected_tabs[0]}</button>' in report
+        method_sections = {
+            "correlation": "correlations", "factors": "factor_analysis",
+            "attrition-analysis": "attrition", "attrition-alerts": "attrition",
+            "scores-change": "scores_change", "item-distribution": "response_distribution",
+        }
+        assert re.findall(r'data-methodology-section="([^"]+)"', report) == list(method_sections)
+        methodology_nav = re.search(r'<nav class="methodology-jump"[^>]*>(.*?)</nav>', report).group(1)
+        assert re.findall(r'href="#methodology-([^"]+)"', methodology_nav) == list(method_sections)
+        for section, analysis in method_sections.items():
+            blurb = re.search(
+                rf'<article class="methodology-card" data-methodology-section="{section}".*?</article>',
+                report, re.DOTALL,
+            ).group(0)
+            assert ("(Not run)" in blurb) == (analysis not in selected)
+            assert "</h3></div><p>" in blurb
+            assert "Example interpretation" in blurb
+            assert "Example action" in blurb
+            assert "Hypothetical:" in blurb
+        payload = json.JSONDecoder().raw_decode(report.split("<script>const D=", 1)[1])[0]
+        assert payload["selectedAnalyses"] == selected
+        assert bool(payload["relationships"]) == ("correlations" in selected)
+        assert bool(payload["factors"]) == ("factor_analysis" in selected)
+        assert bool(payload["attritionData"]) == ("attrition" in selected)
+        assert ("distribution" in payload) == ("response_distribution" in selected)
+        if "response_distribution" in selected:
+            assert 'data-methodology-section="item-distribution"' in report
+            assert "response_distribution.csv" in archive.namelist()
+            assert payload["distribution"]["labels"] == [0, 25, 50, 75, 100]
+            render = report.split("function render(){", 1)[1].split("}renderStatic();", 1)[0]
+            assert 'if(D.selectedAnalyses.includes("response_distribution"))renderDistribution();' in render
+
+
+def test_selected_attrition_without_results_retains_methodology_and_examples():
+    builder = load_script("build_interactive_report")
+    golden = (ROOT / "skills/analyze-survey/references/golden-report.html").read_text(encoding="utf-8")
+    report = builder.prepare_selected_report(
+        builder.prepare_report_shell(golden, False, keep_all_methodology=True), ["attrition"],
+    )
+    assert ">Attrition analysis</button>" not in report
+    assert ">Attrition insights</button>" not in report
+    for section in ("attrition-analysis", "attrition-alerts"):
+        article = re.search(
+            rf'<article class="methodology-card" data-methodology-section="{section}".*?</article>',
+            report, re.DOTALL,
+        ).group(0)
+        assert "(Not run)" in article
+        assert "Example interpretation" in article
+        assert "Example action" in article
+        assert "Hypothetical:" in article
+
+
+def test_distribution_suppresses_sparse_items_and_small_groups():
+    builder = load_script("build_interactive_report")
+    frame = builder.pd.DataFrame({
+        "Q_ONE": [1, 2, 3, 4, 5, None, None, None],
+        "Q_SPARSE": [1, 2, 3, None, None, None, None, None],
+        "Department": ["Large"] * 5 + ["Tiny"] * 3,
+        "__employee_id": range(8),
+    })
+    segments = {"Department": {"values": {"Large": {}, "Tiny": {}}}}
+    payload = builder.distribution_cube(frame, ["Q_ONE", "Q_SPARSE"], segments, 5, 5)
+    assert payload["overall"] == [[5, 20, 20, 20, 20, 20], [None] * 6]
+    assert set(payload["segments"]["Department"]) == {"Large"}
+    assert payload["segments"]["Department"]["Large"][1] == [None] * 6
+
+
 def test_platform_ambiguous_attributes_require_confirmed_evidence(platform_input):
     module, _, options = platform_input
     mappings = {"Tenure": "Tenure", "attribute 4": "Department", "First Name": None}
@@ -518,6 +694,21 @@ def test_survey_interpretation_and_qa_workflow_is_consolidated():
         assert (interpretation_path.parent / path).resolve().is_file()
     for document in ROOT.rglob("*.md"):
         assert "interpret-analysis" not in document.read_text(encoding="utf-8")
+
+
+def test_new_analysis_intake_selects_reports_before_data_source():
+    skill = (ROOT / "skills/analyze-survey/SKILL.md").read_text(encoding="utf-8")
+    intake = skill.split("### New survey analysis", 1)[1].split("## Required grounding", 1)[0]
+    assert intake.index("What type of analysis would you like to run?") < intake.index(
+        "How would you like to bring in survey data?"
+    )
+    assert "multi-select array field" in intake
+    assert "no preselected defaults" in intake
+    assert "explicitly empty selection runs item scores only" in intake
+    assert "Downloads and Methodology are always" in intake
+    assert "Attrition\nanalysis also runs Attrition insights" in intake
+    assert "pass them through\n`--analyses`" in intake
+    assert "Existing-output QA/interpretation" in intake
 
 
 def test_analyze_survey_points_to_linked_dataset():

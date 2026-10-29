@@ -862,6 +862,8 @@ def main() -> int:
             for key, path in artifacts.items()
         },
     }
+    if "selected_analyses" in config:
+        manifest["selected_analyses"] = config["selected_analyses"]
 
     repeatability_check = {
         "enabled": False,
