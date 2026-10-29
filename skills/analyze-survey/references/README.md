@@ -15,6 +15,30 @@ This folder supplies the detailed contracts and input notes:
 | `people-science-summaries.schema.json` | AI-preview narrative shape. |
 | `people-science-source-index.json` | Reviewed public-source retrieval for AI-preview report summaries. |
 
+## Analysis selection
+
+For a new analysis, the first prompt is **What type of analysis would you like
+to run?**, using a multi-select array with Correlation, Factor analysis,
+Attrition analysis, Scores change, and Item distribution. Only then ask for
+Demo Analysis or CSV Upload. Existing-output QA and interpretation skip intake.
+
+Pass the chosen identifiers from `../SKILL.md` using `--analyses`; pass the flag
+with no values for item scores only. Item scores and supporting attribute
+scores always run; Downloads and Methodology always remain. Attrition includes
+both analysis and insights. Scores change enables the existing report-level
+cycle/repeat-respondent calculations. Item distribution enables its codebook,
+filtered percentage table, and aggregate download.
+
+The private config and shared manifest record `selected_analyses`. Unselected
+analyses are not computed or shown as report tabs and stale artifacts are not
+shared. Methodology still lists all available methods, with unrun analyses
+marked **Not run**. Retain their explanatory blurbs, **Example interpretation**,
+and **Example action**, clearly hypothetical rather than computed results.
+These reference sections never trigger additional analyses.
+Intentional deselection is distinct from a selected analysis that lacks
+required data. Skip attrition discovery and outcome follow-ups when attrition
+is unselected. Script callers that omit `--analyses` retain legacy defaults.
+
 ## Interpretation references
 
 Keep first-priority People Science interpretation materials in this folder:
@@ -88,7 +112,7 @@ audits, and raw comments stay under `_input` and are never shared.
 
 ### Custom Exit and termination outcomes
 
-Attrition activation is not restricted to the demo filename. Use
+When Attrition analysis is selected, activation is not restricted to the demo filename. Use
 `--inspect-attrition` before running analysis: it searches every supplied
 worksheet, including non-default sheets, and writes private
 `_input/attrition-discovery.json` without running codebooks. Each candidate

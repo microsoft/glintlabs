@@ -95,6 +95,14 @@
         }
       }
     },
+    "selected_analyses": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Optional reports explicitly selected at intake; item scores, Downloads and Methodology remain mandatory.",
+      "items": {
+        "enum": ["correlations", "factor_analysis", "attrition", "scores_change", "response_distribution"]
+      }
+    },
     "artifacts": {
       "type": "object",
       "additionalProperties": { "type": "string" }

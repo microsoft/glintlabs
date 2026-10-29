@@ -45,9 +45,49 @@ questions do not require a manifest or survey data.
 
 ### New survey analysis
 
-This skill never assumes a data source. Always ask the user, with the
-`ask_user` tool when available, which data ingest method to use before doing
-anything else in a new analysis:
+#### Select analyses first
+
+Before data-source intake, runtime checks, export inspection, or execution, use
+`ask_user` to ask exactly:
+
+> What type of analysis would you like to run?
+
+Use one **multi-select array field**, not a single-select string. Offer exactly
+these five options with no preselected defaults; users may select any combination:
+
+| Option | Runner identifier |
+|---|---|
+| Correlation | `correlations` |
+| Factor analysis | `factor_analysis` |
+| Attrition analysis | `attrition` |
+| Scores change | `scores_change` |
+| Item distribution | `response_distribution` |
+
+Tell the user that item scores always run as supporting context, Attrition
+analysis also runs Attrition insights, and Downloads and Methodology are always
+generated. An explicitly empty selection runs item scores only. If the prompt is
+dismissed or cancelled, stop rather than assuming a selection.
+
+Retain the selected identifiers for this analysis and pass them through
+`--analyses` on every runner invocation, including amendments. Do not silently add
+unselected analyses because the data supports them. Run supporting item/attribute
+scores for the shared filters, but skip unselected codebooks, correlation
+clustering, factor fitting, attrition discovery/insights, and score-change
+comparisons. The report shows only selected analysis tabs plus Downloads and
+Methodology; the item-score summary remains available. Methodology includes
+blurbs for every available analysis, including unselected ones marked **Not run**.
+Include their method explanations, **Example interpretation**, and
+**Example action**, clearly presented as hypothetical guidance rather than
+results from this report. These reference sections must never trigger analysis
+execution.
+
+Existing-output QA/interpretation requests do not start a new analysis and skip
+this selection prompt.
+
+#### Select the data source
+
+After analysis selection, ask the user, with `ask_user` when available, which
+data ingest method to use. This skill never assumes a data source:
 
 > How would you like to bring in survey data?
 > 1. Demo Analysis
@@ -58,7 +98,7 @@ ingestion, or skill modification.
 Do not proceed past this question with an assumed default. Branch on the
 answer:
 
-#### 1. Demo Analysis
+##### 1. Demo Analysis
 
 Use this workbook, which is checked directly into this repository so any user
 can access it without additional permissions:
@@ -72,7 +112,7 @@ a 5-point scale. The checked-in workbook is the only registered sample source. D
 not substitute bundled, generated, or synthetic survey data, and only use it
 when the user explicitly chose Demo Analysis.
 
-#### 2. CSV Upload
+##### 2. CSV Upload
 
 Ask for the file path. Accept `.csv`, `.xlsx`, and `.xlsm` exports. Keep
 respondent-level data local and never paste employee rows into chat. Confirm
@@ -187,6 +227,10 @@ for user input separately when material.
 
 ### Attrition discovery and missing-data follow-up
 
+Apply this section only when **Attrition analysis** was selected. Otherwise skip
+outcome discovery and follow-up questions; intentionally unselected attrition
+is not a missing-data limitation.
+
 Treat attrition as a priority discovery task, not a single exact-header check.
 Before the analysis run, use:
 
@@ -194,6 +238,7 @@ Before the analysis run, use:
 python scripts/analyze_survey_export.py \
   --survey-export <survey.csv-or-xlsx> \
   --output-dir <output-directory> \
+  --analyses <selected-identifiers> \
   --inspect-attrition
 ```
 
@@ -278,17 +323,23 @@ preparation decisions above):
 ```bash
 python scripts/analyze_survey_export.py \
   --survey-export <survey.csv-or-xlsx> \
-  --output-dir <output-directory>
+  --output-dir <output-directory> \
+  --analyses <selected-identifiers>
 ```
+
+For item scores only, pass `--analyses` without values. Never omit the flag in
+this skill: omission retains the legacy full-analysis behavior for existing
+script callers. Scores change uses the report builder's existing cycle and
+repeat-respondent comparisons, not an additional optional codebook.
 
 The runner automatically:
 
 - shows a live percentage, progress bar, elapsed time, and current phase
 - detects supported input columns and joins available attributes as described
   in `references/README.md`
-- runs attrition whenever valid Exit or termination outcomes are present
+- runs selected attrition and its insights when valid outcomes are present
 - creates an internal `analysis-config.json`
-- runs the standard `vivaglint` analyses twice
+- runs item scores, supporting attribute scores, and selected `vivaglint` analyses twice
 - requires SHA-256 repeatability
 - builds the self-contained interactive report and safe share ZIP
 - uses the checked-in golden report as the exact HTML template

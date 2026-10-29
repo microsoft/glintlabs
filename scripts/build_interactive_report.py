@@ -22,7 +22,7 @@ if SCRIPT_DIR not in sys.path:
     sys.path.insert(0, SCRIPT_DIR)
 
 from progress import ProgressReporter
-from analyze_survey_export import PREPARATION_REASONS, file_sha256
+from analyze_survey_export import OPTIONAL_ANALYSES, PREPARATION_REASONS, file_sha256
 from scipy.cluster.hierarchy import cut_tree, linkage
 from scipy.spatial.distance import squareform
 from scipy.stats import fisher_exact
@@ -490,6 +490,7 @@ def cycle_cube(
     cycle_col: str | None,
     scale: int,
     confirmed_order: list[str] | None = None,
+    include_comparisons: bool = True,
 ) -> dict[str, Any]:
     if not cycle_col:
         return {
@@ -510,7 +511,8 @@ def cycle_cube(
             rows.append(
                 [
                     glint_score(float(values.mean()), scale),
-                    round_half_up(float(values.std(ddof=1) * (100 / (scale - 1)))),
+                    round_half_up(float(values.std(ddof=1) * (100 / (scale - 1))))
+                    if include_comparisons else None,
                     int(len(values)),
                 ]
             )
@@ -527,6 +529,8 @@ def cycle_cube(
         }
 
     def repeat_values(source: pd.DataFrame) -> dict[str, Any]:
+        if not include_comparisons:
+            return {}
         employee_ids = {
             cycle: set(
                 source.loc[
@@ -577,6 +581,42 @@ def cycle_cube(
         "repeat": {
             "overall": repeat_values(frame),
             "segments": repeat_segments,
+        },
+    }
+
+
+def distribution_cube(
+    frame: pd.DataFrame,
+    questions: list[str],
+    segments: dict[str, Any],
+    scale: int,
+    minimum: int,
+) -> dict[str, Any]:
+    def rows(source: pd.DataFrame) -> list[list[float | int | None]]:
+        result = []
+        for question in questions:
+            values = source[question].dropna()
+            if len(values) < minimum:
+                result.append([None] * (scale + 1))
+                continue
+            counts = values.value_counts()
+            result.append([
+                int(len(values)),
+                *[round(float(counts.get(value, 0) / len(values) * 100), 2)
+                  for value in range(1, scale + 1)],
+            ])
+        return result
+
+    return {
+        "labels": [round((value - 1) * 100 / (scale - 1), 6) for value in range(1, scale + 1)],
+        "overall": rows(frame),
+        "segments": {
+            attribute: {
+                str(value): rows(group)
+                for value, group in frame.dropna(subset=[attribute]).groupby(attribute, sort=True)
+                if str(value) in data["values"] and group["__employee_id"].nunique() >= minimum
+            }
+            for attribute, data in segments.items()
         },
     }
 
@@ -1344,7 +1384,9 @@ def replace_live_alert_summary(html: str) -> str:
     return html[:start] + replacement + html[end + len(end_marker):]
 
 
-def prepare_report_shell(html: str, has_attrition: bool) -> str:
+def prepare_report_shell(
+    html: str, has_attrition: bool, keep_all_methodology: bool = False,
+) -> str:
     html = html.replace(
         'data-id="relationships" aria-selected="true">Relationships</button>',
         'data-id="relationships" aria-selected="true">Correlation</button>',
@@ -1358,7 +1400,7 @@ def prepare_report_shell(html: str, has_attrition: bool) -> str:
         "",
         1,
     )
-    if has_attrition:
+    if has_attrition or keep_all_methodology:
         html = html.replace("<!-- methodology-attrition-start -->", "").replace(
             "<!-- methodology-attrition-end -->",
             "",
@@ -1367,6 +1409,7 @@ def prepare_report_shell(html: str, has_attrition: bool) -> str:
             "<!-- methodology-attrition-nav-end -->",
             "",
         )
+    if has_attrition:
         old_navigation = (
             '<button class="tab" data-id="factors" aria-selected="false">Factors</button>'
             '<button class="tab" data-id="attrition" aria-selected="false">'
@@ -1387,16 +1430,17 @@ def prepare_report_shell(html: str, has_attrition: bool) -> str:
         "",
         1,
     )
-    html = remove_between_markers(
-        html,
-        "<!-- methodology-attrition-nav-start -->",
-        "<!-- methodology-attrition-nav-end -->",
-    )
-    html = remove_between_markers(
-        html,
-        "<!-- methodology-attrition-start -->",
-        "<!-- methodology-attrition-end -->",
-    )
+    if not keep_all_methodology:
+        html = remove_between_markers(
+            html,
+            "<!-- methodology-attrition-nav-start -->",
+            "<!-- methodology-attrition-nav-end -->",
+        )
+        html = remove_between_markers(
+            html,
+            "<!-- methodology-attrition-start -->",
+            "<!-- methodology-attrition-end -->",
+        )
     attrition_start = html.index("<section class=panel id=attrition")
     next_section_match = re.search(
         r"<section class=panel id=\w+", html[attrition_start + 1 :]
@@ -1411,6 +1455,140 @@ def prepare_report_shell(html: str, has_attrition: bool) -> str:
         'function renderStatic(){document.querySelector("#downloadList").innerHTML=',
         1,
     )
+
+
+def prepare_selected_report(html: str, selected: list[str]) -> str:
+    tabs = {
+        "correlations": ("relationships", "correlation"),
+        "factor_analysis": ("factors", "factors"),
+        "attrition": ("attrition", "attrition-analysis"),
+        "scores_change": ("changes", "scores-change"),
+        "response_distribution": ("distribution", "item-distribution"),
+    }
+    if "response_distribution" in selected:
+        html = html.replace(
+            '<button class="tab" data-id="downloads"',
+            '<button class="tab" data-id="distribution" aria-selected="false">Item distribution</button>'
+            '<button class="tab" data-id="downloads"',
+            1,
+        )
+        html = html.replace(
+            "<section class=panel id=downloads",
+            "<section class=panel id=distribution role=tabpanel hidden><h2>Item distribution</h2>"
+            "<p class=tab-intro>Each row shows the percentage of non-missing answers at each response "
+            "point, labeled on the 0-100 score scale. Percentages describe the spread of answers, "
+            "not a mean score.<br><br>Missing answers are excluded. Items and groups below the "
+            "minimum reporting size are suppressed. Use the shared filter to compare eligible groups.</p>"
+            "<div class=scroll><table class=change-table id=distributionTable></table></div></section>"
+            "<section class=panel id=downloads",
+            1,
+        )
+    html = html.replace(
+        "</nav><div class=methodology-grid>",
+        '<a href="#methodology-item-distribution">Item distribution</a></nav><div class=methodology-grid>',
+        1,
+    )
+    html = html.replace(
+        "</div></section>\n<footer",
+        '<article class="methodology-card" data-methodology-section="item-distribution" '
+        'id="methodology-item-distribution"><div class=methodology-card-head>'
+        "<h3>Item distribution</h3></div><p>For each item, percentages divide the count at each "
+        "response point by the number of non-missing answers. Labels transform the native response "
+        "scale to 0-100; percentages remain percentages. Rounding can prevent a row from summing "
+        "to exactly 100%. Minimum-N suppression applies before results are embedded.</p>"
+        "<div class=methodology-callout><span class=methodology-label>Example interpretation</span>"
+        "<p><em>Hypothetical:</em> Two items both score 50, but one has answers concentrated at 50 "
+        "and the other is split between 0 and 100; equal means can hide different response patterns.</p></div>"
+        "<div class=methodology-callout><span class=methodology-label>Example action</span>"
+        "<p>Review the response spread alongside linked comments and follow-up listening before "
+        "treating a middle score as broad agreement.</p></div></article>"
+        "</div></section>\n<footer",
+        1,
+    )
+
+    def mark_not_run(match: re.Match[str]) -> str:
+        return match[0].replace("</h3>", " <span class=muted>(Not run)</span></h3>", 1)
+
+    for analysis, (tab, methodology) in tabs.items():
+        for tab_id, section in (
+            [(tab, methodology), ("alerts", "attrition-alerts")]
+            if analysis == "attrition" else [(tab, methodology)]
+        ):
+            if analysis not in selected:
+                html = re.sub(
+                    rf'<button class="tab" data-id="{tab_id}"[^>]*>.*?</button>', "", html,
+                )
+                html = html.replace(f"<div class=ai-summary data-summary={tab_id}></div>", "")
+            if not re.search(rf'<button class="tab" data-id="{tab_id}"', html):
+                html = re.sub(
+                    rf'<article class="methodology-card" data-methodology-section="{section}".*?</article>',
+                    mark_not_run, html, flags=re.DOTALL,
+                )
+    first_tab = re.search(r'<button class="tab" data-id="([^"]+)"', html).group(1)
+    html = re.sub(
+        r'(<button class="tab" data-id="([^"]+)" aria-selected=")(true|false)',
+        lambda match: match[1] + ("true" if match[2] == first_tab else "false"),
+        html,
+    )
+    html = re.sub(
+        r'(<section class=panel id=(\w+) role=tabpanel)( hidden)?',
+        lambda match: match[1] + ("" if match[2] == first_tab else " hidden"),
+        html,
+    )
+    html = html.replace(
+        '["relationships","factors","changes","attrition","alerts"].includes(tabId)',
+        '["relationships","factors","changes","attrition","alerts","distribution"].includes(tabId)',
+        1,
+    )
+    html = html.replace(
+        "priorData=priorName?source[priorName]:null",
+        'priorData=priorName&&D.selectedAnalyses.includes("scores_change")?source[priorName]:null',
+        1,
+    )
+    html = html.replace(
+        'let movement="";if(priorData&&changeRows.length)',
+        'let movement="";if(!D.selectedAnalyses.includes("scores_change"))'
+        'movement="Scores change was not selected.";else if(priorData&&changeRows.length)',
+        1,
+    )
+    render_calls = "renderChanges();renderRelationships();renderFactors();"
+    if render_calls not in html:
+        raise ValueError("The report template is missing the analysis-selection render hook.")
+    html = html.replace(
+        render_calls,
+        'if(D.selectedAnalyses.includes("scores_change"))renderChanges();'
+        'if(D.selectedAnalyses.includes("correlations"))renderRelationships();'
+        'if(D.selectedAnalyses.includes("factor_analysis"))renderFactors();'
+        'if(D.selectedAnalyses.includes("response_distribution"))renderDistribution();',
+        1,
+    )
+    distribution_script = r'''
+function renderDistribution(){
+  const source=attr.value?D.distribution.segments[attr.value]?.[val.value]:D.distribution.overall;
+  const table=document.querySelector("#distributionTable"),columns=D.distribution.labels;
+  table.innerHTML=`<thead><tr><th>Survey item</th><th>Responses</th>${columns.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${D.questions.map((q,i)=>{
+    const row=source?.[i];
+    if(!row||row[0]===null)return `<tr><td>${escapeHtml(D.labels[q])}</td><td colspan="${columns.length+1}">Suppressed: insufficient item responses.</td></tr>`;
+    return `<tr><td>${escapeHtml(D.labels[q])}</td><td>${compactN(row[0])}</td>${row.slice(1).map(x=>`<td>${x.toFixed(1)}%</td>`).join("")}</tr>`;
+  }).join("")}</tbody>`;
+  attachVisualToolbar(table,{label:"Item distribution",filename:"item-distribution"});
+}
+'''
+    html = html.replace(
+        "function render(){placeReportFilters",
+        distribution_script + "function render(){placeReportFilters",
+        1,
+    )
+    html = html.replace(
+        "This reference tab documents how the report's analyses are computed",
+        "Item scores always run as supporting context and use the 0-100 scale. "
+        "Only selected optional analyses run; Downloads and Methodology are always included. "
+        "Methods marked Not run describe other analyses you could choose; they have no results in this report. "
+        "Example interpretations and actions are hypothetical, not findings from this report. "
+        "This reference tab documents how the report's analyses are computed",
+        1,
+    )
+    return html
 
 
 def inject_attrition_report(
@@ -1940,6 +2118,13 @@ def main() -> int:
     config_path = Path(options.config).resolve()
     output = Path(options.output_dir).resolve()
     config = json.loads(config_path.read_text(encoding="utf-8"))
+    selected = config.get("selected_analyses")
+    if selected is not None and (
+        not isinstance(selected, list)
+        or any(name not in OPTIONAL_ANALYSES for name in selected)
+    ):
+        raise ValueError("selected_analyses must be a list of supported optional analyses.")
+    enabled = set(OPTIONAL_ANALYSES if selected is None else selected)
     summary_mode = options.summary_mode or config.get("summary_mode", "off")
     if summary_mode not in {"off", "optional", "required"}:
         raise ValueError(
@@ -2016,11 +2201,21 @@ def main() -> int:
     overall = metrics(frame, questions, scale)
     segments = segment_cube(frame, questions, attributes, scale)
     progress.update(25, "Overall and segment score views prepared")
-    progress.update(28, "Building cycle comparisons and repeat-respondent views")
+    compare_scores = "scores_change" in enabled
+    progress.update(
+        28,
+        "Building cycle comparisons and repeat-respondent views"
+        if compare_scores else "Preparing cycle item scores for the survey summary",
+    )
     cycles = cycle_cube(
         frame, questions, attributes, cycle_col, scale, limitations.get("cycle_order"),
+        include_comparisons=compare_scores,
     )
-    progress.update(42, "Cycle comparisons and repeat-respondent views prepared")
+    progress.update(
+        42,
+        "Cycle comparisons and repeat-respondent views prepared"
+        if compare_scores else "Cycle item scores prepared",
+    )
     comment_themes = comment_theme_payload(
         resolve(config_path.parent, config.get("comments_file")),
         frame,
@@ -2032,25 +2227,29 @@ def main() -> int:
         config.get("comments_text_col", "comment"),
         identity_converters,
     )
-    progress.update(45, "Clustering relationship matrices for each filter view")
-    relationships = relationship_cube(frame, questions, attributes, cycle_col)
-    progress.update(60, "Relationship matrices and cluster recommendations prepared")
-    factors_path = output / "factor_analysis_summary.csv"
-    overall_factor_rows = (
-        pd.read_csv(factors_path).to_dict("records") if factors_path.exists() else []
-    )
-    progress.update(62, "Preparing filter-specific factor models")
-    factors = factor_cube(
-        frame,
-        questions,
-        attributes,
-        overall_factor_rows,
-        progress,
-        62,
-        84,
-        cycle_col,
-    )
-    progress.update(84, "Filter-specific factor models prepared")
+    relationships = {}
+    if "correlations" in enabled:
+        progress.update(45, "Clustering relationship matrices for each filter view")
+        relationships = relationship_cube(frame, questions, attributes, cycle_col)
+        progress.update(60, "Relationship matrices and cluster recommendations prepared")
+    factors = {}
+    if "factor_analysis" in enabled:
+        factors_path = output / "factor_analysis_summary.csv"
+        overall_factor_rows = (
+            pd.read_csv(factors_path).to_dict("records") if factors_path.exists() else []
+        )
+        progress.update(62, "Preparing filter-specific factor models")
+        factors = factor_cube(
+            frame,
+            questions,
+            attributes,
+            overall_factor_rows,
+            progress,
+            62,
+            84,
+            cycle_col,
+        )
+        progress.update(84, "Filter-specific factor models prepared")
     attrition_status = next(
         (
             item.get("message", item["status"])
@@ -2060,7 +2259,7 @@ def main() -> int:
         "Attrition analysis was not requested.",
     )
     attrition_path = output / "attrition.csv"
-    attrition_completed = any(
+    attrition_completed = "attrition" in enabled and any(
         item["name"] == "attrition" and item["status"] == "completed"
         for item in manifest["analyses"]
     )
@@ -2117,6 +2316,8 @@ def main() -> int:
         "format_contract": "skills/analyze-survey/references/interactive-report-contract.md",
         "input_limitations": limitations,
     }
+    if selected is not None:
+        manifest["selected_analyses"] = selected
     (output / "analysis-manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
     )
@@ -2136,7 +2337,7 @@ def main() -> int:
         if path.is_file() and path.suffix.lower() in {".csv", ".json"}
         and path.name not in excluded_downloads
     )
-    if limitations["audited"]:
+    if limitations["audited"] or selected is not None:
         allowed = {
             *manifest.get("artifacts", {}).values(),
             "analysis-manifest.json", "people-science-summary-context.json",
@@ -2148,13 +2349,24 @@ def main() -> int:
         downloads.sort()
     context = summary_context(
         questions,
-        cycles,
+        cycles if "scores_change" in enabled else {},
         relationships,
         alert_data,
         factors,
         attrition_status,
         downloads,
     )
+    if selected is not None:
+        context["selected_analyses"] = selected
+        for analysis, tab_names in {
+            "scores_change": ["changes"],
+            "correlations": ["relationships"],
+            "factor_analysis": ["factors"],
+            "attrition": ["attrition", "alerts"],
+        }.items():
+            if analysis not in enabled:
+                for tab_name in tab_names:
+                    context["tabs"][tab_name] = {"status": "not_selected"}
     context["input_limitations"] = limitations
     context_path = output / "people-science-summary-context.json"
     context_path.write_text(
@@ -2189,9 +2401,17 @@ def main() -> int:
         "downloads": downloads,
         "inputLimitations": limitations,
     }
+    if selected is not None:
+        data["selectedAnalyses"] = selected
+        if "response_distribution" in enabled:
+            data["distribution"] = distribution_cube(
+                frame, questions, segments, scale, max(MIN_N, int(config.get("min_group_size", MIN_N))),
+            )
     report_path = output / report_name
     report_html = html_page(data)
-    report_html = prepare_report_shell(report_html, attrition_data is not None)
+    report_html = prepare_report_shell(
+        report_html, attrition_data is not None, keep_all_methodology=selected is not None,
+    )
     if attrition_data is not None:
         minimum_category_n = int(
             attrition_settings.get("minimum_category_n", MIN_N)
@@ -2228,6 +2448,8 @@ def main() -> int:
         )
     if not ai_summaries:
         report_html = remove_ai_summary_cards(report_html)
+    if selected is not None:
+        report_html = prepare_selected_report(report_html, selected)
     report_path.write_text(report_html, encoding="utf-8")
     progress.update(96, "Interactive HTML report written")
 

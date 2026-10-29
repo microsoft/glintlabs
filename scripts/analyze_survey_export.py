@@ -43,6 +43,13 @@ ATTRIBUTE_SHEET_CANDIDATES = (
     "demographics",
 )
 COMMENT_SHEET_CANDIDATES = ("comments", "comment", "verbatims", "open text")
+OPTIONAL_ANALYSES = (
+    "correlations",
+    "factor_analysis",
+    "attrition",
+    "scores_change",
+    "response_distribution",
+)
 SENSITIVE_ATTRIBUTE_TOKENS = (
     "comment",
     "email",
@@ -138,6 +145,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--min-group-size", type=int, default=5)
     parser.add_argument(
+        "--analyses",
+        nargs="*",
+        choices=OPTIONAL_ANALYSES,
+        help="Optional reports to run. An empty list runs item scores only; omission preserves legacy defaults.",
+    )
+    parser.add_argument(
         "--attrition-config",
         help="JSON Exit-analysis settings when outcome columns or cycles are ambiguous.",
     )
@@ -162,6 +175,20 @@ def parse_args() -> argparse.Namespace:
         help="Control AI People Science summaries in the generated report.",
     )
     return parser.parse_args()
+
+
+def apply_analysis_selection(config: dict[str, Any], options: argparse.Namespace) -> None:
+    selected = getattr(options, "analyses", None)
+    if selected is None:
+        return
+    unknown = set(selected) - set(OPTIONAL_ANALYSES)
+    if unknown:
+        raise ValueError("Unknown analyses: " + ", ".join(sorted(unknown)))
+    config["selected_analyses"] = list(dict.fromkeys(selected))
+    config["analyses"] = [
+        name for name in config["analyses"]
+        if name in {"descriptives", "by_attribute"} or name in selected
+    ]
 
 
 def choose_name(available: list[str], requested: str | None, candidates: tuple[str, ...]) -> str:
@@ -420,6 +447,9 @@ def configure_attrition(
     options: argparse.Namespace,
     defaults: dict[str, Any],
 ) -> None:
+    selected = getattr(options, "analyses", None)
+    if selected is not None and "attrition" not in selected:
+        return
     try:
         _configure_attrition(config, survey, attributes, options, defaults)
     except AttritionUnavailableError as error:
@@ -1111,6 +1141,7 @@ def prepare_platform_config(
     if attributes:
         config["attribute_view_mode"] = "separate"
     configure_attrition(config, normalized, None, options, {})
+    apply_analysis_selection(config, options)
     config_path = input_dir / "analysis-config.json"
     config_path.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
     return config_path
@@ -1127,12 +1158,14 @@ def build_config(options: argparse.Namespace, output: Path) -> Path:
 
     input_dir = output / "_input"
     input_dir.mkdir(parents=True, exist_ok=True)
-    discovery = inspect_source(source)
-    exit_source = getattr(options, "exit_data", None)
-    if exit_source:
-        discovery["provided_exit_data"] = inspect_source(Path(exit_source).resolve())
     discovery_path = input_dir / "attrition-discovery.json"
-    discovery_path.write_text(json.dumps(discovery, indent=2) + "\n", encoding="utf-8")
+    selected = getattr(options, "analyses", None)
+    if selected is None or "attrition" in selected or getattr(options, "inspect_attrition", False):
+        discovery = inspect_source(source)
+        exit_source = getattr(options, "exit_data", None)
+        if exit_source:
+            discovery["provided_exit_data"] = inspect_source(Path(exit_source).resolve())
+        discovery_path.write_text(json.dumps(discovery, indent=2) + "\n", encoding="utf-8")
     if getattr(options, "inspect_attrition", False):
         return discovery_path
     platform = read_platform_export(source, options)
@@ -1249,6 +1282,7 @@ def build_config(options: argparse.Namespace, output: Path) -> Path:
         "source_comment_sheet": workbook_source["comment_sheet"],
     }
     configure_attrition(config, survey, attribute_frame, options, registered_defaults)
+    apply_analysis_selection(config, options)
     if attribute_cols:
         config["attribute_view_mode"] = "separate"
     if attribute_path:

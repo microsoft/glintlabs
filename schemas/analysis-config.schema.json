@@ -95,6 +95,14 @@
         "by_attribute",
         "attrition"
       ]
+    },
+    "selected_analyses": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Explicit optional report selection. Item scores, Downloads and Methodology are always included. Omission preserves legacy reports; an empty list selects item scores only.",
+      "items": {
+        "enum": ["correlations", "factor_analysis", "attrition", "scores_change", "response_distribution"]
+      }
     }
   },
   "additionalProperties": false
