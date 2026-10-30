@@ -10,9 +10,15 @@ import vm from "node:vm";
 import { readerFile, readerSource, readerTelemetryConfig } from "./build-pages.mjs";
 
 test("analytics requires an explicit public-reader build flag and rejects ambiguous configuration", () => {
-  for (const value of [undefined, "", "false"]) assert.match(readerTelemetryConfig(value), / = false;/);
-  assert.match(readerTelemetryConfig("true"), / = true;/);
+  for (const value of [undefined, "", "false"]) {
+    assert.match(readerTelemetryConfig(value), /telemetryEnabled = false;/);
+    assert.match(readerTelemetryConfig("false", value), /clarityEnabled = false;/);
+  }
+  assert.match(readerTelemetryConfig("true"), /telemetryEnabled = true;\nexport const clarityEnabled = false;/);
+  assert.match(readerTelemetryConfig("false", "true"), /telemetryEnabled = false;\nexport const clarityEnabled = true;/);
+  assert.match(readerTelemetryConfig("true", "true"), /telemetryEnabled = true;\nexport const clarityEnabled = true;/);
   assert.throws(() => readerTelemetryConfig("yes"), /must be true or false/);
+  assert.throws(() => readerTelemetryConfig("true", "yes"), /GLINTLABS_PAGES_CLARITY must be true or false/);
 });
 
 test("browser icon uses the Fluent beaker and the requested gray-circle treatment", async () => {

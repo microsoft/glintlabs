@@ -75,6 +75,25 @@ export function hasLegacyRefusal(storage: Pick<Storage, "getItem">, now = Date.n
   return false;
 }
 
+export function browserPrivacyRequested(browser: Pick<Navigator, "doNotTrack"> & { globalPrivacyControl?: boolean }) {
+  return browser.globalPrivacyControl === true || browser.doNotTrack === "1";
+}
+
+export function createPreferenceCheck(options: {
+  storage: () => Pick<Storage, "getItem">;
+  warn: (message: string) => void;
+}) {
+  let warned = false;
+  return () => {
+    try { return hasLegacyRefusal(options.storage()); }
+    catch {
+      if (!warned) options.warn("[Glint Labs analytics] Existing preferences unavailable or invalid; collection stays off.");
+      warned = true;
+      return true;
+    }
+  };
+}
+
 export function isProductionLocation(location: Pick<Location, "origin" | "pathname">) {
   return location.origin === productionOrigin &&
     (location.pathname === productionBasePath || location.pathname.startsWith(`${productionBasePath}/`));

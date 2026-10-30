@@ -24,6 +24,10 @@ const failures = [];
 const pending = new Map();
 const events = [];
 const warnings = [];
+const clarityRequests = [];
+const clarityExpected = process.env.GLINTLABS_PAGES_CLARITY === "true";
+const telemetryExpected = process.env.GLINTLABS_PAGES_TELEMETRY !== "false";
+let rejectClarity = false;
 let socket;
 let sequence = 0;
 let rejecting = false;
@@ -68,6 +72,24 @@ async function evaluate(expression) {
 
 async function intercept({ requestId, request }) {
   const url = new URL(request.url);
+  if (request.url === "https://www.clarity.ms/tag/z4zyk0yyz7") {
+    clarityRequests.push(request);
+    await send("Fetch.fulfillRequest", {
+      requestId, responseCode: rejectClarity ? 503 : 200,
+      responseHeaders: [{ name: "Content-Type", value: "text/javascript" }],
+      body: Buffer.from(rejectClarity ? "" : `(() => {
+        const queued = window.clarity.q;
+        window.__clarityCalls = [];
+        window.clarity = (...args) => window.__clarityCalls.push(args);
+        for (const args of queued) window.clarity(...args);
+      })();`).toString("base64"),
+    });
+    return;
+  }
+  if (url.origin === local) {
+    await send("Fetch.continueRequest", { requestId });
+    return;
+  }
   if (request.url === collectorUrl) {
     const headers = [
       { name: "Access-Control-Allow-Origin", value: productionOrigin },
@@ -153,10 +175,9 @@ try {
   });
   await send("Page.enable");
   await send("Runtime.enable");
-  await send("Fetch.enable", { patterns: [
-    { urlPattern: `${productionOrigin}/*` }, { urlPattern: `${collectorUrl}*` },
-  ] });
+  await send("Fetch.enable", { patterns: [{ urlPattern: "*" }] });
   await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 900, deviceScaleFactor: 1, mobile: false });
+  if (telemetryExpected) {
   await go("/?email=never-send&utm_source=private-name");
   await waitFor(() => events.length === 1,
     "Build with GLINTLABS_PAGES_TELEMETRY=true before running telemetry browser checks.");
@@ -272,8 +293,72 @@ try {
   assert.equal(events.length, 9, "Local preview sent telemetry.");
   assert.equal(await evaluate(`localStorage.getItem(${JSON.stringify(visitorKey)})`), null, "Local preview created a browser ID.");
   assert.ok(!JSON.stringify(events).includes("never-send"));
+  }
+  await go("/");
+  await waitFor(() => evaluate('!!document.querySelector("footer")'), "Public footer did not render.");
+  if (clarityExpected) {
+    await waitFor(() => evaluate("Array.isArray(window.__clarityCalls)"), "Build with GLINTLABS_PAGES_CLARITY=true.");
+    assert.deepEqual(await evaluate("window.__clarityCalls"), [], "Clarity consent or custom identifiers were fabricated.");
+    assert.equal(clarityRequests.at(-1).headers.Referer, undefined, "Tag request leaked the document URL.");
+    assert.equal(await evaluate('document.querySelector("footer").textContent.includes("Microsoft Clarity")'), true);
+    let before = clarityRequests.length;
+    await evaluate(`(() => {
+      const link = [...document.querySelectorAll("a[href]")].find(link =>
+        new URL(link.href).pathname.replace(/\\/$/,"") === "/glintlabs/reports");
+      link.click();
+    })()`);
+    await waitFor(() => evaluate('location.pathname.replace(/\\/$/,"") === "/glintlabs/reports"'), "SPA navigation failed.");
+    await pause();
+    assert.equal(clarityRequests.length, before, "SPA navigation loaded a duplicate Clarity tag.");
+    assert.deepEqual(await evaluate("window.__clarityCalls"), [], "SPA navigation changed regional consent defaults.");
+    await changePreference(legacyConsentKeys[0], "denied");
+    await waitFor(() => evaluate('window.__clarityCalls.some(args => args[0] === "stop")'), "Clarity did not stop on refusal.");
+    assert.equal(await evaluate('!!document.querySelector(\'script[src="https://www.clarity.ms/tag/z4zyk0yyz7"]\')'), false);
+    await changePreference(legacyConsentKeys[0], null);
+    await pause();
+    assert.equal(clarityRequests.length, before, "Stopped Clarity restarted without a reload.");
+    for (const source of [
+      'Object.defineProperty(navigator,"globalPrivacyControl",{get:()=>true});',
+      'Object.defineProperty(navigator,"doNotTrack",{get:()=>"1"});',
+      `localStorage.setItem(${JSON.stringify(legacyConsentKeys[1])},JSON.stringify({choice:"denied",expires:Date.now()+86400000}));`,
+      'Object.defineProperty(window,"localStorage",{get(){throw new DOMException("Storage unavailable","SecurityError");}});',
+    ]) {
+      const blocked = await send("Page.addScriptToEvaluateOnNewDocument", { source });
+      await go("/about/");
+      await pause();
+      assert.equal(clarityRequests.length, before, "Clarity bypassed a browser privacy signal or existing refusal.");
+      await send("Page.removeScriptToEvaluateOnNewDocument", { identifier: blocked.identifier });
+    }
+    await go("/about/");
+    await changePreference(legacyConsentKeys[1], null);
+    await waitFor(() => evaluate("Array.isArray(window.__clarityCalls)"), "Clarity did not load after clearing the refusal on a fresh page.");
+    await go("/", local);
+    await pause();
+    before = clarityRequests.length;
+    for (const route of ["/studio/", "/preview/private/", "/reports/unreviewed/"]) {
+      await go(route);
+      await pause();
+      assert.equal(clarityRequests.length, before, "Clarity loaded on an unreviewed/private route.");
+    }
+    await go("/", local);
+    await pause();
+    assert.equal(clarityRequests.length, before, "Clarity loaded in a local preview.");
+    rejectClarity = true;
+    const eventCount = events.length;
+    await go("/tools/");
+    await waitFor(() => warnings.some(message => message.includes("Clarity unavailable")), "Clarity failure was not diagnosed.");
+    if (telemetryExpected) await waitFor(() => events.length > eventCount, "Clarity failure blocked Supabase.");
+    assert.equal(await evaluate('!!document.querySelector(\'[data-glintlabs-event="analyze_survey_click"]\')'), true);
+    assert.equal(await evaluate(`!!document.getElementById("analytics-preferences") ||
+      !!document.querySelector('[aria-label="Analytics preferences"],[aria-label="Site analytics"]')`), false);
+  } else {
+    await pause();
+    assert.equal(clarityRequests.length, 0, "Disabled build loaded Clarity.");
+    assert.equal(await evaluate('document.querySelector("footer").textContent.includes("Microsoft Clarity")'), false);
+  }
+  if (!telemetryExpected) assert.equal(events.length, 0, "Disabled Supabase tracker sent events.");
   if (failures.length) throw failures[0];
-  console.log("Telemetry browser checks passed: no floating analytics UI, accessible inline footer disclosure, automatic first-visit collection without fabricated consent, stable browser IDs, preserved legacy refusals, ID deletion, navigation deduplication, real skill/tool clicks, GPC/DNT, unreadable preferences, anonymous fallback, local suppression, and failure isolation. All events intercepted; none sent to Supabase.");
+  console.log(`Telemetry browser checks passed (Supabase=${telemetryExpected}, Clarity=${clarityExpected}): no consent UI, regional consent left to Clarity, production/route/privacy gates, lifecycle and failure isolation. All vendor requests intercepted; no test data sent to Supabase or Clarity. Vendor geolocation itself requires live regional verification.`);
 } finally {
   stopping = true;
   socket?.close();

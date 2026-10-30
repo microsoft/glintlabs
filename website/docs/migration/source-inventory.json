@@ -14,8 +14,8 @@
       "source": ".github/workflows/site-ci.yml",
       "destination": ".github/workflows/site-ci.yml",
       "sourceSha256": "21ed094e6da10c12eb4e2c9b57bbee6305a1f8fafef492661dae0c7ea6951ba0",
-      "destinationSha256": "1846b4dcbebde75ffbb2ade19feb88cdf6b74b87eebd5daadb1dc485a082fb9a",
-      "intentionalDifference": "Relocated to destination root with website working directory/npm cache, Node22.23.4 and inventory check; preserves source checks, adds verified static-reader build and explicitly authorized main-only GitHub Pages deployment. Subsequent maintainer-approved telemetry adds a disabled-by-default main-only Pages flag and an intercepted browser release gate when enabled. The approved automatic-analytics policy renames that gate to match its first-visit and retained privacy-protection checks."
+      "destinationSha256": "41613198d151a859f2e3b2c5142bc2af32901434d23513cf1056ca1dd015512f",
+      "intentionalDifference": "Relocated to destination root with website working directory/npm cache, Node22.23.4 and inventory check; preserves source checks, adds verified static-reader build and explicitly authorized main-only GitHub Pages deployment. Subsequent maintainer-approved telemetry adds a disabled-by-default main-only Pages flag and an intercepted browser release gate when enabled. The approved automatic-analytics policy renames that gate to match its first-visit and retained privacy-protection checks. The requested Clarity integration adds an independent main-only production flag and extends the intercepted analytics release gate to either provider."
     },
     {
       "source": ".gitignore",
@@ -49,8 +49,8 @@
       "source": "README.md",
       "destination": "website/README.md",
       "sourceSha256": "5d8bf5442839d7989a24a82b72496f407066ecd3381247fdfe35d4995571e0a2",
-      "destinationSha256": "f58e6f3820072aaff9b2f4753b20ddcdd109457a80a19c8ce27ff6e1e17749c9",
-      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback. The approved distinct-browser and automatic-analytics extensions document first-visit tracking without on-site consent/opt-out controls, privacy approval, preserved refusals and DNT/GPC, fixed 18-calendar-month random browser IDs, separate server-side keyed hashing, compatible anonymous events and restricted 90-day distinct counts. The requested removal of floating analytics UI moves its disclosure into plain text in the existing marketing footer."
+      "destinationSha256": "8f4b8ba2bf277f097ce24f119dd3d9afeba2c46d00b405b7e3c97b8e3e0841ed",
+      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback. The approved distinct-browser and automatic-analytics extensions document first-visit tracking without on-site consent/opt-out controls, privacy approval, preserved refusals and DNT/GPC, fixed 18-calendar-month random browser IDs, separate server-side keyed hashing, compatible anonymous events and restricted 90-day distinct counts. The requested removal of floating analytics UI moves its disclosure into plain text in the existing marketing footer. The requested Clarity integration documents regional vendor consent defaults without a banner, project cookie settings, privacy/data boundaries, verification and rollback independently of Supabase."
     },
     {
       "source": "artifacts/README.md",
@@ -3710,8 +3710,8 @@
       "source": "src/app/_components/marketing-footer.tsx",
       "destination": "website/src/app/_components/marketing-footer.tsx",
       "sourceSha256": "e03e844604fab71f8025ecfd6500385e459607ef25451e7e7de318a614a309dc",
-      "destinationSha256": "f5ea85edfb747c933f13a43b5aa8bfc7566577588764ff5a5a023f3e2480ded3",
-      "intentionalDifference": "Move automatic-analytics disclosure into a noninteractive paragraph beside the existing privacy link, gated by the public Pages telemetry build flag. Reuse existing disclaimer styling without a floating widget, consent prompt, new controls or redesign."
+      "destinationSha256": "1a023355fbbcecb8ce82ee745e975c16df7775381cbb5ea794902777e9110d92",
+      "intentionalDifference": "Move automatic-analytics disclosure into a noninteractive paragraph beside the existing privacy link, gated by the public Pages telemetry build flag. Reuse existing disclaimer styling without a floating widget, consent prompt, new controls or redesign. The requested Clarity integration adds a separately gated plain-text disclosure of heatmaps, recordings, regional tracking limits and privacy opt-outs."
     },
     {
       "source": "src/app/_components/public-site-design.module.css",
@@ -3906,8 +3906,8 @@
       "source": "src/app/layout.tsx",
       "destination": "website/src/app/layout.tsx",
       "sourceSha256": "e680330d07265b558c4a9048141a3ee04c1aea1051aafc8abb225a226c91ea08",
-      "destinationSha256": "d326d09bf07ce369870efdf93cadaa1eb0108721bf74ce855a1ef50418510e75",
-      "intentionalDifference": "Subsequent maintainer-approved telemetry mounts optional consent UI and tracking, disabled in normal Next/Studio builds and gated to the public production reader."
+      "destinationSha256": "503a8aa91a81c54383d939286f72edb18fef656f7dcd9922b1f9f523f0fbdfcc",
+      "intentionalDifference": "Subsequent maintainer-approved telemetry mounts optional consent UI and tracking, disabled in normal Next/Studio builds and gated to the public production reader. The requested Clarity integration mounts a second headless tracker behind its independent production-only flag, without restoring consent UI or changing Supabase collection."
     },
     {
       "source": "src/app/page.module.css",

@@ -4,14 +4,9 @@ import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { telemetryEnabled } from "./config";
 import {
-  actionEvent, createBrowserIdentity, createTelemetryClient, hasLegacyRefusal,
+  actionEvent, browserPrivacyRequested, createBrowserIdentity, createPreferenceCheck, createTelemetryClient,
   isProductionLocation, legacyConsentKeys,
 } from "./client";
-
-function privacyRequested() {
-  const browser = navigator as Navigator & { globalPrivacyControl?: boolean };
-  return browser.globalPrivacyControl === true || browser.doNotTrack === "1";
-}
 
 export function SiteTelemetry() {
   const pathname = usePathname();
@@ -19,21 +14,16 @@ export function SiteTelemetry() {
 
   useEffect(() => {
     if (!telemetryEnabled || !isProductionLocation(window.location)) return;
-    let warned = false;
     const tracker = createTelemetryClient({
       enabled: true, location: () => window.location, referrer: () => document.referrer,
-      privacyRequested, fetch: window.fetch.bind(window), warn: message => console.warn(message),
+      privacyRequested: () => browserPrivacyRequested(navigator),
+      fetch: window.fetch.bind(window), warn: message => console.warn(message),
       identity: createBrowserIdentity({
         storage: () => window.localStorage, warn: message => console.warn(message),
       }),
-      preferenceBlocked: () => {
-        try { return hasLegacyRefusal(window.localStorage); }
-        catch {
-          if (!warned) console.warn("[Glint Labs analytics] Existing preferences unavailable or invalid; collection stays off.");
-          warned = true;
-          return true;
-        }
-      },
+      preferenceBlocked: createPreferenceCheck({
+        storage: () => window.localStorage, warn: message => console.warn(message),
+      }),
     });
     client.current = tracker;
     const onStorage = (event: StorageEvent) => {

@@ -172,6 +172,65 @@ reader at its production origin using browser request interception. The test
 serves every production request locally and intercepts all collector requests;
 it never sends test visits to the real project. Set `CHROME_PATH` if needed.
 
+## Microsoft Clarity regional tracking
+
+Clarity project `z4zyk0yyz7` runs alongside Supabase only when the independent
+production Pages build flag `GLINTLABS_PAGES_CLARITY=true` is enabled. Checked-in
+configuration, ordinary Next builds, PR builds, Studio, private/unreviewed paths,
+previews, localhost, DNT/GPC, and existing refusals never load the tag.
+There is no consent box, banner, or new consent record. The existing footer
+discloses Clarity beside the Microsoft Privacy Statement.
+
+The tag uses Clarity's own IP-based regional consent enforcement. No Consent API
+call grants consent or overrides geography. Under the currently documented
+defaults, visitors in the EEA, UK, and Switzerland remain in limited cookieless
+mode without consent; other visitors can receive cookie-based tracking if the
+project's cookie setting permits it. Do not substitute browser language, timezone,
+or a separate geolocation service. This follows Clarity's enforced regions,
+not an exhaustive determination of every jurisdiction's privacy law.
+The site's privacy owner must confirm requirements for its audience.
+
+### Setup and rollout
+
+1. In project `z4zyk0yyz7`, **Settings > Setup > Advanced settings > Cookies**
+   must be **On** for cookie-based sessions outside consent-required regions.
+   Turning it off makes tracking cookieless everywhere. Do not send an artificial
+   `consentv2` grant to bypass regional enforcement.
+2. Review masking, advertising/data-use settings, and the site's privacy notice
+   with the project/privacy owner. Clarity captures public-page DOM, interactions,
+   and URLs/referrers; the Supabase-only coarse URL/category restrictions and
+   90-day retention do **not** apply to Clarity. No Supabase browser ID, account
+   identifier, or custom identifier is forwarded. Private Studio and survey
+   uploads are not in Pages.
+3. Set repository Actions variable `GLINTLABS_PAGES_CLARITY=true` and merge the
+   integration to `main`. Keep `GLINTLABS_PAGES_TELEMETRY` unchanged. The Clarity
+   integration needs no Supabase schema or collector changes.
+4. Verify live visits from an EEA/UK/Swiss connection and a non-enforced region.
+   Confirm denied analytics storage/no `_clck` or `_clsk` cookies in the former,
+   cookie-based sessions in the latter when the project permits them, and no
+   consent UI. Inspect Clarity metadata as described in Microsoft's
+   [Consent Mode documentation](https://learn.microsoft.com/en-us/clarity/setup-and-installation/consent-mode).
+   Local intercepted tests validate our integration, not the vendor's geolocation
+   or the authenticated project's settings.
+
+Cookieless page views do not provide comparable unique-user, returning-user,
+multi-page funnel, or time-per-session metrics. Segment interpretations by
+tracking mode/region rather than treating Clarity as a census. Supabase remains
+the existing event-count baseline; its browser counts are approximate too.
+
+Privacy checks run before loading and again on navigation, focus, visibility,
+and cross-tab preference updates. A refusal stops Clarity and removes the tag;
+already transmitted data cannot be recalled, and stopping can flush prior buffered
+events. Once stopped, Clarity does not restart until a reload passes the checks.
+Tag-loading failure logs a diagnostic and leaves navigation/Supabase unaffected.
+Disable the Actions flag and rebuild Pages to remove the integration.
+
+For local checks, enable both build flags using your shell's environment syntax,
+run `npm run pages:build`, then run `npm run pages:test:telemetry` with the same
+flags. The browser check intercepts **all** page requests and uses a fake Clarity
+tag; no test visits reach either analytics provider. A disabled build can be
+checked with both flags `false`.
+
 ## Prototype contract
 
 Word starts the report; Publishing Studio becomes the approved web version.
