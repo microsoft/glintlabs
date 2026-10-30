@@ -39,7 +39,12 @@ list in a structured form with `priority_tier` and `research_questions`
 fields. `references/external-tab-snapshot.json` is the saved, raw copy of the
 workbook's `External` worksheet that `catalog.json` is derived from.
 
-Resources are ranked by a single scale, taken from the workbook's
+First filter relevance and applicability, then prefer the new catalog's reviewed
+Research Drops over original-vault resources. Collection priority is a retrieval
+preference, not proof of evidence quality or current product validity. Do not
+force an irrelevant Drop into an answer.
+
+Within the original vault, preserve the scale taken from the workbook's
 `Priority to add to context library` column (column J) and carried in
 `catalog.json` as `priority_tier`:
 
@@ -51,14 +56,74 @@ Resources are ranked by a single scale, taken from the workbook's
    high-value that are not present in the workbook snapshot at all; treat
    these as roughly `top5`-equivalent in authority.
 
-Prefer the higher `priority_tier` resource whenever more than one could answer
-the question. See `source-priority.md` for the full routing table of which
+Prefer the higher `priority_tier` among relevant original-vault resources, after
+the new catalog's collection precedence. See `source-priority.md` for which
 `theme` to reach for given a research question, the supplementary curated
 resources, and the secondary live-retrieval checks (Microsoft Viva Blog
 category page, Microsoft Learn, Adoption Center) that are useful for material
 published after the snapshot was taken, but are not re-ranked by column J.
 
 Do not use workbook rows from any worksheet other than `External`.
+
+## Quick theme lookup
+
+Start with the [corpus guide](references/corpus-guide.md) for scope and evidence
+boundaries, then the [topic-first directory](references/topic-lookup.md) to find
+sources by shared concept. Both are repository-relative, browsable on GitHub,
+and bundled with this skill. No local download folder, private SharePoint access,
+or extraction cache is required for discovery.
+
+Use `references/theme-lookup.md` to browse ten reviewed, source-specific themes
+per accessible resource, or search `references/theme-index.json` by topic,
+resource ID, theme label, or summary. Both files ship with the skill; no script
+execution is required. The index includes the catalog plus 17 published Research
+Drop counterparts. An unavailable webinar-series directory is recorded as a gap
+with zero themes, not populated from its unrelated redirect.
+
+Each theme records its kind (finding, recommendation, framework, documentation,
+method, commentary, hypothesis, case study, or signpost), shared topic tags, and
+a short evidence anchor with a line/page/transcript locator. Read the resource's
+context and asset scope, not just the theme label. `L` locators refer to nonblank
+lines of the reviewed body extraction, not browser source lines; `p` locators are
+PDF pages.
+Use the short anchor to locate the passage after retrieving the public source.
+For explicitly reviewed webinars, `s` locators identify machine-transcript
+segments with a recording URL and start time. Retrieve that recording for
+audio-backed claims, not just the recap. Machine transcription can miss words;
+it does not certify visual-only content or exact quantitative claims.
+
+These are editorial navigation summaries, not statistically calculated topics or
+ten independent findings. Directory and operational pages can have ten supported
+topics without containing ten research results. Check `study_families` before
+describing agreement as independent empirical corroboration. The index deliberately
+excludes internal-labeled sections and unpublished supporting material.
+
+The 550 source-level summaries are not 550 distinct ideas. The 42 original Drop
+files were grouped into 17 bundles with ten themes per published counterpart,
+not ten per file; this does not certify lossless coverage of slides or audio.
+All 33 shared topics occur in both collections, and 13 Drops link to a study
+family represented in the original vault at the recorded review. Use the
+generated directory/coverage report for current counts. Broad topic overlap and
+shared samples do not establish claim-level duplication or independent evidence.
+Consolidate repeated ideas in answers while retaining source links, distinct
+analyses, caveats, and contradictory results. No redundancy percentage or
+claim-level semantic consolidation is certified.
+
+Keep the source-priority contract: relevant new-catalog Research Drops come first;
+within the original vault preserve existing column-J priorities. Research Drops
+keep null workbook priority, but that is not lower collection priority. Disclose
+which collections were reviewed. Neither the themes nor their hashes replace retrieving and
+checking the full published body; linked media coverage is explicit and bounded.
+
+When working in the repository, an optional standard-library CLI supports quick
+lookup:
+
+```text
+python scripts/search_knowledge_vault.py "psychological safety"
+python scripts/search_knowledge_vault.py --topic hr-it
+python scripts/search_knowledge_vault.py --resource research-drop-4493933
+python scripts/search_knowledge_vault.py --coverage
+```
 
 ## Retrieval process
 
@@ -91,10 +156,13 @@ explanation. Narrow factual questions can proceed directly to retrieval.
 
 1. Translate the (now-scoped) question into a small set of specific concepts
    and close variants.
-2. Use `source-priority.md`'s routing table to identify which `theme`(s) in
-   `catalog.json` are in scope, then filter and sort candidate entries by
-   `priority_tier` (`top5` > `high` > `medium` > `low`, `curated` treated as
-   `top5`-equivalent).
+2. Browse `topic-lookup.md`, or search `theme-index.json` / `theme-lookup.md`,
+   across both collections for
+   relevant topics and source-specific themes. Catalog categories and research
+   questions are navigation aids, not exclusive filters. Prefer relevant new
+   Research Drops, then original-vault resources in their unchanged
+   `top5` / `curated`-equivalent > `high` > `medium` > `low` order. Read the
+   theme kind, context, asset scope, and shared-study links before selecting.
 3. Retrieve the full published article body for each relevant candidate
    URL. Confirm that body text was actually returned before citing it or counting
    it as reviewed. Empty/error pages, titles, and search snippets are discovery
@@ -102,13 +170,16 @@ explanation. Narrow factual questions can proceed directly to retrieval.
    source counts; disclose the gap rather than supplying the article's claims
    from general knowledge. Catalog/snapshot metadata helps route retrieval but
    is not a substitute for article evidence.
-4. If the snapshot plainly lacks coverage, or the question needs material
-   newer than the snapshot's `retrieved_at` date, run the secondary live
+   For PDF- or recording-backed themes, also retrieve the declared public
+   companion source; a recap alone cannot substantiate recording-only claims.
+4. If the combined reviewed index lacks coverage, or the question needs material
+   newer than its review date, run the secondary live
    checks described in `source-priority.md` (Viva Blog category page,
    Microsoft Learn, Adoption Center) and say explicitly that you did so.
-5. Deduplicate by canonical article URL. If a resource appears in more than
-   one place, treat it at its highest `priority_tier`.
-6. Synthesize only claims supported by retrieved article bodies and attach
+5. Deduplicate by canonical article URL. Preserve registered collection
+   precedence and the highest applicable original-vault tier; do not count
+   duplicate appearances as separate evidence.
+6. Synthesize only claims supported by retrieved full sources and attach
    citations directly to those claims.
 7. Describe how many retrieved sources support the answer and distinguish
    research findings from published recommendations and author commentary. Lead
@@ -194,7 +265,13 @@ clear.
 
 ## Guardrails
 
-- Use only externally published article bodies for substantive evidence.
+- Use only externally published article bodies, public PDFs, and explicitly
+  reviewed public companion recordings for substantive evidence. Keep recording
+  claims tied to recording citations; do not infer them from recap metadata.
+- An appendix is not automatically internal. Published appendices are eligible;
+  exclude explicitly internal-labeled unpublished sections, private notes,
+  reviewer comments, and ownership details. Never retrieve a private original
+  merely because it is listed as catalog provenance.
 - Never use rows from `All Items`, `Internal PSEs & POVs`, or any other workbook
   worksheet; the vault treats only article records from the `External` worksheet
   as eligible evidence.
@@ -225,7 +302,7 @@ clear.
   it; never blend unhedged speculation into the standard evidence-backed
   summary format.
 - Never cite a source for an extrapolated/speculative claim; citations are
-  reserved for claims directly supported by retrieved article bodies.
+  reserved for claims directly supported by retrieved full sources.
 
 ## Future extension points
 
@@ -236,9 +313,15 @@ clear.
   `tests/test_knowledge_vault_catalog.py`).
 - [Done] Retrieval-quality tests covering catalog integrity, workbook-schema
   consistency, and generated-file freshness (`tests/test_knowledge_vault_catalog.py`).
+- [Done] Reviewed ten-theme routing index, public Research Drop lookup, explicit
+  coverage gaps, study-family links, and deterministic search
+  (`references/theme-index.json`, `scripts/search_knowledge_vault.py`,
+  `tests/test_knowledge_vault_themes.py`).
+- [Done] Repository-portable corpus guide and generated topic-first directory
+  with cross-collection counts and shared research lineage
+  (`references/corpus-guide.md`, `references/topic-lookup.md`).
 - Add a true automated refresh and dead-link check that fetches each catalog URL
   over the network on a schedule (the current staleness check only compares dates,
   it does not re-fetch pages).
-- Add topic aliases for common synonyms (e.g., "manager effectiveness" vs.
-  "people leader effectiveness") to improve retrieval-query translation.
+- Expand the lookup's topic aliases as additional reviewed terminology warrants.
 - Add a reviewed cache of article bodies if repository policy permits it.

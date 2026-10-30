@@ -29,7 +29,9 @@ This plugin provides a set of focused skills that share a common analysis contra
    and Methodology are always included.
 2. `analyze-survey-ai-preview` adds staged, evidence-grounded People Science
    summaries to the same shared report pipeline.
-3. `people-science-knowledge-vault` finds and synthesizes externally published People Science knowledge using a strict two-tier source hierarchy.
+3. `people-science-knowledge-vault` finds and synthesizes externally published
+   People Science knowledge using a reviewed topic/source index and explicit
+   collection priorities.
 
 The plugin deliberately does not duplicate the `vivaglint` analysis package. It calls a pinned package version and treats the output manifest as the stable interface between execution and interpretation.
 
@@ -135,11 +137,19 @@ Schema: `schemas/analysis-manifest.schema.json`
 
 ### Knowledge vault status
 
-`people-science-knowledge-vault` is an initial scaffold. It gives first priority to
-all articles discoverable from the Microsoft Viva Blog category and second priority
-only to records in the source workbook's `External` worksheet. Future work can add a
-generated article catalog, automated refresh, topic aliases, and retrieval-quality
-tests without changing this source hierarchy.
+Start with the [corpus guide](skills/people-science-knowledge-vault/references/corpus-guide.md)
+and [topic-first directory](skills/people-science-knowledge-vault/references/topic-lookup.md).
+The repository includes reviewed summaries and public links for 38 accessible
+original-vault resources and 17 Research Drops: 550 source-level entries under 33
+shared topics, with one original directory recorded as unavailable. Discovery
+does not require private SharePoint, local downloads, or script execution.
+
+Relevant new Research Drops take precedence; the original vault's priority
+ordering is preserved within its collection. Shared topics and study families
+are not independent findings or a claim-level deduplication result. Full published
+sources are still required for substantive evidence and freshness checks. See
+the [skill](skills/people-science-knowledge-vault/SKILL.md) and authoritative
+[source-priority contract](skills/people-science-knowledge-vault/references/source-priority.md).
 
 ## Linked survey dataset
 
