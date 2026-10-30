@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { telemetryEnabled } from "@/telemetry/config";
+import { clarityEnabled, telemetryEnabled } from "@/telemetry/config";
 
 import styles from "./marketing-footer.module.css";
 
@@ -17,6 +17,10 @@ export function MarketingFooter() {
             No survey data, names, email addresses, or full URLs are sent. Supabase receives IP addresses
             to handle requests and uses a separate daily-changing hash for short-lived rate limits.
             Browser privacy signals and existing refusals are honored. Counts represent browsers, not people.</p>}
+          {clarityEnabled && <p>Microsoft Clarity measures public-page interactions using heatmaps
+            and session recordings. Clarity limits tracking without consent in regions where it requires
+            consent and may use cookies elsewhere. Browser privacy signals and existing refusals are honored.
+            See the Privacy Statement below.</p>}
         </div>
       </div>
 

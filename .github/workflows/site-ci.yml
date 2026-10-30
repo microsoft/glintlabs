@@ -54,10 +54,14 @@ jobs:
         run: npm run pages:build
         env:
           GLINTLABS_PAGES_TELEMETRY: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.GLINTLABS_PAGES_TELEMETRY == 'true' && 'true' || 'false' }}
+          GLINTLABS_PAGES_CLARITY: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.GLINTLABS_PAGES_CLARITY == 'true' && 'true' || 'false' }}
 
       - name: Verify automatic analytics and privacy protections before release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.GLINTLABS_PAGES_TELEMETRY == 'true'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && (vars.GLINTLABS_PAGES_TELEMETRY == 'true' || vars.GLINTLABS_PAGES_CLARITY == 'true')
         run: npm run pages:test:telemetry
+        env:
+          GLINTLABS_PAGES_TELEMETRY: ${{ vars.GLINTLABS_PAGES_TELEMETRY == 'true' && 'true' || 'false' }}
+          GLINTLABS_PAGES_CLARITY: ${{ vars.GLINTLABS_PAGES_CLARITY == 'true' && 'true' || 'false' }}
 
       - name: Upload public reader only
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

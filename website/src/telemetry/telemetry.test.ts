@@ -4,7 +4,7 @@ import {
   campaignCategory, parseEvent, publicPath, referralCategory, type TelemetryEvent,
 } from "./contract.ts";
 import {
-  actionEvent, createBrowserIdentity, createTelemetryClient, hasLegacyRefusal,
+  actionEvent, browserPrivacyRequested, createBrowserIdentity, createPreferenceCheck, createTelemetryClient, hasLegacyRefusal,
   legacyConsentKeys, visitorExpiry, visitorKey,
 } from "./client.ts";
 import { createHandler } from "../../../supabase/functions/glintlabs-telemetry/handler.ts";
@@ -64,6 +64,27 @@ test("automatic analytics preserves unexpired refusals from both prior policies 
   values.set(legacyConsentKeys[1], JSON.stringify({ choice: "granted", expires: 2000 }));
   assert.equal(hasLegacyRefusal(storage, 1000), true);
   assert.throws(() => hasLegacyRefusal({ getItem: () => { throw new Error("Storage unavailable"); } }));
+});
+
+test("shared browser privacy checks block DNT, GPC and unreadable preferences without fabricating consent", () => {
+  assert.equal(browserPrivacyRequested({ doNotTrack: null }), false);
+  assert.equal(browserPrivacyRequested({ doNotTrack: "1" }), true);
+  assert.equal(browserPrivacyRequested({ doNotTrack: "0", globalPrivacyControl: true }), true);
+  const warnings: string[] = [];
+  let raw: string | null = "{";
+  const blocked = createPreferenceCheck({
+    storage: () => ({ getItem: () => raw }), warn: message => warnings.push(message),
+  });
+  assert.equal(blocked(), true);
+  assert.equal(blocked(), true);
+  assert.equal(warnings.length, 1);
+  raw = null;
+  assert.equal(blocked(), false);
+  const inaccessible = createPreferenceCheck({
+    storage: () => { throw new Error("Storage unavailable"); }, warn: message => warnings.push(message),
+  });
+  assert.equal(inaccessible(), true);
+  assert.equal(warnings.length, 2);
 });
 
 test("browser IDs persist without sliding expiry for 18 calendar months, rotate on expiry and clear on withdrawal", () => {
