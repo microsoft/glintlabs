@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "approved": [],
+  "gaps": [
+    {
+      "resource_id": "think-like-a-people-scientist-bridging-hr-and-it-for-ai-success",
+      "reason": "Transcript redistribution permission is not verified; retrieve public recording evidence or omit recording-only claims."
+    },
+    {
+      "resource_id": "think-like-a-people-scientist-leading-ai-change-with-employee-sentiment",
+      "reason": "Transcript redistribution permission is not verified; retrieve public recording evidence or omit recording-only claims."
+    },
+    {
+      "resource_id": "psychological-safety",
+      "reason": "Transcript redistribution permission is not verified; retrieve public recording evidence or omit recording-only claims."
+    },
+    {
+      "resource_id": "interpret-survey-data",
+      "reason": "Transcript redistribution permission is not verified; retrieve public recording evidence or omit recording-only claims."
+    }
+  ]
+}

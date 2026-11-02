@@ -36,8 +36,12 @@ reviewed machine transcripts with public recording links and timestamps.
 The machine-readable [theme index](theme-index.json) preserves public source
 URLs, summaries, context, shared topics, study families, asset scope, short
 evidence anchors, and provenance hashes. The original [catalog](catalog.json)
-and workbook snapshot remain metadata/provenance records, not required live
-SharePoint retrieval. Never use an `internal_record` as a source to cite.
+provides saved public metadata. Workbook snapshots and ownership records are
+publisher-maintenance inputs, not public runtime dependencies.
+
+See [public setup](public-use.md) for capability requirements. Approved text
+alternatives, when available, are listed in [media alternatives](media-alternatives.json).
+No recording transcript is currently approved for redistribution in this bundle.
 
 ## Why 42 original files become 17 Drops
 

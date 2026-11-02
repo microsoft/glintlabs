@@ -29,28 +29,18 @@ These repository files and their public source links do not depend on private
 SharePoint or a local extraction cache. Ownership records are provenance only.
 `prioritized-resources.md` lists only the original vault and preserves its order.
 
-## Original-vault source: the saved External-tab snapshot
+## Original-vault source: the published catalog
 
-The workbook that backs this vault is:
+Use the bundled `catalog.json` for original-vault metadata. Its priorities
+were derived from the publisher's saved `External` worksheet and do not
+require access to that workbook. Normal users must not refresh a private
+workbook, retrieve ownership records, or install Work IQ.
 
-```text
-https://microsoft.sharepoint-df.com/:x:/t/EVE/cQpI5FMS_jROSLEqT1-GT-KsEgUClfK5_gr5DhPyL0MFgifvGw
-```
-
-Observed workbook name: `People_Science_Content_full_index.xlsx`. Use **only**
-the worksheet named `External`. This workbook is IRM/RMS-protected, so it
-cannot be fetched with a plain unauthenticated request; see
-`workbook-schema.json`'s `access_notes` for how to refresh it.
-
-Rather than re-fetching the live workbook on every retrieval, this skill keeps
-a point-in-time copy of every `External` row in
-`references/external-tab-snapshot.json`, and a curated, enriched view of the
-same rows (plus a few supplementary entries) in `references/catalog.json`.
-**Prefer the combined local theme index for discovery and the snapshot/catalog
-for original-vault metadata.** Only re-open
-the live workbook when the snapshot is stale (see `workbook-schema.json`'s
-`staleness_check`) or a question needs material published after the
-snapshot's `retrieved_at` date.
+If the review is old or coverage is insufficient, check the public sources
+below and disclose the review date and any gap. Workbook maintenance belongs
+to authorized publishers, separately documented in the repository's
+`references/maintenance/knowledge-vault/README.md`; it is not bundled for
+public runtime use.
 
 ### Within the original vault: column J drives priority, not channel
 
@@ -79,11 +69,8 @@ confirmed by the content owner as externally shareable and high-value:
 - [Building a holistic employee listening ecosystem](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/894/1/Holistic%20Listening%20Infographic_09292023%201.pdf)
 - [Redefining High Performance in the New Era of Work](https://www.microsoft.com/content/dam/microsoft/final/en-us/microsoft-brand/documents/Microsoft-HPO-Guide-Oct-2023.pdf)
 
-The SharePoint/OneDrive originals in `catalog.json`'s `internal_record` field
-for these entries (and for the two workbook-sourced `top5` entries below) are
-the internal record of ownership/approval, not for retrieval. An automated
-retrieval agent generally cannot authenticate into SharePoint/OneDrive, so
-**cite and retrieve the public link, not the internal record.**
+**Cite and retrieve the public link, not private ownership records.** The
+standalone bundle exports public catalog fields only.
 
 Two further resources appear in the workbook as `top5` rows whose `URL`
 column only holds an internal `.pptx` filename (no public link); their public
@@ -142,22 +129,15 @@ documentation, and navigation signposts.
 
 ## Explicit exclusions
 
-Never retrieve secondary knowledge from these observed worksheets:
-
-- `All Items`
-- `Asset List`
-- `EVE Delivery Prioritization`
-- `Sheet1`
-- `Internal PSEs & POVs`
-- `Survey Programs`
-
-The workbook may change over time. The rule is based on the worksheet name
-`External`, not its current worksheet ID, range, row count, or column order.
+Private workbooks, unpublished drafts, internal-only records, and private
+extraction caches are not eligible runtime evidence. Only the publisher's
+`External` worksheet informs the saved original-vault catalog; maintenance
+must not import other worksheets.
 
 ## Precedence and deduplication
 
 1. Canonicalize URLs by removing tracking parameters and normalizing host/path.
-2. Deduplicate identical articles across the snapshot, catalog, and any live
+2. Deduplicate identical articles across the catalog, reviewed index, and any live
    checks.
 3. Filter relevance and applicability, prefer registered new-catalog Research
    Drops, then retain `top5` / `curated`-equivalent > `high` > `medium` > `low`

@@ -12,9 +12,31 @@ researcher/consultant and work the scope out with the user before answering (see
 Step 0 below). The skill defines the source hierarchy and answer contract, and
 ships a generated catalog of already-known resources
 (`references/catalog.json`, rendered for humans in
-`references/prioritized-resources.md`), a saved copy of the live workbook's
-`External` worksheet (`references/external-tab-snapshot.json`), and the
-retrieval rules in `references/source-priority.md`.
+`references/prioritized-resources.md`) and the retrieval rules in
+`references/source-priority.md`. Read [public setup](references/public-use.md)
+for installation, host requirements, updates, and reduced-capability behavior.
+
+## Public-use capability check
+
+Use the complete skill folder, not this Markdown file alone. No Microsoft
+account, private workbook, Work IQ, Python, or survey-analysis package is
+required for the published-guidance workflow. Before retrieving evidence,
+check that the host can read bundled files, retrieve complete web article
+bodies, and extract PDF text when relevant. Tool names above are host-specific;
+equivalent tools are acceptable. A link preview is not full-source retrieval.
+
+For recording-backed claims, check whether the host can retrieve audio or
+captions, or whether `references/media-alternatives.json` registers an approved,
+bundled text alternative with the required coverage. A player page is not the
+recording. If this capability is missing, use accessible article evidence only
+and disclose that recording-only claims were not reviewed. Do not silently
+replace them with recap text or theme summaries.
+
+If the host cannot retrieve full sources, offer topic/source discovery with
+links, explicitly not an evidence-backed answer, or ask for a public source
+body the user can supply. Offline discovery is supported; full offline
+research is not promised. Never ask an external user to open or refresh the
+publisher's protected workbook.
 
 ## Use when
 
@@ -36,8 +58,8 @@ Inspect `references/` first, especially `source-priority.md`. Use
 `references/prioritized-resources.md` for a quick, human-readable view of
 already-known resources, and `references/catalog.json` if you need the same
 list in a structured form with `priority_tier` and `research_questions`
-fields. `references/external-tab-snapshot.json` is the saved, raw copy of the
-workbook's `External` worksheet that `catalog.json` is derived from.
+fields. The saved priorities are publisher-maintained; the source workbook
+and its refresh tools are not runtime dependencies.
 
 First filter relevance and applicability, then prefer the new catalog's reviewed
 Research Drops over original-vault resources. Collection priority is a retrieval
@@ -63,7 +85,7 @@ resources, and the secondary live-retrieval checks (Microsoft Viva Blog
 category page, Microsoft Learn, Adoption Center) that are useful for material
 published after the snapshot was taken, but are not re-ranked by column J.
 
-Do not use workbook rows from any worksheet other than `External`.
+Do not retrieve private provenance or source workbooks during normal use.
 
 ## Quick theme lookup
 
@@ -172,6 +194,9 @@ explanation. Narrow factual questions can proceed directly to retrieval.
    is not a substitute for article evidence.
    For PDF- or recording-backed themes, also retrieve the declared public
    companion source; a recap alone cannot substantiate recording-only claims.
+   An approved bundled alternative may support only its explicitly declared
+   source and coverage. Cite the original public source and identify the text
+   alternative and its review date; it is not a live-source freshness check.
 4. If the combined reviewed index lacks coverage, or the question needs material
    newer than its review date, run the secondary live
    checks described in `source-priority.md` (Viva Blog category page,

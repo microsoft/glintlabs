@@ -42,7 +42,12 @@ The plugin deliberately does not duplicate the `vivaglint` analysis package. It 
 - Access to the relevant Viva Glint survey exports or analysis outputs for the
   workflow being used.
 
-Install the complete plugin, not just its skill Markdown. A command-capable
+For knowledge-only use, install the complete standalone Knowledge Vault folder;
+it needs no Python, `vivaglint`, survey export, or Microsoft credentials.
+See [public setup](skills/people-science-knowledge-vault/references/public-use.md).
+
+For survey analysis, install the complete plugin, not just its skill Markdown.
+A command-capable
 host with local file/process permissions is required to run analysis; a
 browser-chat GitHub connection alone is not sufficient.
 
@@ -150,6 +155,14 @@ are not independent findings or a claim-level deduplication result. Full publish
 sources are still required for substantive evidence and freshness checks. See
 the [skill](skills/people-science-knowledge-vault/SKILL.md) and authoritative
 [source-priority contract](skills/people-science-knowledge-vault/references/source-priority.md).
+
+The standalone public bundle includes versioned references, public catalog
+fields, a license, and payload hashes. It omits protected-workbook metadata
+and private ownership records. See [public setup](skills/people-science-knowledge-vault/references/public-use.md)
+for host capabilities and updates, and
+[publisher maintenance](references/maintenance/knowledge-vault/README.md)
+for release and content-check procedures. Recordings remain linked unless
+transcript redistribution permission is independently verified.
 
 ## Linked survey dataset
 

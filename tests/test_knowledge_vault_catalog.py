@@ -17,9 +17,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 VAULT_DIR = ROOT / "skills/people-science-knowledge-vault/references"
 CATALOG_PATH = VAULT_DIR / "catalog.json"
-WORKBOOK_SCHEMA_PATH = VAULT_DIR / "workbook-schema.json"
+MAINTENANCE_DIR = ROOT / "references/maintenance/knowledge-vault"
+WORKBOOK_SCHEMA_PATH = MAINTENANCE_DIR / "workbook-schema.json"
 PRIORITIZED_RESOURCES_PATH = VAULT_DIR / "prioritized-resources.md"
-SOURCE_PRIORITY_PATH = VAULT_DIR / "source-priority.md"
+MAINTENANCE_GUIDE_PATH = MAINTENANCE_DIR / "README.md"
 SOURCE_INDEX_PATH = (
     ROOT / "skills/analyze-survey/references/people-science-source-index.json"
 )
@@ -120,12 +121,12 @@ def test_curated_external_entries_cite_publicly_retrievable_links():
         )
 
 
-def test_workbook_schema_matches_source_priority_prose():
+def test_workbook_schema_matches_publisher_maintenance_prose():
     """workbook-schema.json is the machine-readable version of the workbook facts
-    described in source-priority.md; keep the key facts consistent between them.
+    described in the publisher maintenance guide; keep the facts consistent.
     """
     schema = load_workbook_schema()
-    prose = SOURCE_PRIORITY_PATH.read_text(encoding="utf-8")
+    prose = MAINTENANCE_GUIDE_PATH.read_text(encoding="utf-8")
 
     assert schema["observed_workbook_name"] in prose
     assert schema["required_worksheet"] == "External"
@@ -133,7 +134,7 @@ def test_workbook_schema_matches_source_priority_prose():
     for worksheet in schema["excluded_worksheets"]:
         assert f"`{worksheet}`" in prose, (
             f"excluded worksheet '{worksheet}' from workbook-schema.json is not "
-            "mentioned in source-priority.md"
+            "mentioned in the publisher maintenance guide"
         )
 
 
@@ -177,7 +178,7 @@ def test_external_tab_snapshot_matches_workbook_schema():
     worksheet; keep its row count and worksheet name honest against the
     machine-readable facts in workbook-schema.json.
     """
-    snapshot_path = VAULT_DIR / "external-tab-snapshot.json"
+    snapshot_path = MAINTENANCE_DIR / "external-tab-snapshot.json"
     assert snapshot_path.exists(), "external-tab-snapshot.json is missing"
     snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
     schema = load_workbook_schema()

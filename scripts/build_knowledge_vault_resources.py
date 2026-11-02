@@ -22,9 +22,10 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 VAULT_DIR = ROOT / "skills/people-science-knowledge-vault/references"
 CATALOG_PATH = VAULT_DIR / "catalog.json"
-WORKBOOK_SCHEMA_PATH = VAULT_DIR / "workbook-schema.json"
+MAINTENANCE_DIR = ROOT / "references/maintenance/knowledge-vault"
+WORKBOOK_SCHEMA_PATH = MAINTENANCE_DIR / "workbook-schema.json"
 OUTPUT_PATH = VAULT_DIR / "prioritized-resources.md"
-SNAPSHOT_PATH = VAULT_DIR / "external-tab-snapshot.json"
+SNAPSHOT_PATH = MAINTENANCE_DIR / "external-tab-snapshot.json"
 SOURCE_INDEX_PATH = (
     ROOT / "skills/analyze-survey/references/people-science-source-index.json"
 )
@@ -190,7 +191,7 @@ def render_prioritized_markdown(catalog: dict[str, Any]) -> str:
         "Top5-equivalent. It is **not** the retrieval contract: agents must still",
         "follow `source-priority.md`, which also covers the supplementary live checks",
         "(Microsoft Viva Blog category page, Microsoft Learn, Adoption Center) useful",
-        "for material newer than the saved `external-tab-snapshot.json`.",
+        "for material newer than the publisher-maintained catalog.",
         "",
     ]
 
