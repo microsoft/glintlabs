@@ -12,7 +12,7 @@ Curated entries (not present in the External worksheet snapshot) treated as
 Top5-equivalent. It is **not** the retrieval contract: agents must still
 follow `source-priority.md`, which also covers the supplementary live checks
 (Microsoft Viva Blog category page, Microsoft Learn, Adoption Center) useful
-for material newer than the saved `external-tab-snapshot.json`.
+for material newer than the publisher-maintained catalog.
 
 ## Top5 - highest priority
 

@@ -928,7 +928,7 @@ April 2025 public recap plus the complete 49-minute public webinar audio, locall
 
 **Study-family links:** ai-readiness-april-2024
 
-**Reviewed webinar audio:** https://medius.microsoft.com/Embed/video-nc/ab7a3d06-7a4f-4a3e-9f51-cb0a4957f169 (local machine transcript; visual-only content not certified).
+**Reviewed webinar audio:** https://medius.microsoft.com/Embed/video-nc/ab7a3d06-7a4f-4a3e-9f51-cb0a4957f169 (publisher-reviewed machine transcript; not hosted here; visual-only content not certified).
 
 1. **HR and IT have complementary transformation roles** (recommendation) - Pair technology orchestration with HR's expertise in skills, talent, change, and employee experience rather than assigning the entire AI transformation to IT.
    Topics: hr-it, change-management. Evidence: `s293` at 1195.7s, [recording](https://medius.microsoft.com/Embed/video-nc/ab7a3d06-7a4f-4a3e-9f51-cb0a4957f169), "lead the change".
@@ -966,7 +966,7 @@ May 2025 public recap plus the complete 45-minute public webinar audio, locally 
 
 **Study-family links:** ai-readiness-april-2024
 
-**Reviewed webinar audio:** https://medius.microsoft.com/Embed/video-nc/ebe58201-624e-4975-a2df-de2dd1ee154b (local machine transcript; visual-only content not certified).
+**Reviewed webinar audio:** https://medius.microsoft.com/Embed/video-nc/ebe58201-624e-4975-a2df-de2dd1ee154b (publisher-reviewed machine transcript; not hosted here; visual-only content not certified).
 
 1. **The human learning curve of AI change** (case-study) - A presenter and an anonymized customer example describe uncertainty and returning to familiar work under pressure; these anecdotes suggest listening for learning friction rather than assuming low use means disinterest.
    Topics: change-management, ai-adoption. Evidence: `s224` at 835.4s, [recording](https://medius.microsoft.com/Embed/video-nc/ebe58201-624e-4975-a2df-de2dd1ee154b), "regress back".
@@ -1002,7 +1002,7 @@ February 2024 public recap, the complete 23-page public companion deck text, and
 
 **Reviewed asset scope:** Complete published article/documentation body. Also reviewed all 23 pages of the public companion deck text: https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/Viva_Glint_Blog/50/1/Think%20like%20a%20People%20Scientist_Understanding%20and%20interpreting%20results.pdf. Image-only detail is not certified. Linked courses and other resources are separate assets, not automatically reviewed. Complete local machine transcript of embedded public webinar audio reviewed; visual-only content and untranscribed demos not certified.
 
-**Reviewed webinar audio:** https://medius.microsoft.com/Embed/video-nc/4021d8c8-2092-4d24-a9e6-601282bd0d0e (local machine transcript; visual-only content not certified).
+**Reviewed webinar audio:** https://medius.microsoft.com/Embed/video-nc/4021d8c8-2092-4d24-a9e6-601282bd0d0e (publisher-reviewed machine transcript; not hosted here; visual-only content not certified).
 
 1. **Start with context and employee comments** (recommendation) - Understand organizational and external circumstances, then use comment themes to frame questions before anchoring on a score.
    Topics: survey-interpretation, feedback. Evidence: `s110` at 428.1s, [recording](https://medius.microsoft.com/Embed/video-nc/4021d8c8-2092-4d24-a9e6-601282bd0d0e), "external internal".
@@ -1314,7 +1314,7 @@ Published practical manager guidance plus the complete machine transcript of the
 
 **Reviewed asset scope:** Complete published article/documentation body. Also reviewed OCR of 1 public figures; numeric claims cross-checked against written text where available. Linked courses and other resources are separate assets, not automatically reviewed. Complete local machine transcript of embedded public webinar audio reviewed; visual-only content and untranscribed demos not certified.
 
-**Reviewed webinar audio:** https://medius.microsoft.com/Embed/video-nc/2d8add50-af59-4921-9844-aab616803def (local machine transcript; visual-only content not certified).
+**Reviewed webinar audio:** https://medius.microsoft.com/Embed/video-nc/2d8add50-af59-4921-9844-aab616803def (publisher-reviewed machine transcript; not hosted here; visual-only content not certified).
 
 1. **Speaking up without punishment** (framework) - Psychological safety means being able to question, take interpersonal risks, and admit errors without feared negative consequences.
    Topics: psychological-safety. Evidence: `L15`, "without fear".

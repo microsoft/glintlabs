@@ -3249,12 +3249,15 @@ def test_knowledge_vault_source_priority():
         encoding="utf-8"
     )
     sources = (
-        ROOT / "skills/people-science-knowledge-vault/references/source-priority.md"
+        ROOT / "context/people-science-knowledge-vault/source-priority.md"
     ).read_text(encoding="utf-8")
 
     assert "Microsoft Viva Blog" in skill
     assert "only article records from the `External` worksheet" in skill
     assert "microsoftvivablog" in sources
-    assert "People_Science_Content_full_index.xlsx" in sources
     assert "`External`" in sources
-    assert "`Internal PSEs & POVs`" in sources
+    maintenance = (ROOT / "references/maintenance/knowledge-vault/README.md").read_text(
+        encoding="utf-8"
+    )
+    assert "People_Science_Content_full_index.xlsx" in maintenance
+    assert "`Internal PSEs & POVs`" in maintenance
