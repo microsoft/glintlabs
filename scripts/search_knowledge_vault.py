@@ -15,11 +15,12 @@ from urllib.parse import urlparse
 from build_knowledge_vault_resources import PRIORITY_TIER_GROUPS
 
 ROOT = Path(__file__).resolve().parents[1]
-REFERENCES = ROOT / "skills/people-science-knowledge-vault/references"
+REFERENCES = ROOT / "context/people-science-knowledge-vault"
 INDEX_PATH = REFERENCES / "theme-index.json"
 LOOKUP_PATH = REFERENCES / "theme-lookup.md"
 TOPIC_LOOKUP_PATH = REFERENCES / "topic-lookup.md"
 CATALOG_PATH = REFERENCES / "catalog.json"
+RAW_BASE = "https://raw.githubusercontent.com/microsoft/glintlabs/main/context/people-science-knowledge-vault"
 KINDS = {
     "framework", "finding", "recommendation", "method", "commentary",
     "hypothesis", "case-study", "documentation", "signpost",
@@ -366,6 +367,41 @@ def search(index: dict, query: str = "", *, topic: str | None = None,
     return results
 
 
+def resource_lines(resource: dict) -> list[str]:
+    lines = [
+        "", f"<a id=\"{resource['id']}\"></a>", f"## {resource['title']}", "",
+        f"`{resource['id']}` | {resource['group']} | {resource['review_status']}", "",
+        "**Priority:** " + (
+            "New catalog; before relevant original-vault resources."
+            if resource["group"] == "research-drop"
+            else f"Original vault; retained tier `{resource['priority_tier']}`."
+        ), "",
+        f"**Source:** {resource['url']}", "", resource["context"], "",
+        f"**Reviewed asset scope:** {resource['asset_scope']}", "",
+    ]
+    if resource["study_families"]:
+        lines.extend(["**Study-family links:** " + ", ".join(resource["study_families"]), ""])
+    for media in resource.get("additional_media", []):
+        lines.extend([
+            f"**Reviewed webinar audio:** {media['url']} "
+            "(publisher-reviewed machine transcript; not hosted here; visual-only content not certified).", "",
+        ])
+    if resource["review_status"] == "gap":
+        lines.extend([f"**Gap:** {resource['gap_reason']}", ""])
+    for number, theme in enumerate(resource["themes"], 1):
+        evidence = theme["evidence"]
+        media_note = (
+            f" at {evidence['start_seconds']:.1f}s, [recording]({evidence['url']})"
+            if evidence["locator"].startswith("s") else ""
+        )
+        lines.extend([
+            f"{number}. **{theme['label']}** ({theme['kind']}) - {theme['summary']}",
+            f"   Topics: {', '.join(theme['topics'])}. "
+            f"Evidence: `{evidence['locator']}`{media_note}, \"{evidence['anchor']}\".",
+        ])
+    return lines
+
+
 def render_lookup(index: dict) -> str:
     counts = coverage(index)
     resources = sorted(index["resources"], key=lambda r: (*priority_key(r), r["title"]))
@@ -400,37 +436,7 @@ def render_lookup(index: dict) -> str:
         )
         lines.append(f"- [{resource['title']}](#{resource['id']}) ({priority})")
     for resource in resources:
-        lines.extend([
-            "", f"<a id=\"{resource['id']}\"></a>", f"## {resource['title']}", "",
-            f"`{resource['id']}` | {resource['group']} | {resource['review_status']}", "",
-            "**Priority:** " + (
-                "New catalog; before relevant original-vault resources."
-                if resource["group"] == "research-drop"
-                else f"Original vault; retained tier `{resource['priority_tier']}`."
-            ), "",
-            f"**Source:** {resource['url']}", "", resource["context"], "",
-            f"**Reviewed asset scope:** {resource['asset_scope']}", "",
-        ])
-        if resource["study_families"]:
-            lines.extend(["**Study-family links:** " + ", ".join(resource["study_families"]), ""])
-        for media in resource.get("additional_media", []):
-            lines.extend([
-                f"**Reviewed webinar audio:** {media['url']} "
-                "(local machine transcript; visual-only content not certified).", "",
-            ])
-        if resource["review_status"] == "gap":
-            lines.extend([f"**Gap:** {resource['gap_reason']}", ""])
-        for number, theme in enumerate(resource["themes"], 1):
-            evidence = theme["evidence"]
-            media_note = (
-                f" at {evidence['start_seconds']:.1f}s, [recording]({evidence['url']})"
-                if evidence["locator"].startswith("s") else ""
-            )
-            lines.extend([
-                f"{number}. **{theme['label']}** ({theme['kind']}) - {theme['summary']}",
-                f"   Topics: {', '.join(theme['topics'])}. "
-                f"Evidence: `{evidence['locator']}`{media_note}, \"{evidence['anchor']}\".",
-            ])
+        lines.extend(resource_lines(resource))
     lines.extend(["", "## Evidence and refresh boundaries", ""])
     lines.extend(f"- {note}" for note in index["limitations"])
     lines.extend(["", "## Shared study families", ""])
@@ -505,6 +511,87 @@ def render_topic_lookup(index: dict) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
+def render_web_context(index: dict) -> dict[str, str]:
+    """Keep normal link retrieval small without losing the full reviewed index."""
+    counts = coverage(index)
+    pages = {}
+    entry = [
+        "# People Science context library", "",
+        "Use this library by following links from the "
+        "[skill instructions](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/SKILL.md). "
+        "No ZIP, installation, repository clone, or local scripts are required.", "",
+        f"**Reviewed {index['reviewed_at']}: {counts['reviewed']} reviewed resources, "
+        f"{counts['themes']} source-level summaries, {counts['topics']} topics, "
+        f"{len(counts['gaps'])} explicit gap.**", "",
+        f"Read [source priority]({RAW_BASE}/source-priority.md), "
+        f"[corpus scope]({RAW_BASE}/corpus-guide.md), and "
+        f"[link-only use]({RAW_BASE}/public-use.md). Then choose relevant topics below.", "",
+        "These are discovery summaries, not full source bodies. Follow a topic "
+        "to its source profiles, then retrieve the original public publications "
+        "before supporting claims. Prioritize relevant Research Drops, then the "
+        "original-vault tiers. Shared studies are not independent replications.", "",
+        "If a host cannot retrieve these files, disclose the limitation; do not "
+        "claim this library has been loaded. A link does not register a native "
+        "skill or create a persistent connection. Stay on the same repository "
+        "branch/tag/commit as the supplied skill link; main is the default.", "",
+        "## Topics", "",
+    ]
+    resources = sorted(index["resources"], key=lambda r: (*priority_key(r), r["title"]))
+    for topic, label in index["topics"].items():
+        entry.append(f"- [{label}]({RAW_BASE}/topics/{topic}.md) (`{topic}`)")
+        topic_lines = [
+            f"# {label}", "",
+            f"[Context entry]({RAW_BASE}/README.md) | [Source priority]({RAW_BASE}/source-priority.md)", "",
+            f"Reviewed {index['reviewed_at']}. Read the source profiles for evidence "
+            "scope, study families, limitations, and relevant themes. Source "
+            "ordering preserves collection and original-vault priorities, not causality.", "",
+        ]
+        for group, heading in (("research-drop", "New Research Drops"), ("catalog", "Original vault")):
+            topic_lines.extend([f"## {heading}", ""])
+            for resource in resources:
+                matching = [theme for theme in resource["themes"] if topic in theme["topics"]]
+                if resource["group"] == group and matching:
+                    topic_lines.append(
+                        f"- [{resource['title']}]({RAW_BASE}/sources/{resource['id']}.md) "
+                        f"({len(matching)} relevant themes)."
+                    )
+            topic_lines.append("")
+        pages[f"topics/{topic}.md"] = "\n".join(topic_lines).rstrip() + "\n"
+    entry.extend(["", "## Known gaps", ""])
+    for resource in resources:
+        if resource["review_status"] == "gap":
+            entry.append(f"- [{resource['title']}]({RAW_BASE}/sources/{resource['id']}.md): {resource['gap_reason']}")
+    entry.extend([
+        "", "Four companion recordings have publisher-reviewed audio themes but "
+        "no redistribution-approved transcript is currently hosted here. A player "
+        "page is not audio evidence; hosts without audio/captions must omit "
+        "recording-only claims.", "",
+        "For bulk inspection, use the "
+        f"[full theme index]({RAW_BASE}/theme-index.json), "
+        f"[full source lookup]({RAW_BASE}/theme-lookup.md), or "
+        f"[full topic directory]({RAW_BASE}/topic-lookup.md). These larger files "
+        "are optional; check for truncation rather than claiming complete coverage.", "",
+    ])
+    pages["README.md"] = "\n".join(entry)
+    for resource in resources:
+        lines = [
+            f"# Source profile: {resource['title']}", "",
+            f"[Context entry]({RAW_BASE}/README.md) | [Source priority]({RAW_BASE}/source-priority.md)", "",
+            f"Index review: {index['reviewed_at']}. These editorial themes route "
+            "retrieval; they are not a substitute for the full public source. "
+            "L locators are extraction lines, p locators are PDF pages, and s "
+            "locators are reviewed audio segments. Hashes do not prove freshness.",
+            *resource_lines(resource), "", "## Shared research context", "",
+        ]
+        families = [family for family in index["study_families"] if family["id"] in resource["study_families"]]
+        for family in families:
+            lines.extend([f"### {family['id']}", "", family["description"], ""])
+        if not families:
+            lines.append("No registered study-family link; this is not proof of independent evidence.")
+        pages[f"sources/{resource['id']}.md"] = "\n".join(lines).rstrip() + "\n"
+    return pages
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("query", nargs="?", default="")
@@ -540,11 +627,14 @@ def main(argv: list[str] | None = None) -> int:
         if args.topic and args.topic not in index["topics"]:
             parser.error(f"unknown topic {args.topic!r}; use --topics")
         if args.check or args.write_reference:
-            for path, rendered in (
-                (LOOKUP_PATH, render_lookup(index)),
-                (TOPIC_LOOKUP_PATH, render_topic_lookup(index)),
-            ):
+            outputs = {
+                LOOKUP_PATH: render_lookup(index),
+                TOPIC_LOOKUP_PATH: render_topic_lookup(index),
+                **{REFERENCES / name: body for name, body in render_web_context(index).items()},
+            }
+            for path, rendered in outputs.items():
                 if args.write_reference:
+                    path.parent.mkdir(parents=True, exist_ok=True)
                     path.write_text(rendered, encoding="utf-8")
                 elif not path.exists() or path.read_text(encoding="utf-8") != rendered:
                     raise ValueError(f"{path.name} is stale; run --write-reference")

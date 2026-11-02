@@ -9,33 +9,57 @@ allowed-tools: Read, Glob, Grep, WebFetch
 Find relevant published knowledge, synthesize it with appropriate caution, and cite
 the source articles directly. For complex or ambiguous research questions, act as a
 researcher/consultant and work the scope out with the user before answering (see
-Step 0 below). The skill defines the source hierarchy and answer contract, and
-ships a generated catalog of already-known resources
-(`references/catalog.json`, rendered for humans in
-`references/prioritized-resources.md`) and the retrieval rules in
-`references/source-priority.md`. Read [public setup](references/public-use.md)
-for installation, host requirements, updates, and reduced-capability behavior.
+Step 0 below). The context library lives in the public repository's
+`context/people-science-knowledge-vault/` folder, not on the user's computer.
+
+## Start from the link: no installation
+
+The user can paste this skill's GitHub URL and ask a question. Read the full
+linked instructions, then follow these public context links as needed:
+
+1. Read the [context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/context/people-science-knowledge-vault/README.md),
+   [source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/context/people-science-knowledge-vault/source-priority.md),
+   and [corpus guide](https://raw.githubusercontent.com/microsoft/glintlabs/main/context/people-science-knowledge-vault/corpus-guide.md).
+2. Follow relevant small topic pages from the entry, then their individual
+   source-profile links. Each profile includes reviewed themes, scope,
+   limitations, and study-family context.
+3. Retrieve the original public publications before using their claims.
+   The context summaries are navigation, not full source evidence.
+
+Use the raw links above when GitHub's rendered page returns navigation or
+truncation instead of the file body. If the supplied skill URL specifies a
+branch, tag, or commit other than `main`, resolve all repository context
+links against that same ref; do not silently mix versions. Read linked files
+on demand rather than loading the entire library into one prompt. Check for
+truncation and follow the smaller topic/source pages instead of treating a
+partial response as the complete library.
+
+Do not ask users to download a ZIP, clone the repository, install a plugin,
+copy local files, run scripts, or obtain Microsoft-internal access. Reading
+the link is a conversation-scoped workflow, not native skill registration
+or a persistent connection. An existing native installation is optional;
+when given an explicit link, follow that linked revision rather than a stale
+installed copy.
 
 ## Public-use capability check
 
-Use the complete skill folder, not this Markdown file alone. No Microsoft
-account, private workbook, Work IQ, Python, or survey-analysis package is
-required for the published-guidance workflow. Before retrieving evidence,
-check that the host can read bundled files, retrieve complete web article
-bodies, and extract PDF text when relevant. Tool names above are host-specific;
-equivalent tools are acceptable. A link preview is not full-source retrieval.
+The host must be able to retrieve public GitHub/raw files and complete web
+article bodies, and extract PDF text when relevant. Tool names above are
+host-specific; equivalent tools are acceptable. A link preview is not
+full-source retrieval. If the host cannot read external links, state that
+the library has not been loaded; do not claim a link alone connects it.
 
 For recording-backed claims, check whether the host can retrieve audio or
-captions, or whether `references/media-alternatives.json` registers an approved,
-bundled text alternative with the required coverage. A player page is not the
+captions, or whether the context library's `media-alternatives.json` registers
+an approved hosted text alternative with the required coverage. A player page is not the
 recording. If this capability is missing, use accessible article evidence only
 and disclose that recording-only claims were not reviewed. Do not silently
 replace them with recap text or theme summaries.
 
 If the host cannot retrieve full sources, offer topic/source discovery with
 links, explicitly not an evidence-backed answer, or ask for a public source
-body the user can supply. Offline discovery is supported; full offline
-research is not promised. Never ask an external user to open or refresh the
+body the user can supply. This link-only workflow requires internet access.
+Never ask an external user to open or refresh the
 publisher's protected workbook.
 
 ## Use when
@@ -54,9 +78,10 @@ that skill is available; do not imply it has been connected when it has not.
 
 ## Required source priority
 
-Inspect `references/` first, especially `source-priority.md`. Use
-`references/prioritized-resources.md` for a quick, human-readable view of
-already-known resources, and `references/catalog.json` if you need the same
+Inspect the linked context entry and `source-priority.md` first. Use
+`context/people-science-knowledge-vault/prioritized-resources.md` for a
+human-readable view of original-vault resources, and that folder's
+`catalog.json` if you need the same
 list in a structured form with `priority_tier` and `research_questions`
 fields. The saved priorities are publisher-maintained; the source workbook
 and its refresh tools are not runtime dependencies.
@@ -89,63 +114,34 @@ Do not retrieve private provenance or source workbooks during normal use.
 
 ## Quick theme lookup
 
-Start with the [corpus guide](references/corpus-guide.md) for scope and evidence
-boundaries, then the [topic-first directory](references/topic-lookup.md) to find
-sources by shared concept. Both are repository-relative, browsable on GitHub,
-and bundled with this skill. No local download folder, private SharePoint access,
-or extraction cache is required for discovery.
+Start with the linked context entry and its small topic pages to find sources
+by shared concept. They are hosted in the repo's context folder and require
+no local files, private SharePoint access, or extraction cache.
 
-Use `references/theme-lookup.md` to browse ten reviewed, source-specific themes
-per accessible resource, or search `references/theme-index.json` by topic,
-resource ID, theme label, or summary. Both files ship with the skill; no script
-execution is required. The index includes the catalog plus 17 published Research
+Use individual source pages to read ten reviewed themes per accessible resource.
+For bulk inspection, the context folder also has `theme-lookup.md`,
+`topic-lookup.md`, and `theme-index.json`; check retrieval limits before using
+these larger files. No script execution is required. The index includes the catalog plus 17 published Research
 Drop counterparts. An unavailable webinar-series directory is recorded as a gap
 with zero themes, not populated from its unrelated redirect.
 
-Each theme records its kind (finding, recommendation, framework, documentation,
-method, commentary, hypothesis, case study, or signpost), shared topic tags, and
-a short evidence anchor with a line/page/transcript locator. Read the resource's
-context and asset scope, not just the theme label. `L` locators refer to nonblank
-lines of the reviewed body extraction, not browser source lines; `p` locators are
-PDF pages.
-Use the short anchor to locate the passage after retrieving the public source.
-For explicitly reviewed webinars, `s` locators identify machine-transcript
-segments with a recording URL and start time. Retrieve that recording for
-audio-backed claims, not just the recap. Machine transcription can miss words;
-it does not certify visual-only content or exact quantitative claims.
+Read each profile's theme kinds, source context, reviewed asset scope, and shared
+study-family descriptions, not just labels. Ten editorial themes are not ten
+independent findings; repeated publications or shared topic tags do not establish
+independent corroboration or claim-level duplication. Preserve distinct analyses,
+caveats, and contradictory evidence when consolidating repeated ideas.
 
-These are editorial navigation summaries, not statistically calculated topics or
-ten independent findings. Directory and operational pages can have ten supported
-topics without containing ten research results. Check `study_families` before
-describing agreement as independent empirical corroboration. The index deliberately
-excludes internal-labeled sections and unpublished supporting material.
+Evidence anchors help locate passages after retrieving the public source:
+`L` means nonblank extraction line (not browser source line), `p` means PDF page,
+and `s` means reviewed machine-transcript segment with a recording URL and start
+time. Retrieve recording evidence for audio-only claims; a recap cannot support
+them. Machine transcription does not certify visual-only content or exact numbers.
 
-The 550 source-level summaries are not 550 distinct ideas. The 42 original Drop
-files were grouped into 17 bundles with ten themes per published counterpart,
-not ten per file; this does not certify lossless coverage of slides or audio.
-All 33 shared topics occur in both collections, and 13 Drops link to a study
-family represented in the original vault at the recorded review. Use the
-generated directory/coverage report for current counts. Broad topic overlap and
-shared samples do not establish claim-level duplication or independent evidence.
-Consolidate repeated ideas in answers while retaining source links, distinct
-analyses, caveats, and contradictory results. No redundancy percentage or
-claim-level semantic consolidation is certified.
-
-Keep the source-priority contract: relevant new-catalog Research Drops come first;
-within the original vault preserve existing column-J priorities. Research Drops
-keep null workbook priority, but that is not lower collection priority. Disclose
-which collections were reviewed. Neither the themes nor their hashes replace retrieving and
-checking the full published body; linked media coverage is explicit and bounded.
-
-When working in the repository, an optional standard-library CLI supports quick
-lookup:
-
-```text
-python scripts/search_knowledge_vault.py "psychological safety"
-python scripts/search_knowledge_vault.py --topic hr-it
-python scripts/search_knowledge_vault.py --resource research-drop-4493933
-python scripts/search_knowledge_vault.py --coverage
-```
+The corpus guide explains grouping, inventory counts, media coverage, and gaps.
+Keep relevant Research Drops first, then the original vault's unchanged priorities.
+A Drop's null workbook priority is not lower collection priority. Disclose which
+collections were reviewed. Themes and hashes never replace full-source retrieval
+or freshness checks.
 
 ## Retrieval process
 
@@ -178,7 +174,8 @@ explanation. Narrow factual questions can proceed directly to retrieval.
 
 1. Translate the (now-scoped) question into a small set of specific concepts
    and close variants.
-2. Browse `topic-lookup.md`, or search `theme-index.json` / `theme-lookup.md`,
+2. Follow relevant small topic/source pages, or search the larger
+   `theme-index.json` / `theme-lookup.md` when full retrieval is supported,
    across both collections for
    relevant topics and source-specific themes. Catalog categories and research
    questions are navigation aids, not exclusive filters. Prefer relevant new
@@ -194,7 +191,7 @@ explanation. Narrow factual questions can proceed directly to retrieval.
    is not a substitute for article evidence.
    For PDF- or recording-backed themes, also retrieve the declared public
    companion source; a recap alone cannot substantiate recording-only claims.
-   An approved bundled alternative may support only its explicitly declared
+   An approved hosted alternative may support only its explicitly declared
    source and coverage. Cite the original public source and identify the text
    alternative and its review date; it is not a live-source freshness check.
 4. If the combined reviewed index lacks coverage, or the question needs material
@@ -329,24 +326,10 @@ clear.
 - Never cite a source for an extrapolated/speculative claim; citations are
   reserved for claims directly supported by retrieved full sources.
 
-## Future extension points
+## Publisher maintenance
 
-- [Done] Generated catalog of canonical URLs and article metadata
-  (`references/catalog.json`, `scripts/build_knowledge_vault_resources.py`).
-- [Done] Duplicate detection against `analyze-survey`'s source index
-  (`check_catalog_matches_source_index` in the build script and
-  `tests/test_knowledge_vault_catalog.py`).
-- [Done] Retrieval-quality tests covering catalog integrity, workbook-schema
-  consistency, and generated-file freshness (`tests/test_knowledge_vault_catalog.py`).
-- [Done] Reviewed ten-theme routing index, public Research Drop lookup, explicit
-  coverage gaps, study-family links, and deterministic search
-  (`references/theme-index.json`, `scripts/search_knowledge_vault.py`,
-  `tests/test_knowledge_vault_themes.py`).
-- [Done] Repository-portable corpus guide and generated topic-first directory
-  with cross-collection counts and shared research lineage
-  (`references/corpus-guide.md`, `references/topic-lookup.md`).
-- Add a true automated refresh and dead-link check that fetches each catalog URL
-  over the network on a schedule (the current staleness check only compares dates,
-  it does not re-fetch pages).
-- Expand the lookup's topic aliases as additional reviewed terminology warrants.
-- Add a reviewed cache of article bodies if repository policy permits it.
+Public context and evidence-link checks are automated in the repository.
+Protected-workbook refresh and permission review belong to authorized
+publishers, not users. The maintenance guide is separate from runtime context:
+`references/maintenance/knowledge-vault/README.md`. Do not execute maintenance
+scripts during ordinary link-based chat.

@@ -29,9 +29,9 @@ These repository files and their public source links do not depend on private
 SharePoint or a local extraction cache. Ownership records are provenance only.
 `prioritized-resources.md` lists only the original vault and preserves its order.
 
-## Original-vault source: the published catalog
+## Original-vault source: the repository context catalog
 
-Use the bundled `catalog.json` for original-vault metadata. Its priorities
+Use this context folder's `catalog.json` for original-vault metadata. Its priorities
 were derived from the publisher's saved `External` worksheet and do not
 require access to that workbook. Normal users must not refresh a private
 workbook, retrieve ownership records, or install Work IQ.
@@ -39,8 +39,8 @@ workbook, retrieve ownership records, or install Work IQ.
 If the review is old or coverage is insufficient, check the public sources
 below and disclose the review date and any gap. Workbook maintenance belongs
 to authorized publishers, separately documented in the repository's
-`references/maintenance/knowledge-vault/README.md`; it is not bundled for
-public runtime use.
+`references/maintenance/knowledge-vault/README.md`; it is not a public runtime
+dependency.
 
 ### Within the original vault: column J drives priority, not channel
 
@@ -70,7 +70,7 @@ confirmed by the content owner as externally shareable and high-value:
 - [Redefining High Performance in the New Era of Work](https://www.microsoft.com/content/dam/microsoft/final/en-us/microsoft-brand/documents/Microsoft-HPO-Guide-Oct-2023.pdf)
 
 **Cite and retrieve the public link, not private ownership records.** The
-standalone bundle exports public catalog fields only.
+context library exports public catalog fields only.
 
 Two further resources appear in the workbook as `top5` rows whose `URL`
 column only holds an internal `.pptx` filename (no public link); their public

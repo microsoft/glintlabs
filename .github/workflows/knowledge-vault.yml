@@ -1,23 +1,26 @@
-name: Knowledge Vault portability
+name: Knowledge Vault link access
 
 on:
   pull_request:
     paths:
+      - "context/people-science-knowledge-vault/**"
       - "skills/people-science-knowledge-vault/**"
       - "references/maintenance/knowledge-vault/**"
       - "scripts/*knowledge_vault*"
       - "tests/test_knowledge_vault*"
+      - "tests/test_skill_structure.py"
       - "requirements-knowledge-vault-checks.txt"
       - "skills/analyze-survey/references/people-science-source-index.json"
       - ".github/workflows/knowledge-vault.yml"
   push:
     branches: [main]
-    tags: ["knowledge-vault-v*"]
     paths:
+      - "context/people-science-knowledge-vault/**"
       - "skills/people-science-knowledge-vault/**"
       - "references/maintenance/knowledge-vault/**"
       - "scripts/*knowledge_vault*"
       - "tests/test_knowledge_vault*"
+      - "tests/test_skill_structure.py"
       - "requirements-knowledge-vault-checks.txt"
       - "skills/analyze-survey/references/people-science-source-index.json"
       - ".github/workflows/knowledge-vault.yml"
@@ -39,16 +42,10 @@ jobs:
           python-version: "3.11"
       - name: Install check dependencies
         run: python -m pip install pytest -r requirements-knowledge-vault-checks.txt
-      - name: Test catalog, lookup, and public bundle
-        run: python -m pytest tests/test_knowledge_vault_catalog.py tests/test_knowledge_vault_themes.py tests/test_knowledge_vault_portability.py
-      - name: Build complete standalone artifact
-        run: python scripts/build_knowledge_vault_bundle.py --output-dir dist
-      - name: Upload standalone bundle
-        if: github.event_name != 'schedule'
-        uses: actions/upload-artifact@v4
-        with:
-          name: people-science-knowledge-vault
-          path: dist/*.zip
+      - name: Test catalog, lookup, and link-only context
+        run: python -m pytest tests/test_knowledge_vault_catalog.py tests/test_knowledge_vault_themes.py tests/test_knowledge_vault_portability.py tests/test_skill_structure.py::test_knowledge_vault_source_priority
+      - name: Validate public context graph and media permissions
+        run: python scripts/check_knowledge_vault_context.py
       - name: Check public evidence content
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: python scripts/check_knowledge_vault_sources.py --output source-check.json
@@ -59,27 +56,3 @@ jobs:
           name: knowledge-vault-source-check
           path: source-check.json
           if-no-files-found: error
-      - name: Check tag matches standalone version
-        if: startsWith(github.ref, 'refs/tags/knowledge-vault-v')
-        env:
-          RELEASE_TAG: ${{ github.ref_name }}
-        run: |
-          python -c "import json,os; v=json.load(open('skills/people-science-knowledge-vault/bundle.json'))['version']; assert os.environ['RELEASE_TAG']=='knowledge-vault-v'+v, 'Release tag/version mismatch'"
-
-  release:
-    if: startsWith(github.ref, 'refs/tags/knowledge-vault-v')
-    needs: validate
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: people-science-knowledge-vault
-          path: dist
-      - name: Publish anonymous-download release asset
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          RELEASE_TAG: ${{ github.ref_name }}
-        run: gh release create "$RELEASE_TAG" dist/*.zip --verify-tag --title "People Science Knowledge Vault ${RELEASE_TAG#knowledge-vault-v}" --notes "Complete standalone public skill. See the bundled public-use guide for capabilities, rights, and evidence limitations."

@@ -3,9 +3,11 @@
 This repository contains the reviewed discovery context. Start with the
 [topic-first directory](topic-lookup.md), then open the linked
 [source profiles](theme-lookup.md) and public publications. These files work
-directly on GitHub and ship with the skill; no local download folder, private
+directly on GitHub in this context library; no local download folder, private
 SharePoint access, transcript cache, or script execution is needed to browse.
 
+The [context entry](README.md) provides small topic and source pages for
+link-only retrieval. No ZIP, local installation, or repository clone is required.
 The context is a reviewed navigation layer, not a copy of every original asset.
 For substantive claims, retrieve the linked public source and confirm its body
 and applicability. An inaccessible publication remains an explicit retrieval gap,
@@ -39,9 +41,9 @@ evidence anchors, and provenance hashes. The original [catalog](catalog.json)
 provides saved public metadata. Workbook snapshots and ownership records are
 publisher-maintenance inputs, not public runtime dependencies.
 
-See [public setup](public-use.md) for capability requirements. Approved text
+See [link-only use](public-use.md) for capability requirements. Approved text
 alternatives, when available, are listed in [media alternatives](media-alternatives.json).
-No recording transcript is currently approved for redistribution in this bundle.
+No recording transcript is currently approved for redistribution in this library.
 
 ## Why 42 original files become 17 Drops
 

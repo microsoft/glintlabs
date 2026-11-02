@@ -2,7 +2,7 @@
   "schema_version": "2.0.0",
   "generated_at": "2026-10-08",
   "generated_by": "scripts/build_knowledge_vault_resources.py",
-  "refresh_notes": "Publisher-only metadata: priorities derive from External column J in references/maintenance/knowledge-vault/external-tab-snapshot.json. Authorized publishers maintain that snapshot; runtime users do not refresh protected workbooks. Preserve top5 > high > medium > low, with curated additions top5-equivalent. Regenerate prioritized-resources.md and validate the analyze-survey source index after edits. The standalone bundle exports public catalog fields only.",
+  "refresh_notes": "Publisher-only metadata: priorities derive from External column J in this folder's external-tab-snapshot.json. Authorized publishers maintain that snapshot; runtime users do not refresh protected workbooks. Preserve top5 > high > medium > low, with curated additions top5-equivalent. Regenerate the public catalog and prioritized resources under context/people-science-knowledge-vault and validate the analyze-survey source index after edits.",
   "entries": [
     {
       "id": "people-success",

@@ -2,7 +2,7 @@
 catalog, workbook schema, and generated resources list.
 
 These tests guard the unification between
-`skills/people-science-knowledge-vault/references/catalog.json` and
+the publisher catalog, its public `context/people-science-knowledge-vault/catalog.json`, and
 `skills/analyze-survey/references/people-science-source-index.json`, and make sure
 the generated `prioritized-resources.md` stays in sync with `catalog.json`.
 """
@@ -15,9 +15,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-VAULT_DIR = ROOT / "skills/people-science-knowledge-vault/references"
-CATALOG_PATH = VAULT_DIR / "catalog.json"
+VAULT_DIR = ROOT / "context/people-science-knowledge-vault"
 MAINTENANCE_DIR = ROOT / "references/maintenance/knowledge-vault"
+CATALOG_PATH = MAINTENANCE_DIR / "catalog.json"
 WORKBOOK_SCHEMA_PATH = MAINTENANCE_DIR / "workbook-schema.json"
 PRIORITIZED_RESOURCES_PATH = VAULT_DIR / "prioritized-resources.md"
 MAINTENANCE_GUIDE_PATH = MAINTENANCE_DIR / "README.md"

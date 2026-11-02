@@ -1,79 +1,76 @@
-"""Public bundle completeness, permission gates, and actual-content checks."""
+"""Link-only context traversal, permission gates, and actual-content checks."""
 
 import hashlib
 import json
 import shutil
 import sys
-import zipfile
 from pathlib import Path
 
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-import build_knowledge_vault_bundle as bundle
+import check_knowledge_vault_context as context_check
 import check_knowledge_vault_sources as live
 import search_knowledge_vault as lookup
 
 
-def test_standalone_zip_is_complete_public_and_reproducible(tmp_path):
-    first = bundle.build(tmp_path / "first")
-    second = bundle.build(tmp_path / "second")
-    assert first.read_bytes() == second.read_bytes()
-    with zipfile.ZipFile(first) as archive:
-        archive.extractall(tmp_path / "installed")
-    installed = tmp_path / "installed" / "people-science-knowledge-vault"
-    metadata = lookup.load_json(installed / "bundle.json")
-    for filename, expected in metadata["files"].items():
-        assert hashlib.sha256((installed / filename).read_bytes()).hexdigest() == expected
-    catalog = lookup.load_json(installed / "references/catalog.json")
-    index = lookup.load_json(installed / "references/theme-index.json")
-    assert lookup.validate_index(index, catalog) == []
-    assert lookup.search(index, "manager burnout")
-    assert lookup.coverage(index)["themes"] == 550
-    assert not list(installed.rglob("*snapshot*"))
-    assert not list(installed.rglob("*workbook*"))
+def test_link_entry_reaches_all_topics_and_sources_in_small_public_pages():
+    context_check.validate_context()
+    index = lookup.load_json(lookup.INDEX_PATH)
+    pages = lookup.render_web_context(index)
+    assert len(pages) == 1 + len(index["topics"]) + len(index["resources"])
+    assert all(len(body.encode("utf-8")) <= context_check.MAX_PAGE_BYTES for body in pages.values())
+    entry = pages["README.md"]
+    reached = set()
+    for topic in index["topics"]:
+        assert f"{lookup.RAW_BASE}/topics/{topic}.md" in entry
+        topic_page = pages[f"topics/{topic}.md"]
+        for resource in index["resources"]:
+            link = f"{lookup.RAW_BASE}/sources/{resource['id']}.md"
+            expected = any(topic in theme["topics"] for theme in resource["themes"])
+            assert (link in topic_page) == expected
+            if expected:
+                reached.add(resource["id"])
+                profile = pages[f"sources/{resource['id']}.md"]
+                assert resource["url"] in profile
+                assert resource["context"] in profile
+                assert resource["asset_scope"] in profile
+                for theme in resource["themes"]:
+                    assert theme["summary"] in profile
+    assert reached == {r["id"] for r in index["resources"] if r["review_status"] == "reviewed"}
+    assert "think-like-a-people-scientist-series-hub.md" in entry
+    catalog = lookup.load_json(lookup.CATALOG_PATH)
     assert all("internal_record" not in entry and "notes" not in entry for entry in catalog["entries"])
-    assert (installed / "references/public-use.md").is_file()
-    assert (installed / "references/topic-lookup.md").is_file()
-    assert (installed / "LICENSE").is_file()
-    bundle.validate_links(bundle.bundle_files())
-    bundle.validate_links({"example.md": b"```markdown\n[Example](URL)\n```\n"})
 
 
-def test_changed_payload_cannot_overwrite_same_version(tmp_path):
-    skill = tmp_path / "skill"
-    shutil.copytree(bundle.SKILL, skill)
-    path = bundle.build(tmp_path / "dist", skill)
-    original = path.read_bytes()
-    with (skill / "SKILL.md").open("a", encoding="utf-8") as output:
-        output.write("\nChanged public instructions.\n")
-    with pytest.raises(ValueError, match="new version"):
-        bundle.build(tmp_path / "dist", skill)
-    assert path.read_bytes() == original
-
-
-def test_private_locations_and_missing_references_block_packaging(tmp_path):
-    skill = tmp_path / "skill"
-    shutil.copytree(bundle.SKILL, skill)
-    path = skill / "references/public-use.md"
+def test_private_locations_and_missing_links_block_context_checks(tmp_path):
+    root = tmp_path / "repository"
+    context = root / "context/people-science-knowledge-vault"
+    shutil.copytree(lookup.REFERENCES, context)
+    skill = root / "skills/people-science-knowledge-vault/SKILL.md"
+    skill.parent.mkdir(parents=True)
+    shutil.copyfile(context_check.SKILL_PATH, skill)
+    path = context / "public-use.md"
     original = path.read_text(encoding="utf-8")
     path.write_text(original + "\nhttps://example.sharepoint.com/private\n", encoding="utf-8")
     with pytest.raises(ValueError, match="private ownership"):
-        bundle.bundle_files(skill)
+        context_check.validate_context(context, root)
     path.write_text(original + "\n[Missing](not-shipped.md)\n", encoding="utf-8")
-    with pytest.raises(ValueError, match="missing bundled link"):
-        bundle.bundle_files(skill)
+    with pytest.raises(ValueError, match="missing repository link"):
+        context_check.validate_context(context, root)
+    path.write_text("```markdown\n[Example](URL)\n```\n", encoding="utf-8")
+    context_check.validate_links(path, root)
 
 
 def media_fixture(tmp_path):
     index = lookup.load_json(lookup.INDEX_PATH)
-    manifest = lookup.load_json(bundle.SKILL / "references/media-alternatives.json")
+    manifest = lookup.load_json(lookup.REFERENCES / "media-alternatives.json")
     resource = next(item for item in index["resources"] if item.get("additional_media"))
     source = resource["additional_media"][0]["url"]
     # Synthetic text and grant metadata test the gate, not real redistribution rights.
     content = f"Synthetic test attribution: {source}\nSynthetic audio-only excerpt.\n".encode()
-    path = "references/media/synthetic-test.txt"
+    path = "media/synthetic-test.txt"
     target = tmp_path / path
     target.parent.mkdir(parents=True)
     target.write_bytes(content)
@@ -93,29 +90,29 @@ def media_fixture(tmp_path):
 
 def test_only_rights_reviewed_attributed_hash_matched_text_can_ship(tmp_path):
     index, manifest, asset, content = media_fixture(tmp_path)
-    assert bundle.validate_media(tmp_path, index, manifest) == {asset["path"]: content}
+    assert context_check.validate_media(tmp_path, index, manifest) == {tmp_path / asset["path"]}
     asset["redistribution_verified"] = False
     with pytest.raises(ValueError, match="redistribution permission"):
-        bundle.validate_media(tmp_path, index, manifest)
+        context_check.validate_media(tmp_path, index, manifest)
     asset["redistribution_verified"] = True
     asset["permission_summary"] = ""
     with pytest.raises(ValueError, match="redistribution permission"):
-        bundle.validate_media(tmp_path, index, manifest)
+        context_check.validate_media(tmp_path, index, manifest)
     asset["permission_summary"] = "Synthetic test redistribution permission with bounded scope."
     asset["sha256"] = "0" * 64
     with pytest.raises(ValueError, match="hash mismatch"):
-        bundle.validate_media(tmp_path, index, manifest)
+        context_check.validate_media(tmp_path, index, manifest)
     asset["path"] = "../outside.txt"
-    with pytest.raises(ValueError, match="invalid bundled text path"):
-        bundle.validate_media(tmp_path, index, manifest)
+    with pytest.raises(ValueError, match="invalid hosted text path"):
+        context_check.validate_media(tmp_path, index, manifest)
 
 
 def test_every_recording_has_an_explicit_permission_gap_or_text():
-    manifest = lookup.load_json(bundle.SKILL / "references/media-alternatives.json")
-    assert bundle.validate_media(bundle.SKILL, lookup.load_json(lookup.INDEX_PATH), manifest) == {}
+    manifest = lookup.load_json(lookup.REFERENCES / "media-alternatives.json")
+    assert context_check.validate_media(lookup.REFERENCES, lookup.load_json(lookup.INDEX_PATH), manifest) == set()
     manifest["gaps"].pop()
     with pytest.raises(ValueError, match="every registered recording"):
-        bundle.validate_media(bundle.SKILL, lookup.load_json(lookup.INDEX_PATH), manifest)
+        context_check.validate_media(lookup.REFERENCES, lookup.load_json(lookup.INDEX_PATH), manifest)
 
 
 def sample_resource():
@@ -179,8 +176,18 @@ def test_player_pages_and_recorded_gaps_never_count_as_verified_evidence():
 
 
 def test_runtime_no_longer_requests_workbook_refresh():
-    source_priority = (bundle.SKILL / "references/source-priority.md").read_text(encoding="utf-8")
+    source_priority = (lookup.REFERENCES / "source-priority.md").read_text(encoding="utf-8")
     assert "workbook-schema.json" not in source_priority
     assert "sharepoint-df.com" not in source_priority
-    assert not (bundle.SKILL / "references/workbook-schema.json").exists()
+    assert not (lookup.REFERENCES / "workbook-schema.json").exists()
     assert (ROOT / "references/maintenance/knowledge-vault/workbook-schema.json").is_file()
+
+
+def test_shared_skill_link_requires_no_local_installation_and_preserves_ref():
+    skill = context_check.SKILL_PATH.read_text(encoding="utf-8")
+    assert f"{lookup.RAW_BASE}/README.md" in skill
+    assert "Do not ask users to download a ZIP" in skill
+    assert "same ref" in skill
+    assert "rather than a stale" in skill
+    assert "not native skill registration" in skill
+    assert not (context_check.SKILL_PATH.parent / "bundle.json").exists()
