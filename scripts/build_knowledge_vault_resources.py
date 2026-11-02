@@ -20,11 +20,13 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-VAULT_DIR = ROOT / "skills/people-science-knowledge-vault/references"
-CATALOG_PATH = VAULT_DIR / "catalog.json"
-WORKBOOK_SCHEMA_PATH = VAULT_DIR / "workbook-schema.json"
+MAINTENANCE_DIR = ROOT / "references/maintenance/knowledge-vault"
+VAULT_DIR = ROOT / "context/people-science-knowledge-vault"
+CATALOG_PATH = MAINTENANCE_DIR / "catalog.json"
+PUBLIC_CATALOG_PATH = VAULT_DIR / "catalog.json"
+WORKBOOK_SCHEMA_PATH = MAINTENANCE_DIR / "workbook-schema.json"
 OUTPUT_PATH = VAULT_DIR / "prioritized-resources.md"
-SNAPSHOT_PATH = VAULT_DIR / "external-tab-snapshot.json"
+SNAPSHOT_PATH = MAINTENANCE_DIR / "external-tab-snapshot.json"
 SOURCE_INDEX_PATH = (
     ROOT / "skills/analyze-survey/references/people-science-source-index.json"
 )
@@ -54,6 +56,18 @@ REQUIRED_ENTRY_FIELDS = (
     "description",
     "research_questions",
 )
+PUBLIC_CATALOG_FIELDS = REQUIRED_ENTRY_FIELDS
+
+
+def public_catalog(catalog: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "schema_version": catalog["schema_version"],
+        "generated_at": catalog["generated_at"],
+        "entries": [
+            {field: entry[field] for field in PUBLIC_CATALOG_FIELDS}
+            for entry in catalog["entries"]
+        ],
+    }
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -190,7 +204,7 @@ def render_prioritized_markdown(catalog: dict[str, Any]) -> str:
         "Top5-equivalent. It is **not** the retrieval contract: agents must still",
         "follow `source-priority.md`, which also covers the supplementary live checks",
         "(Microsoft Viva Blog category page, Microsoft Learn, Adoption Center) useful",
-        "for material newer than the saved `external-tab-snapshot.json`.",
+        "for material newer than the publisher-maintained catalog.",
         "",
     ]
 
@@ -230,7 +244,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"WARNING: {warning}", file=sys.stderr)
 
     markdown = render_prioritized_markdown(catalog)
+    public = json.dumps(public_catalog(catalog), indent=2, ensure_ascii=True) + "\n"
     if args.check:
+        if not PUBLIC_CATALOG_PATH.exists() or PUBLIC_CATALOG_PATH.read_text(encoding="utf-8") != public:
+            print("ERROR: public context catalog is stale; regenerate it.", file=sys.stderr)
+            return 1
         current = OUTPUT_PATH.read_text(encoding="utf-8") if OUTPUT_PATH.exists() else ""
         if current.strip() != markdown.strip():
             print(
@@ -241,6 +259,8 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         return 0
 
+    VAULT_DIR.mkdir(parents=True, exist_ok=True)
+    PUBLIC_CATALOG_PATH.write_text(public, encoding="utf-8")
     OUTPUT_PATH.write_text(markdown + "\n", encoding="utf-8")
     print(f"Wrote {OUTPUT_PATH.relative_to(ROOT)}")
     return 0

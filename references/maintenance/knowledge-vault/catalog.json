@@ -2,7 +2,7 @@
   "schema_version": "2.0.0",
   "generated_at": "2026-10-08",
   "generated_by": "scripts/build_knowledge_vault_resources.py",
-  "refresh_notes": "priority_tier is sourced from column J ('Priority to add to context library') of the External worksheet snapshot in external-tab-snapshot.json: top5 > high > medium > low. The 'curated' priority_tier marks entries that are not present in that worksheet snapshot at all. Regenerate prioritized-resources.md after any edit. Re-pull external-tab-snapshot.json at least every 90 days, and re-validate ids/titles/urls used by skills/analyze-survey/references/people-science-source-index.json whenever this file changes.",
+  "refresh_notes": "Publisher-only metadata: priorities derive from External column J in this folder's external-tab-snapshot.json. Authorized publishers maintain that snapshot; runtime users do not refresh protected workbooks. Preserve top5 > high > medium > low, with curated additions top5-equivalent. Regenerate the public catalog and prioritized resources under context/people-science-knowledge-vault and validate the analyze-survey source index after edits.",
   "entries": [
     {
       "id": "people-success",

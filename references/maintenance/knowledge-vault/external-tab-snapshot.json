@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "source": "People_Science_Content_full_index.xlsx (External worksheet)",
+  "source": "Publisher-maintained People_Science_Content_full_index.xlsx (External worksheet)",
   "source_workbook_url": "https://microsoft.sharepoint-df.com/:x:/t/EVE/cQpI5FMS_jROSLEqT1-GT-KsEgUClfK5_gr5DhPyL0MFgifvGw",
   "retrieved_at": "2026-10-08",
   "retrieved_via": "workiq-retrieve (OneDriveAndSharePoint) + workiq-ask, under the signed-in user's M365 identity; the workbook is IRM/RMS-protected and cannot be fetched with a plain unauthenticated HTTP request.",

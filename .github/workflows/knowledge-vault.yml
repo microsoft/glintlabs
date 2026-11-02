@@ -1,0 +1,58 @@
+name: Knowledge Vault link access
+
+on:
+  pull_request:
+    paths:
+      - "context/people-science-knowledge-vault/**"
+      - "skills/people-science-knowledge-vault/**"
+      - "references/maintenance/knowledge-vault/**"
+      - "scripts/*knowledge_vault*"
+      - "tests/test_knowledge_vault*"
+      - "tests/test_skill_structure.py"
+      - "requirements-knowledge-vault-checks.txt"
+      - "skills/analyze-survey/references/people-science-source-index.json"
+      - ".github/workflows/knowledge-vault.yml"
+  push:
+    branches: [main]
+    paths:
+      - "context/people-science-knowledge-vault/**"
+      - "skills/people-science-knowledge-vault/**"
+      - "references/maintenance/knowledge-vault/**"
+      - "scripts/*knowledge_vault*"
+      - "tests/test_knowledge_vault*"
+      - "tests/test_skill_structure.py"
+      - "requirements-knowledge-vault-checks.txt"
+      - "skills/analyze-survey/references/people-science-source-index.json"
+      - ".github/workflows/knowledge-vault.yml"
+  schedule:
+    - cron: "0 15 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install check dependencies
+        run: python -m pip install pytest -r requirements-knowledge-vault-checks.txt
+      - name: Test catalog, lookup, and link-only context
+        run: python -m pytest tests/test_knowledge_vault_catalog.py tests/test_knowledge_vault_themes.py tests/test_knowledge_vault_portability.py tests/test_skill_structure.py::test_knowledge_vault_source_priority
+      - name: Validate public context graph and media permissions
+        run: python scripts/check_knowledge_vault_context.py
+      - name: Check public evidence content
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: python scripts/check_knowledge_vault_sources.py --output source-check.json
+      - name: Upload source check including failures
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        uses: actions/upload-artifact@v4
+        with:
+          name: knowledge-vault-source-check
+          path: source-check.json
+          if-no-files-found: error
