@@ -21,7 +21,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 MAINTENANCE_DIR = ROOT / "references/maintenance/knowledge-vault"
-VAULT_DIR = ROOT / "context/people-science-knowledge-vault"
+VAULT_DIR = ROOT / "skills/people-science-knowledge-vault/references"
 CATALOG_PATH = MAINTENANCE_DIR / "catalog.json"
 PUBLIC_CATALOG_PATH = VAULT_DIR / "catalog.json"
 WORKBOOK_SCHEMA_PATH = MAINTENANCE_DIR / "workbook-schema.json"

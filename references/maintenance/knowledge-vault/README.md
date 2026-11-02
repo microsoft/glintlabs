@@ -27,7 +27,7 @@ On the schema's 90-day expiry, authorized publishers refresh
 `external-tab-snapshot.json`, update the schema's observed date/range/count,
 and rederive catalog priorities from column J. The two files live beside this
 guide. This folder's catalog retains ownership provenance; the catalog builder
-exports only public fields to `context/people-science-knowledge-vault/catalog.json`.
+exports only public fields to `skills/people-science-knowledge-vault/references/catalog.json`.
 
 ## Review and regeneration
 
@@ -68,7 +68,7 @@ No approved transcripts are available at this revision. Do not create or ship
 them without verified permission.
 
 Each `approved` entry requires `resource_id`, `source_url`, `path` (under
-the context folder's `media/`), `sha256`, `redistribution_verified`, `permission_url`,
+the skill's `references/media/`), `sha256`, `redistribution_verified`, `permission_url`,
 `permission_summary`, `permission_reviewed_at`, `text_reviewed_at`, `coverage`
 (`complete-audio-transcript` or `bounded-audio-excerpt`), and `coverage_notes`.
 Dates use `YYYY-MM-DD`. Remove that resource's `gaps` entry only when its approved
@@ -77,7 +77,7 @@ independently determine legal permission from a URL.
 
 ## Publish the link-only library
 
-Commit the regenerated `context` folder with its source changes, run the focused
+Commit the regenerated skill `references` folder with its source changes, run the focused
 tests and context checker, and merge the reviewed PR. No ZIP, release tag,
 download artifact, or per-user installation is part of this workflow. The
 stable skill link reads main; branch/tag/commit links must keep context on

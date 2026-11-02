@@ -44,9 +44,9 @@ The plugin deliberately does not duplicate the `vivaglint` analysis package. It 
 
 For knowledge-only use, paste the [Knowledge Vault skill link](https://github.com/microsoft/glintlabs/blob/main/skills/people-science-knowledge-vault/SKILL.md)
 into an assistant that can read public web links and ask a question.
-Its context library is hosted in [context/people-science-knowledge-vault](context/people-science-knowledge-vault/README.md).
+Its context library is hosted in the skill's [references folder](skills/people-science-knowledge-vault/references/README.md).
 No download, installation, Python, survey export, or Microsoft-internal access
-is required. See [link-only use](context/people-science-knowledge-vault/public-use.md).
+is required. See [link-only use](skills/people-science-knowledge-vault/references/public-use.md).
 
 For survey analysis, install the complete plugin, not just its skill Markdown.
 A command-capable host with local file/process permissions is required to run analysis; a
@@ -113,8 +113,8 @@ references/general/
 When a skill runs, inspect its colocated `references/` folder first, then
 inspect `references/general/`. Skill-specific references take precedence for
 that skill unless they violate privacy, safety, or the manifest contract.
-The Knowledge Vault's reference pointer instead leads to its public `context`
-library; it can be used directly from a link without installing the plugin.
+The Knowledge Vault links directly to its public, colocated `references`
+library; it can be used from a link without installing the plugin.
 
 ## Shared contract
 
@@ -145,8 +145,8 @@ Schema: `schemas/analysis-manifest.schema.json`
 
 ### Knowledge vault status
 
-Start with the [context entry](context/people-science-knowledge-vault/README.md)
-and [corpus guide](context/people-science-knowledge-vault/corpus-guide.md).
+Start with the [context entry](skills/people-science-knowledge-vault/references/README.md)
+and [corpus guide](skills/people-science-knowledge-vault/references/corpus-guide.md).
 The repository includes reviewed summaries and public links for 38 accessible
 original-vault resources and 17 Research Drops: 550 source-level entries under 33
 shared topics, with one original directory recorded as unavailable. Discovery
@@ -157,11 +157,11 @@ ordering is preserved within its collection. Shared topics and study families
 are not independent findings or a claim-level deduplication result. Full published
 sources are still required for substantive evidence and freshness checks. See
 the [skill](skills/people-science-knowledge-vault/SKILL.md) and authoritative
-[source-priority contract](context/people-science-knowledge-vault/source-priority.md).
+[source-priority contract](skills/people-science-knowledge-vault/references/source-priority.md).
 
 The public library uses small linked topic and source pages, with public-only
 catalog fields and explicit evidence limits. It omits protected-workbook
-metadata and private ownership records. See [link-only use](context/people-science-knowledge-vault/public-use.md)
+metadata and private ownership records. See [link-only use](skills/people-science-knowledge-vault/references/public-use.md)
 for host capabilities and updates, and
 [publisher maintenance](references/maintenance/knowledge-vault/README.md)
 for regeneration and content-check procedures. Recordings remain linked unless
