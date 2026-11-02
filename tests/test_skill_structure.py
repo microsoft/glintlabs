@@ -1408,6 +1408,96 @@ def test_attrition_default_uses_initial_company_view(tmp_path):
     assert module.default_attrition_days([], set()) is None
 
 
+def test_attrition_report_preserves_suppression_for_blank_export_counts(tmp_path):
+    spec = importlib.util.spec_from_file_location(
+        "build_interactive_report_blank_attrition",
+        ROOT / "scripts/build_interactive_report.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+    path = tmp_path / "attrition.csv"
+    module.pd.DataFrame([
+        {
+            "analysis_scope": scope,
+            "attribute_name": "department" if scope == "attribute" else "",
+            "attribute_value": "Engineering" if scope == "attribute" else "",
+            "question": "Q_ONE",
+            "days": 180,
+            "favorable_n": None,
+            "unfavorable_n": None,
+            "favorable_attrition": None,
+            "unfavorable_attrition": None,
+            "attrition_ratio": None,
+        }
+        for scope in ("overall", "attribute")
+    ]).to_csv(path, index=False)
+    segments = {
+        "department": {"values": {"Engineering": {"items": [[65, 0, 0, 0, 200]]}}}
+    }
+
+    payload = module.attrition_payload(path, ["Q_ONE"], segments, 5)
+    alerts = module.attrition_alert_payload(
+        path, ["Q_ONE"], segments, [[75, 0, 0, 0, 200]], 5
+    )
+
+    assert len(payload["rows"]) == 2
+    assert all(row[4:9] == [None] * 5 for row in payload["rows"])
+    assert all(row[9:] == [1, None, 0] for row in payload["rows"])
+    assert not any(alerts["byDay"].values())
+
+
+@pytest.mark.parametrize("cycle_column,predictor,include_title,expected", [
+    ("survey_cycle_id", 1002, True, "2026 H2 Engagement Pulse"),
+    ("survey_cycle_title", "2026 H2 Engagement Pulse", True, "2026 H2 Engagement Pulse"),
+    ("survey_cycle_id", "1002", False, "Cycle 1002"),
+])
+def test_attrition_baseline_title_uses_configured_predictor(
+    cycle_column, predictor, include_title, expected,
+):
+    spec = importlib.util.spec_from_file_location(
+        "build_interactive_report_baseline", ROOT / "scripts/build_interactive_report.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+    frame = module.pd.DataFrame({
+        "survey_cycle_id": [1002, 1001, 1003],
+        "survey_cycle_title": [
+            "2026 H2 Engagement Pulse", "2026 H1 Engagement Pulse", "Later Exit survey",
+        ],
+    })
+    if not include_title:
+        frame = frame.drop(columns="survey_cycle_title")
+
+    assert module.attrition_baseline_survey(frame, {
+        "cycle_column": cycle_column, "predictor_cycle": predictor,
+    }) == expected
+
+
+def test_attrition_baseline_title_does_not_guess_missing_or_conflicting_metadata():
+    spec = importlib.util.spec_from_file_location(
+        "build_interactive_report_baseline_missing",
+        ROOT / "scripts/build_interactive_report.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    assert spec and spec.loader
+    spec.loader.exec_module(module)
+    frame = module.pd.DataFrame({
+        "survey_cycle_id": [1002, 1002],
+        "survey_cycle_title": ["First title", "Conflicting title"],
+    })
+    assert module.attrition_baseline_survey(frame, {}) is None
+    with pytest.raises(ValueError, match="conflicting survey titles"):
+        module.attrition_baseline_survey(frame, {
+            "cycle_column": "survey_cycle_id", "predictor_cycle": 1002,
+        })
+    with pytest.raises(ValueError, match="no survey rows"):
+        module.attrition_baseline_survey(frame, {
+            "cycle_column": "survey_cycle_id", "predictor_cycle": 1001,
+        })
+
+
 def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     script_path = ROOT / "scripts/build_interactive_report.py"
     spec = importlib.util.spec_from_file_location(
@@ -1453,6 +1543,7 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
         payload,
         alerts_payload,
         "2025-12-15",
+        baseline_survey="H2 <Engagement> & Pulse",
     )
 
     assert payload["days"] == [90, 180, 365]
@@ -1515,6 +1606,14 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     assert "<br><br><br>" not in rendered_intro.group(1)
     assert report.index(rendered_intro.group(1)) < report.index("id=attritionDays")
     assert report.index("id=attritionDays") < report.index("id=attritionVisual")
+    for section, control in [("attrition", "attritionDays"), ("alerts", "alertDays")]:
+        content = re.search(
+            rf"<section class=panel id={section}\b.*?</section>", report, re.DOTALL
+        ).group(0)
+        assert "<strong>Baseline survey:</strong> H2 &lt;Engagement&gt; &amp; Pulse" in content
+        assert "(completed 2025-12-15)" in content
+        assert content.index("class=tab-intro") < content.index("Baseline survey:")
+        assert content.index("Baseline survey:") < content.index(f"id={control}")
     alerts_intro = re.search(
         r"<section class=panel id=alerts\b.*?<p class=tab-intro>(.*?)</p>",
         report,
@@ -1530,6 +1629,7 @@ def test_attrition_report_injection_adds_live_filtered_table(tmp_path):
     )
     assert "fewer than 10 favorable or unfavorable respondents" in higher_minimum_report
     assert "fewer than five favorable or unfavorable respondents" not in higher_minimum_report
+    assert "<strong>Baseline survey:</strong> Not recorded" in higher_minimum_report
     assert "Start with the largest score gaps" in report
     assert "<th>Favorable n</th>" not in report
     assert "<th>Favorable attrition</th>" not in report
