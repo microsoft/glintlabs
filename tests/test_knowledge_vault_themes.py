@@ -308,7 +308,7 @@ def test_published_overlap_counts_are_recomputed_from_the_index(index):
 def test_repository_bundle_works_without_downloads_sharepoint_or_body_cache(tmp_path):
     bundle = tmp_path / "repository"
     scripts = bundle / "scripts"
-    references = bundle / "context/people-science-knowledge-vault"
+    references = bundle / "skills/people-science-knowledge-vault/references"
     scripts.mkdir(parents=True)
     references.mkdir(parents=True)
     for name in ("search_knowledge_vault.py", "build_knowledge_vault_resources.py"):

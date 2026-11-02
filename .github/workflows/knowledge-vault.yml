@@ -3,7 +3,6 @@ name: Knowledge Vault link access
 on:
   pull_request:
     paths:
-      - "context/people-science-knowledge-vault/**"
       - "skills/people-science-knowledge-vault/**"
       - "references/maintenance/knowledge-vault/**"
       - "scripts/*knowledge_vault*"
@@ -15,7 +14,6 @@ on:
   push:
     branches: [main]
     paths:
-      - "context/people-science-knowledge-vault/**"
       - "skills/people-science-knowledge-vault/**"
       - "references/maintenance/knowledge-vault/**"
       - "scripts/*knowledge_vault*"

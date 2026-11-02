@@ -46,10 +46,9 @@ def test_link_entry_reaches_all_topics_and_sources_in_small_public_pages():
 
 def test_private_locations_and_missing_links_block_context_checks(tmp_path):
     root = tmp_path / "repository"
-    context = root / "context/people-science-knowledge-vault"
+    context = root / "skills/people-science-knowledge-vault/references"
     shutil.copytree(lookup.REFERENCES, context)
     skill = root / "skills/people-science-knowledge-vault/SKILL.md"
-    skill.parent.mkdir(parents=True)
     shutil.copyfile(context_check.SKILL_PATH, skill)
     path = context / "public-use.md"
     original = path.read_text(encoding="utf-8")
@@ -191,3 +190,9 @@ def test_shared_skill_link_requires_no_local_installation_and_preserves_ref():
     assert "rather than a stale" in skill
     assert "not native skill registration" in skill
     assert not (context_check.SKILL_PATH.parent / "bundle.json").exists()
+
+
+def test_context_is_colocated_with_the_skill_not_a_root_level_library():
+    assert lookup.REFERENCES == context_check.SKILL_PATH.parent / "references"
+    assert lookup.RAW_BASE.endswith("/skills/people-science-knowledge-vault/references")
+    assert not (ROOT / "context" / "people-science-knowledge-vault").exists()

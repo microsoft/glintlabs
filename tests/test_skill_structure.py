@@ -3249,7 +3249,7 @@ def test_knowledge_vault_source_priority():
         encoding="utf-8"
     )
     sources = (
-        ROOT / "context/people-science-knowledge-vault/source-priority.md"
+        ROOT / "skills/people-science-knowledge-vault/references/source-priority.md"
     ).read_text(encoding="utf-8")
 
     assert "Microsoft Viva Blog" in skill

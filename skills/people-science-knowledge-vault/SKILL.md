@@ -9,17 +9,17 @@ allowed-tools: Read, Glob, Grep, WebFetch
 Find relevant published knowledge, synthesize it with appropriate caution, and cite
 the source articles directly. For complex or ambiguous research questions, act as a
 researcher/consultant and work the scope out with the user before answering (see
-Step 0 below). The context library lives in the public repository's
-`context/people-science-knowledge-vault/` folder, not on the user's computer.
+Step 0 below). The public context library lives beside this skill in
+`skills/people-science-knowledge-vault/references/`; no local copy is required.
 
 ## Start from the link: no installation
 
 The user can paste this skill's GitHub URL and ask a question. Read the full
 linked instructions, then follow these public context links as needed:
 
-1. Read the [context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/context/people-science-knowledge-vault/README.md),
-   [source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/context/people-science-knowledge-vault/source-priority.md),
-   and [corpus guide](https://raw.githubusercontent.com/microsoft/glintlabs/main/context/people-science-knowledge-vault/corpus-guide.md).
+1. Read the [context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md),
+   [source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md),
+   and [corpus guide](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/corpus-guide.md).
 2. Follow relevant small topic pages from the entry, then their individual
    source-profile links. Each profile includes reviewed themes, scope,
    limitations, and study-family context.
@@ -79,7 +79,7 @@ that skill is available; do not imply it has been connected when it has not.
 ## Required source priority
 
 Inspect the linked context entry and `source-priority.md` first. Use
-`context/people-science-knowledge-vault/prioritized-resources.md` for a
+`references/prioritized-resources.md` beside this skill for a
 human-readable view of original-vault resources, and that folder's
 `catalog.json` if you need the same
 list in a structured form with `priority_tier` and `research_questions`
@@ -115,11 +115,11 @@ Do not retrieve private provenance or source workbooks during normal use.
 ## Quick theme lookup
 
 Start with the linked context entry and its small topic pages to find sources
-by shared concept. They are hosted in the repo's context folder and require
+by shared concept. They are hosted in this skill's `references` folder and require
 no local files, private SharePoint access, or extraction cache.
 
 Use individual source pages to read ten reviewed themes per accessible resource.
-For bulk inspection, the context folder also has `theme-lookup.md`,
+For bulk inspection, `references` also has `theme-lookup.md`,
 `topic-lookup.md`, and `theme-index.json`; check retrieval limits before using
 these larger files. No script execution is required. The index includes the catalog plus 17 published Research
 Drop counterparts. An unavailable webinar-series directory is recorded as a gap

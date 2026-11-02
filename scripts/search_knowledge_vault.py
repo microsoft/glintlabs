@@ -15,12 +15,12 @@ from urllib.parse import urlparse
 from build_knowledge_vault_resources import PRIORITY_TIER_GROUPS
 
 ROOT = Path(__file__).resolve().parents[1]
-REFERENCES = ROOT / "context/people-science-knowledge-vault"
+REFERENCES = ROOT / "skills/people-science-knowledge-vault/references"
 INDEX_PATH = REFERENCES / "theme-index.json"
 LOOKUP_PATH = REFERENCES / "theme-lookup.md"
 TOPIC_LOOKUP_PATH = REFERENCES / "topic-lookup.md"
 CATALOG_PATH = REFERENCES / "catalog.json"
-RAW_BASE = "https://raw.githubusercontent.com/microsoft/glintlabs/main/context/people-science-knowledge-vault"
+RAW_BASE = "https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references"
 KINDS = {
     "framework", "finding", "recommendation", "method", "commentary",
     "hypothesis", "case-study", "documentation", "signpost",
