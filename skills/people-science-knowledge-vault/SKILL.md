@@ -78,22 +78,18 @@ that skill is available; do not imply it has been connected when it has not.
 
 ## Required source priority
 
-Inspect the linked context entry and `source-priority.md` first. Use
-`references/prioritized-resources.md` beside this skill for a
-human-readable view of original-vault resources, and that folder's
-`catalog.json` if you need the same
-list in a structured form with `priority_tier` and `research_questions`
-fields. The saved priorities are publisher-maintained; the source workbook
-and its refresh tools are not runtime dependencies.
+Read the linked context entry and `source-priority.md` first. The adjacent
+`references/prioritized-resources.md` and `catalog.json` list ranked resources
+with `priority_tier` and `research_questions`. Published priorities need no
+workbook or refresh tools at runtime.
 
 First filter relevance and applicability, then prefer the new catalog's reviewed
 Research Drops over original-vault resources. Collection priority is a retrieval
 preference, not proof of evidence quality or current product validity. Do not
 force an irrelevant Drop into an answer.
 
-Within the original vault, preserve the scale taken from the workbook's
-`Priority to add to context library` column (column J) and carried in
-`catalog.json` as `priority_tier`:
+Within the original vault, preserve workbook column J's saved `catalog.json`
+`priority_tier` order:
 
 1. **`top5`** - the small set of resources judged most essential.
 2. **`high`**
@@ -103,12 +99,10 @@ Within the original vault, preserve the scale taken from the workbook's
    high-value that are not present in the workbook snapshot at all; treat
    these as roughly `top5`-equivalent in authority.
 
-Prefer the higher `priority_tier` among relevant original-vault resources, after
-the new catalog's collection precedence. See `source-priority.md` for which
-`theme` to reach for given a research question, the supplementary curated
-resources, and the secondary live-retrieval checks (Microsoft Viva Blog
-category page, Microsoft Learn, Adoption Center) that are useful for material
-published after the snapshot was taken, but are not re-ranked by column J.
+Among relevant original-vault resources, prefer higher tiers after collection
+precedence. `source-priority.md` covers research-question routing, curated
+resources, and live checks for newer material; live discoveries are not
+re-ranked by column J.
 
 Do not retrieve private provenance or source workbooks during normal use.
 
@@ -206,13 +200,18 @@ Narrow factual questions can proceed directly to retrieval.
    alternative and its review date; it is not a live-source freshness check.
 4. If the combined reviewed index lacks coverage, or the question needs material
    newer than its review date, run the secondary live
-   checks described in `source-priority.md` (Viva Blog category page,
+   checks described in `source-priority.md` (Microsoft Viva Blog category page,
    Microsoft Learn, Adoption Center) and say explicitly that you did so.
 5. Deduplicate by canonical article URL. Preserve registered collection
    precedence and the highest applicable original-vault tier; do not count
    duplicate appearances as separate evidence.
-6. Synthesize only claims supported by retrieved full sources and attach
-   citations directly to those claims.
+6. Cite only claims supported by retrieved full sources. Before delivery, verify
+   substantive numbers (sample sizes, dates, effect sizes) against retrieved
+   evidence. Label calculations using verified inputs. Omit unverified numbers;
+   retain qualitative claims only if separately supported. Never substitute vague
+   quantifiers or remembered figures. Remove unsupported claims; unsupported does
+   not mean false. Disclose material missing numbers and seek evidence; explicitly
+   correct numbers already delivered. Do not narrate routine draft cleanup.
 7. Describe how many retrieved sources support the answer and distinguish
    research findings from published recommendations and author commentary. Lead
    with the best-supported pattern and state material disagreement or gaps.
