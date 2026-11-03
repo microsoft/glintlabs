@@ -80,8 +80,8 @@ that skill is available; do not imply it has been connected when it has not.
 
 Read the linked context entry and `source-priority.md` first. The adjacent
 `references/prioritized-resources.md` and `catalog.json` list ranked resources
-with `priority_tier` and `research_questions`. Publisher-maintained priorities
-need no workbook or refresh tools at runtime.
+with `priority_tier` and `research_questions`. Published priorities need no
+workbook or refresh tools at runtime.
 
 First filter relevance and applicability, then prefer the new catalog's reviewed
 Research Drops over original-vault resources. Collection priority is a retrieval
@@ -200,7 +200,7 @@ Narrow factual questions can proceed directly to retrieval.
    alternative and its review date; it is not a live-source freshness check.
 4. If the combined reviewed index lacks coverage, or the question needs material
    newer than its review date, run the secondary live
-   checks described in `source-priority.md` (Viva Blog category page,
+   checks described in `source-priority.md` (Microsoft Viva Blog category page,
    Microsoft Learn, Adoption Center) and say explicitly that you did so.
 5. Deduplicate by canonical article URL. Preserve registered collection
    precedence and the highest applicable original-vault tier; do not count
