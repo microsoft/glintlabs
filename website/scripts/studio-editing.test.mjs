@@ -330,9 +330,13 @@ test("Word chart data is immediately editable without copying or changing the or
     onDone() {}, onCancel() {}, onRemove() {},
   }));
   const editorHeader = nodes(rendered.find(node => node.type === "header"));
-  const chartSelector = editorHeader.find(node => node.type === "button" && node.props.children === "Bar chart");
-  assert.ok(chartSelector, "The current chart name is the header's chart-selection button");
-  assert.equal(chartSelector.props["aria-expanded"], false);
+  const chartSelector = editorHeader.find(node => node.type === "dropdown" && node.props["aria-label"] === "Chart type");
+  assert.ok(chartSelector, "Chart type uses the same standard dropdown as other chart controls");
+  assert.equal(chartSelector.props.value, "Bar chart");
+  assert.deepEqual(chartSelector.props.selectedOptions, ["horizontal-bar-chart"]);
+  assert.deepEqual(nodes(chartSelector).filter(node => node.type === "option").map(node => node.props.children),
+    ["Bar chart", "Paired comparison", "Percentage rings", "Percentage comparison grid"],
+    "The dropdown contains only the four chart names");
   assert.equal(editorHeader.some(node => node.type === "h2"), false,
     "The chart selector replaces the duplicate header title");
   const input = rendered.find(node => node.props?.["aria-label"] === "Value (%), row 1");
@@ -381,8 +385,8 @@ test("Word chart data is immediately editable without copying or changing the or
     assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, tab === "text" ? 3 : tab === "data" ? 4 : 0,
       "Text contains the three single-line chart text fields; Data contains editable cells");
     assert.equal(view.filter(node => node.type === "select").length, 0, "Chart controls never open native operating-system menus");
-    assert.equal(view.filter(node => node.type === "dropdown").length, tab === "data" ? 1 : 0,
-      "Only Sort by uses a dropdown; palette choices are visual radio tiles");
+    assert.equal(view.filter(node => node.type === "dropdown").length, tab === "data" ? 2 : 1,
+      "Chart type is always available; Data adds Sort by, while palettes remain radio tiles");
     if (tab === "palette") {
       const palette = view.find(node => node.type === "input" && node.props.name === "word-chart-palette" && node.props.value === "teal");
       assert.ok(palette, "Each palette is directly selectable without opening a dropdown");

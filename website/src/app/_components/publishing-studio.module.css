@@ -2319,34 +2319,7 @@
 }
 
 .chartTypeIcon { flex: 0 0 20px; width: 20px; height: 20px; }
-.chartEditor .chartChangeAction {
-  justify-self: start;
-  flex-shrink: 0;
-  min-width: 0;
-  max-width: 100%;
-  min-height: 32px;
-  border-radius: var(--studio-compact-action-radius);
-  white-space: normal;
-  text-align: start;
-}
-.chartTypeChoices { display: grid; gap: 8px; padding-bottom: 24px; }
 .chartTableHeader h3 { margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; }
-.chartEditor .chartTypeOption {
-  display: flex;
-  justify-content: flex-start;
-  gap: 12px;
-  width: 100%;
-  padding: 12px;
-  border: 0;
-  border-radius: var(--borderRadiusMedium);
-  color: var(--colorNeutralForeground1);
-  background: var(--colorNeutralBackground2);
-  text-align: left;
-}
-.chartTypeOption > span { min-width: 0; }
-.chartEditor .chartTypeOption:hover { background: var(--colorNeutralBackground3Hover); }
-.chartEditor .chartTypeOption:active { background: var(--colorNeutralBackground3Pressed); }
-.chartEditor .chartTypeOption[aria-pressed="true"] { background: var(--colorBrandBackground2); }
 .chartDataGuidance {
   display: grid;
   justify-items: start;
@@ -2461,6 +2434,17 @@
 
 .chartEditor .chartChoice::after { display: none; }
 .chartEditor .chartChoice:focus-within { outline: 2px solid var(--colorStrokeFocus2); outline-offset: 2px; }
+
+.chartEditor .chartTypeSelector {
+  justify-self: start;
+  width: auto;
+  max-width: 100%;
+}
+
+.chartEditor .chartTypeSelector .chartChoiceButton {
+  white-space: normal;
+  text-align: start;
+}
 
 .chartEditor .chartChoiceButton {
   min-height: 38px;

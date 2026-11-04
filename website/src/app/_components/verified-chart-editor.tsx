@@ -8,14 +8,10 @@ import { ArrowUpload20Regular } from "@fluentui/react-icons/svg/arrow-upload";
 import { ClipboardPaste20Regular } from "@fluentui/react-icons/svg/clipboard-paste";
 import { Color20Regular } from "@fluentui/react-icons/svg/color";
 import { Checkmark16Regular } from "@fluentui/react-icons/svg/checkmark";
-import { ChevronDown20Regular } from "@fluentui/react-icons/svg/chevron-down";
-import { DataBarHorizontal20Regular } from "@fluentui/react-icons/svg/data-bar-horizontal";
 import { DataBarVertical20Regular } from "@fluentui/react-icons/svg/data-bar-vertical";
-import { DataPie20Regular } from "@fluentui/react-icons/svg/data-pie";
 import { Delete16Regular } from "@fluentui/react-icons/svg/delete";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
 import { TextEditStyle20Regular } from "@fluentui/react-icons/svg/text-edit-style";
-import { TextPercent20Regular } from "@fluentui/react-icons/svg/text-percent";
 import { Menu, MenuItem, MenuList, MenuPopover, MenuTrigger } from "@fluentui/react-menu";
 import { Body1, Body1Strong, Caption1 } from "@fluentui/react-text";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -59,13 +55,12 @@ type Props = {
 export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, onDone, onCancel, onRemove, initialType = "horizontal-bar-chart", intent = "edit" }: Props) {
   const tabs = ["data", "text", "palette"] as const;
   const chartChoices = [
-    { type: "horizontal-bar-chart", title: "Bar chart", description: "Compare values across categories", rows: undefined },
-    { type: "paired-percentage-comparison", title: "Paired comparison", description: "Show two percentage findings", rows: 2 },
-    { type: "percentage-ring-group", title: "Percentage rings", description: "Show three percentage findings", rows: 3 },
-    { type: "grouped-column-comparison", title: "Percentage comparison grid", description: "Compare two series across four groups", rows: 4 },
+    { type: "horizontal-bar-chart", title: "Bar chart", rows: undefined },
+    { type: "paired-percentage-comparison", title: "Paired comparison", rows: 2 },
+    { type: "percentage-ring-group", title: "Percentage rings", rows: 3 },
+    { type: "grouped-column-comparison", title: "Percentage comparison grid", rows: 4 },
   ] as const;
   const [tab, setTab] = useState<(typeof tabs)[number]>("data");
-  const [choosingType, setChoosingType] = useState(false);
   const typeButton = useRef<HTMLButtonElement>(null);
   const [dataSource, setDataSource] = useState(source);
   const [editable, setEditable] = useState<EditableData | undefined>(() => {
@@ -186,7 +181,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     } : undefined);
     setSelectedType(type);
     setFrozenOrder(undefined);
-    setChoosingType(false);
     setTab("data");
     if (current) changeData(current);
     typeButton.current?.focus();
@@ -301,12 +295,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       </table>
     </>;
   }
-  function chartIcon(type: VerifiedDataVisualType) {
-    const Icon = type === "horizontal-bar-chart" ? DataBarHorizontal20Regular
-      : type === "paired-percentage-comparison" ? TextPercent20Regular
-        : type === "percentage-ring-group" ? DataPie20Regular : DataBarVertical20Regular;
-    return <Icon className={styles.chartTypeIcon} aria-hidden="true" />;
-  }
   const dataSettings = selectedType === "horizontal-bar-chart" ? <div className={styles.chartDataSettings}>
     <div className={styles.field}>
       <Body1Strong id={`${block.id}-sort-label`}>Sort by</Body1Strong>
@@ -349,23 +337,21 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   </Menu>;
   return <div className={styles.chartEditor}>
     <header className={`${styles.chartEditorHeader} ${styles.chartSelectedHeader}`}>
-      <Button ref={typeButton} type="button" appearance="outline" className={styles.chartChangeAction}
-        icon={<ChevronDown20Regular aria-hidden="true" />} iconPosition="after"
-        aria-expanded={choosingType} aria-controls={choosingType ? `${block.id}-chart-types` : undefined}
-        onClick={() => { setChoosingType(value => !value); setTab("data"); }}>{chartChoice?.title ?? "Choose a chart"}</Button>
+      <Dropdown aria-label="Chart type" className={`${styles.chartChoice} ${styles.chartTypeSelector}`}
+        button={{ ref: typeButton, className: styles.chartChoiceButton }} listbox={{ className: styles.chartControlPopup }}
+        placeholder="Choose a chart" value={chartChoice?.title ?? ""} selectedOptions={selectedType ? [selectedType] : []}
+        onOptionSelect={(_, data) => {
+          if (data.optionValue) changeChartType(data.optionValue as VerifiedDataVisualType);
+        }}>
+        {chartChoices.map(({ type, title }) => <Option key={type} value={type} checkIcon={null}
+          className={styles.chartMenuItem}>{title}</Option>)}
+      </Dropdown>
       <Button type="button" appearance="subtle" className={styles.chartEditorDismiss}
         icon={<Dismiss20Regular aria-hidden="true" />} aria-label="Close chart editor" onClick={onCancel} />
     </header>
     <div className={styles.chartEditorContent}>
     <div className={styles.chartEditorTools}>
-    {choosingType ? <div id={`${block.id}-chart-types`} role="group" aria-label="Chart types" className={styles.chartTypeChoices}>
-      {chartChoices.map(({ type, title, description }) => <Button key={type} type="button" appearance="outline"
-        className={styles.chartTypeOption} aria-pressed={selectedType === type} onClick={() => changeChartType(type)}>
-        {chartIcon(type)}
-        <span><Body1Strong block>{title}</Body1Strong><Caption1 block>{description}</Caption1></span>
-      </Button>)}
-    </div> : null}
-    {!choosingType ? <div className={styles.chartTabs} role="tablist" aria-label="Chart editing">
+    <div className={styles.chartTabs} role="tablist" aria-label="Chart editing">
       {visibleTabs.map(value => {
         return <button key={value} type="button" role="tab"
         id={`${block.id}-${value}-tab`} aria-controls={`${block.id}-chart-panel`} aria-selected={tab === value}
@@ -385,7 +371,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
           <span>{value === "text" ? "Text" : value === "data" ? "Data" : "Palette"}</span>
         </button>;
       })}
-    </div> : null}
+    </div>
     <input ref={fileInput} hidden type="file" accept=".csv,.tsv,.txt" onChange={async event => {
       const file = event.target.files?.[0]; event.target.value = "";
       if (!file) return;
@@ -395,7 +381,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       } catch (cause) { setError(cause instanceof Error ? cause.message : "The table could not be imported."); }
     }} />
     </div>
-    {!choosingType ? <section id={`${block.id}-chart-panel`} role="tabpanel" aria-labelledby={`${block.id}-${tab}-tab`}
+    <section id={`${block.id}-chart-panel`} role="tabpanel" aria-labelledby={`${block.id}-${tab}-tab`}
       data-chart-tab={tab} className={styles.chartEditorBody}>
       {error ? <Body1 className={styles.inputError} role="alert" block>{error}</Body1> : null}
       {tab === "data" ? <>
@@ -499,7 +485,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
             <Checkmark16Regular className={styles.chartPaletteCheck} aria-hidden="true" /></span>
         </label>)}
       </fieldset>}
-    </section> : null}
+    </section>
     </div>
     <footer className={styles.chartEditorFooter}>
       {intent !== "insert" && block.source.part === "studio" ? <Button type="button"
