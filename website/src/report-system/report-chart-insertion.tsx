@@ -37,7 +37,7 @@ export function ReportChartInsertion({ blocks, onInsertChart, restoreFocus }: {
         const previous = node.previousElementSibling?.getBoundingClientRect();
         const gap = previous ? Math.max(24, rect.top - previous.bottom) : 48;
         return { before, top: rect.top - origin.top - gap / 2, left: rect.left - origin.left, width: rect.width,
-          height: Math.min(32, Math.max(24, gap - 24)),
+          height: 32,
           label: before ? `Insert chart before ${title?.slice(0, 60)}` : "Insert chart at end of report" };
       }));
     }

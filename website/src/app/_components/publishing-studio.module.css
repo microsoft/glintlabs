@@ -2158,7 +2158,7 @@
 
 @media (max-width: 600px) {
   .chartSelectedHeader { grid-template-columns: minmax(0, 1fr) 32px; }
-  .chartSelectedHeader .chartChangeAction { grid-column: 1; grid-row: 2; justify-self: start; margin-inline-start: 32px; }
+  .chartSelectedHeader .chartChangeAction { grid-column: 1; grid-row: 2; justify-self: start; }
   .chartSelectedHeader .chartEditorDismiss { grid-column: 2; grid-row: 1; }
 }
 

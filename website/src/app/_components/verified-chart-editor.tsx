@@ -351,7 +351,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   return <div className={styles.chartEditor}>
     <header className={`${styles.chartEditorHeader} ${styles.chartSelectedHeader}`}>
       <div className={styles.chartHeading}>
-        {selectedType ? chartIcon(selectedType) : null}
         <h2 ref={editorHeading} tabIndex={-1}><Subtitle1>{chartChoice?.title ?? "Choose a chart"}</Subtitle1></h2>
       </div>
       <Button ref={typeButton} type="button" appearance="outline" className={styles.chartChangeAction}

@@ -873,7 +873,7 @@
   border-radius: 12px;
   color: var(--colorNeutralForeground1);
   background: var(--report-canvas);
-  box-shadow: 0 0 0 16px var(--report-canvas);
+  box-shadow: -16px 0 0 var(--report-canvas), 16px 0 0 var(--report-canvas);
   font: 400 14px/20px "Segoe UI", sans-serif;
   white-space: nowrap;
   cursor: pointer;
