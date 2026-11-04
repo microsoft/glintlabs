@@ -2148,18 +2148,9 @@
 
 .chartSelectedHeader {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto 32px;
+  grid-template-columns: minmax(0, 1fr) 32px;
   padding-bottom: 0;
   border-bottom: 0;
-}
-
-.chartHeading { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.chartHeading h2 { min-width: 0; }
-
-@media (max-width: 600px) {
-  .chartSelectedHeader { grid-template-columns: minmax(0, 1fr) 32px; }
-  .chartSelectedHeader .chartChangeAction { grid-column: 1; grid-row: 2; justify-self: start; }
-  .chartSelectedHeader .chartEditorDismiss { grid-column: 2; grid-row: 1; }
 }
 
 .chartEditorHeader h2:focus-visible {
@@ -2328,7 +2319,16 @@
 }
 
 .chartTypeIcon { flex: 0 0 20px; width: 20px; height: 20px; }
-.chartEditor .chartChangeAction { flex-shrink: 0; min-height: 32px; border-radius: var(--studio-compact-action-radius); }
+.chartEditor .chartChangeAction {
+  justify-self: start;
+  flex-shrink: 0;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 32px;
+  border-radius: var(--studio-compact-action-radius);
+  white-space: normal;
+  text-align: start;
+}
 .chartTypeChoices { display: grid; gap: 8px; padding-bottom: 24px; }
 .chartTableHeader h3 { margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; }
 .chartEditor .chartTypeOption {

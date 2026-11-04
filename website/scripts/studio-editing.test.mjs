@@ -329,6 +329,12 @@ test("Word chart data is immediately editable without copying or changing the or
     block: original, source: original, onPreview: value => previews.push(value),
     onDone() {}, onCancel() {}, onRemove() {},
   }));
+  const editorHeader = nodes(rendered.find(node => node.type === "header"));
+  const chartSelector = editorHeader.find(node => node.type === "button" && node.props.children === "Bar chart");
+  assert.ok(chartSelector, "The current chart name is the header's chart-selection button");
+  assert.equal(chartSelector.props["aria-expanded"], false);
+  assert.equal(editorHeader.some(node => node.type === "h2"), false,
+    "The chart selector replaces the duplicate header title");
   const input = rendered.find(node => node.props?.["aria-label"] === "Value (%), row 1");
   assert.ok(rendered.some(node => node.type === "h3" && node.props.children === "Chart data"),
     "The data section is visibly labeled without repeating the source title");

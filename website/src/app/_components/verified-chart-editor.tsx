@@ -17,7 +17,7 @@ import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
 import { TextEditStyle20Regular } from "@fluentui/react-icons/svg/text-edit-style";
 import { TextPercent20Regular } from "@fluentui/react-icons/svg/text-percent";
 import { Menu, MenuItem, MenuList, MenuPopover, MenuTrigger } from "@fluentui/react-menu";
-import { Body1, Body1Strong, Caption1, Subtitle1 } from "@fluentui/react-text";
+import { Body1, Body1Strong, Caption1 } from "@fluentui/react-text";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   chartPresentationSchema,
@@ -109,7 +109,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   const chartChoice = chartChoices.find(choice => choice.type === selectedType);
   const requiredRows = chartChoice?.rows;
   const fixedRows = Boolean(requiredRows);
-  const editorHeading = useRef<HTMLHeadingElement>(null);
   const replacementButton = useRef<HTMLButtonElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const pasteInput = useRef<HTMLTextAreaElement>(null);
@@ -150,7 +149,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       : { ...visual, presentation };
   }, [dataReady, dataSource, pairedPresentation, presentation, presentationValid, previewAt, selectedType]);
 
-  useEffect(() => { editorHeading.current?.focus(); }, []);
+  useEffect(() => { typeButton.current?.focus(); }, []);
   useEffect(() => { if (pasteOpen) pasteInput.current?.focus(); }, [pasteOpen]);
 
   useEffect(() => {
@@ -350,13 +349,10 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   </Menu>;
   return <div className={styles.chartEditor}>
     <header className={`${styles.chartEditorHeader} ${styles.chartSelectedHeader}`}>
-      <div className={styles.chartHeading}>
-        <h2 ref={editorHeading} tabIndex={-1}><Subtitle1>{chartChoice?.title ?? "Choose a chart"}</Subtitle1></h2>
-      </div>
       <Button ref={typeButton} type="button" appearance="outline" className={styles.chartChangeAction}
         icon={<ChevronDown20Regular aria-hidden="true" />} iconPosition="after"
         aria-expanded={choosingType} aria-controls={choosingType ? `${block.id}-chart-types` : undefined}
-        onClick={() => { setChoosingType(value => !value); setTab("data"); }}>Change chart</Button>
+        onClick={() => { setChoosingType(value => !value); setTab("data"); }}>{chartChoice?.title ?? "Choose a chart"}</Button>
       <Button type="button" appearance="subtle" className={styles.chartEditorDismiss}
         icon={<Dismiss20Regular aria-hidden="true" />} aria-label="Close chart editor" onClick={onCancel} />
     </header>
