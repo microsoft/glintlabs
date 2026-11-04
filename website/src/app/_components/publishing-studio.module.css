@@ -2641,7 +2641,21 @@
 .chartEditor .chartRemoveRow :global(.fui-Button__icon) { width: 16px; height: 16px; margin: 0; }
 
 .chartSupportingTextEditor { margin-top: var(--spacingVerticalS, 8px); }
-.chartSupportingTextEditor summary { min-height: 32px; color: var(--colorNeutralForeground2); font-size: 12px; line-height: 32px; cursor: pointer; }
+.chartSupportingTextEditor summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalS, 8px);
+  min-height: 32px;
+  color: var(--colorNeutralForeground2);
+  font-size: 12px;
+  line-height: 32px;
+  list-style: none;
+  cursor: pointer;
+}
+.chartSupportingTextEditor summary::-webkit-details-marker { display: none; }
+.chartSupportingTextEditor summary svg { flex: 0 0 16px; }
+.chartSupportingTextEditor[open] > summary svg { rotate: 180deg; }
 .chartSupportingTextEditor summary:focus-visible { outline: 2px solid var(--colorBrandStroke1); outline-offset: 2px; }
 .chartSupportingTextField { margin-top: var(--spacingVerticalS, 8px); }
 .chartSupportingTextField textarea { resize: vertical; }

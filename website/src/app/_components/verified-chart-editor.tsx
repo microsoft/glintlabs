@@ -7,6 +7,7 @@ import { Add16Regular } from "@fluentui/react-icons/svg/add";
 import { ArrowUpload20Regular } from "@fluentui/react-icons/svg/arrow-upload";
 import { ClipboardPaste20Regular } from "@fluentui/react-icons/svg/clipboard-paste";
 import { Checkmark16Regular } from "@fluentui/react-icons/svg/checkmark";
+import { ChevronDown16Regular } from "@fluentui/react-icons/svg/chevron-down";
 import { Delete16Regular } from "@fluentui/react-icons/svg/delete";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
 import { Menu, MenuItem, MenuList, MenuPopover, MenuTrigger } from "@fluentui/react-menu";
@@ -231,7 +232,10 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     const text = row.supportingText ?? row.breakdown?.map(detail =>
       `${detail.label}: ${detail.value.replace(/%\s*$/, "").trim()}${valueType === "percentage" ? "%" : ""}`).join("\n") ?? "";
     return <details className={styles.chartSupportingTextEditor}>
-      <summary aria-label={`Supporting text for ${category}`}>Supporting text (optional)</summary>
+      <summary aria-label={`Supporting text for ${category}`}>
+        <span>Supporting text (optional)</span>
+        <ChevronDown16Regular aria-hidden="true" />
+      </summary>
       <label className={`${styles.field} ${styles.chartSupportingTextField}`}>
         <span className={styles.chartCellLabel}>Supporting text for {category}</span>
         <textarea rows={3} value={text} placeholder="One bullet per line"
