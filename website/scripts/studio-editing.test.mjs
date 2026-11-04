@@ -420,7 +420,7 @@ test("Word chart data is immediately editable without copying or changing the or
     if (tab === "data") {
       assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, 4);
       assert.equal(view.some(node => node.props?.["aria-label"] === "Remove row 1"), false);
-      assert.equal(view.some(node => node.type === "button" && node.props.children === "Add row"), false);
+      assert.equal(view.some(node => node.type === "button" && node.props.children === "Add category"), false);
       assert.equal(view.some(node => node.props?.role === "radiogroup"), false,
         "Paired percentages cannot switch to a Number unit");
       assert.ok(view.some(node => node.props?.role === "tab" && nodes(node).some(child => child.props?.children === "Palette")));

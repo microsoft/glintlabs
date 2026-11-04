@@ -445,7 +445,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
             {tableDraft && (!fixedRows || tableDraft.table.rows.length < requiredRows!) ? <Button className={styles.chartAction} type="button" appearance="subtle"
               icon={<Add16Regular aria-hidden="true" />} disabled={tableDraft.table.rows.length >= 12}
               onClick={() => changeData({ ...tableDraft, table: { ...tableDraft.table,
-                rows: [...tableDraft.table.rows, { id: crypto.randomUUID(), cells: tableDraft.table.columns.map(() => "") }] } })}>Add row</Button> : null}
+                rows: [...tableDraft.table.rows, { id: crypto.randomUUID(), cells: tableDraft.table.columns.map(() => "") }] } })}>Add category</Button> : null}
           </div>
         </div>
         {pasteOpen ? <div className={styles.chartPasteEditor}>
