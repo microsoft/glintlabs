@@ -2202,7 +2202,7 @@
   padding: 48px 24px 24px;
 }
 
-.chartEditorBody[data-chart-tab="data"] { gap: 48px; }
+.chartEditorBody[data-chart-tab="data"] { gap: 24px; }
 
 .chartEditorBody > * {
   flex-shrink: 0;
@@ -2286,20 +2286,24 @@
 
 .chartEditor .chartPrimaryAction:not(:disabled) {
   border-color: transparent;
-  color: var(--colorNeutralForeground1);
-  background: var(--studio-chart-selected);
+  color: var(--colorNeutralForegroundOnBrand);
+  background: var(--studio-action-background);
 }
 
 .chartEditor .chartPrimaryAction:hover:not(:disabled) {
-  background: var(--colorNeutralBackground3Hover);
+  background: var(--studio-action-background-hover);
 }
 
 .chartEditor .chartPrimaryAction:active:not(:disabled) {
-  background: var(--colorNeutralBackground3Pressed);
+  background: var(--studio-action-background);
 }
 
 .chartEditor .chartDangerAction {
-  width: 143px;
+  width: auto;
+  min-height: 32px;
+  height: 32px;
+  padding-inline: 0;
+  font-size: 12px;
   color: var(--colorPaletteRedForeground1);
   border-color: transparent;
   background: transparent;
@@ -2331,16 +2335,78 @@
 
 .chartEditorTools {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  gap: 24px;
   margin: 24px 24px 0;
 }
 
-.chartReplaceAction { width: 137px; margin-inline-start: auto; }
+.chartIdentity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+.chartIdentityText { display: grid; flex: 1; gap: 4px; min-width: 0; }
+.chartIdentity > .chartTypePreview { flex: 0 0 56px; width: 56px; height: 48px; padding: 4px; overflow: hidden; }
+.chartIdentity > .chartTypePreview i { max-width: 40px; }
+.chartIdentity > .chartTypePreview b { font-size: 16px; }
+.chartIdentityText > :first-child { color: var(--colorNeutralForeground3); }
+.chartEditor .chartChangeAction { flex-shrink: 0; min-height: 32px; border-radius: var(--studio-compact-action-radius); }
+.chartTypeChoices { display: grid; gap: 12px; }
+.chartTypeChoices h3,
+.chartTableHeader h3 { margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; }
+.chartTypeChoices > :nth-child(2) { color: var(--colorNeutralForeground3); }
+.chartTypeChoices .chartTypeCard { width: 100%; }
+.chartTypeChoices .chartTypeCard[aria-pressed="true"] { border-color: var(--colorBrandStroke1); background: var(--colorBrandBackground2); }
+.chartTypeFit { margin-top: 4px; color: var(--colorNeutralForeground3); }
+.chartDataGuidance {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: var(--studio-action-radius);
+  background: var(--colorBrandBackground2);
+}
+.chartDataGuidance .field { width: 100%; }
+.chartPalettes {
+  --chart-blue: #5f82f2;
+  --chart-teal: #6a908d;
+  --chart-lavender: #8e83ad;
+  --chart-mauve: #ad83a0;
+  --chart-paired-primary: #294482;
+  --chart-paired-blue: #5c8df8;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.chartPalettes legend { margin-bottom: 8px; padding: 0; font-weight: 600; }
+.chartPalettes > span { color: var(--colorNeutralForeground3); }
+.chartPaletteTile { position: relative; display: grid; gap: 12px; padding: 16px; border: 1px solid var(--studio-field-border); border-radius: var(--studio-action-radius); cursor: pointer; }
+.chartPaletteTile:has(input:checked) { border-color: var(--colorBrandStroke1); background: var(--colorBrandBackground2); }
+.chartPaletteTile:hover { background: var(--colorNeutralBackground1Hover); }
+.chartPaletteTile:has(input:focus-visible) { outline: 2px solid var(--colorStrokeFocus2); outline-offset: 2px; }
+.chartPaletteTile input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.chartPaletteSwatches { display: flex; gap: 4px; }
+.chartPaletteSwatches i { flex: 1; height: 24px; border-radius: var(--borderRadiusSmall); background: var(--chart-blue); }
+.chartPaletteSwatches[data-palette="brand"] i:nth-child(2) { background: var(--chart-teal); }
+.chartPaletteSwatches[data-palette="brand"] i:nth-child(3) { background: var(--chart-lavender); }
+.chartPaletteSwatches[data-palette="brand"] i:nth-child(4) { background: var(--chart-mauve); }
+.chartPaletteSwatches[data-palette="teal"] i { background: var(--chart-teal); }
+.chartPalettes[data-paired] .chartPaletteSwatches:not([data-palette="teal"]) i { background: var(--chart-paired-blue); }
+.chartPalettes[data-paired] .chartPaletteSwatches[data-palette="brand"] i:first-child { background: var(--chart-paired-primary); }
+.chartPaletteLabel { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.chartPaletteCheck { visibility: hidden; color: var(--colorBrandForeground1); }
+.chartPaletteTile:has(input:checked) .chartPaletteCheck { visibility: visible; }
+.chartTableHeader { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+.chartTableHeader > div { display: grid; gap: 4px; }
+.chartTableHeader > div > span { color: var(--colorNeutralForeground3); }
+.chartEditor .chartReplaceAction { width: auto; min-height: 32px; height: 32px; padding: 4px 8px; font-size: 12px; }
 
-.chartTabs { display: flex; gap: 16px; }
+.chartTabs { display: flex; gap: 24px; width: 100%; border-bottom: 1px solid var(--studio-field-border); }
 .chartTabs button {
   display: inline-flex;
   flex: 0 0 auto;
@@ -2350,23 +2416,24 @@
   min-width: 0;
   min-height: 40px;
   height: 40px;
-  padding: 8px 20px;
-  border: 1px solid var(--studio-chart-button-border);
-  border-radius: var(--borderRadiusMedium);
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
   background: transparent;
   color: var(--colorNeutralForeground1);
   font: inherit;
-  font-size: 16px;
-  line-height: 22px;
+  font-size: 14px;
+  line-height: 20px;
   white-space: nowrap;
   cursor: pointer;
 }
-.chartTabs button:first-child { width: 94px; }
-.chartTabs button:last-child { width: 99px; }
+.chartTabs button:first-child,
+.chartTabs button:last-child { width: auto; }
 .chartTabs button[aria-selected="true"] {
-  border-color: transparent;
-  background: var(--studio-chart-selected);
-  font-weight: 400;
+  border-bottom-color: var(--colorBrandStroke1);
+  background: transparent;
+  font-weight: 600;
 }
 .chartTabs button:hover { background: var(--colorNeutralBackground1Hover); }
 .chartTabs button:active { background: var(--colorNeutralBackground1Pressed); }
@@ -2511,8 +2578,8 @@
 .chartDataGrid th { font-weight: 625; }
 .chartDataGrid thead th { padding-bottom: 10px; }
 .chartDataGrid th:nth-child(2), .chartDataGrid td:nth-child(2) { width: 70px; padding-right: 8px; }
-.chartDataGrid[data-chart-type="grouped-column-comparison"] th:nth-child(n+2),
-.chartDataGrid[data-chart-type="grouped-column-comparison"] td:nth-child(n+2) { width: 88px; padding-right: 8px; }
+.chartDataGrid[data-series-count="2"] th:nth-child(n+2),
+.chartDataGrid[data-series-count="2"] td:nth-child(n+2) { width: 88px; padding-right: 8px; }
 .chartDataGrid th:last-child:has(.chartCellLabel), .chartDataGrid td:has(.chartRemoveRow) { width: 16px; padding-right: 0; }
 .chartDataGrid input {
   width: 100%;
@@ -2534,22 +2601,14 @@
 }
 .chartEditor .chartRemoveRow :global(.fui-Button__icon) { width: 16px; height: 16px; margin: 0; }
 
-.chartOptions summary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 32px;
-  padding: 5px 10px;
-  border: 1px solid var(--colorNeutralStroke1);
-  border-radius: var(--studio-compact-action-radius);
-  cursor: pointer;
-  list-style: none;
-}
-.chartOptions summary::-webkit-details-marker { display: none; }
-.chartOptions summary:hover { background: var(--colorNeutralBackground1Hover); }
-.chartOptions summary:focus-visible { outline: 2px solid var(--colorStrokeFocus2); outline-offset: 2px; }
-.chartOptions[open] summary svg { transform: rotate(180deg); }
-.chartOptionFields { display: grid; gap: 24px; padding-top: 24px; }
+.chartEditorBody { padding-top: 24px; }
+.chartEditor .chartAction,
+.chartEditor .chartChoiceButton,
+.chartEditor .field :is(input, textarea),
+.chartDataGrid input { font-size: 14px; line-height: 20px; }
+.chartEditor .field :is(input, textarea),
+.chartDataGrid input,
+.chartEditor .chartChoiceButton { color: var(--colorNeutralForeground1); }
 
 @media (max-width: 1023px) {
   .workspace.chartEditing {

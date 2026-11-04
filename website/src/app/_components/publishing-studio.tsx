@@ -88,6 +88,7 @@ import {
 import styles from "./publishing-studio.module.css";
 import { StudioReportViewport } from "./studio-report-viewport";
 import { VerifiedChartEditor } from "./verified-chart-editor";
+import { ChartDraftPreview, type ChartDraftPreviewData } from "../../report-system/chart-draft-preview";
 
 const StudioReportRenderer = dynamic(
   () => import("../../report-system/report-renderer").then((module) => memo(module.ReportRenderer)),
@@ -664,6 +665,7 @@ function VisualEditor({
   onChooseImage,
   onRemove,
   onPreview,
+  onDraftPreview,
 }: {
   block: VisualBlock;
   onDone: (block: ReportBlock) => void;
@@ -671,6 +673,7 @@ function VisualEditor({
   onChooseImage: (block: ImageBlock) => void;
   onRemove: () => void;
   onPreview: (block: ReportBlock) => void;
+  onDraftPreview?: (draft: ChartDraftPreviewData | undefined) => void;
 }) {
   const originalBlock = useRef(block).current;
   const [imageError, setImageError] = useState<string>();
@@ -835,7 +838,7 @@ function VisualEditor({
 
   return <VerifiedChartEditor block={originalBlock} source={sourceBlock}
     initialType={newChartType}
-    onPreview={onPreview} onDone={onDone} onCancel={() => onCancel(originalBlock)} onRemove={onRemove} />;
+    onPreview={onPreview} onDraftPreview={onDraftPreview} onDone={onDone} onCancel={() => onCancel(originalBlock)} onRemove={onRemove} />;
 }
 
 export function PublishingStudio() {
@@ -844,11 +847,13 @@ export function PublishingStudio() {
   const [hasUnappliedImageChanges, setHasUnappliedImageChanges] = useState(false);
   const [activeTool, setActiveTool] = useState<Tool>();
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
+  const [chartDraftPreview, setChartDraftPreview] = useState<ChartDraftPreviewData>();
   const [chartInsertion, setChartInsertion] = useState<{
     beforeBlockId?: string;
     block: Extract<ReportBlock, { type: "visual-placeholder" }>;
     type?: VerifiedDataVisualType;
     preview?: ReportBlock;
+    draftPreview?: ChartDraftPreviewData;
   }>();
   const chartPickerHeading = useRef<HTMLHeadingElement>(null);
   const [insertionFocus, setInsertionFocus] = useState<string>();
@@ -857,6 +862,11 @@ export function PublishingStudio() {
   }, [chartInsertion]);
   const previewInsertedChart = useCallback((block: ReportBlock) => {
     setChartInsertion(current => current ? { ...current, preview: block } : current);
+  }, []);
+  const previewInsertedChartDraft = useCallback((draftPreview: ChartDraftPreviewData | undefined) => {
+    setChartInsertion(current => current ? {
+      ...current, draftPreview, ...(draftPreview ? { preview: undefined, type: draftPreview.type } : {}),
+    } : current);
   }, []);
   const [pendingImageBlockId, setPendingImageBlockId] = useState<string>();
   const [highlightedBlockId, setHighlightedBlockId] = useState<string>();
@@ -877,7 +887,14 @@ export function PublishingStudio() {
   const [imageAttention, setImageAttention] = useState<{ blockId: string; attempt: number; message: string }>();
   const [packageProject, setPackageProject] = useState<StudioProject>();
   const [savedProjects, setSavedProjects] = useState<StudioProject[]>([]);
-  const [storageMessage, setStorageMessage] = useState<string | { message: string; undo: ParagraphBlock[] }>();
+  const [storageMessage, setStorageMessage] = useState<string | { message: string; undo?: ParagraphBlock[] }>();
+  useEffect(() => {
+    if (!storageMessage || typeof storageMessage === "string") return;
+    const timer = window.setTimeout(() => {
+      setStorageMessage(current => current === storageMessage ? undefined : current);
+    }, 10000);
+    return () => window.clearTimeout(timer);
+  }, [storageMessage]);
   const [bulkResults, setBulkResults] = useState<BulkImportResult[]>([]);
   const [bulkProgress, setBulkProgress] = useState<{
     fileName: string;
@@ -1559,10 +1576,11 @@ export function PublishingStudio() {
   }
 
   function undoTextCallout() {
-    if (!manifest || !storageMessage || typeof storageMessage === "string") return;
+    if (!manifest || !storageMessage || typeof storageMessage === "string" || !storageMessage.undo) return;
+    const previousParagraphs = storageMessage.undo;
     const blocks = manifest.blocks.flatMap(block => {
       if (block.type !== "paragraph") return [];
-      const previous = storageMessage.undo.find(item => item.id === block.id && item.text === block.text);
+      const previous = previousParagraphs.find(item => item.id === block.id && item.text === block.text);
       if (!previous) return [];
       const restored = { ...block };
       if (previous.callouts) restored.callouts = previous.callouts;
@@ -1571,7 +1589,7 @@ export function PublishingStudio() {
     });
     if (!blocks.length) { setStorageMessage(undefined); return; }
     dispatch({ type: "format-text", blocks });
-    setStorageMessage("Formatting undone.");
+    setStorageMessage({ message: "Formatting undone." });
     window.requestAnimationFrame(() => reportSurfaceRef.current?.contentDocument
       ?.getElementById(`report-block-${blocks[0].id}`)
       ?.querySelector<HTMLElement>("[data-report-text-block]")?.focus({ preventScroll: true }));
@@ -1671,6 +1689,7 @@ export function PublishingStudio() {
         {chartInsertion.type ? <VerifiedChartEditor
           key={chartInsertion.block.id} block={chartInsertion.block} initialType={chartInsertion.type} intent="insert"
           onPreview={previewInsertedChart} onDone={finishChartInsertion}
+          onDraftPreview={previewInsertedChartDraft}
           onCancel={() => finishChartInsertion()} onRemove={() => finishChartInsertion()} />
           : <div className={styles.chartEditor}>
             <header className={styles.chartEditorHeader}>
@@ -1827,12 +1846,14 @@ export function PublishingStudio() {
               block={selectedBlock}
               key={selectedBlock.id}
               onDone={(block) => {
+                setChartDraftPreview(undefined);
                 dispatch({ type: "change-block", block });
                 setSelectedBlockId(undefined);
                 setActiveTool(undefined);
                 restoreVisualEditorFocus(block.id);
               }}
               onCancel={(originalBlock) => {
+                setChartDraftPreview(undefined);
                 if (
                   originalBlock.type === "visual-placeholder" &&
                   originalBlock.source.part === "studio"
@@ -1856,6 +1877,7 @@ export function PublishingStudio() {
               }}
               onRemove={removeSelectedBlock}
               onPreview={previewVisual}
+              onDraftPreview={setChartDraftPreview}
             />
           </section>
         );
@@ -2210,8 +2232,8 @@ export function PublishingStudio() {
                   <Body1Strong>{storageMessage.message}</Body1Strong>
                 </div>
               )}
-              {typeof storageMessage === "string" ? <button
-                aria-label="Dismiss save message"
+              {typeof storageMessage === "string" || !storageMessage.undo ? <button
+                aria-label={typeof storageMessage === "string" ? "Dismiss save message" : "Dismiss formatting message"}
                 onClick={() => setStorageMessage(undefined)}
                 type="button"
               >
@@ -2341,9 +2363,12 @@ export function PublishingStudio() {
                     highlightedBlockId={highlightedBlockId}
                     manifest={displayManifest ?? manifest}
                     blockOverrides={chartInsertion && !chartInsertion.preview ? {
-                      [chartInsertion.block.id]: <div className={reportStyles.chartInsertionPlaceholder} role="status">
-                        Chart preview will appear here.
-                      </div>,
+                      [chartInsertion.block.id]: chartInsertion.type ? <ChartDraftPreview draft={chartInsertion.draftPreview ?? {
+                        blockId: chartInsertion.block.id, type: chartInsertion.type, title: "Comparison",
+                        table: { columns: [], rows: [] }, unit: "percentage",
+                      }} /> : <div className={reportStyles.chartInsertionPlaceholder} role="status">Choose a chart to preview it here.</div>,
+                    } : activeTool === "visuals" && selectedBlockId === chartDraftPreview?.blockId && chartDraftPreview ? {
+                      [chartDraftPreview.blockId]: <ChartDraftPreview draft={chartDraftPreview} />,
                     } : undefined}
                     onInsertChart={selectedBlockId ? undefined : startChartInsertion}
                     insertionFocus={insertionFocus === undefined ? undefined : {

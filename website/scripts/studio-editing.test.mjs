@@ -314,7 +314,7 @@ test("Word chart data is immediately editable without copying or changing the or
     chartPresentationSchema, pairedComparisonPresentationSchema, automaticallyVerifiedVisualType, compatibleVerifiedVisuals, createVerifiedDataVisual, parseChartValue, sortChartItems, verifiedDataVisualName, validateChartTable,
     createStudioChartSource() { assert.fail("Opening a chart must not create replacement source data"); },
     Dismiss20Regular: "dismiss-icon", Delete16Regular: "delete-icon",
-    TextEditStyle20Regular: "text-icon", DataBarVertical20Regular: "data-icon", ChevronDown16Regular: "chevron-icon",
+    TextEditStyle20Regular: "text-icon", DataBarVertical20Regular: "data-icon", Color20Regular: "color-icon", Checkmark16Regular: "check-icon",
     Add16Regular: "add-icon", ArrowUpload20Regular: "upload-icon", ClipboardPaste20Regular: "paste-icon",
     Button: "button", MenuButton: "button", Checkbox: "checkbox", Dropdown: "dropdown", Option: "option",
     Menu: "menu", MenuItem: "menuitem", MenuList: "menulist", MenuPopover: "popover", MenuTrigger: "trigger",
@@ -329,8 +329,8 @@ test("Word chart data is immediately editable without copying or changing the or
     onDone() {}, onCancel() {}, onRemove() {},
   }));
   const input = rendered.find(node => node.props?.["aria-label"] === "Value (%), row 1");
-  assert.equal(rendered.some(node => node.type === "h3"), false,
-    "The canonical table has column headings without a separate metric heading");
+  assert.ok(rendered.some(node => node.type === "h3" && node.props.children === "Chart data"),
+    "The data section is visibly labeled without repeating the source title");
   assert.ok(rendered.some(node => node.type === "caption" && node.props.children === "Chart data"),
     "The table retains its accessible name without an extra visible heading");
   assert.ok(rendered.some(node => node.type === "th" && node.props.children === "Value"),
@@ -365,22 +365,21 @@ test("Word chart data is immediately editable without copying or changing the or
   assert.deepEqual(original, before, "Editing a Studio copy leaves the Word source intact");
   assert.deepEqual(rendered.filter(node => node.props?.role === "tab").map(node =>
     nodes(node).find(child => child.type === "span").props.children),
-    ["Text", "Data"], "The canonical editor has Text and Data tabs");
-  for (const tab of ["text", "data"]) {
+    ["Data", "Text", "Palette"], "The editor separates data, text and palette");
+  for (const tab of ["text", "data", "palette"]) {
     selectedTab = tab;
     const view = nodes(render({
       block: original, source: original, onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
     }));
-    assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, tab === "text" ? 3 : 4,
+    assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, tab === "text" ? 3 : tab === "data" ? 4 : 0,
       "Text contains the three single-line chart text fields; Data contains editable cells");
     assert.equal(view.filter(node => node.type === "select").length, 0, "Chart controls never open native operating-system menus");
-    assert.equal(view.filter(node => node.type === "dropdown").length, tab === "data" ? 2 : 0,
-      "Data keeps Sort by and Palette as dropdowns; value types are directly visible");
-    if (tab === "data") {
-      const palette = view.find(node => node.type === "dropdown" && node.props.value === "Glint Labs");
-      assert.equal(view.filter(node => node.type === "details").some(disclosure => nodes(disclosure).includes(palette)), false,
-        "Palette is directly available without opening Chart options");
-      palette.props.onOptionSelect({}, { optionValue: "teal" });
+    assert.equal(view.filter(node => node.type === "dropdown").length, tab === "data" ? 1 : 0,
+      "Only Sort by uses a dropdown; palette choices are visual radio tiles");
+    if (tab === "palette") {
+      const palette = view.find(node => node.type === "input" && node.props.name === "word-chart-palette" && node.props.value === "teal");
+      assert.ok(palette, "Each palette is directly selectable without opening a dropdown");
+      palette.props.onChange();
       assert.equal(updates.at(-1)({ palette: "brand", sort: "source" }).palette, "teal");
       assert.deepEqual(original, before, "An appearance choice cannot rewrite the source");
     }
@@ -423,7 +422,7 @@ test("Word chart data is immediately editable without copying or changing the or
       assert.equal(view.some(node => node.type === "button" && node.props.children === "Add row"), false);
       assert.equal(view.some(node => node.props?.role === "radiogroup"), false,
         "Paired percentages cannot switch to a Number unit");
-      assert.ok(view.some(node => node.type === "dropdown" && node.props.value === "Glint Labs"));
+      assert.ok(view.some(node => node.props?.role === "tab" && nodes(node).some(child => child.props?.children === "Palette")));
     } else {
       assert.deepEqual(view.filter(node => node.type === "input" && node.props.type === "text")
         .map(node => node.props.value), ["Two findings", "While...", "Only...", ""]);
@@ -479,7 +478,7 @@ test("callout conversion applies immediately and undo restores only affected for
   componentFunction("undoTextCallout", { ...scope, manifest: current, storageMessage: message })();
   assert.deepEqual(actions[1].blocks, [{ ...first, links: [changedLink] }],
     "Undo restores previous ranges, not stale paragraph text, links, or unrelated formatting");
-  assert.equal(message, "Formatting undone.");
+  assert.deepEqual(message, { message: "Formatting undone." });
   actions.length = 0;
   assert.equal(apply([
     { blockId: first.id, start: 8, end: 19 }, { blockId: second.id, start: 0, end: 999 },
