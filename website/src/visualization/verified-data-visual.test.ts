@@ -29,6 +29,76 @@ const source: DataVisualSourceBlock = {
   source: { part: "word/document.xml", index: 10 },
 };
 
+test("bar breakdowns preserve reviewed labels, precision and parent values through save and restore", async () => {
+  const table = {
+    columns: ["Category", "Percentage"],
+    rows: [
+      { id: "analysis", cells: ["Analysis", "74.00%"], breakdown: [
+        { id: "themes", label: "Identify themes", value: "62.50%" },
+        { id: "sentiment", label: "Analyze sentiment", value: "0" },
+      ] },
+      { id: "action", cells: ["Action taking", "43"] },
+    ],
+  };
+  const before = structuredClone(table);
+  const edited = await createStudioChartSource({
+    id: source.id, table, sourceName: "Reviewed chart", synthetic: false,
+  });
+  assert.deepEqual(edited.data.rows[0].breakdown, table.rows[0].breakdown);
+  const visual = createVerifiedDataVisual(edited, "horizontal-bar-chart", "2026-11-04T22:00:00.000Z");
+  assert.ok(visual.type === "horizontal-bar-chart");
+  assert.deepEqual(visual.items[0].breakdown, [
+    { id: "themes", label: "Identify themes", value: 62.5 },
+    { id: "sentiment", label: "Analyze sentiment", value: 0 },
+  ]);
+  assert.deepEqual(visual.items.map(item => item.value), [74, 43],
+    "Breakdowns do not recalculate or invent parent values");
+  const restored = reportBlockSchema.parse(visual);
+  assert.deepEqual(restored, visual);
+  assert.equal(verifiedVisualMatchesSource(restored), true);
+  assert.deepEqual(table, before, "Preparing the chart does not mutate its input");
+  assert.equal(verifiedVisualMatchesSource({
+    ...visual,
+    items: visual.items.map((item, index) => index ? item : {
+      ...item, breakdown: item.breakdown!.map(detail => ({ ...detail, value: detail.value + 1 })),
+    }),
+  }), false, "Changed breakdown values cannot retain source approval");
+  const changed = await createStudioChartSource({
+    id: source.id, sourceName: "Reviewed chart", synthetic: false,
+    table: { ...table, rows: table.rows.map((row, index) => index ? row : {
+      ...row, breakdown: row.breakdown!.map(detail => ({ ...detail, value: "12" })),
+    }) },
+  });
+  assert.notEqual(changed.data.sha256, edited.data.sha256, "The evidence hash includes breakdown data");
+});
+
+test("bar breakdowns reject missing or invalid values without treating them as zero", async () => {
+  for (const detail of [
+    { id: "detail", label: "", value: "24" },
+    { id: "detail", label: "Finding", value: "" },
+    { id: "detail", label: "Finding", value: "101%" },
+    { id: "detail", label: "Finding", value: "-1" },
+  ]) {
+    await assert.rejects(() => createStudioChartSource({
+      id: source.id, sourceName: "Reviewed chart", synthetic: false,
+      table: { columns: source.data.columns, rows: source.data.rows.map((row, index) => index ? row : {
+        ...row, breakdown: [detail],
+      }) },
+    }), /breakdown/i);
+  }
+  const numeric = await createStudioChartSource({
+    id: source.id, sourceName: "Reviewed numbers", synthetic: false, unit: "number",
+    table: { columns: ["Category", "Number"], rows: [
+      { id: "first", cells: ["First", "-10"], breakdown: [{ id: "detail", label: "Change", value: "-2.50" }] },
+      { id: "second", cells: ["Second", "20"] },
+    ] },
+  });
+  const visual = createVerifiedDataVisual(numeric, "horizontal-bar-chart", "2026-11-04T22:00:00.000Z");
+  assert.ok(visual.type === "horizontal-bar-chart");
+  assert.equal(visual.items[0].breakdown?.[0].value, -2.5);
+  assert.equal(reportBlockSchema.safeParse(visual).success, true);
+});
+
 test("paired comparisons require exactly two independently valid percentage findings", () => {
   const pair = { ...source, data: { ...source.data, rows: source.data.rows.slice(0, 2) } };
   assert.ok(compatibleVerifiedVisuals(pair).includes("paired-percentage-comparison"));

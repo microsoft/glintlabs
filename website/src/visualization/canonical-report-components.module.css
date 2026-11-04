@@ -654,6 +654,34 @@
   font-variant-numeric: tabular-nums;
 }
 
+.horizontalDisclosure {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  min-width: 0;
+}
+.horizontalDisclosure::details-content { grid-column: 1 / -1; }
+.horizontalDisclosure > summary { min-height: 44px; list-style: none; cursor: pointer; border-radius: 8px; -webkit-tap-highlight-color: transparent; }
+.horizontalDisclosure > summary::-webkit-details-marker { display: none; }
+.horizontalDisclosure > summary:hover { color: var(--colorBrandForeground1, #335ccc); }
+.horizontalDisclosure > summary:active { background: var(--colorVivaBrandBackground2, #e5eeff); }
+.horizontalDisclosure > summary:focus-visible { outline: 2px solid var(--colorBrandStroke1, #335ccc); outline-offset: 4px; }
+.horizontalDisclosureLabel { display: flex; align-items: center; gap: 8px; }
+.horizontalDisclosureLabel svg { flex: 0 0 16px; }
+.horizontalDisclosure[open] .horizontalDisclosureLabel svg { rotate: 180deg; }
+.horizontalBreakdown {
+  grid-column: 1 / -1;
+  margin: 12px 0 0;
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--colorNeutralBackground2, #fafafa);
+  font: 14px/20px "Segoe UI", sans-serif;
+}
+.horizontalBreakdown > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
+.horizontalBreakdown > div + div { margin-top: 12px; }
+.horizontalBreakdown dt { overflow-wrap: anywhere; }
+.horizontalBreakdown dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+
 .seriesLegend {
   display: flex;
   align-items: center;

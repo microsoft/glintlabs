@@ -115,7 +115,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     return {
       table: {
         columns: [...dataSource.data.columns],
-        rows: dataSource.data.rows.map(row => ({ id: row.id, cells: [...row.cells] })),
+        rows: dataSource.data.rows.map(row => ({ ...row, cells: [...row.cells] })),
       },
       sourceName: dataSource.data.title.trim().slice(0, 200) || "Chart data",
       synthetic: dataSource.data.synthetic ?? false,
@@ -190,8 +190,12 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       setTouchedCells(previous => new Set([...previous, ...tableDraft.table.rows
         .flatMap(row => row.cells.flatMap((cell, column) => column > 0 && cell.trim() ? [`${row.id}:${column}`] : []))]));
       changeData({ ...tableDraft, table: { ...tableDraft.table,
-        rows: tableDraft.table.rows.map(row => ({ ...row, cells: row.cells.map((cell, i) =>
-          next === "number" && i > 0 ? cell.replace(/%\s*$/, "").trim() : cell) })) } });
+        rows: tableDraft.table.rows.map(row => ({
+          ...row, cells: row.cells.map((cell, i) => next === "number" && i > 0 ? cell.replace(/%\s*$/, "").trim() : cell),
+          ...(row.breakdown ? { breakdown: row.breakdown.map(detail => ({
+            ...detail, value: next === "number" ? detail.value.replace(/%\s*$/, "").trim() : detail.value,
+          })) } : {}),
+        })) } });
     }
   }
   function replaceTable(table: ChartTable, sourceName: string, synthetic = intent !== "insert") {
@@ -211,7 +215,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     if (!dataSource || dataSource.data.columns.length !== 2 || dataSource.data.unit === "unknown") return;
     replaceTable({
       columns: [...dataSource.data.columns],
-      rows: dataSource.data.rows.map(row => ({ id: row.id, cells: [...row.cells] })),
+      rows: dataSource.data.rows.map(row => ({ ...row, cells: [...row.cells] })),
     }, dataSource.data.title, dataSource.data.synthetic ?? false);
   }
   function editCell(rowId: string, column: number, value: string) {
@@ -221,6 +225,44 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       table: { ...tableDraft.table, rows: tableDraft.table.rows.map(row =>
         row.id === rowId ? { ...row, cells: row.cells.map((cell, i) => i === column ? value : cell) } : row) },
     });
+  }
+  function changeBreakdown(rowId: string, breakdown: ChartTable["rows"][number]["breakdown"]) {
+    if (!tableDraft) return;
+    changeData({ ...tableDraft, table: { ...tableDraft.table,
+      rows: tableDraft.table.rows.map(row => row.id === rowId ? { ...row, breakdown } : row),
+    } });
+  }
+  function breakdownEditor(row: ChartTable["rows"][number], rowIndex: number) {
+    const category = row.cells[0].trim() || `category ${rowIndex + 1}`;
+    return <details className={styles.chartBreakdownEditor}>
+      <summary aria-label={`Breakdown for ${category}`}>
+        Breakdown{row.breakdown?.length ? ` (${row.breakdown.length})` : " (optional)"}
+      </summary>
+      <div className={styles.chartBreakdownFields}>
+        {row.breakdown?.map((detail, index) => <div key={detail.id} className={styles.chartBreakdownRow}>
+          <input type="text" maxLength={160} placeholder="Label" value={detail.label}
+            aria-label={`Breakdown label, category ${rowIndex + 1}, row ${index + 1}`}
+            aria-invalid={!detail.label.trim()}
+            onChange={event => changeBreakdown(row.id, row.breakdown!.map(item => item.id === detail.id
+              ? { ...item, label: event.target.value } : item))} />
+          <input type="text" inputMode="decimal" maxLength={24} placeholder={valueType === "percentage" ? "Value (%)" : "Value"}
+            value={valueType === "percentage" ? detail.value.replace(/%\s*$/, "").trim() : detail.value}
+            aria-label={`Breakdown value${valueType === "percentage" ? " (%)" : ""}, category ${rowIndex + 1}, row ${index + 1}`}
+            aria-invalid={parseChartValue(detail.value, valueType) === undefined}
+            onChange={event => changeBreakdown(row.id, row.breakdown!.map(item => item.id === detail.id
+              ? { ...item, value: event.target.value } : item))} />
+          <Button type="button" appearance="subtle" className={styles.chartBreakdownRemove}
+            aria-label={`Remove breakdown row ${index + 1} from ${category}`}
+            icon={<Delete16Regular aria-hidden="true" />}
+            onClick={() => changeBreakdown(row.id, row.breakdown!.filter(item => item.id !== detail.id))} />
+        </div>)}
+        <Button type="button" appearance="subtle" className={styles.chartAction}
+          aria-label={`Add breakdown row for ${category}`} icon={<Add16Regular aria-hidden="true" />}
+          onClick={() => changeBreakdown(row.id, [...row.breakdown ?? [], { id: crypto.randomUUID(), label: "", value: "" }])}>
+          Add row
+        </Button>
+      </div>
+    </details>;
   }
   function textField(key: "title" | "subtitle" | "note") {
     return <label key={key} className={styles.field}>
@@ -280,6 +322,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
                 onBlur={() => setTouchedCells(previous => new Set(previous).add(`${row.id}:${column}`))}
                 onChange={event => editCell(row.id, column, event.target.value)} />
             </label> : cell}
+            {column === 0 && tableDraft && selectedType === "horizontal-bar-chart" ? breakdownEditor(row, rowIndex) : null}
             {column === 0 && rowErrors.length ? <span id={`${prefix}-${row.id}-errors`} className={styles.inputError}>
               {rowErrors.map(item => item.message).join(" ")}
             </span> : null}

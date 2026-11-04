@@ -2616,7 +2616,8 @@
 .chartDataGrid input[data-compact-value="true"] { padding-inline: 8px; }
 .chartCell { display: block; min-width: 0; }
 .chartCellLabel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-.chartEditor .chartRemoveRow {
+.chartEditor .chartRemoveRow,
+.chartEditor .chartBreakdownRemove {
   position: relative;
   min-width: 32px;
   width: 32px;
@@ -2624,7 +2625,19 @@
   padding: 0;
   border-radius: var(--borderRadiusMedium, 8px);
 }
-.chartEditor .chartRemoveRow :global(.fui-Button__icon) { width: 16px; height: 16px; margin: 0; }
+.chartEditor .chartRemoveRow :global(.fui-Button__icon),
+.chartEditor .chartBreakdownRemove :global(.fui-Button__icon) { width: 16px; height: 16px; margin: 0; }
+
+.chartBreakdownEditor { margin-top: 8px; }
+.chartBreakdownEditor summary { min-height: 32px; color: var(--colorNeutralForeground2); font-size: 12px; line-height: 32px; cursor: pointer; }
+.chartBreakdownEditor summary:focus-visible { outline: 2px solid var(--colorBrandStroke1); outline-offset: 2px; }
+.chartBreakdownFields { display: grid; gap: 8px; margin-top: 8px; }
+.chartBreakdownRow { display: grid; grid-template-columns: minmax(0, 1fr) 72px 32px; gap: 8px; align-items: start; }
+@media (max-width: 479px) {
+  .chartBreakdownRow { grid-template-columns: minmax(0, 1fr) 32px; }
+  .chartBreakdownRow input { grid-column: 1; }
+  .chartBreakdownRow button { grid-column: 2; grid-row: 1 / span 2; }
+}
 
 .chartEditorBody { padding-top: 24px; }
 .chartEditor .chartAction,

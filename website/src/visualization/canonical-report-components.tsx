@@ -1,4 +1,4 @@
-import { ArrowRight20Regular } from "@fluentui/react-icons";
+import { ArrowRight20Regular, ChevronDown16Regular } from "@fluentui/react-icons";
 
 import type { CanonicalVisualBlock } from "./canonical-report-blocks";
 import { PercentageRingGroup } from "./percentage-ring-group";
@@ -270,6 +270,11 @@ function HorizontalBarChart({
     const raw = block.verifiedSource?.rows.find(row => row.id === id)?.cells[1]?.replace(/%\s*$/, "").trim();
     return `${raw && Number(raw) === value ? raw : value}${isNumber ? "" : "%"}`;
   };
+  const displayBreakdownValue = (rowId: string, id: string, value: number) => {
+    const raw = block.verifiedSource?.rows.find(row => row.id === rowId)?.breakdown
+      ?.find(detail => detail.id === id)?.value.replace(/%\s*$/, "").trim();
+    return `${raw && Number(raw) === value ? raw : value}${isNumber ? "" : "%"}`;
+  };
 
   return (
     <figure className={`${styles.card} ${styles.horizontalChart}`} data-density={presentation?.density}>
@@ -278,22 +283,36 @@ function HorizontalBarChart({
       {presentation?.subtitle ? <p className={styles.chartSubtitle}>{presentation.subtitle}</p> : null}
       <div className={styles.rule} />
       <div className={styles.horizontalRows}>
-        {items.map((item) => (
-          <div className={styles.horizontalRow} key={item.id}>
-            <span>{item.label}</span>
-            <div className={styles.horizontalValue}>
-              <div className={styles.horizontalBarTrack} aria-hidden="true">
+        {items.map((item) => {
+          const expandable = Boolean(item.breakdown?.length);
+          const Row = expandable ? "summary" : "div";
+          const Value = expandable ? "span" : "div";
+          const row = <Row className={styles.horizontalRow} key={item.id}>
+            <span className={expandable ? styles.horizontalDisclosureLabel : undefined}>
+              {item.label}{expandable ? <ChevronDown16Regular aria-hidden="true" /> : null}
+            </span>
+            <Value className={styles.horizontalValue}>
+              <Value className={styles.horizontalBarTrack} aria-hidden="true">
                 <i style={{
                   width: `${isNumber ? Math.abs(position(item.value) - position(0)) : item.value}%`,
                   marginLeft: isNumber ? `${position(Math.min(0, item.value))}%` : undefined,
                   background: `var(--chart-${colors[block.items.indexOf(item) % colors.length]})`,
                 }} />
                 {isNumber && minimum < 0 ? <b className={styles.chartZero} style={{ left: `${position(0)}%` }} /> : null}
-              </div>
+              </Value>
               <strong>{displayValue(item.id, item.value)}</strong>
-            </div>
-          </div>
-        ))}
+            </Value>
+          </Row>;
+          return expandable ? <details className={styles.horizontalDisclosure} key={item.id}>
+            {row}
+            <dl className={styles.horizontalBreakdown}>
+              {item.breakdown!.map(detail => <div key={detail.id}>
+                <dt>{detail.label}</dt>
+                <dd>{displayBreakdownValue(item.id, detail.id, detail.value)}</dd>
+              </div>)}
+            </dl>
+          </details> : row;
+        })}
       </div>
       {isNumber ? <p className={styles.chartScale}>Number scale: {minimum} to {maximum}</p> : null}
       {block.source.part !== "studio" && presentation?.note ? <>
@@ -303,7 +322,12 @@ function HorizontalBarChart({
       <div className={styles.chartDataTable}>
         <table><caption>{presentation?.title ?? block.title} · Source order · {isNumber ? "Number" : "Percentage"} values</caption>
           <thead><tr><th scope="col">Category</th><th scope="col">{isNumber ? block.legend.replace(/\s*\(%\)\s*$/, "") : block.legend}</th></tr></thead>
-          <tbody>{block.items.map(item => <tr key={item.id}><th scope="row">{item.label}</th><td>{displayValue(item.id, item.value)}</td></tr>)}</tbody>
+          <tbody>{block.items.flatMap(item => [
+            <tr key={item.id}><th scope="row">{item.label}</th><td>{displayValue(item.id, item.value)}</td></tr>,
+            ...item.breakdown?.map(detail => <tr key={`${item.id}-${detail.id}`}>
+              <th scope="row">{item.label}: {detail.label}</th><td>{displayBreakdownValue(item.id, detail.id, detail.value)}</td>
+            </tr>) ?? [],
+          ])}</tbody>
         </table>
       </div>
     </figure>

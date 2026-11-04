@@ -66,6 +66,11 @@ export const structuredDataSchema = z.object({
       z.object({
         id: z.string().min(1),
         cells: z.array(z.string()).min(2),
+        breakdown: z.array(z.object({
+          id: z.string().min(1),
+          label: z.string(),
+          value: z.string(),
+        })).optional(),
       }),
     )
     .min(1),
@@ -279,7 +284,9 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
     type: z.literal("horizontal-bar-chart"),
     presentation: chartPresentationSchema.optional(),
     title: z.string().min(1),
-    items: z.array(chartItemSchema).min(2).max(12),
+    items: z.array(chartItemSchema.extend({
+      breakdown: z.array(chartItemSchema).min(1).optional(),
+    })).min(2).max(12),
     legend: z.string().min(1),
     sourceNote: z.string().min(1),
     verifiedSource: verifiedDataSourceSchema.optional(),
@@ -289,6 +296,11 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
         if (item.value < 0 || item.value > 100) {
           context.addIssue({ code: "custom", path: ["items", index, "value"], message: "Percentage values must be between 0 and 100." });
         }
+        item.breakdown?.forEach((detail, detailIndex) => {
+          if (detail.value < 0 || detail.value > 100) {
+            context.addIssue({ code: "custom", path: ["items", index, "breakdown", detailIndex, "value"], message: "Percentage values must be between 0 and 100." });
+          }
+        });
       });
     }
   }),

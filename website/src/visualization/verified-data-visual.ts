@@ -46,6 +46,9 @@ function numericRows(block: DataVisualSourceBlock) {
     id: row.id,
     label: row.cells[0]?.trim() || "",
     values: row.cells.slice(1).map(value => parseChartValue(value, block.data.unit)),
+    breakdown: row.breakdown?.map(detail => ({
+      id: detail.id, label: detail.label.trim(), value: parseChartValue(detail.value, block.data.unit),
+    })),
   }));
 }
 
@@ -69,7 +72,8 @@ export function compatibleVerifiedVisuals(
   if (
     block.data.columns.length === 2 &&
     rows.length >= 2 &&
-    rows.length <= 12
+    rows.length <= 12 &&
+    rows.every(row => row.breakdown?.every(detail => detail.id && detail.label && detail.value !== undefined) ?? true)
   ) {
     compatible.push("horizontal-bar-chart");
   }
@@ -139,6 +143,9 @@ export function createVerifiedDataVisual(
           id: row.id,
           label: row.label,
           value: row.values[0] as number,
+          ...(row.breakdown?.length ? { breakdown: row.breakdown.map(detail => ({
+            ...detail, value: detail.value as number,
+          })) } : {}),
         })),
         legend: source.data.columns[1],
         sourceNote:

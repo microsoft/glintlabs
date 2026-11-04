@@ -1,10 +1,7 @@
 import { canonicalJson, sha256Text } from "../integrity/approved-content.ts";
 import { compatibleVerifiedVisuals, parseChartValue, type ChartValueType, type DataVisualSourceBlock, type VerifiedDataVisualType } from "./verified-data-visual.ts";
 
-export type ChartTable = {
-  columns: string[];
-  rows: { id: string; cells: string[] }[];
-};
+export type ChartTable = Pick<DataVisualSourceBlock["data"], "columns" | "rows">;
 export type ChartTableError = { row: number; column: number; message: string };
 
 export function validateChartTable(table: ChartTable, unit: ChartValueType = "percentage", visualType: VerifiedDataVisualType = "horizontal-bar-chart"): ChartTableError[] {
@@ -32,6 +29,21 @@ export function validateChartTable(table: ChartTable, unit: ChartValueType = "pe
       errors.push({ row: index, column: 0, message: "Use a unique category label between 1 and 160 characters." });
     }
     seen.add(key);
+    if (visualType === "horizontal-bar-chart") {
+      const detailIds = new Set<string>();
+      const detailLabels = new Set<string>();
+      row.breakdown?.forEach(detail => {
+        const detailKey = detail.label.trim().replace(/\s+/g, " ").toLocaleLowerCase("en-US");
+        if (!detail.id || detailIds.has(detail.id) || !detailKey || detail.label.length > 160 || detailLabels.has(detailKey)) {
+          errors.push({ row: -1, column: -1, message: `${label || "This category"}: use unique breakdown labels between 1 and 160 characters.` });
+        }
+        if (detail.value.trim().length > 24 || parseChartValue(detail.value, unit) === undefined) {
+          errors.push({ row: -1, column: -1, message: `${label || "This category"}: enter ${unit === "percentage" ? "a breakdown percentage from 0 to 100" : "a breakdown number without % signs or commas"}.` });
+        }
+        detailIds.add(detail.id);
+        detailLabels.add(detailKey);
+      });
+    }
     for (let column = 1; column < columns; column++) {
       const raw = row.cells[column]?.trim() ?? "";
       if (row.cells.length !== columns || raw.length > 24 || parseChartValue(raw, unit) === undefined) {
@@ -116,7 +128,12 @@ export async function createStudioChartSource({
     title: sourceName.trim(),
     unit,
     columns: table.columns.map(value => value.trim()),
-    rows: table.rows.map(row => ({ id: row.id, cells: row.cells.map(value => value.trim()) })),
+    rows: table.rows.map(row => ({
+      id: row.id, cells: row.cells.map(value => value.trim()),
+      ...(row.breakdown?.length ? { breakdown: row.breakdown.map(detail => ({
+        id: detail.id, label: detail.label.trim(), value: detail.value.trim(),
+      })) } : {}),
+    })),
     evidenceImage: original?.data.evidenceImage,
     recommendedVisualType: visualType,
     sourceNote: `${synthetic ? "Synthetic example. Not research findings. " : ""}Source: ${sourceName.trim()}. ${originalSource ? "Edited in Studio; not unchanged Word values." : "Author-provided Studio table."}`,
