@@ -6,12 +6,9 @@ import { Dropdown, Option } from "@fluentui/react-combobox";
 import { Add16Regular } from "@fluentui/react-icons/svg/add";
 import { ArrowUpload20Regular } from "@fluentui/react-icons/svg/arrow-upload";
 import { ClipboardPaste20Regular } from "@fluentui/react-icons/svg/clipboard-paste";
-import { Color20Regular } from "@fluentui/react-icons/svg/color";
 import { Checkmark16Regular } from "@fluentui/react-icons/svg/checkmark";
-import { DataBarVertical20Regular } from "@fluentui/react-icons/svg/data-bar-vertical";
 import { Delete16Regular } from "@fluentui/react-icons/svg/delete";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
-import { TextEditStyle20Regular } from "@fluentui/react-icons/svg/text-edit-style";
 import { Menu, MenuItem, MenuList, MenuPopover, MenuTrigger } from "@fluentui/react-menu";
 import { Body1, Body1Strong, Caption1 } from "@fluentui/react-text";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -366,8 +363,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
           }
         }}
         onClick={() => setTab(value)}>
-          {value === "text" ? <TextEditStyle20Regular aria-hidden="true" /> : value === "data"
-            ? <DataBarVertical20Regular aria-hidden="true" /> : <Color20Regular aria-hidden="true" />}
           <span>{value === "text" ? "Text" : value === "data" ? "Data" : "Palette"}</span>
         </button>;
       })}
@@ -494,7 +489,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       <div className={styles.editorActions}>
       <Button type="button" className={styles.chartAction} onClick={onCancel}>Cancel</Button>
       <Button type="button" appearance="primary" className={`${styles.chartAction} ${styles.chartPrimaryAction}`} disabled={!draft}
-        onClick={() => { if (draft) onDone({ ...draft, verifiedSource: { ...draft.verifiedSource!, verifiedAt: new Date().toISOString() } }); }}>{intent === "insert" ? "Insert chart" : "Apply changes"}</Button>
+        onClick={() => { if (draft) onDone({ ...draft, verifiedSource: { ...draft.verifiedSource!, verifiedAt: new Date().toISOString() } }); }}>Apply changes</Button>
       </div>
     </footer>
   </div>;

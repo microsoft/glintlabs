@@ -2366,20 +2366,27 @@
 .chartTableHeader > div > span { color: var(--colorNeutralForeground3); }
 .chartEditor .chartReplaceAction { width: auto; min-height: 32px; height: 32px; padding: 4px 8px; font-size: 12px; }
 
-.chartTabs { display: flex; gap: 24px; width: 100%; border-bottom: 1px solid var(--studio-field-border); }
+.chartTabs {
+  --colorBrandForeground1: #335ccc;
+  --colorBrandStroke1: var(--colorBrandForeground1);
+  --colorVivaBrandBackground2: #e5eeff;
+  display: flex;
+  gap: var(--spacingHorizontalS, 8px);
+  width: 100%;
+  border-bottom: 1px solid var(--studio-field-border);
+}
 .chartTabs button {
+  position: relative;
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
   justify-content: center;
-  gap: 6px;
   min-width: 0;
-  min-height: 40px;
-  height: 40px;
-  padding: 8px 0;
+  min-height: 44px;
+  height: 44px;
+  padding: 8px 12px;
   border: 0;
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
+  border-radius: var(--borderRadiusMedium, 8px);
   background: transparent;
   color: var(--colorNeutralForeground1);
   font: inherit;
@@ -2388,24 +2395,34 @@
   white-space: nowrap;
   cursor: pointer;
 }
+.chartTabs button::after {
+  position: absolute;
+  inset-inline: var(--spacingHorizontalM, 12px);
+  bottom: 0;
+  height: 2px;
+  border-radius: var(--borderRadiusSmall, 3px);
+  background: transparent;
+  content: "";
+}
 .chartTabs button:first-child,
 .chartTabs button:last-child { width: auto; }
 .chartTabs button[aria-selected="true"] {
-  border-bottom-color: var(--colorBrandStroke1);
-  background: transparent;
+  color: var(--colorBrandForeground1);
   font-weight: 600;
 }
-.chartTabs button:hover { background: var(--colorNeutralBackground1Hover); }
-.chartTabs button:active { background: var(--colorNeutralBackground1Pressed); }
-.chartTabs button[aria-selected="true"]:hover {
-  background: var(--colorNeutralBackground1Pressed);
+.chartTabs button[aria-selected="true"]::after {
+  background: var(--colorBrandStroke1);
 }
-.chartTabs button[aria-selected="true"]:active {
-  background: var(--colorNeutralBackground1Pressed);
+.chartTabs button:hover {
+  color: var(--colorBrandForeground1);
+  background: var(--colorVivaBrandBackground2);
 }
-.chartTabs svg,
+.chartTabs button:active {
+  color: var(--colorNeutralForeground1);
+  background: var(--colorVivaBrandBackground2);
+}
 .chartEditorDismiss svg { width: 20px; height: 20px; flex-shrink: 0; }
-.chartTabs button:focus-visible { outline: 2px solid var(--colorStrokeFocus2); outline-offset: 2px; }
+.chartTabs button:focus-visible { outline: 2px solid var(--colorBrandStroke1); outline-offset: 1px; }
 
 @media (forced-colors: active) {
   .viewportSwitcher button[aria-pressed="true"],
@@ -2415,6 +2432,8 @@
     color: HighlightText;
     background: Highlight;
   }
+  .chartTabs button[aria-selected="true"]::after { background: HighlightText; }
+  .chartTabs button:focus-visible { outline-color: Highlight; }
 }
 
 .chartDataActions {

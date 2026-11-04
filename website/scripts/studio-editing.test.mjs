@@ -377,6 +377,9 @@ test("Word chart data is immediately editable without copying or changing the or
   assert.deepEqual(rendered.filter(node => node.props?.role === "tab").map(node =>
     nodes(node).find(child => child.type === "span").props.children),
     ["Data", "Text", "Palette"], "The editor separates data, text and palette");
+  assert.ok(rendered.filter(node => node.props?.role === "tab").every(tab =>
+    nodes(tab).every(node => !String(node.type).endsWith("-icon"))),
+  "Chart editing tabs use text labels without decorative icons");
   for (const tab of ["text", "data", "palette"]) {
     selectedTab = tab;
     const view = nodes(render({
@@ -452,9 +455,10 @@ test("Word chart data is immediately editable without copying or changing the or
     assert.deepEqual(view.filter(node => node.type === "input" && node.props.type === "text" && node.props["inputMode"])
       .map(node => node.props.value), Array(cells).fill(""), `${initialType} starts with the correct blank data shape`);
     assert.equal(view.some(node => node.props["aria-invalid"] === true), false, "Untouched fields do not begin in error");
-    const insert = view.find(node => node.type === "button" && node.props.children === "Insert chart");
-    assert.equal(insert.props.disabled, true);
-    insert.props.onClick();
+    const apply = view.find(node => node.type === "button" && node.props.children === "Apply changes");
+    assert.ok(apply, "New chart previews use the same Apply changes action as existing charts");
+    assert.equal(apply.props.disabled, true);
+    apply.props.onClick();
     assert.equal(view.some(node => node.type === "button" && node.props.children === "Remove chart"), false,
       "A draft is canceled, not deleted from the report");
   }
