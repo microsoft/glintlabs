@@ -438,9 +438,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
           </label> : null}
         </section> : null}
         <div className={styles.chartTableSection}>
-          <div className={styles.chartTableHeader}>
-            <h3>Chart data</h3>
-          </div>
           {dataSettings}
           {dataGrid("panel")}
           <div className={styles.chartDataActions}>

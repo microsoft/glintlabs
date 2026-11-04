@@ -2354,7 +2354,6 @@
 }
 
 .chartTypeIcon { flex: 0 0 20px; width: 20px; height: 20px; }
-.chartTableHeader h3 { margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; }
 .chartDataGuidance {
   display: grid;
   justify-items: start;
@@ -2396,7 +2395,6 @@
 .chartPaletteLabel { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .chartPaletteCheck { visibility: hidden; color: var(--colorBrandForeground1); }
 .chartPaletteTile:has(input:checked) .chartPaletteCheck { visibility: visible; }
-.chartTableHeader { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 .chartEditor .chartReplaceAction { width: auto; min-height: 32px; height: 32px; padding: 4px 8px; font-size: 12px; }
 
 .chartTabs,
