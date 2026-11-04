@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { Checkmark16Regular } from "@fluentui/react-icons/svg/checkmark";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
 import { Send16Regular } from "@fluentui/react-icons/svg/send";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -412,6 +413,7 @@ export function PublicationPackageDialog({ project, onSave, onClose }: {
                         value={`illustration:${illustration.id}`} checked={metadata.thumbnail.source === illustration.src}
                         onChange={() => changeMetadata({ ...metadata, thumbnail: { source: illustration.src, alt: illustration.description, presentation: "illustration" } })} />
                       <Image src={illustration.src} unoptimized width={88} height={88} alt="" />
+                      <Checkmark16Regular className={styles.thumbnailCheck} aria-hidden="true" />
                       <span className={styles.srOnly}>{illustration.label}</span>
                     </label>)}
                   </div>

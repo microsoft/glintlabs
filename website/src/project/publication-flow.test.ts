@@ -212,8 +212,8 @@ test("publishing omits unused Topics and ZIP options and keeps the compact catal
   assert.match(dialog, /<aside[^>]+aria-label="Draft catalog card">/);
   assert.match(styles, /\.thumbnailChoices \{[^}]*minmax\(96px, 1fr\)[^}]*max-height: 200px;[^}]*overflow: auto;/);
   assert.match(styles, /\.thumbnailChoice img \{[^}]*width: 72px; height: 72px; object-fit: contain;/);
-  assert.match(styles, /\.header \{[^}]*padding: 28px 32px 20px;/);
-  assert.match(styles, /\.closeButton \{[^}]*width: 28px; height: 28px;/);
+  assert.match(styles, /\.header \{[^}]*padding: 24px 32px;/);
+  assert.match(styles, /\.closeButton \{[^}]*width: 44px; height: 44px;/);
   assert.match(dialog, /<Dismiss20Regular aria-hidden="true" \/>/);
   const detailsStyles = styles.match(/\.detailsSection \{([^}]*)\}/)?.[1];
   assert.ok(detailsStyles);
@@ -291,9 +291,9 @@ test("homepage featuring is an optional checkbox and publishing fields use consi
   assert.match(placement, /id="publication-featured-until-error"/);
   assert.match(styles, /\.featureUntil \{[^}]*grid-template-columns: auto minmax\(0, 1fr\);[^}]*align-items: center;/);
   assert.match(styles, /\.featureUntil > \.fieldError \{ grid-column: 1 \/ -1; \}/);
-  assert.match(styles, /\.fields \{[^}]*gap: 20px;/);
-  assert.match(styles, /\.metaGrid \{[^}]*gap: 20px;/);
-  assert.match(styles, /\.field \{[^}]*gap: 10px;/);
+  assert.match(styles, /\.fields \{[^}]*gap: 24px;/);
+  assert.match(styles, /\.metaGrid \{[^}]*gap: 24px;/);
+  assert.match(styles, /\.field \{[^}]*gap: 8px;/);
   assert.match(styles, /\.detailsSection \{[^}]*padding: 0;/);
   assert.match(styles, /\.catalogCardPreview \{ margin: 0; \}/);
 });

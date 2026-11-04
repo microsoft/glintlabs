@@ -14,12 +14,16 @@ import { Checkmark16Regular } from "@fluentui/react-icons/svg/checkmark";
 import { CheckmarkCircle20Regular } from "@fluentui/react-icons/svg/checkmark-circle";
 import { ChevronDown16Regular } from "@fluentui/react-icons/svg/chevron-down";
 import { Desktop20Regular } from "@fluentui/react-icons/svg/desktop";
+import { DataBarHorizontal20Regular } from "@fluentui/react-icons/svg/data-bar-horizontal";
+import { DataBarVertical20Regular } from "@fluentui/react-icons/svg/data-bar-vertical";
+import { DataPie20Regular } from "@fluentui/react-icons/svg/data-pie";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
 import { DocumentText24Regular } from "@fluentui/react-icons/svg/document-text";
 import { Home20Regular } from "@fluentui/react-icons/svg/home";
 import { Phone20Regular } from "@fluentui/react-icons/svg/phone";
 import { Send16Regular } from "@fluentui/react-icons/svg/send";
 import { Tablet20Regular } from "@fluentui/react-icons/svg/tablet";
+import { TextPercent20Regular } from "@fluentui/react-icons/svg/text-percent";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import {
@@ -491,7 +495,7 @@ function PanelShell({
             onClick={onClose}
             type="button"
           >
-            ×
+            <Dismiss20Regular aria-hidden="true" />
           </button>
         ) : null}
       </header>
@@ -613,7 +617,7 @@ function ImageEditor({
               }}
               type="button"
             >
-              Remove Image
+              Remove image
             </button>
           ) : null}
         </>
@@ -1700,17 +1704,14 @@ export function PublishingStudio() {
             <div className={styles.chartEditorBody}>
               <Body1>Choose a chart for this location.</Body1>
               {([
-                ["horizontal-bar-chart", "Bar chart", "Compare values"],
-                ["paired-percentage-comparison", "Paired comparison", "Show two percentage findings"],
-                ["percentage-ring-group", "Percentage rings", "Show three percentage findings"],
-                ["grouped-column-comparison", "Percentage comparison grid", "Compare two series across four groups"],
-              ] as const).map(([type, title, description]) => <Button key={type} type="button"
+                ["horizontal-bar-chart", "Bar chart", "Compare values", DataBarHorizontal20Regular],
+                ["paired-percentage-comparison", "Paired comparison", "Show two percentage findings", TextPercent20Regular],
+                ["percentage-ring-group", "Percentage rings", "Show three percentage findings", DataPie20Regular],
+                ["grouped-column-comparison", "Percentage comparison grid", "Compare two series across four groups", DataBarVertical20Regular],
+              ] as const).map(([type, title, description, Icon]) => <Button key={type} type="button"
                 className={styles.chartTypeCard}
                 onClick={() => setChartInsertion(current => current ? { ...current, type } : current)}>
-                <span className={styles.chartTypePreview} aria-hidden="true" data-chart-type={type}>
-                  {type === "paired-percentage-comparison" ? <><b>%</b><b>%</b></>
-                    : type === "grouped-column-comparison" ? <><i /><i /><i /><i /></> : <><i /><i /><i /></>}
-                </span>
+                <Icon className={styles.chartTypeIcon} aria-hidden="true" />
                 <span><Body1Strong block>{title}</Body1Strong><Caption1 block>{description}</Caption1></span>
               </Button>)}
             </div>

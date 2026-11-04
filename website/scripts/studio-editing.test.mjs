@@ -593,7 +593,7 @@ test("closable panels support Escape without dismissing panels that require expl
   const jsx = (type, props) => ({ type, props });
   const render = componentFunction("PanelShell", {
     exports: {}, require() { return { jsx, jsxs: jsx }; },
-    styles: {}, Subtitle1: "heading",
+    styles: {}, Subtitle1: "heading", Dismiss20Regular: "dismiss-icon",
   });
   for (const closable of [true, false]) {
     let closed = 0;
