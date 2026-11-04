@@ -349,24 +349,20 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     </MenuPopover>
   </Menu>;
   return <div className={styles.chartEditor}>
-    <header className={styles.chartEditorHeader}>
-      <h2 ref={editorHeading} tabIndex={-1}><Subtitle1>{intent === "insert" ? "Insert chart" : "Edit chart"}</Subtitle1></h2>
+    <header className={`${styles.chartEditorHeader} ${styles.chartSelectedHeader}`}>
+      <div className={styles.chartHeading}>
+        {selectedType ? chartIcon(selectedType) : null}
+        <h2 ref={editorHeading} tabIndex={-1}><Subtitle1>{chartChoice?.title ?? "Choose a chart"}</Subtitle1></h2>
+      </div>
+      <Button ref={typeButton} type="button" appearance="outline" className={styles.chartChangeAction}
+        icon={<ChevronDown20Regular aria-hidden="true" />} iconPosition="after"
+        aria-expanded={choosingType} aria-controls={choosingType ? `${block.id}-chart-types` : undefined}
+        onClick={() => { setChoosingType(value => !value); setTab("data"); }}>Change chart</Button>
       <Button type="button" appearance="subtle" className={styles.chartEditorDismiss}
         icon={<Dismiss20Regular aria-hidden="true" />} aria-label="Close chart editor" onClick={onCancel} />
     </header>
     <div className={styles.chartEditorContent}>
     <div className={styles.chartEditorTools}>
-    <div className={styles.chartIdentity}>
-      {selectedType ? chartIcon(selectedType) : null}
-      <span className={styles.chartIdentityText}>
-        <Caption1>Chart type</Caption1>
-        <Body1Strong>{chartChoice?.title ?? "Choose a chart"}</Body1Strong>
-      </span>
-      <Button ref={typeButton} type="button" appearance="outline" className={styles.chartChangeAction}
-        icon={<ChevronDown20Regular aria-hidden="true" />} iconPosition="after"
-        aria-expanded={choosingType} aria-controls={choosingType ? `${block.id}-chart-types` : undefined}
-        onClick={() => { setChoosingType(value => !value); setTab("data"); }}>Change chart</Button>
-    </div>
     {choosingType ? <div id={`${block.id}-chart-types`} role="group" aria-label="Chart types" className={styles.chartTypeChoices}>
       {chartChoices.map(({ type, title, description }) => <Button key={type} type="button" appearance="outline"
         className={styles.chartTypeOption} aria-pressed={selectedType === type} onClick={() => changeChartType(type)}>
