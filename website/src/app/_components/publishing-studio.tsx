@@ -1702,7 +1702,7 @@ export function PublishingStudio() {
                 icon={<Dismiss20Regular />} onClick={() => finishChartInsertion()} />
             </header>
             <div className={styles.chartEditorBody}>
-              <Body1>Choose a chart for this location.</Body1>
+              <div className={styles.chartTypeList}>
               {([
                 ["horizontal-bar-chart", "Bar chart", "Compare values", DataBarHorizontal20Regular],
                 ["paired-percentage-comparison", "Paired comparison", "Show two percentage findings", TextPercent20Regular],
@@ -1714,6 +1714,7 @@ export function PublishingStudio() {
                 <Icon className={styles.chartTypeIcon} aria-hidden="true" />
                 <span><Body1Strong block>{title}</Body1Strong><Caption1 block>{description}</Caption1></span>
               </Button>)}
+              </div>
             </div>
             <footer className={styles.chartEditorFooter}>
               <div className={styles.editorActions}>
@@ -1957,9 +1958,6 @@ export function PublishingStudio() {
               </div>
             </details>
           ) : null}
-          {hasUnsavedEdits ? (
-            <Caption1 className={styles.dirtyStatus} role="status">Unsaved changes</Caption1>
-          ) : null}
         </div>
         {manifest ? (
           <div
@@ -1998,6 +1996,9 @@ export function PublishingStudio() {
                     {openIssues.length === 1 ? "issue" : "issues"}
                   </span>
                 </button>
+              ) : null}
+              {hasUnsavedEdits ? (
+                <Caption1 className={styles.dirtyStatus} role="status">Unsaved changes</Caption1>
               ) : null}
               <button
                 className={styles.secondaryTopAction}

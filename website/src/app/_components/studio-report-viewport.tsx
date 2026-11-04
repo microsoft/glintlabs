@@ -34,6 +34,15 @@ export function StudioReportViewport({
     let checking = false;
     let styleVersion = 0;
     let revealFrame = 0;
+    let scrollbarTimeout = 0;
+
+    function showScrollbar() {
+      previewDocument!.documentElement.dataset.scrolling = "true";
+      window.clearTimeout(scrollbarTimeout);
+      scrollbarTimeout = window.setTimeout(() => {
+        delete previewDocument!.documentElement.dataset.scrolling;
+      }, 800);
+    }
 
     function revealWhenReady() {
       if (disposed || revealed || failed || checking) return;
@@ -89,7 +98,7 @@ export function StudioReportViewport({
       }
       const root = previewDocument!.documentElement;
       root.lang = sourceDocument.documentElement.lang;
-      root.className = sourceDocument.documentElement.className;
+      root.className = `${sourceDocument.documentElement.className} ${styles.previewScrollbars}`;
       root.dataset.sitePalette = sourceDocument.documentElement.dataset.sitePalette ?? "blue";
       const inherited = getComputedStyle(frame!);
       for (const property of inherited) {
@@ -127,14 +136,19 @@ export function StudioReportViewport({
     previewDocument.addEventListener("click", navigatePreviewLink, true);
     previewDocument.addEventListener("pointerdown", onInteract);
     previewDocument.addEventListener("focusin", onInteract);
+    previewDocument.addEventListener("scroll", showScrollbar, { passive: true });
     return () => {
       disposed = true;
       cancelAnimationFrame(revealFrame);
       contentObserver.disconnect();
       observer.disconnect();
+      window.clearTimeout(scrollbarTimeout);
+      previewDocument.documentElement.classList.remove(styles.previewScrollbars);
+      delete previewDocument.documentElement.dataset.scrolling;
       previewDocument.removeEventListener("click", navigatePreviewLink, true);
       previewDocument.removeEventListener("pointerdown", onInteract);
       previewDocument.removeEventListener("focusin", onInteract);
+      previewDocument.removeEventListener("scroll", showScrollbar);
     };
   }, [frameRef, onInteract, previewDocument]);
 

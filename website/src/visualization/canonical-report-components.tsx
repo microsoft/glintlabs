@@ -240,11 +240,13 @@ function PairedPercentageComparison({
           </div>;
         })}
       </div>
-      <div className={styles.pairedRule} aria-hidden="true" />
-      <figcaption className={styles.pairedFootnote}>
-        {presentation?.note ? <p>{presentation.note}</p> : null}
-        <p>{block.footnote}</p>
-      </figcaption>
+      {block.source.part !== "studio" ? <>
+        <div className={styles.pairedRule} aria-hidden="true" />
+        <figcaption className={styles.pairedFootnote}>
+          {presentation?.note ? <p>{presentation.note}</p> : null}
+          <p>{block.footnote}</p>
+        </figcaption>
+      </> : null}
     </figure>
   );
 }
@@ -294,7 +296,7 @@ function HorizontalBarChart({
         ))}
       </div>
       {isNumber ? <p className={styles.chartScale}>Number scale: {minimum} to {maximum}</p> : null}
-      {presentation?.note ? <>
+      {block.source.part !== "studio" && presentation?.note ? <>
         <div className={styles.rule} />
         <p className={styles.chartNote}>{presentation.note}</p>
       </> : null}
@@ -344,8 +346,10 @@ function GroupedColumnComparison({
           </span>
         ))}
       </div>
-      {block.presentation?.note ? <p className={styles.chartNote}>{block.presentation.note}</p> : null}
-      <SourceNote>{block.sourceNote}</SourceNote>
+      {block.source.part !== "studio" ? <>
+        {block.presentation?.note ? <p className={styles.chartNote}>{block.presentation.note}</p> : null}
+        <SourceNote>{block.sourceNote}</SourceNote>
+      </> : block.verifiedSource?.synthetic ? <p className={styles.chartSynthetic}>Synthetic example · Not research findings</p> : null}
     </figure>
   );
 }

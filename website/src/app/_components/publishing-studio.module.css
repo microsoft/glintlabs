@@ -1753,6 +1753,7 @@
   position: relative;
   flex: 0 0 auto;
   overflow: hidden;
+  border-radius: 10px;
   box-shadow: 0 0 0 1px var(--report-rule), var(--studio-shadow);
 }
 
@@ -1764,6 +1765,21 @@
   background: var(--report-canvas);
   transform: scale(var(--canvas-scale, 1));
   transform-origin: top left;
+}
+
+.previewScrollbars {
+  scrollbar-color: transparent transparent;
+}
+
+.previewScrollbars[data-scrolling="true"] {
+  scrollbar-color: var(--colorNeutralForegroundDisabled, #8a8a8a) transparent;
+}
+
+@media (forced-colors: active) {
+  .previewScrollbars,
+  .previewScrollbars[data-scrolling="true"] {
+    scrollbar-color: auto;
+  }
 }
 
 .previewLoading {
@@ -2074,6 +2090,11 @@
 .chartEditorSurface > .editor {
   overflow-y: auto;
   padding: var(--spacingHorizontalXXL, 24px);
+}
+
+.chartTypeList {
+  display: grid;
+  gap: var(--spacingVerticalS, 8px);
 }
 
 .chartEditor .chartTypeCard {

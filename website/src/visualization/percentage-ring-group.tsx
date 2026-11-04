@@ -11,11 +11,17 @@ export function PercentageRingGroup({
 }: {
   block: PercentageRingGroupBlock;
 }) {
+  const isStudioChart = block.source.part === "studio";
+  const note = isStudioChart ? undefined : block.presentation?.note;
+  const footnote = isStudioChart
+    ? block.verifiedSource?.synthetic ? "Synthetic example · Not research findings" : undefined
+    : block.footnote;
+  const hasFootnote = Boolean(note || footnote);
   return (
     <figure
       className={styles.visual}
       aria-labelledby={`${block.id}-title`}
-      aria-describedby={`${block.id}-footnote`}
+      aria-describedby={hasFootnote ? `${block.id}-footnote` : undefined}
     >
       <h3 className={styles.title} id={`${block.id}-title`}>
         {block.presentation?.title ?? block.title}
@@ -62,10 +68,10 @@ export function PercentageRingGroup({
           </div>
         ))}
       </div>
-      <figcaption className={styles.footnote} id={`${block.id}-footnote`}>
-        {block.presentation?.note ? <p>{block.presentation.note}</p> : null}
-        {block.footnote}
-      </figcaption>
+      {hasFootnote ? <figcaption className={styles.footnote} id={`${block.id}-footnote`}>
+        {note ? <p>{note}</p> : null}
+        {footnote}
+      </figcaption> : null}
     </figure>
   );
 }

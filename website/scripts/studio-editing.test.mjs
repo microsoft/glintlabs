@@ -10,7 +10,7 @@ import { createDataVisualPreview } from "../src/visualization/data-visual-previe
 import { automaticallyVerifiedVisualType, compatibleVerifiedVisuals, createVerifiedDataVisual, parseChartValue, verifiedDataVisualName } from "../src/visualization/verified-data-visual.ts";
 import { sortChartItems } from "../src/visualization/chart-order.ts";
 import { isCanonicalVisualBlock } from "../src/visualization/canonical-report-blocks.ts";
-import { validateChartTable } from "../src/visualization/chart-authoring.ts";
+import { createStudioChartSource, validateChartTable } from "../src/visualization/chart-authoring.ts";
 import { setTextCallout } from "../src/project/text-callout.ts";
 
 const source = ts.createSourceFile(
@@ -281,6 +281,53 @@ test("switching report items and tools cannot apply unreviewed chart previews", 
   assert.equal(select("next-item"), false);
   componentFunction("changeTool", scope)("issues");
   assert.equal(messages.length, 2, "both exits require Apply or Cancel");
+});
+
+test("Studio-authored charts omit note and source footers without changing their evidence or existing report notes", async () => {
+  const jsx = (type, props) => ({ type, props });
+  const text = node => Array.isArray(node) ? node.map(text).join(" ")
+    : !node || typeof node === "boolean" ? ""
+    : typeof node === "object" ? text(typeof node.type === "function" ? node.type(node.props) : node.props?.children)
+    : String(node);
+  for (const [type, name, count, grouped] of [
+    ["horizontal-bar-chart", "HorizontalBarChart", 4, false],
+    ["paired-percentage-comparison", "PairedPercentageComparison", 2, false],
+    ["percentage-ring-group", "PercentageRingGroup", 3, false],
+    ["grouped-column-comparison", "GroupedColumnComparison", 4, true],
+  ]) {
+    const source = await createStudioChartSource({
+      id: type, sourceName: "Chart data", synthetic: false, visualType: type,
+      table: {
+        columns: grouped ? ["Category", "Before", "After"] : ["Category", "Percentage"],
+        rows: Array.from({ length: count }, (_, index) => ({
+          id: `row-${index}`, cells: grouped ? [`Group ${index + 1}`, "24", "36"] : [`Group ${index + 1}`, "24"],
+        })),
+      },
+    });
+    const block = {
+      ...createVerifiedDataVisual(source, type, "2026-11-04T22:00:00.000Z"),
+      presentation: { title: "Research chart", subtitle: "", note: "Test", palette: "brand", leadIns: ["First", "Second"] },
+    };
+    const before = structuredClone(block);
+    const componentSource = ts.createSourceFile("chart.tsx", readFileSync(new URL(
+      type === "percentage-ring-group" ? "../src/visualization/percentage-ring-group.tsx"
+        : "../src/visualization/canonical-report-components.tsx", import.meta.url), "utf8"),
+    ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    const render = componentFunction(name, {
+      exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {}, sortChartItems,
+      SourceNote: ({ children }) => jsx("figcaption", { children }),
+    }, componentSource);
+    assert.doesNotMatch(text(render({ block })), /Test|Source: Chart data|Author-provided Studio table/,
+      `${type} has no Studio-authored footer in its shared report renderer`);
+    assert.deepEqual(block, before, "Rendering preserves source evidence and the saved presentation");
+    const existing = { ...block, source: { part: "word/document.xml", index: 0 } };
+    assert.match(text(render({ block: existing })), /Test/, "Existing report notes remain visible");
+    if (type !== "horizontal-bar-chart") {
+      assert.match(text(render({ block: existing })), /Source: Chart data/, "Existing report citations remain visible");
+    }
+    const synthetic = { ...block, verifiedSource: { ...block.verifiedSource, synthetic: true } };
+    assert.match(text(render({ block: synthetic })), /Synthetic example/, "Synthetic data stays clearly identified");
+  }
 });
 
 test("Word chart data is immediately editable without copying or changing the original on open", () => {

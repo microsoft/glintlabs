@@ -893,8 +893,11 @@
 }
 
 .chartInsertionPlaceholder {
+  display: grid;
+  min-height: 320px;
+  place-items: center;
   padding: 32px;
-  border: 1px dashed var(--report-selection);
+  border: 1px solid var(--report-selection);
   border-radius: 20px;
   color: var(--report-muted);
   background: var(--report-visual-soft);
