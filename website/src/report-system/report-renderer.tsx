@@ -10,6 +10,8 @@ import type {
 } from "../manifest/report-manifest.ts";
 import { estimateReportReadingTime } from "../project/report-reading-time.ts";
 import { reportAuthor } from "../project/report-author.ts";
+import { textCalloutSegments, type TextCalloutSelection } from "../project/text-callout.ts";
+import { ReportTextSelection } from "./report-text-selection";
 import { ListeningMaturityScorecard } from "../visualization/listening-maturity-scorecard";
 import {
   isCanonicalVisualBlock,
@@ -28,6 +30,7 @@ import {
   type ReportStyle,
 } from "./report-style";
 import styles from "./report-renderer.module.css";
+import { ReportChartInsertion } from "./report-chart-insertion";
 
 type ImageBlock = Extract<ReportBlock, { type: "image" }>;
 type TextBlock = Extract<
@@ -54,6 +57,9 @@ type ReportRendererProps = {
   orderedListBlockIds?: ReadonlySet<string>;
   referenceBlockIds?: ReadonlySet<string>;
   onSelectBlock?: (blockId: string) => void;
+  onSelectText?: (selection: TextCalloutSelection, enabled: boolean) => boolean;
+  onInsertChart?: (beforeBlockId?: string) => void;
+  insertionFocus?: { beforeBlockId: string; onRestored: () => void };
   reportStyle?: ReportStyle;
   selectedBlockId?: string;
 };
@@ -128,8 +134,9 @@ function imagePresentation(block: ImageBlock) {
   );
 }
 
-function RichText({ block, reference = false, referenceMarkers }: {
+function RichText({ block, reference = false, referenceMarkers, start = 0, end = block.text.length }: {
   block: TextBlock; reference?: boolean; referenceMarkers?: ReadonlySet<string>;
+  start?: number; end?: number;
 }) {
   const links = block.links ?? [];
   const label = reference ? block.text.match(/^\s*\[\d+\]/)?.[0] : undefined;
@@ -138,7 +145,7 @@ function RichText({ block, reference = false, referenceMarkers }: {
       : referenceMarkers?.has(marker[0]))
     .map(marker => ({ start: marker.index, end: marker.index + marker[0].length }));
   if (links.length === 0 && markers.length === 0) {
-    return block.text;
+    return block.text.slice(start, end);
   }
 
   function textRange(start: number, end: number) {
@@ -161,21 +168,24 @@ function RichText({ block, reference = false, referenceMarkers }: {
   }
 
   const content: ReactNode[] = [];
-  let cursor = 0;
+  let cursor = start;
   for (const [index, link] of links.entries()) {
-    if (cursor < link.start) {
-      content.push(...textRange(cursor, link.start));
+    const from = Math.max(start, link.start);
+    const to = Math.min(end, link.end);
+    if (from >= to) continue;
+    if (cursor < from) {
+      content.push(...textRange(cursor, from));
     }
-    const children = textRange(link.start, link.end);
+    const children = textRange(from, to);
     content.push(
       <a href={link.href} key={`${block.id}-link-${index}`}>
         {children.length === 1 ? children[0] : children}
       </a>,
     );
-    cursor = link.end;
+    cursor = to;
   }
-  if (cursor < block.text.length) {
-    content.push(...textRange(cursor, block.text.length));
+  if (cursor < end) {
+    content.push(...textRange(cursor, end));
   }
   return content;
 }
@@ -277,6 +287,7 @@ function renderBlock(
   if (isCanonicalVisualBlock(block)) {
     const isEditableVisual =
       block.type === "percentage-ring-group" ||
+      block.type === "paired-percentage-comparison" ||
       block.type === "horizontal-bar-chart" ||
       block.type === "grouped-column-comparison";
     const canEdit = isAuthoring && isEditableVisual && Boolean(props.onSelectBlock);
@@ -294,7 +305,7 @@ function renderBlock(
         {canEdit ? (
           <div className={styles.chartEditToolbar}>
             <button
-              aria-label={`Edit chart: ${block.title}`}
+              aria-label={`Edit chart: ${"presentation" in block ? block.presentation?.title ?? block.title : block.title}`}
               className={styles.chartEditAction}
               onClick={() => props.onSelectBlock?.(block.id)}
               type="button"
@@ -317,12 +328,22 @@ function renderBlock(
         </Heading>
       );
     }
-    case "paragraph":
+    case "paragraph": {
+      const selectableText = isAuthoring && props.onSelectText && !isReference && props.textOverrides?.[block.id] === undefined;
+      if (block.callouts?.length && props.textOverrides?.[block.id] === undefined) {
+        return <div data-report-text-block={selectableText ? block.id : undefined} tabIndex={selectableText ? -1 : undefined}>
+          {textCalloutSegments(block).map(range => <p key={`${range.start}-${range.end}`}
+            className={range.callout ? styles.textCallout : styles.paragraph} data-text-callout={range.callout || undefined}>
+            <RichText block={block} start={range.start} end={range.end} reference={isReference} referenceMarkers={referenceMarkers} />
+          </p>)}
+        </div>;
+      }
       return (
-        <p className={styles.paragraph}>
+        <p className={styles.paragraph} data-report-text-block={selectableText ? block.id : undefined} tabIndex={selectableText ? -1 : undefined}>
           {props.textOverrides?.[block.id] ?? <RichText block={block} reference={isReference} referenceMarkers={referenceMarkers} />}
         </p>
       );
+    }
     case "image":
       return (
         <figure className={styles.figure} title={locator}>
@@ -490,7 +511,7 @@ function renderBlock(
         >
           <span className={styles.issueLabel}>Needs attention</span>
           <strong>Data visual needs review</strong>
-          <span>Review the extracted source data in the Visuals panel.</span>
+          <span>Review the source data in the chart editor.</span>
         </button>
       ) : (
         <aside className={styles.placeholder}>
@@ -567,6 +588,7 @@ function reportContent(
           id={`report-block-${block.id}`}
           key={block.id}
           role={isDivider ? "separator" : undefined}
+          data-chart-insert-before={props.mode !== "read" && props.onInsertChart && (!isReference || startsReferences) && !isDivider ? block.id : undefined}
         >
           {isDivider ? null : props.blockOverrides?.[block.id] ?? renderBlock(block, props, isReference, referenceMarkers)}
         </div>,
@@ -588,6 +610,7 @@ function reportContent(
       <List
         className={`${styles.list} ${briefHeadingLevel === undefined ? "" : styles.briefList} ${isReference ? styles.referencesList : ""}`}
         key={`list-${items[0].id}`}
+        data-chart-insert-before={props.mode !== "read" && props.onInsertChart && !isReference && briefHeadingLevel === undefined ? items[0].id : undefined}
       >
         {items.map((item) => (
           <li
@@ -620,6 +643,10 @@ function reportContent(
     briefHeadingIndex = undefined;
   }
 
+  const lastVisibleBlock = blocks.findLast(block => !props.hiddenBlockIds?.has(block.id));
+  if (props.mode !== "read" && props.onInsertChart && !previousBlockWasReference && lastVisibleBlock?.type !== "references") {
+    content.push(<div key="chart-insertion-end" data-chart-insert-before="" aria-hidden="true" />);
+  }
   return content;
 }
 
@@ -842,6 +869,9 @@ export function ReportRenderer(props: ReportRendererProps) {
           {reportContent(bodyBlocks, props)}
         </div>
       </div>
+      {props.mode !== "read" && props.onSelectText ? <ReportTextSelection blocks={props.manifest.blocks} onSelectText={props.onSelectText} /> : null}
+      {props.mode !== "read" && props.onInsertChart ? <ReportChartInsertion blocks={props.manifest.blocks}
+        onInsertChart={props.onInsertChart} restoreFocus={props.insertionFocus} /> : null}
     </article>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@fluentui/react-button";
 import {
   Body1,
   Body1Strong,
@@ -10,6 +11,7 @@ import {
 import { ArrowBidirectionalLeftRight20Regular } from "@fluentui/react-icons/svg/arrow-bidirectional-left-right";
 import { ArrowUpload16Regular } from "@fluentui/react-icons/svg/arrow-upload";
 import { Checkmark16Regular } from "@fluentui/react-icons/svg/checkmark";
+import { CheckmarkCircle20Regular } from "@fluentui/react-icons/svg/checkmark-circle";
 import { ChevronDown16Regular } from "@fluentui/react-icons/svg/chevron-down";
 import { Desktop20Regular } from "@fluentui/react-icons/svg/desktop";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
@@ -42,6 +44,8 @@ import type {
   ReviewItem,
 } from "../../manifest/report-manifest.ts";
 import { reportBlockSchema } from "../../manifest/report-manifest.ts";
+import { setTextCallout, type ParagraphBlock, type TextCalloutSelection } from "../../project/text-callout.ts";
+import reportStyles from "../../report-system/report-renderer.module.css";
 import { BrowserProjectStorage } from "../../project/project-storage.ts";
 import {
   applyImageReview,
@@ -79,6 +83,7 @@ import {
   automaticallyVerifiedVisualType,
   verifiedVisualMatchesSource,
   type DataVisualSourceBlock,
+  type VerifiedDataVisualType,
 } from "../../visualization/verified-data-visual.ts";
 import styles from "./publishing-studio.module.css";
 import { StudioReportViewport } from "./studio-report-viewport";
@@ -160,7 +165,7 @@ function PublicationPackageLoader(props: PublicationDialogProps) {
     onRetry={() => { setFailed(false); setAttempt(current => current + 1); }} />;
 }
 
-type Tool = "document" | "issues" | "visuals";
+type Tool = "document" | "issues" | "visuals" | "insert-chart";
 type ReportViewport = "full-width" | "desktop" | "tablet" | "mobile";
 type VisualBlock = Extract<
   ReportBlock,
@@ -169,6 +174,7 @@ type VisualBlock = Extract<
       | "visual-placeholder"
       | "branded-visual"
       | "percentage-ring-group"
+      | "paired-percentage-comparison"
       | "listening-maturity-scorecard"
       | "listening-approach-continuum"
       | "featured-statistic"
@@ -206,7 +212,13 @@ type StudioAction =
   | { type: "load-project"; project: StudioProject }
   | { type: "change-block"; block: ReportBlock }
   | { type: "preview-block"; block: ReportBlock }
+  | { type: "format-text"; blocks: ParagraphBlock[] }
   | { type: "remove-block"; blockId: string }
+  | {
+      type: "add-visual";
+      block: ReportBlock;
+      index: number;
+    }
   | {
       type: "restore-block";
       block: ReportBlock;
@@ -230,6 +242,7 @@ type Issue = {
   severity: ReviewItem["severity"];
   blockId?: string;
   sourceLabel?: string;
+  action?: "review-chart";
 };
 
 const reportViewports: Array<{
@@ -320,6 +333,15 @@ function reducer(state: StudioState, action: StudioAction): StudioState {
           ),
         },
       };
+    case "format-text":
+      if (state.status !== "ready") return state;
+      return {
+        ...state,
+        manifest: {
+          ...state.manifest,
+          blocks: state.manifest.blocks.map(block => action.blocks.find(next => next.id === block.id) ?? block),
+        },
+      };
     case "preview-block":
       if (state.status !== "ready") {
         return state;
@@ -341,6 +363,7 @@ function reducer(state: StudioState, action: StudioAction): StudioState {
         ...state,
         manifest: removeReportBlock(state.manifest, action.blockId).manifest,
       };
+    case "add-visual":
     case "restore-block":
       if (state.status !== "ready") {
         return state;
@@ -350,7 +373,7 @@ function reducer(state: StudioState, action: StudioAction): StudioState {
         manifest: restoreReportBlock(state.manifest, {
           block: action.block,
           index: action.index,
-          reviewItems: action.reviewItems,
+          reviewItems: action.type === "restore-block" ? action.reviewItems : [],
         }),
       };
   }
@@ -653,12 +676,14 @@ function VisualEditor({
   const [imageError, setImageError] = useState<string>();
   const [isReadingImage, setIsReadingImage] = useState(false);
   const [isChartEditing, setIsChartEditing] = useState(false);
+  const [newChartType, setNewChartType] = useState<"horizontal-bar-chart" | "paired-percentage-comparison">("horizontal-bar-chart");
   const sourceBlock = useMemo<DataVisualSourceBlock | undefined>(() => {
     if (originalBlock.type === "data-visual-source") {
       return originalBlock;
     }
     if (
       (originalBlock.type === "percentage-ring-group" ||
+        originalBlock.type === "paired-percentage-comparison" ||
         originalBlock.type === "horizontal-bar-chart" ||
         originalBlock.type === "grouped-column-comparison") &&
       originalBlock.verifiedSource
@@ -769,6 +794,12 @@ function VisualEditor({
           <button className={styles.secondaryAction} type="button" onClick={() => setIsChartEditing(true)}>
             Add chart
           </button>
+          <button className={styles.secondaryAction} type="button" onClick={() => {
+            setNewChartType("paired-percentage-comparison");
+            setIsChartEditing(true);
+          }}>
+            Add paired comparison
+          </button>
         </section>
         <button
           className={styles.secondaryAction}
@@ -803,6 +834,7 @@ function VisualEditor({
   }
 
   return <VerifiedChartEditor block={originalBlock} source={sourceBlock}
+    initialType={newChartType}
     onPreview={onPreview} onDone={onDone} onCancel={() => onCancel(originalBlock)} onRemove={onRemove} />;
 }
 
@@ -812,6 +844,20 @@ export function PublishingStudio() {
   const [hasUnappliedImageChanges, setHasUnappliedImageChanges] = useState(false);
   const [activeTool, setActiveTool] = useState<Tool>();
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
+  const [chartInsertion, setChartInsertion] = useState<{
+    beforeBlockId?: string;
+    block: Extract<ReportBlock, { type: "visual-placeholder" }>;
+    type?: VerifiedDataVisualType;
+    preview?: ReportBlock;
+  }>();
+  const chartPickerHeading = useRef<HTMLHeadingElement>(null);
+  const [insertionFocus, setInsertionFocus] = useState<string>();
+  useEffect(() => {
+    if (chartInsertion && !chartInsertion.type) chartPickerHeading.current?.focus();
+  }, [chartInsertion]);
+  const previewInsertedChart = useCallback((block: ReportBlock) => {
+    setChartInsertion(current => current ? { ...current, preview: block } : current);
+  }, []);
   const [pendingImageBlockId, setPendingImageBlockId] = useState<string>();
   const [highlightedBlockId, setHighlightedBlockId] = useState<string>();
   const [canvasScale, setCanvasScale] = useState(1);
@@ -831,7 +877,7 @@ export function PublishingStudio() {
   const [imageAttention, setImageAttention] = useState<{ blockId: string; attempt: number; message: string }>();
   const [packageProject, setPackageProject] = useState<StudioProject>();
   const [savedProjects, setSavedProjects] = useState<StudioProject[]>([]);
-  const [storageMessage, setStorageMessage] = useState<string>();
+  const [storageMessage, setStorageMessage] = useState<string | { message: string; undo: ParagraphBlock[] }>();
   const [bulkResults, setBulkResults] = useState<BulkImportResult[]>([]);
   const [bulkProgress, setBulkProgress] = useState<{
     fileName: string;
@@ -881,21 +927,27 @@ export function PublishingStudio() {
     ),
     [state, reportStyle, acceptedReviewItemIds, imageReviews, currentProject],
   );
-  const hasUnsavedEdits = hasUnappliedImageChanges || hasProjectChanges;
+  const hasUnsavedEdits = !!chartInsertion || hasUnappliedImageChanges || hasProjectChanges;
   const hasUnsavedChanges = hasUnsavedEdits || (!!manifest && !currentProject);
   const selectedBlock = manifest?.blocks.find(
     (block) => block.id === selectedBlockId,
   );
   const isVisualEditing = activeTool === "visuals" && !!selectedBlock && isVisualBlock(selectedBlock);
-  const displayManifest = useMemo(() => manifest ? {
-    ...manifest,
-    blocks: manifest.blocks.map((block) => {
+  const displayManifest = useMemo(() => {
+    if (!manifest) return undefined;
+    const blocks = manifest.blocks.map((block) => {
       if (block.type !== "image") return block;
       const review = imageReviews.find((item) => item.blockId === block.id);
       return applyImageReview(block, review && block.id === selectedBlockId
         ? { ...review, description: block.alt } : review);
-    }),
-  } : undefined, [manifest, imageReviews, selectedBlockId]);
+    });
+    if (chartInsertion) {
+      const index = chartInsertion.beforeBlockId
+        ? blocks.findIndex(block => block.id === chartInsertion.beforeBlockId) : blocks.length;
+      if (index >= 0) blocks.splice(index, 0, chartInsertion.preview ?? chartInsertion.block);
+    }
+    return { ...manifest, blocks };
+  }, [manifest, imageReviews, selectedBlockId, chartInsertion]);
   const integrity = useMemo(
     () =>
       manifest && state.status === "ready"
@@ -926,6 +978,7 @@ export function PublishingStudio() {
 
       if (
         block.type !== "percentage-ring-group" &&
+        block.type !== "paired-percentage-comparison" &&
         block.type !== "horizontal-bar-chart" &&
         block.type !== "grouped-column-comparison"
       ) {
@@ -944,9 +997,6 @@ export function PublishingStudio() {
       ];
     });
   }, [manifest]);
-  const verifiedDataVisualCount = dataVisualStatuses.filter(
-    (visual) => visual.status === "verified",
-  ).length;
   const dataVisualsNeedingReview = dataVisualStatuses.filter(
     (visual) => visual.status === "review-required",
   );
@@ -990,7 +1040,7 @@ export function PublishingStudio() {
       return [];
     }
 
-    return manifest.reviewItems
+    const result: Issue[] = manifest.reviewItems
       .filter((item) => item.code !== "comments-omitted" || item.severity === "blocker")
       .map((item) => ({
         id: item.id,
@@ -1001,10 +1051,22 @@ export function PublishingStudio() {
           ? `${item.source.part} · item ${item.source.index}`
           : undefined,
       }));
-  }, [manifest]);
+    for (const visual of dataVisualsNeedingReview) {
+      const existing = result.findIndex(issue => issue.blockId === visual.id);
+      if (existing >= 0) {
+        result[existing] = { ...result[existing], severity: "blocker", action: "review-chart" };
+      } else {
+        result.push({
+          id: `chart-review-${visual.id}`, blockId: visual.id,
+          label: `Review chart: ${visual.title}`, severity: "blocker", action: "review-chart",
+        });
+      }
+    }
+    return result;
+  }, [manifest, dataVisualsNeedingReview]);
   const acceptedIssueIds = useMemo(
-    () => new Set(acceptedReviewItemIds),
-    [acceptedReviewItemIds],
+    () => new Set(acceptedReviewItemIds.filter(id => !issues.some(issue => issue.id === id && issue.severity === "blocker"))),
+    [acceptedReviewItemIds, issues],
   );
   const openIssues = issues.filter(
     (issue) =>
@@ -1472,6 +1534,83 @@ export function PublishingStudio() {
     }
   }
 
+  function openTextCallout(selection: TextCalloutSelection, enabled: boolean) {
+    if (!manifest || !selection.length || !requireAppliedEdits()) return false;
+    const drafts: ParagraphBlock[] = [];
+    const previous: ParagraphBlock[] = [];
+    try {
+      for (const range of selection) {
+        const block = manifest.blocks.find(item => item.id === range.blockId);
+        if (block?.type !== "paragraph") return false;
+        drafts.push(setTextCallout(block, range, enabled));
+        previous.push(block);
+      }
+    } catch {
+      setStorageMessage("Select the text you want to format.");
+      return false;
+    }
+    dispatch({ type: "format-text", blocks: drafts });
+    setStorageMessage({ message: enabled ? "Callout successfully added" : "Converted to paragraph.", undo: previous });
+    setActiveTool(undefined);
+    window.requestAnimationFrame(() => reportSurfaceRef.current?.contentDocument
+      ?.getElementById(`report-block-${selection[0].blockId}`)
+      ?.querySelector<HTMLElement>("[data-report-text-block]")?.focus({ preventScroll: true }));
+    return true;
+  }
+
+  function undoTextCallout() {
+    if (!manifest || !storageMessage || typeof storageMessage === "string") return;
+    const blocks = manifest.blocks.flatMap(block => {
+      if (block.type !== "paragraph") return [];
+      const previous = storageMessage.undo.find(item => item.id === block.id && item.text === block.text);
+      if (!previous) return [];
+      const restored = { ...block };
+      if (previous.callouts) restored.callouts = previous.callouts;
+      else delete restored.callouts;
+      return [restored];
+    });
+    if (!blocks.length) { setStorageMessage(undefined); return; }
+    dispatch({ type: "format-text", blocks });
+    setStorageMessage("Formatting undone.");
+    window.requestAnimationFrame(() => reportSurfaceRef.current?.contentDocument
+      ?.getElementById(`report-block-${blocks[0].id}`)
+      ?.querySelector<HTMLElement>("[data-report-text-block]")?.focus({ preventScroll: true }));
+  }
+
+  function startChartInsertion(beforeBlockId?: string) {
+    if (!manifest || !requireAppliedEdits()) return;
+    const index = beforeBlockId ? manifest.blocks.findIndex(block => block.id === beforeBlockId) : manifest.blocks.length;
+    if (index < 0) return;
+    const id = crypto.randomUUID();
+    setInsertionFocus(undefined);
+    setChartInsertion({ beforeBlockId, block: {
+      id, type: "visual-placeholder", description: "New chart",
+      source: { part: "studio", index }, provenance: { kind: "studio" },
+    } });
+    setSelectedBlockId(id);
+    setActiveTool("insert-chart");
+  }
+
+  function finishChartInsertion(block?: ReportBlock) {
+    if (!manifest || !chartInsertion) return;
+    const { beforeBlockId } = chartInsertion;
+    if (block) {
+      const index = beforeBlockId ? manifest.blocks.findIndex(item => item.id === beforeBlockId) : manifest.blocks.length;
+      if (index < 0) return;
+      dispatch({ type: "add-visual", block, index });
+    }
+    setChartInsertion(undefined);
+    setSelectedBlockId(undefined);
+    setActiveTool(undefined);
+    if (block) {
+      window.requestAnimationFrame(() => reportSurfaceRef.current?.contentDocument
+        ?.getElementById(`report-block-${block.id}`)?.scrollIntoView({ block: "nearest" }));
+      restoreVisualEditorFocus(block.id);
+    } else {
+      setInsertionFocus(beforeBlockId ?? "");
+    }
+  }
+
   function changeTool(tool?: Tool) {
     if (!requireAppliedEdits()) return;
     if (pendingImageBlockId) {
@@ -1522,6 +1661,47 @@ export function PublishingStudio() {
   function panelContent() {
     if (!activeTool) {
       return null;
+    }
+
+    if (activeTool === "insert-chart" && chartInsertion) {
+      return <section aria-label="Insert chart" className={styles.chartEditorSurface}
+        onKeyDown={event => {
+          if (event.key === "Escape" && !event.defaultPrevented) { event.preventDefault(); finishChartInsertion(); }
+        }}>
+        {chartInsertion.type ? <VerifiedChartEditor
+          key={chartInsertion.block.id} block={chartInsertion.block} initialType={chartInsertion.type} intent="insert"
+          onPreview={previewInsertedChart} onDone={finishChartInsertion}
+          onCancel={() => finishChartInsertion()} onRemove={() => finishChartInsertion()} />
+          : <div className={styles.chartEditor}>
+            <header className={styles.chartEditorHeader}>
+              <h2 ref={chartPickerHeading} tabIndex={-1}><Subtitle1>Insert chart</Subtitle1></h2>
+              <Button type="button" appearance="subtle" className={styles.chartEditorDismiss} aria-label="Close chart picker"
+                icon={<Dismiss20Regular />} onClick={() => finishChartInsertion()} />
+            </header>
+            <div className={styles.chartEditorBody}>
+              <Body1>Choose a chart for this location.</Body1>
+              {([
+                ["horizontal-bar-chart", "Bar chart", "Compare values"],
+                ["paired-percentage-comparison", "Paired comparison", "Show two percentage findings"],
+                ["percentage-ring-group", "Percentage rings", "Show three percentage findings"],
+                ["grouped-column-comparison", "Percentage comparison grid", "Compare two series across four groups"],
+              ] as const).map(([type, title, description]) => <Button key={type} type="button"
+                className={styles.chartTypeCard}
+                onClick={() => setChartInsertion(current => current ? { ...current, type } : current)}>
+                <span className={styles.chartTypePreview} aria-hidden="true" data-chart-type={type}>
+                  {type === "paired-percentage-comparison" ? <><b>%</b><b>%</b></>
+                    : type === "grouped-column-comparison" ? <><i /><i /><i /><i /></> : <><i /><i /><i /></>}
+                </span>
+                <span><Body1Strong block>{title}</Body1Strong><Caption1 block>{description}</Caption1></span>
+              </Button>)}
+            </div>
+            <footer className={styles.chartEditorFooter}>
+              <div className={styles.editorActions}>
+                <Button type="button" className={styles.chartAction} onClick={() => finishChartInsertion()}>Cancel</Button>
+              </div>
+            </footer>
+          </div>}
+      </section>;
     }
 
     if (activeTool === "document") {
@@ -1604,12 +1784,15 @@ export function PublishingStudio() {
                   </div>
                   <button
                     disabled={!issue.blockId}
-                    onClick={() => highlightIssue(issue.blockId)}
+                    onClick={() => {
+                      if (issue.action === "review-chart" && issue.blockId) selectBlock(issue.blockId);
+                      else highlightIssue(issue.blockId);
+                    }}
                     type="button"
                   >
                     <Body1Strong block>{issue.label}</Body1Strong>
                     <Caption1 block>
-                      {issue.blockId
+                      {issue.action === "review-chart" ? "Open chart editor" : issue.blockId
                         ? `Highlight in report${
                             issue.sourceLabel ? ` · ${issue.sourceLabel}` : ""
                           }`
@@ -1677,64 +1860,6 @@ export function PublishingStudio() {
           </section>
         );
       }
-      return (
-        <PanelShell onClose={() => changeTool(undefined)} title="Visuals">
-            <div className={styles.panelSection}>
-              <section className={styles.documentStatus}>
-                <Body1Strong block>Data visual status</Body1Strong>
-                <dl className={styles.documentStatusList}>
-                  <div>
-                    <dt>Verified</dt>
-                    <dd className={styles.statusPositive}>
-                      {verifiedDataVisualCount}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Needs review</dt>
-                    <dd
-                      className={
-                        dataVisualsNeedingReview.length === 0
-                          ? styles.statusPositive
-                          : styles.statusWarning
-                      }
-                    >
-                      {dataVisualsNeedingReview.length}
-                    </dd>
-                  </div>
-                </dl>
-                <Caption1 block>
-                  Guided Word charts and tables are verified automatically when
-                  their structure matches the requested Glint Labs visual.
-                </Caption1>
-              </section>
-              {dataVisualsNeedingReview.length > 0 ? (
-                <>
-                  <Body1Strong block>Needs review</Body1Strong>
-                  {dataVisualsNeedingReview.map((visual) => (
-                    <button
-                      className={styles.secondaryAction}
-                      key={visual.id}
-                      onClick={() => selectBlock(visual.id)}
-                      type="button"
-                    >
-                      Review {visual.title}
-                    </button>
-                  ))}
-                </>
-              ) : dataVisualStatuses.length > 0 ? (
-                <Body1 block>
-                  No chart-by-chart confirmation is needed. Publishing will
-                  flag a visual only if its source becomes ambiguous or no
-                  longer matches.
-                </Body1>
-              ) : (
-                <Body1 block>
-                  This report does not contain structured data visuals.
-                </Body1>
-              )}
-            </div>
-        </PanelShell>
-      );
     }
 
     return null;
@@ -1836,31 +1961,6 @@ export function PublishingStudio() {
         <div className={styles.reportStatus}>
           {manifest ? (
             <>
-              {dataVisualsNeedingReview.length > 0 ? (
-                <button
-                  aria-pressed={activeTool === "visuals"}
-                  className={styles.contextualAction}
-                  onClick={() =>
-                    changeTool(
-                      activeTool === "visuals" ? undefined : "visuals",
-                    )
-                  }
-                  type="button"
-                >
-                  <span className={styles.fullActionLabel}>
-                    {dataVisualsNeedingReview.length}{" "}
-                    {dataVisualsNeedingReview.length === 1
-                      ? "visual needs review"
-                      : "visuals need review"}
-                  </span>
-                  <span className={styles.compactActionLabel}>
-                    {dataVisualsNeedingReview.length}{" "}
-                    {dataVisualsNeedingReview.length === 1
-                      ? "visual"
-                      : "visuals"}
-                  </span>
-                </button>
-              ) : null}
               {openIssues.length > 0 ? (
                 <button
                   aria-pressed={activeTool === "issues"}
@@ -2097,21 +2197,26 @@ export function PublishingStudio() {
       <div
         className={`${styles.workspace} ${
           activeTool ? styles.panelOpen : ""
-        } ${isVisualEditing ? styles.chartEditing : ""}`}
+        } ${isVisualEditing || chartInsertion ? styles.chartEditing : ""}`}
       >
-        {!isVisualEditing ? panelContent() : null}
+        {panelContent()}
 
         <main className={styles.canvas} id="main-content" ref={canvasRef}>
           {storageMessage ? (
-            <div className={styles.storageMessage} role="status">
-              <Body1>{storageMessage}</Body1>
-              <button
+            <div className={`${styles.storageMessage} ${typeof storageMessage === "string" ? "" : styles.calloutToast}`} role="status">
+              {typeof storageMessage === "string" ? <Body1>{storageMessage}</Body1> : (
+                <div className={styles.calloutToastMessage}>
+                  <CheckmarkCircle20Regular aria-hidden="true" className={styles.calloutToastIcon} />
+                  <Body1Strong>{storageMessage.message}</Body1Strong>
+                </div>
+              )}
+              {typeof storageMessage === "string" ? <button
                 aria-label="Dismiss save message"
                 onClick={() => setStorageMessage(undefined)}
                 type="button"
               >
                 <Dismiss20Regular aria-hidden="true" />
-              </button>
+              </button> : <Button appearance="outline" size="small" className={styles.toastUndo} onClick={undoTextCallout}>Undo</Button>}
             </div>
           ) : null}
           {state.status === "empty" ? (
@@ -2235,7 +2340,17 @@ export function PublishingStudio() {
                     coverEyebrow=""
                     highlightedBlockId={highlightedBlockId}
                     manifest={displayManifest ?? manifest}
+                    blockOverrides={chartInsertion && !chartInsertion.preview ? {
+                      [chartInsertion.block.id]: <div className={reportStyles.chartInsertionPlaceholder} role="status">
+                        Chart preview will appear here.
+                      </div>,
+                    } : undefined}
+                    onInsertChart={selectedBlockId ? undefined : startChartInsertion}
+                    insertionFocus={insertionFocus === undefined ? undefined : {
+                      beforeBlockId: insertionFocus, onRestored: () => setInsertionFocus(undefined),
+                    }}
                     onSelectBlock={selectBlock}
+                    onSelectText={selectedBlockId ? undefined : openTextCallout}
                     reportStyle={reportStyle}
                     selectedBlockId={selectedBlockId}
                     previewViewport
@@ -2245,7 +2360,6 @@ export function PublishingStudio() {
             </div>
           ) : null}
         </main>
-        {isVisualEditing ? panelContent() : null}
       </div>
     </section>
   );

@@ -22,6 +22,11 @@ function blockText(block: ReportBlock): (string | undefined)[] {
       return [];
     case "branded-visual":
       return [block.title, ...block.values];
+    case "paired-percentage-comparison":
+      return [
+        block.presentation?.title ?? block.title, ...(block.presentation?.leadIns ?? []),
+        ...block.metrics.map(metric => metric.description), block.presentation?.note, block.footnote,
+      ];
     case "percentage-ring-group":
       return [block.title, ...block.metrics.map(metric => metric.description), block.footnote];
     case "listening-approach-continuum":

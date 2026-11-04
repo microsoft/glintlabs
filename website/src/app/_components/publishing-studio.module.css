@@ -9,6 +9,8 @@
   --studio-action-radius: 16px;
   --studio-compact-action-height: 32px;
   --studio-compact-action-radius: 12px;
+  --studio-toast-border: #efefef;
+  --studio-toast-shadow: 0 0 2px rgb(0 0 0 / 10%), 0 4px 8px rgb(0 0 0 / 3%), 0 8px 16px rgb(0 0 0 / 6%);
 
   min-height: max(100vh, 620px);
   padding-top: 0;
@@ -322,10 +324,6 @@
   background: var(--warning-background);
 }
 
-.compactActionLabel {
-  display: none;
-}
-
 .issueAction {
   color: var(--danger);
   background: var(--danger-background);
@@ -539,63 +537,7 @@
   background: var(--positive);
 }
 
-.documentStatus {
-  display: grid;
-  gap: 10px;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--studio-surface-subtle);
-}
-
-.documentStatusList {
-  display: grid;
-}
-
-.documentStatusList > div {
-  display: flex;
-  gap: 12px;
-  align-items: baseline;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-top: 1px solid var(--border);
-}
-
-.documentStatusList > div:first-child {
-  padding-top: 0;
-  border-top: 0;
-}
-
-.documentStatusList > div:last-child {
-  padding-bottom: 0;
-}
-
-.documentStatusList dt {
-  font-size: 13px;
-  line-height: 18px;
-}
-
-.documentStatusList dd {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: right;
-}
-
-.statusPositive {
-  color: var(--positive);
-}
-
-.statusWarning {
-  color: var(--warning);
-}
-
 .statusPending {
-  color: var(--muted);
-}
-
-.documentStatus > span:last-child {
   color: var(--muted);
 }
 
@@ -1688,6 +1630,60 @@
   background: rgb(255 255 255 / 12%);
 }
 
+.canvas .storageMessage.calloutToast {
+  position: fixed;
+  top: auto;
+  bottom: 24px;
+  left: 24px;
+  gap: var(--spacingHorizontalXL, 20px);
+  width: max-content;
+  padding: 12px 16px;
+  border-color: var(--studio-toast-border);
+  border-radius: var(--studio-action-radius);
+  color: var(--colorNeutralForeground1);
+  background: var(--studio-surface);
+  box-shadow: var(--studio-toast-shadow);
+  transform: none;
+}
+
+.calloutToastMessage {
+  display: flex;
+  align-items: center;
+  gap: var(--spacingHorizontalSNudge, 6px);
+  min-width: 0;
+}
+
+.calloutToastIcon {
+  flex-shrink: 0;
+  color: var(--colorPaletteGreenForeground1);
+}
+
+.storageMessage.calloutToast .toastUndo {
+  width: auto;
+  min-width: 0;
+  height: 24px;
+  min-height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--studio-action-border);
+  border-radius: var(--borderRadiusCircular);
+  font-size: var(--fontSizeBase200);
+  font-weight: var(--fontWeightRegular);
+  line-height: var(--lineHeightBase200);
+}
+
+.storageMessage.calloutToast .toastUndo:hover {
+  border-color: var(--studio-action-border-hover);
+  background: var(--studio-surface-subtle);
+}
+
+.storageMessage.calloutToast .toastUndo:active {
+  background: var(--colorNeutralBackground1Pressed);
+}
+
+@media (max-width: 479px) {
+  .canvas .storageMessage.calloutToast { left: 16px; }
+}
+
 .canvasContent {
   display: flex;
   align-items: center;
@@ -2047,7 +2043,7 @@
 }
 
 .workspace.chartEditing {
-  grid-template-columns: minmax(0, 1fr) 472px;
+  grid-template-columns: 472px minmax(0, 1fr);
 }
 
 .chartEditorSurface {
@@ -2068,6 +2064,63 @@
   overflow-y: auto;
   padding: var(--spacingHorizontalXXL, 24px);
 }
+
+.chartEditor .chartTypeCard {
+  display: flex;
+  justify-content: flex-start;
+  gap: var(--spacingHorizontalXL, 24px);
+  width: 100%;
+  min-height: 96px;
+  padding: var(--spacingHorizontalL, 16px);
+  border: 0;
+  border-radius: var(--borderRadiusMedium);
+  color: var(--colorNeutralForeground1);
+  background: var(--colorNeutralBackground2);
+  text-align: left;
+}
+
+.chartEditor .chartTypeCard:hover { background: var(--colorNeutralBackground3Hover); }
+.chartEditor .chartTypeCard:active { background: var(--colorNeutralBackground3Pressed); }
+
+.chartTypePreview {
+  display: flex;
+  flex: 0 0 80px;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--spacingHorizontalS, 8px);
+  height: 56px;
+  color: var(--colorBrandForeground1);
+}
+
+.chartTypePreview i {
+  width: 32px;
+  height: 8px;
+  border-radius: var(--borderRadiusSmall);
+  background: currentColor;
+}
+
+.chartTypePreview[data-chart-type="horizontal-bar-chart"] { flex-direction: column; align-items: flex-start; }
+.chartTypePreview i:nth-child(2) { width: 56px; }
+.chartTypePreview i:nth-child(3) { width: 40px; }
+.chartTypePreview b { align-self: center; font-size: 24px; }
+
+.chartTypePreview[data-chart-type="percentage-ring-group"] i {
+  width: 20px;
+  height: 20px;
+  border: 3px solid currentColor;
+  border-radius: 50%;
+  background: transparent;
+  align-self: center;
+}
+
+.chartTypePreview[data-chart-type="grouped-column-comparison"] i {
+  width: 8px;
+  height: 24px;
+}
+
+.chartTypePreview[data-chart-type="grouped-column-comparison"] i:nth-child(2) { height: 40px; }
+.chartTypePreview[data-chart-type="grouped-column-comparison"] i:nth-child(3) { height: 32px; }
+.chartTypePreview[data-chart-type="grouped-column-comparison"] i:nth-child(4) { height: 48px; }
 
 .chartEditing .canvasContent {
   padding: var(--spacingHorizontalXXL, 24px);
@@ -2159,8 +2212,7 @@
   gap: var(--spacingVerticalS, 8px);
 }
 
-.chartEditor .field > span { font-weight: 400; }
-.chartEditorBody[data-chart-tab="data"] .field > span { font-weight: 625; }
+.chartEditor .field > span { font-weight: 625; }
 
 .chartEditor .optionGroup legend {
   margin-bottom: var(--spacingVerticalS, 8px);
@@ -2459,6 +2511,8 @@
 .chartDataGrid th { font-weight: 625; }
 .chartDataGrid thead th { padding-bottom: 10px; }
 .chartDataGrid th:nth-child(2), .chartDataGrid td:nth-child(2) { width: 70px; padding-right: 8px; }
+.chartDataGrid[data-chart-type="grouped-column-comparison"] th:nth-child(n+2),
+.chartDataGrid[data-chart-type="grouped-column-comparison"] td:nth-child(n+2) { width: 88px; padding-right: 8px; }
 .chartDataGrid th:last-child:has(.chartCellLabel), .chartDataGrid td:has(.chartRemoveRow) { width: 16px; padding-right: 0; }
 .chartDataGrid input {
   width: 100%;
@@ -2505,6 +2559,11 @@
 
   .chartEditorSurface {
     border-left: 0;
+    grid-row: 2;
+  }
+
+  .chartEditing > .canvas {
+    grid-row: 1;
   }
 
   .chartEditing .canvasContent {
@@ -2825,14 +2884,6 @@
   .viewportSwitcher button {
     width: 32px;
     height: 32px;
-  }
-
-  .fullActionLabel {
-    display: none;
-  }
-
-  .compactActionLabel {
-    display: inline;
   }
 
   .contextualAction,

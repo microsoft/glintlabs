@@ -24,6 +24,7 @@ const imageSourceSchema = z.union([
   z.string().startsWith("/"),
 ]);
 const verifiedVisualTypeSchema = z.enum([
+  "paired-percentage-comparison",
   "percentage-ring-group",
   "horizontal-bar-chart",
   "grouped-column-comparison",
@@ -95,6 +96,12 @@ export const chartPresentationSchema = z.object({
 });
 export type ChartPresentation = z.infer<typeof chartPresentationSchema>;
 
+export const pairedComparisonPresentationSchema = chartPresentationSchema
+  .pick({ title: true, note: true, palette: true })
+  .extend({
+    leadIns: z.tuple([z.string().max(80), z.string().max(80)]).default(["", ""]),
+  });
+
 const chartItemSchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
@@ -118,6 +125,19 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
     type: z.literal("paragraph"),
     text: z.string().min(1),
     links: z.array(reportTextLinkSchema).optional(),
+    callouts: z.array(z.object({
+      start: z.number().int().nonnegative(),
+      end: z.number().int().positive(),
+    })).optional(),
+  }).superRefine((block, context) => {
+    let previousEnd = 0;
+    for (const [index, range] of (block.callouts ?? []).entries()) {
+      if (range.start < previousEnd || range.start >= range.end || range.end > block.text.length ||
+        !block.text.slice(range.start, range.end).trim()) {
+        context.addIssue({ code: "custom", message: "Callouts must use nonempty, ordered, non-overlapping text ranges.", path: ["callouts", index] });
+      }
+      previousEnd = range.end;
+    }
   }),
   baseBlockSchema.extend({
     type: z.literal("list-item"),
@@ -156,6 +176,7 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
   }),
   baseBlockSchema.extend({
     type: z.literal("percentage-ring-group"),
+    presentation: chartPresentationSchema.optional(),
     title: z.string().min(1),
     metrics: z
       .array(
@@ -167,6 +188,18 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
       )
       .length(3),
     footnote: z.string().min(1),
+    verifiedSource: verifiedDataSourceSchema.optional(),
+  }),
+  baseBlockSchema.extend({
+    type: z.literal("paired-percentage-comparison"),
+    title: z.string().min(1),
+    metrics: z.array(z.object({
+      id: z.string().min(1),
+      value: percentageSchema,
+      description: z.string().min(1),
+    })).length(2),
+    footnote: z.string().min(1),
+    presentation: pairedComparisonPresentationSchema.optional(),
     verifiedSource: verifiedDataSourceSchema.optional(),
   }),
   baseBlockSchema.extend({
@@ -261,6 +294,7 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
   }),
   baseBlockSchema.extend({
     type: z.literal("grouped-column-comparison"),
+    presentation: chartPresentationSchema.optional(),
     title: z.string().min(1),
     subtitle: z.string().min(1),
     series: z.tuple([z.string().min(1), z.string().min(1)]),

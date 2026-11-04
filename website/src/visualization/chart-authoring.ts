@@ -1,5 +1,5 @@
 import { canonicalJson, sha256Text } from "../integrity/approved-content.ts";
-import { parseChartValue, type ChartValueType, type DataVisualSourceBlock } from "./verified-data-visual.ts";
+import { compatibleVerifiedVisuals, parseChartValue, type ChartValueType, type DataVisualSourceBlock, type VerifiedDataVisualType } from "./verified-data-visual.ts";
 
 export type ChartTable = {
   columns: string[];
@@ -7,13 +7,22 @@ export type ChartTable = {
 };
 export type ChartTableError = { row: number; column: number; message: string };
 
-export function validateChartTable(table: ChartTable, unit: ChartValueType = "percentage"): ChartTableError[] {
+export function validateChartTable(table: ChartTable, unit: ChartValueType = "percentage", visualType: VerifiedDataVisualType = "horizontal-bar-chart"): ChartTableError[] {
   const errors: ChartTableError[] = [];
-  if (table.columns.length !== 2 || table.columns.some(value => !value.trim() || value.length > 100)) {
-    errors.push({ row: -1, column: -1, message: "Use two column headings, each between 1 and 100 characters." });
+  const columns = visualType === "grouped-column-comparison" ? 3 : 2;
+  if (table.columns.length !== columns || table.columns.some(value => !value.trim() || value.length > 100)) {
+    errors.push({ row: -1, column: -1, message: `Use ${columns === 3 ? "three" : "two"} column headings, each between 1 and 100 characters.` });
   }
-  if (table.rows.length < 2 || table.rows.length > 12) {
+  const fixedRows = visualType === "percentage-ring-group" ? 3 : visualType === "grouped-column-comparison" ? 4 : visualType === "paired-percentage-comparison" ? 2 : undefined;
+  if (fixedRows && table.rows.length !== fixedRows) {
+    errors.push({ row: -1, column: -1, message: visualType === "grouped-column-comparison"
+      ? "Use exactly four categories and two percentage series."
+      : `Use exactly ${fixedRows === 3 ? "three" : "two"} percentage findings.` });
+  } else if (table.rows.length < 2 || table.rows.length > 12) {
     errors.push({ row: -1, column: -1, message: "Use between 2 and 12 categories." });
+  }
+  if (visualType !== "horizontal-bar-chart" && unit !== "percentage") {
+    errors.push({ row: -1, column: -1, message: "Use percentage values for this chart." });
   }
   const seen = new Set<string>();
   table.rows.forEach((row, index) => {
@@ -23,17 +32,19 @@ export function validateChartTable(table: ChartTable, unit: ChartValueType = "pe
       errors.push({ row: index, column: 0, message: "Use a unique category label between 1 and 160 characters." });
     }
     seen.add(key);
-    const raw = row.cells[1]?.trim() ?? "";
-    if (row.cells.length !== 2 || raw.length > 24 || parseChartValue(raw, unit) === undefined) {
-      errors.push({ row: index, column: 1, message: unit === "percentage"
-        ? "Enter a percentage from 0 to 100. Use a decimal point; do not leave missing values."
-        : "Enter a number without % signs or commas." });
+    for (let column = 1; column < columns; column++) {
+      const raw = row.cells[column]?.trim() ?? "";
+      if (row.cells.length !== columns || raw.length > 24 || parseChartValue(raw, unit) === undefined) {
+        errors.push({ row: index, column, message: unit === "percentage"
+          ? "Enter a percentage from 0 to 100. Use a decimal point; do not leave missing values."
+          : "Enter a number without % signs or commas." });
+      }
     }
   });
   return errors;
 }
 
-export function parseChartTable(input: string, header = true): ChartTable {
+export function parseChartTable(input: string, header = true, visualType: VerifiedDataVisualType = "horizontal-bar-chart"): ChartTable {
   const text = input.replace(/^\uFEFF/, "");
   if (text.length > 200000) throw new Error("Use a table smaller than 200 KB, with up to 12 data rows.");
   const counts: Record<string, number> = { "\t": 0, ",": 0, ";": 0 };
@@ -71,17 +82,20 @@ export function parseChartTable(input: string, header = true): ChartTable {
   }
   if (quoted) throw new Error("A quoted cell is unfinished. Close its quotation mark.");
   if (cell || cells.length) finishRow();
-  if (!records.length || records.some(row => row.length !== 2)) throw new Error("Use exactly two columns: category labels and percentage values.");
-  const columns = header ? records.shift()! : ["Category", "Percentage (%)"];
+  const columnCount = visualType === "grouped-column-comparison" ? 3 : 2;
+  if (!records.length || records.some(row => row.length !== columnCount)) throw new Error(columnCount === 3
+    ? "Use exactly three columns: category labels and two percentage series."
+    : "Use exactly two columns: category labels and percentage values.");
+  const columns = header ? records.shift()! : columnCount === 3 ? ["Category", "Series 1", "Series 2"] : ["Category", "Percentage (%)"];
   if (records.length > 12 || columns.some(value => !value || value.length > 100) ||
-      records.some(row => row[0].length > 160 || row[1].length > 24)) {
+      records.some(row => row[0].length > 160 || row.slice(1).some(value => value.length > 24))) {
     throw new Error("Use up to 12 rows, headings up to 100 characters, labels up to 160, and values up to 24.");
   }
   return { columns, rows: records.map((cells, index) => ({ id: `row-${index + 1}`, cells })) };
 }
 
 export async function createStudioChartSource({
-  id, table, sourceName, synthetic, original, unit = "percentage",
+  id, table, sourceName, synthetic, original, unit = "percentage", visualType = "horizontal-bar-chart",
 }: {
   id: string;
   table: ChartTable;
@@ -89,8 +103,9 @@ export async function createStudioChartSource({
   synthetic: boolean;
   original?: DataVisualSourceBlock;
   unit?: ChartValueType;
+  visualType?: VerifiedDataVisualType;
 }): Promise<DataVisualSourceBlock> {
-  const errors = validateChartTable(table, unit);
+  const errors = validateChartTable(table, unit, visualType);
   if (errors.length) throw new Error(errors[0].message);
   if (!sourceName.trim() || sourceName.length > 200) throw new Error("Add a source name of up to 200 characters.");
   const originalSource = original?.data.originalSource ?? (original ? {
@@ -103,15 +118,21 @@ export async function createStudioChartSource({
     columns: table.columns.map(value => value.trim()),
     rows: table.rows.map(row => ({ id: row.id, cells: row.cells.map(value => value.trim()) })),
     evidenceImage: original?.data.evidenceImage,
-    recommendedVisualType: "horizontal-bar-chart" as const,
+    recommendedVisualType: visualType,
     sourceNote: `${synthetic ? "Synthetic example. Not research findings. " : ""}Source: ${sourceName.trim()}. ${originalSource ? "Edited in Studio; not unchanged Word values." : "Author-provided Studio table."}`,
     synthetic,
     originalSource,
   };
-  return {
+  const result: DataVisualSourceBlock = {
     id, type: "data-visual-source",
     data: { ...data, sha256: await sha256Text(canonicalJson(data)) },
     provenance: { kind: "studio" },
     source: { part: "studio", index: original?.source.index ?? 0 },
   };
+  if (!compatibleVerifiedVisuals(result).includes(visualType)) {
+    throw new Error(visualType === "paired-percentage-comparison"
+      ? "Use exactly two percentage findings."
+      : "This table is not compatible with the selected chart.");
+  }
+  return result;
 }

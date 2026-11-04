@@ -29,6 +29,52 @@ const source: DataVisualSourceBlock = {
   source: { part: "word/document.xml", index: 10 },
 };
 
+test("paired comparisons require exactly two independently valid percentage findings", () => {
+  const pair = { ...source, data: { ...source.data, rows: source.data.rows.slice(0, 2) } };
+  assert.ok(compatibleVerifiedVisuals(pair).includes("paired-percentage-comparison"));
+  for (const data of [
+    { ...pair.data, unit: "number" as const },
+    source.data,
+    { ...pair.data, rows: pair.data.rows.slice(0, 1) },
+    { ...pair.data, rows: [{ id: "one", cells: ["First", "101"] }, pair.data.rows[1]] },
+  ]) {
+    assert.equal(compatibleVerifiedVisuals({ ...pair, data }).includes("paired-percentage-comparison"), false);
+  }
+});
+
+test("paired comparisons preserve precision, provenance and independent totals through save and restore", async () => {
+  const edited = await createStudioChartSource({
+    id: source.id,
+    table: parseChartTable("Finding,Percentage\nSee an opportunity,83.00%\nHave a clear plan,43%"),
+    sourceName: "Synthetic paired findings", synthetic: true, original: source,
+    visualType: "paired-percentage-comparison",
+  });
+  const visual = createVerifiedDataVisual(edited, "paired-percentage-comparison", "2026-11-03T20:00:00.000Z");
+  assert.ok(visual.type === "paired-percentage-comparison");
+  assert.deepEqual(visual.metrics.map(metric => metric.value), [83, 43]);
+  const presentation = { title: "Opportunity and readiness", leadIns: ["While...", "Only..."], note: "Independent findings.", palette: "brand" };
+  const restored = reportBlockSchema.parse({ ...visual, presentation });
+  assert.ok(restored.type === "paired-percentage-comparison");
+  assert.deepEqual(restored.presentation, presentation);
+  assert.equal(restored.verifiedSource?.rows[0].cells[1], "83.00%");
+  assert.equal(restored.verifiedSource?.originalSource?.sha256, source.data.sha256);
+  assert.equal(verifiedVisualMatchesSource(restored), true);
+  assert.equal(verifiedVisualMatchesSource({
+    ...restored, metrics: restored.metrics.map((metric, i) => i ? metric : { ...metric, value: 84 }),
+  }), false);
+  assert.equal(verifiedVisualMatchesSource({ ...restored, footnote: "Changed source note" }), false);
+  for (const raw of ["-1", "101", "1e2", ""]) {
+    await assert.rejects(() => createStudioChartSource({
+      id: source.id, table: parseChartTable(`Finding,Percentage\nFirst,${raw}\nSecond,43`),
+      sourceName: "Invalid pair", synthetic: true, visualType: "paired-percentage-comparison",
+    }));
+  }
+  await assert.rejects(() => createStudioChartSource({
+    id: source.id, table: { columns: source.data.columns, rows: source.data.rows },
+    sourceName: "Three findings", synthetic: true, visualType: "paired-percentage-comparison",
+  }));
+});
+
 test("saves chart appearance separately without rewriting verified research data", () => {
   const visual = createVerifiedDataVisual(source, "horizontal-bar-chart", "2026-09-17T20:00:00.000Z");
   const presentation = {
@@ -44,6 +90,49 @@ test("saves chart appearance separately without rewriting verified research data
   assert.equal(verifiedVisualMatchesSource(restored), true);
   assert.equal(restored.type === "horizontal-bar-chart" && restored.title, "Manager optimism");
   assert.deepEqual(restored.type === "horizontal-bar-chart" && restored.verifiedSource?.rows, source.data.rows);
+});
+
+test("Studio rings require three findings and preserve independent percentages and appearance", async () => {
+  const table = parseChartTable("Finding,Percentage\nFirst,83.00%\nSecond,43\nThird,0", true, "percentage-ring-group");
+  const edited = await createStudioChartSource({
+    id: "rings", table, sourceName: "Ring findings", synthetic: false, visualType: "percentage-ring-group",
+  });
+  const visual = createVerifiedDataVisual(edited, "percentage-ring-group", "2026-11-04T20:00:00.000Z");
+  const presentation = { title: "Three findings", note: "Independent percentages.", palette: "brand", density: "comfortable", sort: "source", subtitle: "" };
+  const restored = reportBlockSchema.parse({ ...visual, presentation });
+  assert.ok(restored.type === "percentage-ring-group");
+  assert.deepEqual(restored.presentation, presentation);
+  assert.equal(restored.verifiedSource?.rows[0].cells[1], "83.00%");
+  assert.equal(verifiedVisualMatchesSource(restored), true);
+  assert.ok(validateChartTable({ ...table, rows: table.rows.slice(0, 2) }, "percentage", "percentage-ring-group").length);
+});
+
+test("Studio comparison grids accept two percentage series without relaxing bar imports", async () => {
+  const input = "Group,Current,Previous\nFirst,83.00%,43\nSecond,0,100\nThird,12.50,20\nFourth,75,60";
+  assert.throws(() => parseChartTable(input), /two columns/i);
+  const table = parseChartTable(input, true, "grouped-column-comparison");
+  assert.deepEqual(validateChartTable(table, "percentage", "grouped-column-comparison"), []);
+  const edited = await createStudioChartSource({
+    id: "grid", table, sourceName: "Comparison data", synthetic: false, visualType: "grouped-column-comparison",
+  });
+  const visual = createVerifiedDataVisual(edited, "grouped-column-comparison", "2026-11-04T20:00:00.000Z");
+  const presentation = { title: "Compare groups", subtitle: "Two series", note: "Author note", palette: "brand", density: "comfortable", sort: "source" };
+  const restored = reportBlockSchema.parse({ ...visual, presentation });
+  assert.ok(restored.type === "grouped-column-comparison");
+  assert.deepEqual(restored.series, ["Current", "Previous"]);
+  assert.deepEqual(restored.groups[0].values, [83, 43]);
+  assert.deepEqual(restored.presentation, presentation);
+  assert.equal(restored.verifiedSource?.rows[0].cells[1], "83.00%");
+  assert.equal(verifiedVisualMatchesSource(restored), true);
+  for (const invalid of [
+    { ...table, rows: table.rows.slice(0, 3) },
+    { ...table, rows: table.rows.map((row, i) => i ? row : { ...row, cells: ["First", "83", "101"] }) },
+    { ...table, rows: table.rows.map((row, i) => i ? row : { ...row, cells: ["First", "83", ""] }) },
+  ]) {
+    await assert.rejects(() => createStudioChartSource({
+      id: "invalid-grid", table: invalid, sourceName: "Invalid grid", synthetic: false, visualType: "grouped-column-comparison",
+    }));
+  }
 });
 
 test("pasted percentage tables preserve quoted labels, precision, zero, and fractional percentages", () => {

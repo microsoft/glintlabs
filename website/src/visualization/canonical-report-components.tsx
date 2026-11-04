@@ -217,6 +217,38 @@ function PullQuote({
   );
 }
 
+function PairedPercentageComparison({
+  block,
+}: {
+  block: Extract<CanonicalVisualBlock, { type: "paired-percentage-comparison" }>;
+}) {
+  const presentation = block.presentation;
+  return (
+    <figure className={`${styles.card} ${styles.pairedComparison}`} data-palette={presentation?.palette}>
+      {block.verifiedSource?.synthetic ? <p className={styles.chartSynthetic}>Synthetic example · Not research findings</p> : null}
+      <h3>{presentation?.title ?? block.title}</h3>
+      <div className={styles.pairedMetrics}>
+        {block.metrics.map((metric, index) => {
+          const raw = block.verifiedSource?.rows.find(row => row.id === metric.id)?.cells[1]?.replace(/%\s*$/, "").trim();
+          const leadIn = presentation?.leadIns[index];
+          return <div className={styles.pairedMetric} key={metric.id}>
+            {leadIn ? <p className={styles.pairedLeadIn}>{leadIn}</p> : null}
+            <div className={styles.pairedFinding}>
+              <strong>{raw && Number(raw) === metric.value ? raw : metric.value}%</strong>
+              <p>{metric.description}</p>
+            </div>
+          </div>;
+        })}
+      </div>
+      <div className={styles.pairedRule} aria-hidden="true" />
+      <figcaption className={styles.pairedFootnote}>
+        {presentation?.note ? <p>{presentation.note}</p> : null}
+        <p>{block.footnote}</p>
+      </figcaption>
+    </figure>
+  );
+}
+
 function HorizontalBarChart({
   block,
 }: {
@@ -283,8 +315,8 @@ function GroupedColumnComparison({
 }) {
   return (
     <figure className={`${styles.card} ${styles.groupedColumns}`}>
-      <h3>{block.title}</h3>
-      <p>{block.subtitle}</p>
+      <h3>{block.presentation?.title ?? block.title}</h3>
+      {(block.presentation?.subtitle ?? block.subtitle) ? <p>{block.presentation?.subtitle ?? block.subtitle}</p> : null}
       <div className={styles.rule} />
       <div className={styles.columnGroups}>
         {block.groups.map((group) => (
@@ -312,6 +344,7 @@ function GroupedColumnComparison({
           </span>
         ))}
       </div>
+      {block.presentation?.note ? <p className={styles.chartNote}>{block.presentation.note}</p> : null}
       <SourceNote>{block.sourceNote}</SourceNote>
     </figure>
   );
@@ -429,6 +462,8 @@ export function CanonicalReportComponent({
       return <PullQuote block={block} />;
     case "percentage-ring-group":
       return <PercentageRingGroup block={block} />;
+    case "paired-percentage-comparison":
+      return <PairedPercentageComparison block={block} />;
     case "horizontal-bar-chart":
       return <HorizontalBarChart block={block} />;
     case "grouped-column-comparison":

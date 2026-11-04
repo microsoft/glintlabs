@@ -786,6 +786,114 @@
   line-height: 28px;
 }
 
+.textCallout {
+  margin: 0 0 24px;
+  padding-left: 24px;
+  border-left: 4px solid var(--report-blue, #5c8df8);
+  color: var(--report-text);
+  font-family: "Segoe Sans", "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 36px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.chartInsertionLayer {
+  --colorBrandForeground1: #4c89ef;
+  --colorVivaBrandBackground2: #e5eeff;
+  --colorNeutralForeground1: #242424;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.chartInsertionLayer[data-text-selected] { visibility: hidden; }
+
+.chartInsertionBoundary {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.chartInsertionBoundary::before {
+  position: absolute;
+  inset-inline: 0;
+  height: 1px;
+  background: var(--colorBrandForeground1);
+  content: "";
+  opacity: 0;
+}
+
+.chartInsertionBoundary button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 100%;
+  padding: 0 12px;
+  border: 1px solid var(--colorBrandForeground1);
+  border-radius: 12px;
+  color: var(--colorNeutralForeground1);
+  background: var(--report-canvas);
+  box-shadow: 0 0 0 16px var(--report-canvas);
+  font: 400 14px/20px "Segoe UI", sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.chartInsertionBoundary:hover::before,
+.chartInsertionBoundary:focus-within::before,
+.chartInsertionBoundary:hover button,
+.chartInsertionBoundary:focus-within button { opacity: 1; }
+.chartInsertionBoundary button:hover { background: var(--colorVivaBrandBackground2); }
+.chartInsertionBoundary button:active { background: var(--colorVivaBrandBackground2); }
+.chartInsertionBoundary button:focus-visible { outline: 2px solid var(--colorBrandForeground1); outline-offset: 2px; }
+
+@media (hover: none) {
+  .chartInsertionBoundary button { opacity: 1; }
+}
+
+.chartInsertionPlaceholder {
+  padding: 32px;
+  border: 1px dashed var(--report-selection);
+  border-radius: 20px;
+  color: var(--report-muted);
+  background: var(--report-visual-soft);
+  text-align: center;
+  font: 16px/24px "Segoe UI", sans-serif;
+}
+
+.textSelectionActions {
+  position: fixed;
+  z-index: 20;
+}
+
+.textSelectionActions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 5px 12px;
+  border: 1px solid var(--report-blue);
+  border-radius: 12px;
+  color: var(--report-text);
+  background: var(--report-canvas, #fff);
+  font: 14px/20px "Segoe UI", sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.textSelectionActions button:hover { background: var(--report-visual-soft, #f2f2f2); }
+.textSelectionActions button:active { background: var(--report-light-blue); }
+.textSelectionActions button:focus-visible { outline: 2px solid var(--report-selection); outline-offset: 2px; }
+
+.textCallout a,
 .paragraph a,
 .listItem a {
   color: inherit;
@@ -794,11 +902,13 @@
   text-underline-offset: 3px;
 }
 
+.textCallout a:hover,
 .paragraph a:hover,
 .listItem a:hover {
   text-decoration-thickness: 2px;
 }
 
+.textCallout a:focus-visible,
 .paragraph a:focus-visible,
 .listItem a:focus-visible {
   border-radius: 2px;
@@ -1200,7 +1310,8 @@
   outline-offset: 0;
 }
 
-.chartAuthoring[data-report-component="horizontal-bar-chart"] {
+.chartAuthoring[data-report-component="horizontal-bar-chart"],
+.chartAuthoring[data-report-component="paired-percentage-comparison"] {
   border-radius: 20px;
 }
 

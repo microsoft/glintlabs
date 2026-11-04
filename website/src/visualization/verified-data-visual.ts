@@ -9,6 +9,7 @@ export type VerifiedDataVisualBlock = Extract<
   {
     type:
       | "percentage-ring-group"
+      | "paired-percentage-comparison"
       | "horizontal-bar-chart"
       | "grouped-column-comparison";
   }
@@ -17,6 +18,7 @@ export type VerifiedDataVisualType = VerifiedDataVisualBlock["type"];
 export type ChartValueType = "percentage" | "number";
 
 const verifiedVisualNames: Record<VerifiedDataVisualType, string> = {
+  "paired-percentage-comparison": "Paired percentage comparison",
   "percentage-ring-group": "Percentage ring group",
   "horizontal-bar-chart": "Horizontal bar chart",
   "grouped-column-comparison": "Grouped column comparison",
@@ -70,6 +72,9 @@ export function compatibleVerifiedVisuals(
     rows.length <= 12
   ) {
     compatible.push("horizontal-bar-chart");
+  }
+  if (block.data.unit === "percentage" && block.data.columns.length === 2 && rows.length === 2) {
+    compatible.push("paired-percentage-comparison");
   }
   if (block.data.unit === "percentage" && block.data.columns.length === 2 && rows.length === 3) {
     compatible.push("percentage-ring-group");
@@ -140,6 +145,7 @@ export function createVerifiedDataVisual(
           source.data.sourceNote ??
           "Source: approved structured data from the reviewed Word report.",
       };
+    case "paired-percentage-comparison":
     case "percentage-ring-group":
       return {
         ...shared,
@@ -149,11 +155,7 @@ export function createVerifiedDataVisual(
           id: row.id,
           value: row.values[0] as number,
           description: row.label,
-        })) as [
-          { id: string; value: number; description: string },
-          { id: string; value: number; description: string },
-          { id: string; value: number; description: string },
-        ],
+        })),
         footnote:
           source.data.sourceNote ??
           "Source: approved structured data from the reviewed Word report.",
@@ -185,6 +187,7 @@ export function createVerifiedDataVisual(
 export function verifiedVisualMatchesSource(block: ReportBlock) {
   if (
     block.type !== "percentage-ring-group" &&
+    block.type !== "paired-percentage-comparison" &&
     block.type !== "horizontal-bar-chart" &&
     block.type !== "grouped-column-comparison"
   ) {
@@ -229,9 +232,10 @@ export function verifiedVisualMatchesSource(block: ReportBlock) {
         block.sourceNote === expected.sourceNote &&
         JSON.stringify(block.items) === JSON.stringify(expected.items)
       );
+    case "paired-percentage-comparison":
     case "percentage-ring-group":
       return (
-        expected.type === "percentage-ring-group" &&
+        expected.type === block.type &&
         block.title === expected.title &&
         block.footnote === expected.footnote &&
         JSON.stringify(block.metrics) === JSON.stringify(expected.metrics)

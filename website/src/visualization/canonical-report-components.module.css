@@ -998,13 +998,68 @@
   line-height: 16px;
 }
 
+.pairedComparison {
+  --paired-primary: #294482;
+  --paired-secondary: #5c8df8;
+  position: relative;
+  display: grid;
+  gap: 48px;
+  max-width: 100%;
+  padding: 40px;
+  border-color: #cedeff;
+  border-radius: 20px;
+  font-family: "Segoe Sans", "Segoe UI Variable", "Segoe UI", sans-serif;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.pairedComparison::before,
+.pairedComparison::after {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: #cedeff;
+  opacity: 0.3;
+  filter: blur(250px);
+  pointer-events: none;
+  content: "";
+}
+
+.pairedComparison::before { top: -200px; left: -200px; }
+.pairedComparison::after { right: -170px; bottom: -170px; width: 340px; height: 340px; }
+.pairedComparison > * { position: relative; }
+.pairedComparison[data-palette="blue"] { --paired-primary: #5c8df8; }
+.pairedComparison[data-palette="teal"] { --paired-primary: #6a908d; --paired-secondary: #6a908d; }
+
+.pairedComparison h3 {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+.pairedMetrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+.pairedMetric { display: grid; align-content: start; gap: 10px; min-width: 0; }
+.pairedLeadIn { display: flex; align-items: center; gap: 16px; }
+.pairedLeadIn::before,
+.pairedLeadIn::after { flex: 1; height: 1px; background: #eff4ff; content: ""; }
+.pairedFinding { display: grid; gap: 4px; }
+.pairedLeadIn,
+.pairedFinding p { font-size: 20px; font-weight: 550; line-height: 24px; }
+.pairedFinding strong { color: var(--paired-primary); font-size: 56px; font-weight: 420; line-height: 68px; }
+.pairedMetric:nth-child(2) strong { color: var(--paired-secondary); }
+.pairedRule { height: 1px; background: #eff4ff; }
+.pairedFootnote { display: grid; gap: 8px; font-size: 12px; font-weight: 420; font-style: italic; line-height: 16px; }
+.pairedComparison .chartSynthetic { font-size: 12px; line-height: 16px; }
+
 :global([data-report-style="new-fluent-colors"]) .card {
   border-color: var(--report-rule);
   color: var(--report-text);
   background: var(--report-canvas);
 }
 
-:global([data-report-style="new-fluent-colors"]) .horizontalChart {
+:global([data-report-style="new-fluent-colors"]) .horizontalChart,
+:global([data-report-style="new-fluent-colors"]) .pairedComparison {
   border-color: var(--report-light-blue);
 }
 
@@ -1194,6 +1249,10 @@
 }
 
 @container report (max-width: 479px) {
+  .pairedComparison { gap: 32px; padding: 24px 20px; }
+  .pairedComparison h3 { font-size: 20px; line-height: 26px; }
+  .pairedMetrics { grid-template-columns: 1fr; gap: 32px; }
+
   .horizontalChart {
     padding: 24px 20px;
   }

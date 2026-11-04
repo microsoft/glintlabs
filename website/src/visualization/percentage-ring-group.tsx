@@ -18,7 +18,7 @@ export function PercentageRingGroup({
       aria-describedby={`${block.id}-footnote`}
     >
       <h3 className={styles.title} id={`${block.id}-title`}>
-        {block.title}
+        {block.presentation?.title ?? block.title}
       </h3>
       <div className={styles.metrics}>
         {block.metrics.map((metric, index) => (
@@ -63,6 +63,7 @@ export function PercentageRingGroup({
         ))}
       </div>
       <figcaption className={styles.footnote} id={`${block.id}-footnote`}>
+        {block.presentation?.note ? <p>{block.presentation.note}</p> : null}
         {block.footnote}
       </figcaption>
     </figure>

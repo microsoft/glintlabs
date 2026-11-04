@@ -114,6 +114,7 @@ function semanticBlock(block: ReportBlock) {
 
   if (
     (block.type === "percentage-ring-group" ||
+      block.type === "paired-percentage-comparison" ||
       block.type === "listening-methods-comparison" ||
       block.type === "horizontal-bar-chart" ||
       block.type === "grouped-column-comparison") &&
@@ -174,6 +175,7 @@ function semanticBlock(block: ReportBlock) {
   delete content.id;
   delete content.provenance;
   delete content.source;
+  if (block.type === "paragraph") delete content.callouts;
   return {
     id: block.id,
     type: block.type,
@@ -245,6 +247,7 @@ export function evaluateApprovedContentIntegrity(
   const unsafeVisual = manifest.blocks.find(
     (block) =>
       (block.type === "percentage-ring-group" ||
+        block.type === "paired-percentage-comparison" ||
         block.type === "horizontal-bar-chart" ||
         block.type === "grouped-column-comparison") &&
       (!block.verifiedSource ||

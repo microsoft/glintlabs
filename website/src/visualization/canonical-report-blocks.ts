@@ -8,6 +8,7 @@ export const canonicalVisualTypes = [
   "listening-methods-comparison",
   "pull-quote",
   "percentage-ring-group",
+  "paired-percentage-comparison",
   "horizontal-bar-chart",
   "grouped-column-comparison",
   "before-after-comparison",
@@ -60,6 +61,11 @@ export const canonicalVisualOptions: Array<{
     kind: "percentage-ring-group",
     name: "Percentage ring group",
     reason: "Show three related percentages with explanations",
+  },
+  {
+    kind: "paired-percentage-comparison",
+    name: "Paired percentage comparison",
+    reason: "Contrast two independent percentage findings",
   },
   {
     kind: "horizontal-bar-chart",
@@ -258,6 +264,16 @@ export function createCanonicalVisualBlock(
         ],
         footnote:
           "Source: Microsoft People Science Agentic Teaming & Trust Survey, n = 520 global, full-time, English-speaking managers. July 2025.",
+      };
+    case "paired-percentage-comparison":
+      return {
+        id, source, type,
+        title: "Two findings side by side",
+        metrics: [
+          { id: `${id}-metric-1`, value: 83, description: "See an opportunity" },
+          { id: `${id}-metric-2`, value: 43, description: "Have a clear plan" },
+        ],
+        footnote: "Synthetic example. Not research findings.",
       };
     case "horizontal-bar-chart":
       return {

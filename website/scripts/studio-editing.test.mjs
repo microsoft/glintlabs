@@ -3,13 +3,15 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import ts from "typescript";
 
-import { chartPresentationSchema, reportManifestSchema } from "../src/manifest/report-manifest.ts";
+import { chartPresentationSchema, pairedComparisonPresentationSchema, reportManifestSchema } from "../src/manifest/report-manifest.ts";
 import { createStudioProject, hasStudioProjectChanges } from "../src/project/studio-project.ts";
 import { reportAuthor } from "../src/project/report-author.ts";
 import { createDataVisualPreview } from "../src/visualization/data-visual-preview.ts";
-import { automaticallyVerifiedVisualType, compatibleVerifiedVisuals, createVerifiedDataVisual, parseChartValue } from "../src/visualization/verified-data-visual.ts";
+import { automaticallyVerifiedVisualType, compatibleVerifiedVisuals, createVerifiedDataVisual, parseChartValue, verifiedDataVisualName } from "../src/visualization/verified-data-visual.ts";
 import { sortChartItems } from "../src/visualization/chart-order.ts";
 import { isCanonicalVisualBlock } from "../src/visualization/canonical-report-blocks.ts";
+import { validateChartTable } from "../src/visualization/chart-authoring.ts";
+import { setTextCallout } from "../src/project/text-callout.ts";
 
 const source = ts.createSourceFile(
   "publishing-studio.tsx",
@@ -241,6 +243,27 @@ test("automatically verified Word charts remain editable in Studio but not Reade
   assert.deepEqual(selected, [source.id, source.id]);
 });
 
+test("chart review issues remain actionable without duplicating source warnings or accepting unverified data", () => {
+  const manifest = { reviewItems: [
+    { id: "source-review", blockId: "chart-1", severity: "warning", message: "Check chart values." },
+    { id: "other", blockId: "image", severity: "warning", message: "Describe this image." },
+  ] };
+  const before = structuredClone(manifest);
+  const issues = componentValue("issues", {
+    manifest,
+    dataVisualsNeedingReview: [{ id: "chart-1", title: "First chart" }, { id: "chart-2", title: "Second chart" }],
+    useMemo: callback => callback(),
+  });
+  assert.equal(issues.length, 3, "An existing source warning gains a review action instead of a duplicate issue");
+  assert.deepEqual(issues.filter(issue => issue.action === "review-chart").map(issue => [issue.blockId, issue.severity]),
+    [["chart-1", "blocker"], ["chart-2", "blocker"]]);
+  const accepted = componentValue("acceptedIssueIds", {
+    issues, acceptedReviewItemIds: ["source-review", "other"], useMemo: callback => callback(),
+  });
+  assert.deepEqual([...accepted], ["other"], "Prior acceptance never masks a chart that now requires verification");
+  assert.deepEqual(manifest, before);
+});
+
 test("switching report items and tools cannot apply unreviewed chart previews", () => {
   const messages = [];
   const scope = {
@@ -288,7 +311,7 @@ test("Word chart data is immediately editable without copying or changing the or
     useState: initial => [initial === "data" ? selectedTab : typeof initial === "function" ? initial() : initial, value => updates.push(value)],
     useEffect: effect => effects.push(effect),
     useMemo: callback => callback(),
-    chartPresentationSchema, automaticallyVerifiedVisualType, compatibleVerifiedVisuals, createVerifiedDataVisual, parseChartValue, sortChartItems,
+    chartPresentationSchema, pairedComparisonPresentationSchema, automaticallyVerifiedVisualType, compatibleVerifiedVisuals, createVerifiedDataVisual, parseChartValue, sortChartItems, verifiedDataVisualName, validateChartTable,
     createStudioChartSource() { assert.fail("Opening a chart must not create replacement source data"); },
     Dismiss20Regular: "dismiss-icon", Delete16Regular: "delete-icon",
     TextEditStyle20Regular: "text-icon", DataBarVertical20Regular: "data-icon", ChevronDown16Regular: "chevron-icon",
@@ -382,6 +405,86 @@ test("Word chart data is immediately editable without copying or changing the or
     removeChart.props.onClick();
   }
   assert.equal(removed, 2, "The footer action retains the existing removal callback");
+  const pairSource = {
+    ...original, data: { ...original.data, recommendedVisualType: "paired-percentage-comparison" },
+  };
+  const pair = {
+    ...createVerifiedDataVisual(pairSource, "paired-percentage-comparison", "2026-11-03T20:00:00.000Z"),
+    presentation: { title: "Two findings", leadIns: ["While...", "Only..."], note: "", palette: "brand" },
+  };
+  for (const tab of ["data", "text"]) {
+    selectedTab = tab;
+    const view = nodes(render({
+      block: pair, source: pairSource, onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
+    }));
+    if (tab === "data") {
+      assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, 4);
+      assert.equal(view.some(node => node.props?.["aria-label"] === "Remove row 1"), false);
+      assert.equal(view.some(node => node.type === "button" && node.props.children === "Add row"), false);
+      assert.equal(view.some(node => node.props?.role === "radiogroup"), false,
+        "Paired percentages cannot switch to a Number unit");
+      assert.ok(view.some(node => node.type === "dropdown" && node.props.value === "Glint Labs"));
+    } else {
+      assert.deepEqual(view.filter(node => node.type === "input" && node.props.type === "text")
+        .map(node => node.props.value), ["Two findings", "While...", "Only...", ""]);
+    }
+  }
+  selectedTab = "data";
+  for (const [initialType, cells] of [
+    ["horizontal-bar-chart", 4], ["paired-percentage-comparison", 4],
+    ["percentage-ring-group", 6], ["grouped-column-comparison", 12],
+  ]) {
+    const view = nodes(render({
+      block: { id: "new-chart", type: "visual-placeholder", source: { part: "studio", index: 1 } },
+      intent: "insert", initialType, onPreview() {},
+      onDone() { assert.fail("An empty chart cannot be inserted"); }, onCancel() {}, onRemove() {},
+    }));
+    assert.deepEqual(view.filter(node => node.type === "input" && node.props.type === "text" && node.props["inputMode"])
+      .map(node => node.props.value), Array(cells).fill(""), `${initialType} starts with the correct blank data shape`);
+    assert.equal(view.some(node => node.props["aria-invalid"] === true), false, "Untouched fields do not begin in error");
+    const insert = view.find(node => node.type === "button" && node.props.children === "Insert chart");
+    assert.equal(insert.props.disabled, true);
+    insert.props.onClick();
+    assert.equal(view.some(node => node.type === "button" && node.props.children === "Remove chart"), false,
+      "A draft is canceled, not deleted from the report");
+  }
+});
+
+test("callout conversion applies immediately and undo restores only affected formatting", () => {
+  const first = { id: "first", type: "paragraph", text: "Before. Highlighted text. After.",
+    callouts: [{ start: 0, end: 6 }], source: { part: "word/document.xml", index: 1 } };
+  const second = { id: "second", type: "paragraph", text: "Another paragraph.",
+    source: { part: "word/document.xml", index: 2 } };
+  const manifest = { ...project("Immediate callouts").manifest, blocks: [first, second] };
+  const actions = [];
+  let message;
+  const scope = {
+    manifest, setTextCallout, requireAppliedEdits: () => true,
+    dispatch: action => actions.push(action),
+    setStorageMessage: value => { message = value; },
+    setActiveTool() {},
+    window: { requestAnimationFrame() {} },
+  };
+  const apply = componentFunction("openTextCallout", scope);
+  assert.equal(apply([{ blockId: first.id, start: 8, end: 19 }], true), true);
+  assert.equal(actions.length, 1, "Conversion is committed without Apply");
+  assert.equal(actions[0].type, "format-text");
+  assert.deepEqual(actions[0].blocks[0].callouts, [{ start: 0, end: 6 }, { start: 8, end: 19 }]);
+  assert.equal(message.message, "Callout successfully added");
+  const changedLink = { start: 0, end: 6, href: "https://example.com/updated" };
+  const current = { ...manifest, blocks: [
+    { ...actions[0].blocks[0], links: [changedLink] },
+    { ...second, callouts: [{ start: 0, end: 7 }] },
+  ] };
+  componentFunction("undoTextCallout", { ...scope, manifest: current, storageMessage: message })();
+  assert.deepEqual(actions[1].blocks, [{ ...first, links: [changedLink] }],
+    "Undo restores previous ranges, not stale paragraph text, links, or unrelated formatting");
+  assert.equal(message, "Formatting undone.");
+  actions.length = 0;
+  assert.equal(apply([
+    { blockId: first.id, start: 8, end: 19 }, { blockId: second.id, start: 0, end: 999 },
+  ], true), false);
+  assert.equal(actions.length, 0, "Invalid multi-paragraph selections cannot partially apply");
 });
 
 test("image accessibility shows a directly labeled description and preserves saved image data", () => {
@@ -536,12 +639,13 @@ test("Studio ignores cached comment warnings without hiding other warnings or bl
   ];
   const issues = componentValue("issues", {
     manifest: { reviewItems },
+    dataVisualsNeedingReview: [],
     useMemo: (callback) => callback(),
   }, "PublishingStudio");
   assert.deepEqual(issues.map((issue) => issue.id), ["warning", "blocker", "comment-blocker"]);
   assert.equal(reviewItems.length, 4, "cached manifests remain unchanged");
   assert.equal(componentValue("issues", {
-    manifest: null, useMemo: (callback) => callback(),
+    manifest: null, dataVisualsNeedingReview: [], useMemo: (callback) => callback(),
   }, "PublishingStudio").length, 0);
 });
 
@@ -867,7 +971,8 @@ test("References styling stays within its section and preserves citation text an
     ...block, id: `block-${index}`, source: { part: "word/document.xml", index },
   }));
   scope.reportReferenceMarkers = componentFunction("reportReferenceMarkers", scope, rendererSource);
-  const rendered = componentFunction("reportContent", scope, rendererSource)(blocks, {});
+  const contents = componentFunction("reportContent", scope, rendererSource);
+  const rendered = contents(blocks, {});
   assert.deepEqual(rendered.filter((node) => node.type === "div").map((node) => node.props.children.reference), [
     false, true, true, true, true, false, false, false, false,
   ]);
@@ -901,6 +1006,16 @@ test("References styling stays within its section and preserves citation text an
   assert.equal(overlapping[0].props.children[0].type, "sup");
   assert.equal(text(overlapping[0]), block.text.slice(0, block.links[0].end));
   assert.equal(text(overlapping), block.text);
+  const insertionProps = { onInsertChart() {} };
+  const referenceSection = blocks.slice(0, 6);
+  assert.deepEqual(contents(referenceSection, insertionProps).map(node => node.props["data-chart-insert-before"]).filter(id => id !== undefined),
+    ["block-0", "block-1"], "Insert before References, never between citations or after them");
+  assert.ok(contents(referenceSection, { ...insertionProps, mode: "read" })
+    .every(node => node.props["data-chart-insert-before"] === undefined), "Reader has no authoring boundaries");
+  assert.deepEqual(contents([{
+    id: "references", type: "references", source: { part: "studio", index: 0 },
+  }], insertionProps).map(node => node.props["data-chart-insert-before"]).filter(id => id !== undefined),
+  ["references"], "A self-contained references block also ends the editable body");
 });
 
 test("inline citations match actual References entries and preserve all text and link offsets", () => {
@@ -960,11 +1075,61 @@ test("inline citations match actual References entries and preserve all text and
     assert.equal(nodes(rendered).filter(n => n.type === "sup").map(text).join(""), "[12]");
     assert.equal(text(rendered), value);
     assert.deepEqual(block, before, "approved text and link ranges are unchanged");
+    const boundaries = [0, start + 1, start + 3, value.length];
+    const segments = boundaries.slice(1).map((end, index) => richText({
+      block, referenceMarkers: markers, start: boundaries[index], end,
+    }));
+    assert.equal(text(segments), value, "partial callouts retain every source character in order");
+    assert.equal(nodes(segments).filter(n => n.type === "sup").map(text).join(""), "[12]");
+    assert.equal(nodes(segments).filter(n => n.type === "a").map(text).join(""), value.slice(from, to));
+    assert.ok(nodes(segments).filter(n => n.type === "a").every(link => link.props.href === block.links[0].href));
   }
   const label = { id: "label", type: "paragraph", text: "  [1] Original reference." };
   const renderedLabel = richText({ block: label, reference: true, referenceMarkers: markers });
   assert.equal(text(renderedLabel), label.text);
   assert.deepEqual(nodes(renderedLabel).filter(n => n.type === "sup").map(text), ["[1]"]);
+});
+
+test("applying editorial formatting preserves review warnings and participates in unsaved-edit protection", () => {
+  const reducer = componentFunction("reducer", {});
+  const original = project("Editorial");
+  original.manifest.blocks.push({ id: "paragraph", type: "paragraph", text: "Before. Selected. After.", source: { part: "word/document.xml", index: 1 } });
+  original.manifest.reviewItems.push({ id: "paragraph-review", blockId: "paragraph", severity: "warning", message: "Review this source." });
+  const loaded = reducer({ status: "empty" }, { type: "load-project", project: original });
+  const draft = { ...original.manifest.blocks.at(-1), callouts: [{ start: 8, end: 17 }] };
+  const applied = reducer(loaded, { type: "format-text", blocks: [draft] });
+  assert.deepEqual(applied.manifest.reviewItems, loaded.manifest.reviewItems);
+  assert.deepEqual(applied.manifest.blocks.at(-1), draft);
+  assert.equal(loaded.manifest.blocks.at(-1).callouts, undefined);
+  assert.equal(changeStatus(loaded, { currentProject: original }).edits, false);
+  assert.equal(changeStatus(applied, { currentProject: original }).edits, true);
+});
+
+test("callout rendering keeps explicit text overrides authoritative and outside selection formatting", () => {
+  const renderer = ts.createSourceFile(
+    "report-renderer.tsx",
+    readFileSync(new URL("../src/report-system/report-renderer.tsx", import.meta.url), "utf8"),
+    ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
+  );
+  const jsx = (type, props, key) => ({ type, props, key });
+  const render = componentFunction("renderBlock", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; },
+    isCanonicalVisualBlock: () => false,
+    textCalloutSegments: block => block.callouts.map(range => ({ ...range, callout: true })),
+    RichText: "rich-text", styles: { paragraph: "paragraph", textCallout: "callout" },
+  }, renderer);
+  const block = { id: "paragraph", type: "paragraph", text: "Approved text.", callouts: [{ start: 0, end: 14 }],
+    source: { part: "word/document.xml", index: 0 } };
+  const props = { onSelectText: () => true };
+  const callout = render(block, props);
+  assert.equal(callout.props.children[0].props["data-text-callout"], true);
+  assert.equal(callout.props["data-report-text-block"], block.id);
+  for (const override of ["Display override.", ""]) {
+    const displayed = render(block, { ...props, textOverrides: { [block.id]: override } });
+    assert.equal(displayed.type, "p");
+    assert.equal(displayed.props.children, override);
+    assert.equal(displayed.props["data-report-text-block"], undefined);
+  }
 });
 
 test("preview readiness waits for report content, stylesheets, fonts, and a render frame", async () => {
@@ -1132,10 +1297,12 @@ function changeStatus(state, {
   acceptedReviewItemIds = [],
   imageReviews = [],
   hasUnappliedImageChanges = false,
+  chartInsertion,
 } = {}) {
   const scope = {
     state, currentProject, reportStyle, acceptedReviewItemIds, imageReviews,
     hasUnappliedImageChanges,
+    chartInsertion,
     manifest: state.status === "ready" ? state.manifest : undefined,
     hasStudioProjectChanges,
     useMemo: callback => callback(),
