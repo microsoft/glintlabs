@@ -2361,15 +2361,17 @@
 .chartPaletteLabel { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .chartPaletteCheck { visibility: hidden; color: var(--colorBrandForeground1); }
 .chartPaletteTile:has(input:checked) .chartPaletteCheck { visibility: visible; }
-.chartTableHeader { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
-.chartTableHeader > div { display: grid; gap: 4px; }
-.chartTableHeader > div > span { color: var(--colorNeutralForeground3); }
+.chartTableHeader { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 .chartEditor .chartReplaceAction { width: auto; min-height: 32px; height: 32px; padding: 4px 8px; font-size: 12px; }
 
-.chartTabs {
+.chartTabs,
+.chartValueSegments {
   --colorBrandForeground1: #335ccc;
   --colorBrandStroke1: var(--colorBrandForeground1);
   --colorVivaBrandBackground2: #e5eeff;
+}
+
+.chartTabs {
   display: flex;
   gap: var(--spacingHorizontalS, 8px);
   width: 100%;
@@ -2512,7 +2514,12 @@
   gap: 0;
 }
 
-.chartDataSettings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.chartDataSettings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacingHorizontalM, 12px);
+  margin-bottom: 16px;
+}
 .chartValueSegments {
   display: flex;
   justify-content: space-between;
@@ -2546,16 +2553,26 @@
   font: 14px/20px var(--fontFamilyBase, "Segoe UI", sans-serif);
   white-space: nowrap;
 }
-.chartValueSegments label:hover span { background: var(--colorNeutralBackground1Hover); }
+.chartValueSegments label:hover span {
+  color: var(--colorBrandForeground1);
+  background: var(--colorVivaBrandBackground2);
+}
 .chartValueSegments input:checked + span {
-  color: var(--colorNeutralForeground1);
-  background: var(--studio-chart-selected);
-  box-shadow: 0 0 0 1px var(--studio-field-border);
-  font-weight: 400;
+  color: var(--colorBrandForeground1);
+  background: var(--colorVivaBrandBackground2);
+  font-weight: 600;
 }
 .chartValueSegments input:focus-visible + span {
-  outline: 2px solid var(--colorStrokeFocus2);
+  outline: 2px solid var(--colorBrandStroke1);
   outline-offset: -3px;
+}
+@media (forced-colors: active) {
+  .chartValueSegments input:checked + span {
+    forced-color-adjust: none;
+    color: HighlightText;
+    background: Highlight;
+  }
+  .chartValueSegments input:checked:focus-visible + span { outline-color: HighlightText; }
 }
 @media (max-width: 479px) {
   .chartDataSettings { grid-template-columns: minmax(0, 1fr); }

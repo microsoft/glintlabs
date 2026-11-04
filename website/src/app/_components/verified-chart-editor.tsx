@@ -380,7 +380,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       data-chart-tab={tab} className={styles.chartEditorBody}>
       {error ? <Body1 className={styles.inputError} role="alert" block>{error}</Body1> : null}
       {tab === "data" ? <>
-        {dataSettings}
         {errors.some(item => item.row < 0) ? <section className={styles.chartDataGuidance} aria-label="Required data changes">
           <Body1Strong block>Adjust data for this chart</Body1Strong>
           {errors.filter(item => item.row < 0).map((item, index) => <Body1 block key={index}>{item.message}</Body1>)}
@@ -409,9 +408,10 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
         </section> : null}
         <div className={styles.chartTableSection}>
           <div className={styles.chartTableHeader}>
-            <div><h3>Chart data</h3><Caption1>{valueType === "percentage" ? "Values do not need to total 100%." : "Edit values to update the preview."}</Caption1></div>
+            <h3>Chart data</h3>
             {replacementMenu}
           </div>
+          {dataSettings}
           {dataGrid("panel")}
           <div className={styles.chartDataActions}>
             {tableDraft && (!fixedRows || tableDraft.table.rows.length < requiredRows!) ? <Button className={styles.chartAction} type="button" appearance="subtle"

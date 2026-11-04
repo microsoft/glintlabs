@@ -342,6 +342,9 @@ test("Word chart data is immediately editable without copying or changing the or
   const input = rendered.find(node => node.props?.["aria-label"] === "Value (%), row 1");
   assert.ok(rendered.some(node => node.type === "h3" && node.props.children === "Chart data"),
     "The data section is visibly labeled without repeating the source title");
+  assert.ok(rendered.findIndex(node => node.type === "h3" && node.props.children === "Chart data") <
+    rendered.findIndex(node => node.props?.id === "word-chart-sort-label"),
+  "Chart data introduces the section before its sorting and value-type controls");
   assert.ok(rendered.some(node => node.type === "caption" && node.props.children === "Chart data"),
     "The table retains its accessible name without an extra visible heading");
   assert.ok(rendered.some(node => node.type === "th" && node.props.children === "Value"),
