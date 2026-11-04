@@ -1343,7 +1343,13 @@
 .chartAuthoring {
   border-radius: 16px;
   background: var(--report-canvas);
-  outline-offset: 0;
+  outline-offset: var(--spacingHorizontalS, 8px);
+}
+
+.chartAuthoring:hover,
+.chartAuthoring:focus-within,
+.chartAuthoring.selected {
+  outline-color: var(--colorNeutralStrokeAccessible, #616161);
 }
 
 .chartAuthoring[data-report-component="horizontal-bar-chart"],
