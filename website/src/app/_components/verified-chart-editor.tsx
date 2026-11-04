@@ -12,7 +12,7 @@ import { Delete16Regular } from "@fluentui/react-icons/svg/delete";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
 import { Menu, MenuItem, MenuList, MenuPopover, MenuTrigger } from "@fluentui/react-menu";
 import { Body1, Body1Strong, Caption1 } from "@fluentui/react-text";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import {
   chartPresentationSchema,
   pairedComparisonPresentationSchema,
@@ -295,7 +295,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
         </th>)}{canRemoveRows ? <th scope="col"><span className={styles.chartCellLabel}>Remove row</span></th> : null}</tr></thead>
         <tbody>{displayed.map(({ row, rowIndex }, displayIndex) => {
           const rowErrors = visibleErrors.filter(item => item.row === rowIndex);
-          return <tr key={row.id}>{row.cells.map((cell, column) => <td key={column}>
+          return <Fragment key={row.id}><tr>{row.cells.map((cell, column) => <td key={column}>
             {tableDraft ? <label className={styles.chartCell}>
               <span className={styles.chartCellLabel}>{headings[column]}{column > 0 && valueType === "percentage" ? " (%)" : ""}, row {displayIndex + 1}</span>
               <input aria-label={`${headings[column]}${column > 0 && valueType === "percentage" ? " (%)" : ""}, row ${displayIndex + 1}`} type="text"
@@ -307,7 +307,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
                 onBlur={() => setTouchedCells(previous => new Set(previous).add(`${row.id}:${column}`))}
                 onChange={event => editCell(row.id, column, event.target.value)} />
             </label> : cell}
-            {column === 0 && tableDraft && selectedType === "horizontal-bar-chart" ? supportingTextEditor(row, rowIndex) : null}
             {column === 0 && rowErrors.length ? <span id={`${prefix}-${row.id}-errors`} className={styles.inputError}>
               {rowErrors.map(item => item.message).join(" ")}
             </span> : null}
@@ -315,7 +314,12 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
             aria-label={`Remove row ${displayIndex + 1}`} disabled={table.rows.length <= 2}
             icon={<Delete16Regular aria-hidden="true" />}
             onClick={() => changeData({ ...tableDraft, table: { ...tableDraft.table, rows: table.rows.filter(item => item.id !== row.id) } })}>
-          </Button></td> : null}</tr>;
+          </Button></td> : null}</tr>
+          {tableDraft && selectedType === "horizontal-bar-chart" ? <tr className={styles.chartSupportingTextRow}>
+            <td colSpan={row.cells.length + (canRemoveRows ? 1 : 0)}>
+              {supportingTextEditor(row, rowIndex)}
+            </td>
+          </tr> : null}</Fragment>;
         })}</tbody>
       </table>
     </>;

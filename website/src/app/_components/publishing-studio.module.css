@@ -2211,9 +2211,9 @@
 .chartEditorBody {
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: var(--spacingVerticalXXL, 24px);
   min-height: 0;
-  padding: 48px 24px 24px;
+  padding: var(--spacingVerticalM, 12px) var(--spacingHorizontalXXL, 24px) var(--spacingVerticalXXL, 24px);
 }
 
 .chartEditorBody[data-chart-tab="data"] { gap: 24px; }
@@ -2243,8 +2243,8 @@
 
 .chartEditor .field :is(input, textarea),
 .chartDataGrid input {
-  min-height: 40px;
-  padding: 8px 12px;
+  min-height: 32px;
+  padding: 4px 8px;
   border: 1px solid var(--studio-field-border);
   border-radius: var(--borderRadiusMedium, 8px);
   color: var(--studio-field-foreground);
@@ -2254,6 +2254,7 @@
 
 .chartEditor .field textarea {
   min-height: 64px;
+  padding: 8px 12px;
 }
 
 .chartEditor .field :is(input, textarea)[aria-invalid="true"] {
@@ -2350,7 +2351,7 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  margin: 24px 24px 0;
+  margin: var(--spacingVerticalM, 12px) var(--spacingHorizontalXXL, 24px) 0;
 }
 
 .chartTypeIcon { flex: 0 0 20px; width: 20px; height: 20px; }
@@ -2416,8 +2417,8 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
-  min-height: 44px;
-  height: 44px;
+  min-height: 40px;
+  height: 40px;
   padding: 8px 12px;
   border: 0;
   border-radius: var(--borderRadiusMedium, 8px);
@@ -2477,10 +2478,16 @@
   gap: var(--spacingHorizontalM, 12px);
 }
 
+.chartDataActions .chartAction {
+  min-height: 32px;
+  height: 32px;
+  padding: 4px 8px;
+}
+
 .chartEditor .chartChoice {
   width: 100%;
   min-width: 0;
-  min-height: 40px;
+  min-height: 32px;
   border-radius: var(--borderRadiusMedium, 8px);
   border-color: var(--studio-field-border);
 }
@@ -2500,8 +2507,8 @@
 }
 
 .chartEditor .chartChoiceButton {
-  min-height: 38px;
-  padding: 8px 12px;
+  min-height: 30px;
+  padding: 4px 8px;
   border-radius: inherit;
   font-family: inherit;
   font-size: 16px;
@@ -2552,16 +2559,13 @@
   gap: var(--spacingHorizontalS, 8px);
   margin-bottom: 16px;
 }
-.chartEditor .chartDataSettings .chartChoice { min-height: 32px; }
-.chartEditor .chartDataSettings .chartChoiceButton {
-  min-height: 30px;
-  padding: 4px 8px;
-}
 .chartDataGrid { width: 100%; table-layout: fixed; border-collapse: collapse; }
 .chartDataGrid caption { text-align: left; padding-bottom: 12px; font-size: 12px; color: var(--muted); }
-.chartDataGrid th, .chartDataGrid td { padding: 0 10px 20px 0; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+.chartDataGrid th, .chartDataGrid td { padding: 0 10px 24px 0; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
 .chartDataGrid th { font-weight: 600; }
-.chartDataGrid thead th { padding-bottom: 10px; }
+.chartDataGrid thead th { padding-bottom: var(--spacingVerticalS, 8px); }
+.chartDataGrid tr:has(+ .chartSupportingTextRow) > td { padding-bottom: 0; }
+.chartDataGrid .chartSupportingTextRow > td { padding-right: 0; }
 .chartDataGrid th:nth-child(2), .chartDataGrid td:nth-child(2) { width: 70px; padding-right: 8px; }
 .chartDataGrid[data-series-count="2"] th:nth-child(n+2),
 .chartDataGrid[data-series-count="2"] td:nth-child(n+2) { width: 88px; padding-right: 8px; }
@@ -2579,7 +2583,8 @@
   position: relative;
   min-width: 32px;
   width: 32px;
-  min-height: 40px;
+  min-height: 32px;
+  height: 32px;
   padding: 0;
   border-radius: var(--borderRadiusMedium, 8px);
 }
@@ -2591,10 +2596,10 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacingHorizontalS, 8px);
-  min-height: 32px;
+  min-height: 24px;
   color: var(--colorNeutralForeground2);
   font-size: 12px;
-  line-height: 32px;
+  line-height: 20px;
   list-style: none;
   cursor: pointer;
 }
@@ -2605,7 +2610,6 @@
 .chartSupportingTextField { margin-top: var(--spacingVerticalS, 8px); }
 .chartSupportingTextField textarea { resize: vertical; }
 
-.chartEditorBody { padding-top: 24px; }
 .chartEditor .chartAction,
 .chartEditor .chartChoiceButton,
 .chartEditor .field :is(input, textarea),
