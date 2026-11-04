@@ -350,6 +350,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       <Button type="button" appearance="subtle" className={styles.chartEditorDismiss}
         icon={<Dismiss20Regular aria-hidden="true" />} aria-label="Close chart editor" onClick={onCancel} />
     </header>
+    <div className={styles.chartEditorContent}>
     <div className={styles.chartEditorTools}>
     <div className={styles.chartIdentity}>
       {selectedType ? thumbnail(selectedType) : null}
@@ -361,6 +362,17 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
         aria-expanded={choosingType} aria-controls={choosingType ? `${block.id}-chart-types` : undefined}
         onClick={() => { setChoosingType(value => !value); setTab("data"); }}>Change chart</Button>
     </div>
+    {choosingType ? <div id={`${block.id}-chart-types`} role="group" aria-label="Chart types" className={styles.chartTypeChoices}>
+      <h3>Choose a chart</h3>
+      <Caption1>Keep your data, then adjust it to fit the chart you choose.</Caption1>
+      {chartChoices.map(({ type, title, description }) => <Button key={type} type="button" appearance="outline"
+        className={styles.chartTypeCard} aria-pressed={selectedType === type} onClick={() => changeChartType(type)}>
+        {thumbnail(type)}
+        <span><Body1Strong block>{title}</Body1Strong><Caption1 block>{description}</Caption1>
+          <Caption1 className={styles.chartTypeFit} block>{tableDraft && !validateChartTable(tableDraft.table, valueType, type).length
+            ? "Uses current data" : "Needs data changes"}</Caption1></span>
+      </Button>)}
+    </div> : null}
     <div className={styles.chartTabs} role="tablist" aria-label="Chart editing">
       {visibleTabs.map(value => {
         return <button key={value} type="button" role="tab"
@@ -393,17 +405,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     </div>
     <section id={`${block.id}-chart-panel`} role="tabpanel" aria-labelledby={`${block.id}-${tab}-tab`}
       data-chart-tab={tab} className={styles.chartEditorBody}>
-      {choosingType ? <div id={`${block.id}-chart-types`} role="group" aria-label="Chart types" className={styles.chartTypeChoices}>
-        <h3>Choose a chart</h3>
-        <Caption1>Keep your data, then adjust it to fit the chart you choose.</Caption1>
-        {chartChoices.map(({ type, title, description }) => <Button key={type} type="button" appearance="outline"
-          className={styles.chartTypeCard} aria-pressed={selectedType === type} onClick={() => changeChartType(type)}>
-          {thumbnail(type)}
-          <span><Body1Strong block>{title}</Body1Strong><Caption1 block>{description}</Caption1>
-            <Caption1 className={styles.chartTypeFit} block>{tableDraft && !validateChartTable(tableDraft.table, valueType, type).length
-              ? "Uses current data" : "Needs data changes"}</Caption1></span>
-        </Button>)}
-      </div> : null}
       {error ? <Body1 className={styles.inputError} role="alert" block>{error}</Body1> : null}
       {tab === "data" ? <>
         {dataSettings}
@@ -507,6 +508,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
         </label>)}
       </fieldset>}
     </section>
+    </div>
     <footer className={styles.chartEditorFooter}>
       {intent !== "insert" && block.source.part === "studio" ? <Button type="button"
         className={`${styles.chartAction} ${styles.chartDangerAction}`} onClick={onRemove}
