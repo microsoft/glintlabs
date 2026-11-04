@@ -321,9 +321,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     </>;
   }
   const dataSettings = selectedType === "horizontal-bar-chart" ? <div className={styles.chartDataSettings}>
-    <div className={styles.field}>
-      <Body1Strong id={`${block.id}-sort-label`}>Sort by</Body1Strong>
-      <Dropdown aria-labelledby={`${block.id}-sort-label`} className={styles.chartChoice}
+      <Dropdown aria-label="Sort by" className={styles.chartChoice}
         button={{ className: styles.chartChoiceButton }} listbox={{ className: styles.chartControlPopup }}
         value={orders[presentation.sort]} selectedOptions={[presentation.sort]}
         onOptionSelect={(_, data) => { if (data.optionValue) {
@@ -333,17 +331,15 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
         {Object.entries(orders).map(([value, label]) => <Option key={value} value={value}
           className={styles.chartMenuItem}>{label}</Option>)}
       </Dropdown>
-    </div>
-    <div className={styles.field}>
-      <Body1Strong id={`${block.id}-value-type-label`}>Value type</Body1Strong>
-      <div role="radiogroup" aria-labelledby={`${block.id}-value-type-label`} className={styles.chartValueSegments}>
-        {(["percentage", "number"] as const).map(unit => <label key={unit}>
-          <input type="radio" name={`${block.id}-value-type`}
-            value={unit} checked={valueType === unit} onChange={() => changeValueType(unit)} />
-          <span>{unit === "percentage" ? "Percentage" : "Number"}</span>
-        </label>)}
-      </div>
-    </div>
+      <Dropdown aria-label="Value type" className={styles.chartChoice}
+        button={{ className: styles.chartChoiceButton }} listbox={{ className: styles.chartControlPopup }}
+        value={valueType === "percentage" ? "Percentage" : "Number"} selectedOptions={[valueType]}
+        onOptionSelect={(_, data) => {
+          if (data.optionValue) changeValueType(data.optionValue as ChartValueType);
+        }}>
+        {(["percentage", "number"] as const).map(unit => <Option key={unit} value={unit}
+          className={styles.chartMenuItem}>{unit === "percentage" ? "Percentage" : "Number"}</Option>)}
+      </Dropdown>
   </div> : null;
   const replacementMenu = <Menu open={replacementOpen} onOpenChange={(_, data) => setReplacementOpen(data.open)}
     positioning={{ position: "below", align: "end", offset: 8 }}>
@@ -372,7 +368,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
           {chartChoices.map(({ type, title }) => <Option key={type} value={type} checkIcon={null}
             className={styles.chartMenuItem}>{title}</Option>)}
         </Dropdown>
-        {replacementMenu}
+        {intent === "insert" ? replacementMenu : null}
       </div>
       <Button type="button" appearance="subtle" className={styles.chartEditorDismiss}
         icon={<Dismiss20Regular aria-hidden="true" />} aria-label="Close chart editor" onClick={onCancel} />
