@@ -2373,7 +2373,6 @@
 .chartEditor .chartTypeOption:hover { background: var(--colorNeutralBackground3Hover); }
 .chartEditor .chartTypeOption:active { background: var(--colorNeutralBackground3Pressed); }
 .chartEditor .chartTypeOption[aria-pressed="true"] { background: var(--colorBrandBackground2); }
-.chartTypeFit { margin-top: 4px; color: var(--colorNeutralForeground3); }
 .chartDataGuidance {
   display: grid;
   justify-items: start;

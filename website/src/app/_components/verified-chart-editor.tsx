@@ -371,9 +371,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       {chartChoices.map(({ type, title, description }) => <Button key={type} type="button" appearance="outline"
         className={styles.chartTypeOption} aria-pressed={selectedType === type} onClick={() => changeChartType(type)}>
         {chartIcon(type)}
-        <span><Body1Strong block>{title}</Body1Strong><Caption1 block>{description}</Caption1>
-          <Caption1 className={styles.chartTypeFit} block>{tableDraft && !validateChartTable(tableDraft.table, valueType, type).length
-            ? "Uses current data" : "Needs data changes"}</Caption1></span>
+        <span><Body1Strong block>{title}</Body1Strong><Caption1 block>{description}</Caption1></span>
       </Button>)}
     </div> : null}
     {!choosingType ? <div className={styles.chartTabs} role="tablist" aria-label="Chart editing">
