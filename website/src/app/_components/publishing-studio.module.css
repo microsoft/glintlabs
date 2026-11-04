@@ -2352,17 +2352,27 @@
   width: 100%;
 }
 .chartIdentityText { display: grid; flex: 1; gap: 4px; min-width: 0; }
-.chartIdentity > .chartTypePreview { flex: 0 0 56px; width: 56px; height: 48px; padding: 4px; overflow: hidden; }
-.chartIdentity > .chartTypePreview i { max-width: 40px; }
-.chartIdentity > .chartTypePreview b { font-size: 16px; }
+.chartTypeIcon { flex: 0 0 20px; width: 20px; height: 20px; }
 .chartIdentityText > :first-child { color: var(--colorNeutralForeground3); }
 .chartEditor .chartChangeAction { flex-shrink: 0; min-height: 32px; border-radius: var(--studio-compact-action-radius); }
-.chartTypeChoices { display: grid; gap: 12px; }
-.chartTypeChoices h3,
+.chartTypeChoices { display: grid; gap: 8px; padding-bottom: 24px; }
 .chartTableHeader h3 { margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; }
-.chartTypeChoices > :nth-child(2) { color: var(--colorNeutralForeground3); }
-.chartTypeChoices .chartTypeCard { width: 100%; }
-.chartTypeChoices .chartTypeCard[aria-pressed="true"] { border-color: var(--colorBrandStroke1); background: var(--colorBrandBackground2); }
+.chartEditor .chartTypeOption {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  border: 0;
+  border-radius: var(--borderRadiusMedium);
+  color: var(--colorNeutralForeground1);
+  background: var(--colorNeutralBackground2);
+  text-align: left;
+}
+.chartTypeOption > span { min-width: 0; }
+.chartEditor .chartTypeOption:hover { background: var(--colorNeutralBackground3Hover); }
+.chartEditor .chartTypeOption:active { background: var(--colorNeutralBackground3Pressed); }
+.chartEditor .chartTypeOption[aria-pressed="true"] { background: var(--colorBrandBackground2); }
 .chartTypeFit { margin-top: 4px; color: var(--colorNeutralForeground3); }
 .chartDataGuidance {
   display: grid;

@@ -8,10 +8,14 @@ import { ArrowUpload20Regular } from "@fluentui/react-icons/svg/arrow-upload";
 import { ClipboardPaste20Regular } from "@fluentui/react-icons/svg/clipboard-paste";
 import { Color20Regular } from "@fluentui/react-icons/svg/color";
 import { Checkmark16Regular } from "@fluentui/react-icons/svg/checkmark";
+import { ChevronDown20Regular } from "@fluentui/react-icons/svg/chevron-down";
+import { DataBarHorizontal20Regular } from "@fluentui/react-icons/svg/data-bar-horizontal";
 import { DataBarVertical20Regular } from "@fluentui/react-icons/svg/data-bar-vertical";
+import { DataPie20Regular } from "@fluentui/react-icons/svg/data-pie";
 import { Delete16Regular } from "@fluentui/react-icons/svg/delete";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
 import { TextEditStyle20Regular } from "@fluentui/react-icons/svg/text-edit-style";
+import { TextPercent20Regular } from "@fluentui/react-icons/svg/text-percent";
 import { Menu, MenuItem, MenuList, MenuPopover, MenuTrigger } from "@fluentui/react-menu";
 import { Body1, Body1Strong, Caption1, Subtitle1 } from "@fluentui/react-text";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -298,11 +302,11 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       </table>
     </>;
   }
-  function thumbnail(type: VerifiedDataVisualType) {
-    return <span className={styles.chartTypePreview} aria-hidden="true" data-chart-type={type}>
-      {type === "paired-percentage-comparison" ? <><b>%</b><b>%</b></>
-        : type === "grouped-column-comparison" ? <><i /><i /><i /><i /></> : <><i /><i /><i /></>}
-    </span>;
+  function chartIcon(type: VerifiedDataVisualType) {
+    const Icon = type === "horizontal-bar-chart" ? DataBarHorizontal20Regular
+      : type === "paired-percentage-comparison" ? TextPercent20Regular
+        : type === "percentage-ring-group" ? DataPie20Regular : DataBarVertical20Regular;
+    return <Icon className={styles.chartTypeIcon} aria-hidden="true" />;
   }
   const dataSettings = selectedType === "horizontal-bar-chart" ? <div className={styles.chartDataSettings}>
     <div className={styles.field}>
@@ -353,27 +357,26 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     <div className={styles.chartEditorContent}>
     <div className={styles.chartEditorTools}>
     <div className={styles.chartIdentity}>
-      {selectedType ? thumbnail(selectedType) : null}
+      {selectedType ? chartIcon(selectedType) : null}
       <span className={styles.chartIdentityText}>
         <Caption1>Chart type</Caption1>
         <Body1Strong>{chartChoice?.title ?? "Choose a chart"}</Body1Strong>
       </span>
       <Button ref={typeButton} type="button" appearance="outline" className={styles.chartChangeAction}
+        icon={<ChevronDown20Regular aria-hidden="true" />} iconPosition="after"
         aria-expanded={choosingType} aria-controls={choosingType ? `${block.id}-chart-types` : undefined}
         onClick={() => { setChoosingType(value => !value); setTab("data"); }}>Change chart</Button>
     </div>
     {choosingType ? <div id={`${block.id}-chart-types`} role="group" aria-label="Chart types" className={styles.chartTypeChoices}>
-      <h3>Choose a chart</h3>
-      <Caption1>Keep your data, then adjust it to fit the chart you choose.</Caption1>
       {chartChoices.map(({ type, title, description }) => <Button key={type} type="button" appearance="outline"
-        className={styles.chartTypeCard} aria-pressed={selectedType === type} onClick={() => changeChartType(type)}>
-        {thumbnail(type)}
+        className={styles.chartTypeOption} aria-pressed={selectedType === type} onClick={() => changeChartType(type)}>
+        {chartIcon(type)}
         <span><Body1Strong block>{title}</Body1Strong><Caption1 block>{description}</Caption1>
           <Caption1 className={styles.chartTypeFit} block>{tableDraft && !validateChartTable(tableDraft.table, valueType, type).length
             ? "Uses current data" : "Needs data changes"}</Caption1></span>
       </Button>)}
     </div> : null}
-    <div className={styles.chartTabs} role="tablist" aria-label="Chart editing">
+    {!choosingType ? <div className={styles.chartTabs} role="tablist" aria-label="Chart editing">
       {visibleTabs.map(value => {
         return <button key={value} type="button" role="tab"
         id={`${block.id}-${value}-tab`} aria-controls={`${block.id}-chart-panel`} aria-selected={tab === value}
@@ -393,7 +396,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
           <span>{value === "text" ? "Text" : value === "data" ? "Data" : "Palette"}</span>
         </button>;
       })}
-    </div>
+    </div> : null}
     <input ref={fileInput} hidden type="file" accept=".csv,.tsv,.txt" onChange={async event => {
       const file = event.target.files?.[0]; event.target.value = "";
       if (!file) return;
@@ -403,7 +406,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       } catch (cause) { setError(cause instanceof Error ? cause.message : "The table could not be imported."); }
     }} />
     </div>
-    <section id={`${block.id}-chart-panel`} role="tabpanel" aria-labelledby={`${block.id}-${tab}-tab`}
+    {!choosingType ? <section id={`${block.id}-chart-panel`} role="tabpanel" aria-labelledby={`${block.id}-${tab}-tab`}
       data-chart-tab={tab} className={styles.chartEditorBody}>
       {error ? <Body1 className={styles.inputError} role="alert" block>{error}</Body1> : null}
       {tab === "data" ? <>
@@ -507,7 +510,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
             <Checkmark16Regular className={styles.chartPaletteCheck} aria-hidden="true" /></span>
         </label>)}
       </fieldset>}
-    </section>
+    </section> : null}
     </div>
     <footer className={styles.chartEditorFooter}>
       {intent !== "insert" && block.source.part === "studio" ? <Button type="button"

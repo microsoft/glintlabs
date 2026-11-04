@@ -315,6 +315,7 @@ test("Word chart data is immediately editable without copying or changing the or
     createStudioChartSource() { assert.fail("Opening a chart must not create replacement source data"); },
     Dismiss20Regular: "dismiss-icon", Delete16Regular: "delete-icon",
     TextEditStyle20Regular: "text-icon", DataBarVertical20Regular: "data-icon", Color20Regular: "color-icon", Checkmark16Regular: "check-icon",
+    DataBarHorizontal20Regular: "bar-icon", DataPie20Regular: "ring-icon", TextPercent20Regular: "percent-icon", ChevronDown20Regular: "chevron-icon",
     Add16Regular: "add-icon", ArrowUpload20Regular: "upload-icon", ClipboardPaste20Regular: "paste-icon",
     Button: "button", MenuButton: "button", Checkbox: "checkbox", Dropdown: "dropdown", Option: "option",
     Menu: "menu", MenuItem: "menuitem", MenuList: "menulist", MenuPopover: "popover", MenuTrigger: "trigger",
