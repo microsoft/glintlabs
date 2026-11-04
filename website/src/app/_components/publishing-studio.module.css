@@ -1,11 +1,14 @@
 .shell {
-  --studio-header-height: 80px;
+  --studio-header-height: 73px;
+  --studio-canvas: #f2f5f7;
   --studio-action-background: #242424;
   --studio-action-background-hover: #3a3a3a;
   --studio-action-border: #d1d1d1;
   --studio-action-border-hover: #bdbdbd;
   --studio-action-height: 40px;
   --studio-action-radius: 16px;
+  --studio-compact-action-height: 32px;
+  --studio-compact-action-radius: 12px;
 
   min-height: max(100vh, 620px);
   padding-top: 0;
@@ -31,8 +34,8 @@
   gap: 12px;
   align-items: center;
   height: var(--studio-header-height);
-  padding: 0 20px;
-  border-bottom: 0;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--colorNeutralStroke2);
   background: var(--studio-surface);
 }
 
@@ -44,7 +47,7 @@
 .reportStatus {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
   min-width: 0;
 }
 
@@ -56,13 +59,13 @@
 
 .homeAction {
   display: grid;
-  flex: 0 0 40px;
-  width: 40px;
-  height: 40px;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
   padding: 0;
   place-items: center;
   border: 0;
-  border-radius: 50%;
+  border-radius: var(--studio-compact-action-radius);
   color: var(--ink);
   background: transparent;
   cursor: pointer;
@@ -85,7 +88,7 @@
 
 .reportStatus {
   grid-column: 3;
-  gap: 16px;
+  gap: 20px;
   justify-self: end;
 }
 
@@ -95,14 +98,16 @@
 
 .publishAction,
 .secondaryTopAction {
-  min-height: var(--studio-action-height);
-  padding: 0 14px;
+  min-height: var(--studio-compact-action-height);
+  height: var(--studio-compact-action-height);
+  padding: 6px 10px;
   border: 0;
-  border-radius: var(--studio-action-radius);
+  border-radius: var(--studio-compact-action-radius);
   color: var(--glint-paper);
   background: var(--studio-action-background);
   font: inherit;
   font-size: 14px;
+  line-height: 20px;
   font-weight: 400;
   cursor: pointer;
 }
@@ -117,10 +122,9 @@
 }
 
 .secondaryTopAction {
-  min-width: 58px;
-  border: 1px solid var(--studio-action-border);
+  min-width: 52px;
   color: var(--studio-action-background);
-  background: var(--studio-surface);
+  background: var(--colorNeutralBackground3);
 }
 
 .secondaryTopAction:hover {
@@ -134,7 +138,7 @@
   min-width: 100px;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .integrityStatus {
@@ -154,9 +158,9 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: var(--studio-action-height);
+  min-height: var(--studio-compact-action-height);
   border: 1px solid var(--studio-action-border);
-  border-radius: var(--studio-action-radius);
+  border-radius: var(--studio-compact-action-radius);
   color: var(--ink);
   background: var(--studio-surface);
   font: inherit;
@@ -172,14 +176,16 @@
 
 .documentTrigger {
   min-width: 0;
-  min-height: 40px;
+  min-height: var(--studio-compact-action-height);
+  height: var(--studio-compact-action-height);
   max-width: min(256px, 30vw);
   justify-content: space-between;
-  gap: 12px;
-  padding: 0 14px 0 18px;
+  gap: 6px;
+  padding: 6px 10px;
   border-color: var(--studio-action-border);
-  border-radius: var(--studio-action-radius);
-  font-size: 16px;
+  border-radius: var(--studio-compact-action-radius);
+  font-size: 14px;
+  line-height: 20px;
   font-weight: 400;
   list-style: none;
 }
@@ -1694,9 +1700,10 @@
 }
 
 .viewportSwitcher {
+  --colorSubtleBackgroundSelected: #f2f2f2;
   grid-column: 2;
   display: flex;
-  gap: 4px;
+  gap: var(--spacingHorizontalM, 12px);
   width: fit-content;
   padding: 0;
   border: 0;
@@ -1710,33 +1717,35 @@
   padding: 0;
   place-items: center;
   border: 0;
-  border-radius: 50%;
-  color: #242424;
+  border-radius: var(--borderRadiusMedium, 4px);
+  color: var(--colorNeutralForeground1);
   background: transparent;
   cursor: pointer;
 }
 
 .viewportSwitcher button:hover {
-  color: #242424;
-  background: #f5f5f5;
+  background: var(--colorSubtleBackgroundHover);
 }
 
 .viewportSwitcher button[aria-pressed="true"] {
-  color: #242424;
-  background: #f0f0f0;
+  background: var(--colorSubtleBackgroundSelected);
+}
+
+.viewportSwitcher button:active {
+  background: var(--colorSubtleBackgroundPressed);
 }
 
 .viewportSwitcher button:focus-visible {
-  outline: 3px solid var(--focus);
+  outline: 2px solid var(--colorStrokeFocus2);
   outline-offset: 2px;
 }
 
 .fullWidthCanvas {
-  padding: 0;
+  padding: 40px 0;
 }
 
-.fullWidthCanvas .reportFrame {
-  box-shadow: none;
+.chartEditing .canvasContent.fullWidthCanvas {
+  padding-inline: 0;
 }
 
 .reportFrame {
@@ -1777,9 +1786,11 @@
 
 .startScreen {
   display: grid;
-  gap: 20px;
-  width: min(400px, calc(100% - 32px));
-  margin: 10vh auto 48px;
+  align-content: center;
+  width: min(448px, calc(100% - 32px));
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 40px 0 calc(40px + var(--studio-header-height));
 }
 
 .startScreen > .savedProjects {
@@ -1805,32 +1816,34 @@
 .startCard {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 400px;
-  padding: 32px;
-  border: 1px solid #d6dce5;
+  padding: 32px 24px 40px;
+  border: 1px solid var(--colorNeutralStroke2);
   border-radius: 20px;
   background: var(--studio-surface);
 }
 
 .startIllustration {
-  width: 146px;
-  height: 146px;
+  width: 128px;
+  height: 128px;
   object-fit: contain;
 }
 
 .startCardContent {
   display: grid;
-  gap: 24px;
+  gap: 40px;
   width: 100%;
 }
 
 .startCardActions {
-  display: grid;
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
 }
 
 .savedDrafts {
@@ -1838,9 +1851,20 @@
 }
 
 .savedDrafts > summary {
-  width: 100%;
+  width: fit-content;
   max-width: none;
+  min-height: var(--studio-action-height);
+  height: var(--studio-action-height);
+  padding: 8px 12px;
+  border-radius: var(--studio-action-radius);
+  font-size: 16px;
+  line-height: 22px;
 }
+
+.savedDrafts > summary > svg { display: none; }
+
+.savedDrafts[open] { flex-basis: 100%; }
+.savedDrafts[open] > summary { margin-inline: auto; }
 
 .savedDrafts[open] > summary {
   margin-bottom: 12px;
@@ -1853,7 +1877,7 @@
 
 .startCardCopy {
   display: grid;
-  gap: 16px;
+  gap: 8px;
   justify-items: center;
   text-align: center;
 }
@@ -1866,17 +1890,17 @@
 
 .startCardCopy > h1 {
   color: #000;
-  font-size: 20px;
-  font-weight: 550;
-  line-height: 24px;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 28px;
   letter-spacing: -0.15px;
 }
 
 .startCard .startCardCopy > .startCardDescription {
-  color: #000;
-  font-size: 14px;
-  font-weight: 420;
-  line-height: 20px;
+  color: var(--colorNeutralForeground1);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
 }
 
 .publishingStyleField {
@@ -1898,7 +1922,7 @@
   padding: 8px 40px 8px 12px;
   appearance: none;
   border: 1px solid #8a8886;
-  border-radius: 10px;
+  border-radius: 4px;
   color: #242424;
   background-color: var(--studio-surface);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='m4 6 4 4 4-4' stroke='%23242424' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -1917,7 +1941,8 @@
 }
 
 .startCard .filePicker {
-  width: 100%;
+  width: auto;
+  gap: 6px;
   min-height: 40px;
   padding: 8px 12px;
   border-radius: 16px;
@@ -1999,7 +2024,7 @@
   width: 100%;
   padding: 9px 10px;
   border: 1px solid var(--studio-control-border);
-  border-radius: 7px;
+  border-radius: 4px;
   color: var(--ink);
   background: var(--studio-surface);
   font: inherit;
@@ -2019,6 +2044,484 @@
 
 .inputError {
   color: var(--danger);
+}
+
+.workspace.chartEditing {
+  grid-template-columns: minmax(0, 1fr) 472px;
+}
+
+.chartEditorSurface {
+  --studio-field-border: #eaeaea;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--studio-surface);
+  box-shadow: 0 0 8px rgb(0 0 0 / 20%), 0 14px 28px rgb(0 0 0 / 24%);
+}
+
+.chartEditorSurface > .visualLibrary,
+.chartEditorSurface > .editor {
+  overflow-y: auto;
+  padding: var(--spacingHorizontalXXL, 24px);
+}
+
+.chartEditing .canvasContent {
+  padding: var(--spacingHorizontalXXL, 24px);
+}
+
+.chartEditing .storageMessage {
+  position: absolute;
+  top: var(--spacingVerticalM, 12px);
+  bottom: auto;
+}
+
+.chartEditor {
+  --borderRadiusMedium: 12px;
+  --fontFamilyBase: "Segoe Sans", "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif;
+  --studio-field-foreground: rgb(0 0 0 / 56.47059%);
+  --studio-chart-button-border: rgb(0 0 0 / 12.94118%);
+  --studio-chart-selected: #f2f2f2;
+}
+
+.chartControlPopup {
+  --borderRadiusMedium: 8px;
+  --colorBrandForeground1: #335ccc;
+}
+
+.chartEditor {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  color: var(--colorNeutralForeground1);
+  font-family: var(--fontFamilyBase, "Segoe UI", sans-serif);
+  font-size: var(--fontSizeBase300, 14px);
+  line-height: var(--lineHeightBase300, 20px);
+}
+
+.chartEditorHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalM, 12px);
+  margin-inline: 24px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--studio-field-border);
+}
+
+.chartEditorHeader h2 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 625;
+}
+
+.chartEditorHeader h2 > span { font: inherit; }
+
+.chartEditorHeader h2:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.chartEditor .chartEditorDismiss {
+  flex: 0 0 24px;
+  min-width: 24px;
+  width: 24px;
+  height: 24px;
+  margin-block: -1px;
+  margin-inline-end: -2px;
+  padding: 0;
+  border-radius: var(--borderRadiusMedium, 8px);
+}
+
+.chartEditorBody {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 48px 24px 24px;
+}
+
+.chartEditorBody[data-chart-tab="data"] { gap: 48px; }
+
+.chartEditorBody > * {
+  flex-shrink: 0;
+}
+
+.chartEditor .field {
+  gap: var(--spacingVerticalS, 8px);
+}
+
+.chartEditor .field > span { font-weight: 400; }
+.chartEditorBody[data-chart-tab="data"] .field > span { font-weight: 625; }
+
+.chartEditor .optionGroup legend {
+  margin-bottom: var(--spacingVerticalS, 8px);
+  font-weight: var(--fontWeightSemibold, 600);
+}
+
+.chartEditor .optionGroup label {
+  align-items: center;
+  gap: var(--spacingHorizontalS, 8px);
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: var(--borderRadiusMedium, 4px);
+}
+
+.chartEditor .field :is(input, textarea),
+.chartDataGrid input {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--studio-field-border);
+  border-radius: var(--borderRadiusMedium, 8px);
+  color: var(--studio-field-foreground);
+  background: var(--colorNeutralBackground1);
+  font: 16px/22px var(--fontFamilyBase, "Segoe UI", sans-serif);
+}
+
+.chartEditor .field textarea {
+  min-height: 64px;
+}
+
+.chartEditor .field :is(input, textarea)[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.chartEditor .field :is(input, textarea):focus-visible,
+.chartDataGrid input:focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 2px;
+}
+
+.chartEditor .field :is(input, textarea):hover:not([aria-invalid="true"]),
+.chartDataGrid input:hover:not([aria-invalid="true"]) {
+  border-color: var(--colorNeutralStroke1Hover);
+}
+
+.chartEditor .chartAction {
+  gap: 6px;
+  min-width: 0;
+  min-height: 40px;
+  height: 40px;
+  padding: 8px 12px;
+  border-color: var(--studio-chart-button-border);
+  border-radius: var(--borderRadiusMedium);
+  font-family: inherit;
+  font-size: var(--fontSizeBase400, 16px);
+  font-weight: 400;
+  line-height: var(--lineHeightBase400, 22px);
+  white-space: nowrap;
+}
+
+.chartEditor .chartAction :global(.fui-Button__icon),
+.chartEditor .chartAction :global(.fui-MenuButton__menuIcon) {
+  margin-inline: 0;
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}
+
+.chartEditorFooter .editorActions > button:first-child { width: 72px; }
+.chartEditorFooter .chartPrimaryAction { width: 128px; }
+.chartDataActions .chartAction { width: 106px; }
+
+.chartEditor .chartPrimaryAction:not(:disabled) {
+  border-color: transparent;
+  color: var(--colorNeutralForeground1);
+  background: var(--studio-chart-selected);
+}
+
+.chartEditor .chartPrimaryAction:hover:not(:disabled) {
+  background: var(--colorNeutralBackground3Hover);
+}
+
+.chartEditor .chartPrimaryAction:active:not(:disabled) {
+  background: var(--colorNeutralBackground3Pressed);
+}
+
+.chartEditor .chartDangerAction {
+  width: 143px;
+  color: var(--colorPaletteRedForeground1);
+  border-color: transparent;
+  background: transparent;
+}
+
+.chartEditor .chartDangerAction:hover:not(:disabled) {
+  color: var(--colorPaletteRedForeground2);
+  background: var(--colorPaletteRedBackground1);
+}
+
+.chartEditor .chartDangerAction:active:not(:disabled) {
+  background: var(--colorPaletteRedBackground2);
+}
+
+.chartEditorFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacingVerticalM, 12px);
+  padding: 24px;
+  border-top: 1px solid var(--studio-field-border);
+  background: var(--studio-surface);
+}
+
+.chartEditorFooter .editorActions {
+  margin-inline-start: auto;
+  gap: 16px;
+}
+
+.chartEditorTools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 24px 24px 0;
+}
+
+.chartReplaceAction { width: 137px; margin-inline-start: auto; }
+
+.chartTabs { display: flex; gap: 16px; }
+.chartTabs button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 40px;
+  height: 40px;
+  padding: 8px 20px;
+  border: 1px solid var(--studio-chart-button-border);
+  border-radius: var(--borderRadiusMedium);
+  background: transparent;
+  color: var(--colorNeutralForeground1);
+  font: inherit;
+  font-size: 16px;
+  line-height: 22px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.chartTabs button:first-child { width: 94px; }
+.chartTabs button:last-child { width: 99px; }
+.chartTabs button[aria-selected="true"] {
+  border-color: transparent;
+  background: var(--studio-chart-selected);
+  font-weight: 400;
+}
+.chartTabs button:hover { background: var(--colorNeutralBackground1Hover); }
+.chartTabs button:active { background: var(--colorNeutralBackground1Pressed); }
+.chartTabs button[aria-selected="true"]:hover {
+  background: var(--colorNeutralBackground1Pressed);
+}
+.chartTabs button[aria-selected="true"]:active {
+  background: var(--colorNeutralBackground1Pressed);
+}
+.chartTabs svg,
+.chartEditorDismiss svg { width: 20px; height: 20px; flex-shrink: 0; }
+.chartTabs button:focus-visible { outline: 2px solid var(--colorStrokeFocus2); outline-offset: 2px; }
+
+@media (forced-colors: active) {
+  .viewportSwitcher button[aria-pressed="true"],
+  .chartTabs button[aria-selected="true"] {
+    forced-color-adjust: none;
+    border-color: Highlight;
+    color: HighlightText;
+    background: Highlight;
+  }
+}
+
+.chartDataActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--spacingHorizontalM, 12px);
+}
+
+.chartEditor .chartChoice {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  border-radius: var(--borderRadiusMedium, 8px);
+  border-color: var(--studio-field-border);
+}
+
+.chartEditor .chartChoice::after { display: none; }
+.chartEditor .chartChoice:focus-within { outline: 2px solid var(--colorStrokeFocus2); outline-offset: 2px; }
+
+.chartEditor .chartChoiceButton {
+  min-height: 38px;
+  padding: 8px 12px;
+  border-radius: inherit;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 22px;
+  color: var(--studio-field-foreground);
+}
+
+.chartControlPopup.chartControlPopup {
+  max-width: calc(100vw - 24px);
+  padding: var(--spacingHorizontalS, 8px);
+  border-radius: var(--borderRadiusMedium);
+  background: var(--colorNeutralBackground1);
+  color: var(--colorNeutralForeground1);
+  box-shadow: var(--shadow16);
+  font-family: var(--fontFamilyBase);
+  font-size: var(--fontSizeBase300);
+  line-height: var(--lineHeightBase300);
+}
+
+.chartControlPopup .chartMenuItem {
+  gap: var(--spacingHorizontalS, 8px);
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: var(--borderRadiusSmall);
+  font-size: var(--fontSizeBase300);
+  line-height: var(--lineHeightBase300);
+}
+
+.chartPasteEditor {
+  display: grid;
+  gap: var(--spacingVerticalM, 12px);
+}
+
+.chartPasteActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacingHorizontalM, 12px);
+}
+
+.chartTableSection {
+  display: grid;
+  gap: 0;
+}
+
+.chartDataSettings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.chartValueSegments {
+  display: flex;
+  justify-content: space-between;
+  height: 40px;
+  border: 1px solid var(--studio-field-border);
+  border-radius: var(--borderRadiusMedium, 8px);
+  background: var(--colorNeutralBackground1);
+}
+.chartValueSegments label { position: relative; min-width: 0; cursor: pointer; }
+.chartValueSegments label:first-child { width: 107px; }
+.chartValueSegments label:last-child { width: 85px; }
+.chartEditor .chartValueSegments input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+.chartValueSegments span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 8px 12px;
+  border-radius: var(--borderRadiusMedium);
+  color: var(--studio-field-foreground);
+  font: 16px/22px var(--fontFamilyBase, "Segoe UI", sans-serif);
+  white-space: nowrap;
+}
+.chartValueSegments label:hover span { background: var(--colorNeutralBackground1Hover); }
+.chartValueSegments input:checked + span {
+  color: var(--colorNeutralForeground1);
+  background: var(--studio-chart-selected);
+  box-shadow: 0 0 0 1px var(--studio-field-border);
+  font-weight: 400;
+}
+.chartValueSegments input:focus-visible + span {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: -3px;
+}
+@media (max-width: 479px) {
+  .chartDataSettings { grid-template-columns: minmax(0, 1fr); }
+}
+.chartDataGrid { width: 100%; table-layout: fixed; border-collapse: collapse; }
+.chartDataGrid caption { text-align: left; padding-bottom: 12px; font-size: 12px; color: var(--muted); }
+.chartDataGrid th, .chartDataGrid td { padding: 0 10px 20px 0; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+.chartDataGrid th { font-weight: 625; }
+.chartDataGrid thead th { padding-bottom: 10px; }
+.chartDataGrid th:nth-child(2), .chartDataGrid td:nth-child(2) { width: 70px; padding-right: 8px; }
+.chartDataGrid th:last-child:has(.chartCellLabel), .chartDataGrid td:has(.chartRemoveRow) { width: 16px; padding-right: 0; }
+.chartDataGrid input {
+  width: 100%;
+  min-width: 0;
+}
+.chartDataGrid input[aria-invalid="true"] { border-color: var(--danger); }
+.chartDataGrid td:nth-child(2) input { text-align: left; }
+.chartDataGrid input[data-compact-value="true"] { padding-inline: 8px; }
+.chartCell { display: block; min-width: 0; }
+.chartCellLabel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.chartEditor .chartRemoveRow {
+  position: relative;
+  inset-inline-start: -4px;
+  min-width: 24px;
+  width: 24px;
+  min-height: 40px;
+  padding: 0;
+  border-radius: var(--borderRadiusMedium, 8px);
+}
+.chartEditor .chartRemoveRow :global(.fui-Button__icon) { width: 16px; height: 16px; margin: 0; }
+
+.chartOptions summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid var(--colorNeutralStroke1);
+  border-radius: var(--studio-compact-action-radius);
+  cursor: pointer;
+  list-style: none;
+}
+.chartOptions summary::-webkit-details-marker { display: none; }
+.chartOptions summary:hover { background: var(--colorNeutralBackground1Hover); }
+.chartOptions summary:focus-visible { outline: 2px solid var(--colorStrokeFocus2); outline-offset: 2px; }
+.chartOptions[open] summary svg { transform: rotate(180deg); }
+.chartOptionFields { display: grid; gap: 24px; padding-top: 24px; }
+
+@media (max-width: 1023px) {
+  .workspace.chartEditing {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(180px, 30%) minmax(0, 1fr);
+  }
+
+  .chartEditorSurface {
+    border-left: 0;
+  }
+
+  .chartEditing .canvasContent {
+    padding: var(--spacingHorizontalM, 12px);
+  }
+
+  .chartEditorHeader,
+  .chartEditorBody,
+  .chartEditorFooter {
+    padding-right: var(--spacingHorizontalXXL, 24px);
+    padding-left: var(--spacingHorizontalXXL, 24px);
+  }
+
+  .chartEditorHeader {
+    padding-inline: 0;
+  }
+
 }
 
 .optionGroup {
@@ -2135,10 +2638,12 @@
   min-height: var(--studio-action-height);
   align-items: center;
   justify-content: center;
-  padding: 0 14px;
+  gap: 6px;
+  padding: 8px 12px;
   border-radius: var(--studio-action-radius);
   font: inherit;
-  font-size: 14px;
+  font-size: 16px;
+  line-height: 22px;
   font-weight: 400;
   text-decoration: none;
   cursor: pointer;

@@ -552,9 +552,17 @@
 }
 
 .horizontalChart {
-  height: 857px;
-  min-height: 857px;
-  padding: 40px 32px 32px;
+  --chart-blue: #5f82f2;
+  --chart-teal: #6a908d;
+  --chart-lavender: #8e83ad;
+  --chart-mauve: #ad83a0;
+  --chart-track: #f8f8f8;
+  height: auto;
+  min-height: 0;
+  max-width: 100%;
+  border: 1px solid var(--report-light-blue, #cedeff);
+  border-radius: 20px;
+  padding: 40px;
 }
 
 .horizontalChart h3,
@@ -565,10 +573,10 @@
 }
 
 .horizontalChart h3 {
-  width: 700px;
-  margin: 0 auto;
-  text-align: center;
-  text-wrap: balance;
+  width: 100%;
+  font-weight: 600;
+  letter-spacing: -0.15px;
+  text-align: left;
 }
 
 .rule {
@@ -579,50 +587,73 @@
 
 .horizontalRows {
   display: grid;
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: 20px 12px;
+}
+
+.horizontalChart .rule {
+  background: #eff4ff;
 }
 
 .horizontalRow {
   display: grid;
-  grid-template-columns: 234px 428px;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   align-items: center;
-  gap: 24px;
-  min-height: 40px;
+  row-gap: 8px;
 }
 
 .horizontalRow > span {
+  grid-column: 1 / -1;
+  overflow-wrap: anywhere;
   font-size: 14px;
-  font-weight: 625;
+  font-weight: 420;
   line-height: 20px;
 }
 
 .horizontalValue {
   display: grid;
-  grid-template-columns: 383px 33px;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   align-items: center;
-  gap: 12px;
 }
 
 .horizontalBarTrack {
+  position: relative;
   height: 24px;
-  background: transparent;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--chart-track);
+}
+
+.chartZero {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid var(--colorNeutralForeground3);
+}
+
+.chartScale {
+  margin: 12px 0 0;
+  color: var(--colorNeutralForeground3);
+  font-size: 12px;
 }
 
 .horizontalBarTrack i {
   display: block;
   height: 100%;
+  border-radius: inherit;
   background: linear-gradient(90deg, #15a0b9 0%, #16bbda 100%);
 }
 
 .horizontalValue strong {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 625;
-  line-height: 22px;
+  line-height: 20px;
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-.chartLegend,
 .seriesLegend {
   display: flex;
   align-items: center;
@@ -633,18 +664,12 @@
   line-height: 16px;
 }
 
-.horizontalChart .chartLegend {
-  margin-top: 16px;
-}
-
-.chartLegend i,
 .seriesLegend i {
   width: 12px;
   height: 12px;
   background: #16bbda;
 }
 
-.horizontalChart .sourceNote,
 .groupedColumns .sourceNote {
   display: block;
   margin-top: 16px;
@@ -652,10 +677,35 @@
   white-space: pre-line;
 }
 
-.horizontalChart .sourceNote {
-  width: 642px;
-  margin-top: 13px;
-  margin-left: 44px;
+.horizontalChart .chartSubtitle {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+
+.horizontalChart .chartNote {
+  font-size: 12px;
+  font-style: italic;
+  line-height: 16px;
+  overflow-wrap: anywhere;
+}
+
+.horizontalChart .chartSubtitle { text-align: left; }
+.horizontalChart .chartSynthetic {
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.horizontalChart[data-density="compact"] .horizontalRows { gap: 12px; }
+.horizontalChart[data-density="compact"] .horizontalBarTrack { height: 16px; }
+.chartDataTable {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .groupedColumns {
@@ -954,6 +1004,10 @@
   background: var(--report-canvas);
 }
 
+:global([data-report-style="new-fluent-colors"]) .horizontalChart {
+  border-color: var(--report-light-blue);
+}
+
 :global([data-report-style="new-fluent-colors"]) .continuum > .eyebrow,
 :global([data-report-style="new-fluent-colors"]) .featuredEyebrow,
 :global([data-report-style="new-fluent-colors"]) .dataDisclosureHeading > span,
@@ -992,7 +1046,6 @@
 :global([data-report-style="new-fluent-colors"]) .pullQuote > span,
 :global([data-report-style="new-fluent-colors"]) .methodBarTrack span,
 :global([data-report-style="new-fluent-colors"]) .horizontalBarTrack i,
-:global([data-report-style="new-fluent-colors"]) .chartLegend i,
 :global([data-report-style="new-fluent-colors"]) .columnPrimary,
 :global([data-report-style="new-fluent-colors"]) .seriesLegend .columnPrimary {
   background: var(--report-blue);
@@ -1005,7 +1058,6 @@
 }
 
 :global([data-report-style="new-fluent-colors"]) .sourceNote,
-:global([data-report-style="new-fluent-colors"]) .horizontalChart .sourceNote,
 :global([data-report-style="new-fluent-colors"]) .groupedColumns .sourceNote {
   color: var(--report-muted);
 }
@@ -1029,7 +1081,6 @@
   }
 
   .continuumRow,
-  .horizontalRow,
   .insightColumns,
   .referencesLayout {
     grid-template-columns: 1fr;
@@ -1049,46 +1100,10 @@
     width: 100%;
   }
 
-  .horizontalValue {
-    grid-template-columns: minmax(0, 1fr) 42px;
-  }
-
-  .horizontalChart {
-    padding: 24px 20px;
-  }
-
-  .horizontalChart h3,
   .groupedColumns > h3 {
     width: 100%;
     font-size: 20px;
     line-height: 26px;
-  }
-
-  .horizontalChart .rule {
-    margin: 24px 0;
-  }
-
-  .horizontalRows {
-    gap: 20px;
-  }
-
-  .horizontalRow {
-    gap: 8px;
-    min-height: 0;
-  }
-
-  .horizontalRow > span {
-    font-size: 14px;
-    line-height: 20px;
-  }
-
-  .horizontalBarTrack {
-    height: 18px;
-  }
-
-  .horizontalChart .sourceNote {
-    width: 100%;
-    margin: 16px 0 0;
   }
 
   .groupedColumns {
@@ -1175,5 +1190,20 @@
   .shiftArrow {
     justify-self: center;
     transform: rotate(90deg);
+  }
+}
+
+@container report (max-width: 479px) {
+  .horizontalChart {
+    padding: 24px 20px;
+  }
+
+  .horizontalChart h3 {
+    font-size: 20px;
+    line-height: 26px;
+  }
+
+  .horizontalChart .rule {
+    margin: 24px 0;
   }
 }

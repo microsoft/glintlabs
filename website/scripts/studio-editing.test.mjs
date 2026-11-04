@@ -3,9 +3,13 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import ts from "typescript";
 
-import { reportManifestSchema } from "../src/manifest/report-manifest.ts";
+import { chartPresentationSchema, reportManifestSchema } from "../src/manifest/report-manifest.ts";
 import { createStudioProject, hasStudioProjectChanges } from "../src/project/studio-project.ts";
 import { reportAuthor } from "../src/project/report-author.ts";
+import { createDataVisualPreview } from "../src/visualization/data-visual-preview.ts";
+import { automaticallyVerifiedVisualType, compatibleVerifiedVisuals, createVerifiedDataVisual, parseChartValue } from "../src/visualization/verified-data-visual.ts";
+import { sortChartItems } from "../src/visualization/chart-order.ts";
+import { isCanonicalVisualBlock } from "../src/visualization/canonical-report-blocks.ts";
 
 const source = ts.createSourceFile(
   "publishing-studio.tsx",
@@ -200,6 +204,184 @@ test("reader preview presets include an actual browser viewport height", () => {
     { id: "tablet", label: "Tablet", width: 1024, height: 768 },
     { id: "mobile", label: "Mobile", width: 390, height: 844 },
   ]);
+});
+
+test("automatically verified Word charts remain editable in Studio but not Reader preview", () => {
+  const renderer = ts.createSourceFile(
+    "report-renderer.tsx",
+    readFileSync(new URL("../src/report-system/report-renderer.tsx", import.meta.url), "utf8"),
+    ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
+  );
+  const jsx = (type, props) => ({ type, props });
+  const render = componentFunction("renderBlock", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; },
+    isCanonicalVisualBlock,
+    automaticallyVerifiedVisualType, compatibleVerifiedVisuals, createDataVisualPreview,
+    CanonicalReportComponent: "chart", styles: {},
+  }, renderer);
+  const source = {
+    id: "word-chart", type: "data-visual-source",
+    source: { part: "word/document.xml", index: 1 },
+    data: {
+      sourceKind: "word-table", title: "Synthetic comparison", unit: "percentage",
+      recommendedVisualType: "horizontal-bar-chart", sha256: "a".repeat(64),
+      columns: ["Team", "Percentage"],
+      rows: [{ id: "a", cells: ["Research", "24.00%"] }, { id: "b", cells: ["Support", "0"] }],
+    },
+  };
+  const selected = [];
+  const props = { onSelectBlock: id => selected.push(id) };
+  for (const block of [source, createDataVisualPreview(source, "horizontal-bar-chart")]) {
+    const button = render(block, props).props.children[0].props.children;
+    assert.equal(button?.type, "button", "automatic source verification must not hide chart editing");
+    assert.equal(button.props.children, "Edit chart");
+    button.props.onClick();
+    assert.equal(render(block, { ...props, mode: "read" }).props.children[0], null);
+  }
+  assert.deepEqual(selected, [source.id, source.id]);
+});
+
+test("switching report items and tools cannot apply unreviewed chart previews", () => {
+  const messages = [];
+  const scope = {
+    manifest: { blocks: [{ id: "next-item", type: "visual-placeholder" }] },
+    selectedBlockId: "chart-being-edited",
+    selectedBlock: { type: "horizontal-bar-chart" },
+    pendingImageBlockId: undefined,
+    useCallback: callback => callback,
+    window: { confirm: () => true },
+    setStorageMessage: message => messages.push(message),
+    setSelectedBlockId() { assert.fail("Unapplied chart edits must not be dismissed"); },
+  };
+  scope.requireAppliedEdits = componentFunction("requireAppliedEdits", scope);
+  const select = componentValue("selectBlock", scope, "PublishingStudio");
+  assert.equal(select("next-item"), false);
+  componentFunction("changeTool", scope)("issues");
+  assert.equal(messages.length, 2, "both exits require Apply or Cancel");
+});
+
+test("Word chart data is immediately editable without copying or changing the original on open", () => {
+  const editorSource = ts.createSourceFile(
+    "verified-chart-editor.tsx",
+    readFileSync(new URL("../src/app/_components/verified-chart-editor.tsx", import.meta.url), "utf8"),
+    ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
+  );
+  const jsx = (type, props) => ({ type, props });
+  const effects = [];
+  const updates = [];
+  const previews = [];
+  let selectedTab = "data";
+  const original = {
+    id: "word-chart", type: "data-visual-source",
+    source: { part: "word/document.xml", index: 1 },
+    data: {
+      sourceKind: "word-table", title: "Team comparison", unit: "percentage",
+      recommendedVisualType: "horizontal-bar-chart", sha256: "a".repeat(64),
+      columns: ["Team", "Percentage"],
+      rows: [{ id: "a", cells: ["Research", "24.00%"] }, { id: "b", cells: ["Support", "0"] }],
+    },
+  };
+  const before = structuredClone(original);
+  const render = componentFunction("VerifiedChartEditor", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; },
+    useRef: current => ({ current }),
+    useState: initial => [initial === "data" ? selectedTab : typeof initial === "function" ? initial() : initial, value => updates.push(value)],
+    useEffect: effect => effects.push(effect),
+    useMemo: callback => callback(),
+    chartPresentationSchema, automaticallyVerifiedVisualType, compatibleVerifiedVisuals, createVerifiedDataVisual, parseChartValue, sortChartItems,
+    createStudioChartSource() { assert.fail("Opening a chart must not create replacement source data"); },
+    Dismiss20Regular: "dismiss-icon", Delete16Regular: "delete-icon",
+    TextEditStyle20Regular: "text-icon", DataBarVertical20Regular: "data-icon", ChevronDown16Regular: "chevron-icon",
+    Add16Regular: "add-icon", ArrowUpload20Regular: "upload-icon", ClipboardPaste20Regular: "paste-icon",
+    Button: "button", MenuButton: "button", Checkbox: "checkbox", Dropdown: "dropdown", Option: "option",
+    Menu: "menu", MenuItem: "menuitem", MenuList: "menulist", MenuPopover: "popover", MenuTrigger: "trigger",
+    styles: {}, Caption1: "caption", Body1: "body", Body1Strong: "strong", Subtitle1: "heading",
+  }, editorSource);
+  function nodes(node) {
+    if (!node || typeof node !== "object") return [];
+    return [node, ...[node.props?.children, node.props?.icon].flat(Infinity).flatMap(nodes)];
+  }
+  const rendered = nodes(render({
+    block: original, source: original, onPreview: value => previews.push(value),
+    onDone() {}, onCancel() {}, onRemove() {},
+  }));
+  const input = rendered.find(node => node.props?.["aria-label"] === "Value (%), row 1");
+  assert.equal(rendered.some(node => node.type === "h3"), false,
+    "The canonical table has column headings without a separate metric heading");
+  assert.ok(rendered.some(node => node.type === "caption" && node.props.children === "Chart data"),
+    "The table retains its accessible name without an extra visible heading");
+  assert.ok(rendered.some(node => node.type === "th" && node.props.children === "Value"),
+    "The visible Value heading stays unit-neutral; input names retain percentage context");
+  assert.ok(rendered.some(node => node.type === "th" && node.props.children === "Label"),
+    "The editable label column is generic rather than derived from source headings");
+  assert.ok(rendered.some(node => node.props?.["aria-label"] === "Label, row 1"),
+    "Accessible input names match the generic column heading");
+  const valueTypes = rendered.find(node => node.props?.role === "radiogroup");
+  assert.ok(valueTypes, "Both value types are available as a segmented radio group");
+  assert.deepEqual(nodes(valueTypes).filter(node => node.type === "input").map(node =>
+    [node.props.value, node.props.checked]), [["percentage", true], ["number", false]]);
+  assert.ok(rendered.findIndex(node => node.props?.id === "word-chart-sort-label") <
+    rendered.findIndex(node => node.props?.id === "word-chart-value-type-label"),
+  "Sort by precedes Value type in both visual and keyboard order");
+  assert.ok(input, "Imported chart values can be edited directly");
+  assert.equal(input.props.value, "24.00", "Percentage inputs omit the glyph without dropping source precision");
+  assert.equal(rendered.find(node => node.props?.["aria-label"] === "Value (%), row 2").props.value, "0");
+  assert.equal(rendered.filter(node => node.type === "input" && node.props.type === "checkbox").length, 0,
+    "The Data tab has no source settings or confirmation checkboxes");
+  assert.equal(rendered.some(node => node.type === "summary" && node.props.children === "Source details"), false,
+    "Source details are kept out of the editor");
+  const remove = rendered.find(node => node.props?.["aria-label"] === "Remove row 1");
+  assert.ok(nodes(remove).some(node => node.type === "delete-icon" && node.props["aria-hidden"] === "true"),
+    "Row removal uses a decorative trash icon inside the labeled button");
+  effects.forEach(effect => effect());
+  assert.equal(previews.length, 1);
+  assert.deepEqual(previews[0].verifiedSource.rows, before.data.rows);
+  assert.equal(previews[0].verifiedSource.sha256, before.data.sha256);
+  input.props.onChange({ target: { value: "36" } });
+  assert.ok(updates.some(value => value?.table?.rows[0].cells[1] === "36"));
+  assert.deepEqual(original, before, "Editing a Studio copy leaves the Word source intact");
+  assert.deepEqual(rendered.filter(node => node.props?.role === "tab").map(node =>
+    nodes(node).find(child => child.type === "span").props.children),
+    ["Text", "Data"], "The canonical editor has Text and Data tabs");
+  for (const tab of ["text", "data"]) {
+    selectedTab = tab;
+    const view = nodes(render({
+      block: original, source: original, onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
+    }));
+    assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, tab === "text" ? 3 : 4,
+      "Text contains the three single-line chart text fields; Data contains editable cells");
+    assert.equal(view.filter(node => node.type === "select").length, 0, "Chart controls never open native operating-system menus");
+    assert.equal(view.filter(node => node.type === "dropdown").length, tab === "data" ? 2 : 0,
+      "Data keeps Sort by and Palette as dropdowns; value types are directly visible");
+    if (tab === "data") {
+      const palette = view.find(node => node.type === "dropdown" && node.props.value === "Glint Labs");
+      assert.equal(view.filter(node => node.type === "details").some(disclosure => nodes(disclosure).includes(palette)), false,
+        "Palette is directly available without opening Chart options");
+      palette.props.onOptionSelect({}, { optionValue: "teal" });
+      assert.equal(updates.at(-1)({ palette: "brand", sort: "source" }).palette, "teal");
+      assert.deepEqual(original, before, "An appearance choice cannot rewrite the source");
+    }
+    if (tab === "text") {
+      assert.ok(view.some(node => node.type === "strong" && node.props.children === "Title"));
+    }
+  }
+  assert.equal(rendered.some(node => node.type === "button" && node.props.children === "Remove chart"), false,
+    "Imported charts keep their existing removal restriction");
+  let removed = 0;
+  for (const tab of ["text", "data"]) {
+    selectedTab = tab;
+    const studioBlock = { ...original, source: { ...original.source, part: "studio" } };
+    const view = nodes(render({
+      block: studioBlock, source: original, onPreview() {}, onDone() {}, onCancel() {},
+      onRemove() { removed++; },
+    }));
+    const footer = view.find(node => node.type === "footer");
+    const removeChart = nodes(footer).find(node => node.type === "button" && node.props.children === "Remove chart");
+    assert.ok(removeChart, `Remove chart remains in the footer on the ${tab} tab`);
+    assert.equal(view.filter(node => node.type === "button" && node.props.children === "Remove chart").length, 1);
+    removeChart.props.onClick();
+  }
+  assert.equal(removed, 2, "The footer action retains the existing removal callback");
 });
 
 test("image accessibility shows a directly labeled description and preserves saved image data", () => {
@@ -416,15 +598,17 @@ test("the last report section becomes current at document bottom and resets when
   assert.equal(activeIndex, -1, "empty navigation has no active section");
 });
 
-test("Full width uses outward arrows without changing the device icons", () => {
+test("viewport navigation uses the Figma-connected 20px Fluent icons", () => {
   const icon = componentFunction("ReportViewportIcon", {
-    ArrowExpand16Regular: "expand", Desktop16Regular: "desktop",
-    Tablet16Regular: "tablet", Phone16Regular: "mobile",
+    ArrowExpand16Regular: "old-expand", Desktop16Regular: "old-desktop",
+    Tablet16Regular: "old-tablet", Phone16Regular: "old-mobile",
+    ArrowBidirectionalLeftRight20Regular: "width", Desktop20Regular: "desktop",
+    Tablet20Regular: "tablet", Phone20Regular: "mobile",
     exports: {},
     require() { return { jsx: (type, props) => ({ type, props }) }; },
   });
   for (const [viewport, expected] of [
-    ["full-width", "expand"], ["desktop", "desktop"], ["tablet", "tablet"], ["mobile", "mobile"],
+    ["full-width", "width"], ["desktop", "desktop"], ["tablet", "tablet"], ["mobile", "mobile"],
   ]) {
     assert.deepEqual(icon({ viewport }), { type: expected, props: { "aria-hidden": "true" } });
   }
@@ -889,7 +1073,7 @@ test("preview fits the workspace in both dimensions without depending on report 
     setAvailableCanvasHeight(value) { size[1] = value; },
   })();
   assert.equal(scale, 1);
-  assert.deepEqual(size, [1200, 700]);
+  assert.deepEqual(size, [1200, 620], "Full width retains the preview's vertical canvas inset");
 });
 
 test("review issue navigation scrolls the preview document, not the Studio", () => {

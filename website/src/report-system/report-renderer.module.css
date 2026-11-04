@@ -1194,6 +1194,72 @@
   outline-color: var(--report-selection);
 }
 
+.chartAuthoring {
+  border-radius: 16px;
+  background: var(--report-canvas);
+  outline-offset: 0;
+}
+
+.chartAuthoring[data-report-component="horizontal-bar-chart"] {
+  border-radius: 20px;
+}
+
+.chartAuthoring > figure {
+  margin: 0;
+}
+
+.chartAuthoring > figure > :first-child {
+  padding-inline-end: 96px;
+}
+
+.chartEditToolbar {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.chartAuthoring:hover > .chartEditToolbar,
+.chartEditToolbar:has(.chartEditAction:focus-visible),
+.chartEditToolbar:has(.chartEditAction[data-keyboard-focus="true"]:focus) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.chartEditAction {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--report-rule);
+  border-radius: 8px;
+  color: var(--report-heading);
+  background: var(--report-canvas);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.chartEditAction:hover {
+  background: var(--report-visual-soft);
+}
+
+.chartEditAction:focus-visible,
+.chartEditAction[data-keyboard-focus="true"]:focus {
+  outline: 3px solid var(--report-selection);
+  outline-offset: 3px;
+}
+
+@media (hover: none) {
+  .chartEditToolbar {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
 .editVisual {
   position: absolute;
   z-index: 2;

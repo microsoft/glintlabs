@@ -73,16 +73,32 @@ export const structuredDataSchema = z.object({
   recommendedVisualType: verifiedVisualTypeSchema.optional(),
   subtitle: z.string().min(1).optional(),
   sourceNote: z.string().min(1).optional(),
+  synthetic: z.boolean().optional(),
+  originalSource: z.object({
+    sourceKind: z.string().min(1),
+    title: z.string().min(1),
+    sha256: sha256Schema,
+  }).optional(),
 });
 
 const verifiedDataSourceSchema = structuredDataSchema.extend({
   verifiedAt: z.string().datetime(),
 });
 
+export const chartPresentationSchema = z.object({
+  title: z.string().trim().min(1).max(120),
+  subtitle: z.string().max(240).default(""),
+  note: z.string().max(500).default(""),
+  palette: z.enum(["brand", "blue", "teal"]).default("brand"),
+  density: z.enum(["comfortable", "compact"]).default("comfortable"),
+  sort: z.enum(["source", "ascending", "descending", "alphabetical"]).default("source"),
+});
+export type ChartPresentation = z.infer<typeof chartPresentationSchema>;
+
 const chartItemSchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
-  value: percentageSchema,
+  value: z.number().finite(),
 });
 
 const imagePresentationSchema = z.object({
@@ -228,11 +244,20 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
   }),
   baseBlockSchema.extend({
     type: z.literal("horizontal-bar-chart"),
+    presentation: chartPresentationSchema.optional(),
     title: z.string().min(1),
     items: z.array(chartItemSchema).min(2).max(12),
     legend: z.string().min(1),
     sourceNote: z.string().min(1),
     verifiedSource: verifiedDataSourceSchema.optional(),
+  }).superRefine((block, context) => {
+    if (block.verifiedSource?.unit !== "number") {
+      block.items.forEach((item, index) => {
+        if (item.value < 0 || item.value > 100) {
+          context.addIssue({ code: "custom", path: ["items", index, "value"], message: "Percentage values must be between 0 and 100." });
+        }
+      });
+    }
   }),
   baseBlockSchema.extend({
     type: z.literal("grouped-column-comparison"),

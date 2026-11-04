@@ -210,10 +210,11 @@ test("publishing omits unused Topics and ZIP options and keeps the compact catal
   assert.doesNotMatch(dialog, /Other publishing options|Download publication ZIP|downloadPackage|"downloading"/);
   assert.doesNotMatch(dialog, /Catalog card preview/);
   assert.match(dialog, /<aside[^>]+aria-label="Draft catalog card">/);
-  assert.match(styles, /\.thumbnailChoices \{[^}]*minmax\(104px, 1fr\)[^}]*max-height: 240px;[^}]*overflow: auto;/);
+  assert.match(styles, /\.thumbnailChoices \{[^}]*minmax\(96px, 1fr\)[^}]*max-height: 200px;[^}]*overflow: auto;/);
   assert.match(styles, /\.thumbnailChoice img \{[^}]*width: 72px; height: 72px; object-fit: contain;/);
-  assert.match(styles, /\.header \{[^}]*padding: 12px 24px;/);
-  assert.match(styles, /\.closeButton \{[^}]*width: 44px; height: 44px;[^}]*font-size: 20px;/);
+  assert.match(styles, /\.header \{[^}]*padding: 28px 32px 20px;/);
+  assert.match(styles, /\.closeButton \{[^}]*width: 28px; height: 28px;/);
+  assert.match(dialog, /<Dismiss20Regular aria-hidden="true" \/>/);
   const detailsStyles = styles.match(/\.detailsSection \{([^}]*)\}/)?.[1];
   assert.ok(detailsStyles);
   assert.doesNotMatch(detailsStyles, /border/);
@@ -236,22 +237,23 @@ test("publishing keeps all detail inputs visible without a redundant heading or 
   assert.match(section, /inputProps\("catalog\.featuredUntil", "publication-featured-until", false, false\)/);
 });
 
-test("publishing pairs a compact employee count with the display date after the summary", async () => {
+test("publishing pairs the canonical date controls and keeps employee count beside its preview", async () => {
   const [dialog, styles] = await Promise.all([
     readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/studio/_components/publication-package-dialog.module.css", import.meta.url), "utf8"),
   ]);
-  const fields = ['aria-label="Catalog image"', ...["title", "summary", "date", "employee-count", "slug"].map(name => `name="publication-${name}"`)];
+  const fields = ['aria-label="Catalog image"', ...["title", "summary", "date", "featured", "slug", "employee-count"].map(name => `name="publication-${name}"`)];
   let previous = -1;
   for (const field of fields) {
     const position = dialog.indexOf(field);
     assert.ok(position > previous, field);
     previous = position;
   }
-  assert.match(dialog, /className=\{`\$\{styles\.cardBadgeFields\} \$\{styles\.wide\}`\}/);
-  assert.match(styles, /\.cardBadgeFields \{[^}]*grid-template-columns: minmax\(0, 1fr\) minmax\(0, 160px\);[^}]*gap: 16px;/);
-  assert.match(styles, /\.cardBadgeFields > :last-child \{ max-width: 160px; \}/);
-  assert.match(styles, /@media \(max-width: 600px\) \{[\s\S]*?\.cardBadgeFields \{ grid-template-columns: minmax\(0, 1fr\); \}/);
+  assert.match(dialog, /className=\{`\$\{styles\.publicationDates\} \$\{styles\.wide\}`\}/);
+  assert.match(styles, /\.publicationDates \{[^}]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);[^}]*gap: 24px;/);
+  assert.match(styles, /\.previewFields \{ max-width: 160px;/);
+  assert.match(dialog, /<fieldset className=\{styles\.previewFields\} disabled=\{busy\}>[\s\S]*?name="publication-employee-count"/);
+  assert.match(styles, /@media \(max-width: 600px\) \{[\s\S]*?\.publicationDates \{ grid-template-columns: minmax\(0, 1fr\); \}/);
 });
 
 test("publishing inherits the report author and omits manual author and reading-time controls", async () => {
@@ -277,23 +279,21 @@ test("homepage featuring is an optional checkbox and publishing fields use consi
   ]);
   assert.doesNotMatch(dialog, /<select id="publication-featured"|Homepage placement/);
   assert.match(dialog, /name="publication-featured" type="checkbox" checked=\{metadata\.catalog\.featured\}/);
-  assert.match(dialog, /<span>Feature on the homepage<\/span>/);
+  assert.match(dialog, /<span className=\{styles\.srOnly\}>Feature on the homepage<\/span>/);
   assert.match(dialog, /featured: event\.target\.checked, featuredUntil: event\.target\.checked \? metadata\.catalog\.featuredUntil : null/);
-  const placement = dialog.match(/<div className=\{`\$\{styles\.homepagePlacement\} \$\{styles\.wide\}`\}>([\s\S]*?)<\/div>/)?.[1];
+  const placement = dialog.match(/<div className=\{`\$\{styles\.publicationDates\} \$\{styles\.wide\}`\}>([\s\S]*?)<\/section>/)?.[1];
   assert.ok(placement);
-  assert.ok(placement.indexOf('htmlFor="publication-featured"') < placement.indexOf('htmlFor="publication-featured-until"'));
+  assert.ok(placement.includes('htmlFor="publication-featured"') && placement.includes('htmlFor="publication-featured-until"'));
   assert.doesNotMatch(placement, /metadata\.catalog\.featured \?/);
-  assert.match(placement, /className=\{`\$\{styles\.field\} \$\{styles\.featureUntil\}`\}/);
-  assert.match(placement, /<label htmlFor="publication-featured-until"><span className=\{styles\.srOnly\}>Feature <\/span>Until<\/label>/);
+  assert.match(placement, /className=\{styles\.featureUntil\}/);
+  assert.match(placement, /<label htmlFor="publication-featured-until">Feature on homepage until \(optional\)<\/label>/);
   assert.match(placement, /inputProps\("catalog\.featuredUntil", "publication-featured-until", false, false\)\} disabled=\{!metadata\.catalog\.featured\}/);
   assert.match(placement, /id="publication-featured-until-error"/);
-  assert.match(styles, /\.homepagePlacement \{[^}]*grid-template-columns: minmax\(0, 1fr\) minmax\(0, 216px\);[^}]*align-items: center;[^}]*gap: 16px;/);
   assert.match(styles, /\.featureUntil \{[^}]*grid-template-columns: auto minmax\(0, 1fr\);[^}]*align-items: center;/);
   assert.match(styles, /\.featureUntil > \.fieldError \{ grid-column: 1 \/ -1; \}/);
-  assert.match(styles, /@media \(max-width: 600px\) \{[\s\S]*?\.homepagePlacement \{ grid-template-columns: minmax\(0, 1fr\); \}/);
-  assert.match(styles, /\.fields \{[^}]*gap: 16px;/);
-  assert.match(styles, /\.metaGrid \{[^}]*gap: 16px;/);
-  assert.match(styles, /\.field \{[^}]*gap: 8px;/);
+  assert.match(styles, /\.fields \{[^}]*gap: 20px;/);
+  assert.match(styles, /\.metaGrid \{[^}]*gap: 20px;/);
+  assert.match(styles, /\.field \{[^}]*gap: 10px;/);
   assert.match(styles, /\.detailsSection \{[^}]*padding: 0;/);
   assert.match(styles, /\.catalogCardPreview \{ margin: 0; \}/);
 });
@@ -316,10 +316,10 @@ test("publishing separates draft saving from preview and publish actions without
   assert.doesNotMatch(footer, />Cancel<\/button>|"Cancel"/);
   assert.match(publishActions, /websiteUpdate \? <button[^>]*onClick=\{requestClose\}[^>]*>Done<\/button>/);
   assert.match(publishActions, /Preview report/);
-  assert.match(publishActions, /Publish report/);
+  assert.match(publishActions, /Publish to Glint Labs/);
   assert.match(draftActions, /className=\{studioStyles\.secondaryAction\}/);
-  assert.match(publishActions, /ref=\{previewButtonRef\} className=\{studioStyles\.secondaryAction\}/);
-  assert.match(publishActions, /ref=\{previewLinkRef\} className=\{studioStyles\.secondaryAction\}/);
+  assert.match(publishActions, /ref=\{previewButtonRef\} className=\{`\$\{studioStyles\.secondaryAction\} \$\{styles\.previewAction\}`\}/);
+  assert.match(publishActions, /ref=\{previewLinkRef\} className=\{`\$\{studioStyles\.secondaryAction\} \$\{styles\.previewAction\}`\}/);
   assert.match(publishActions, /ref=\{publishButtonRef\} className=\{studioStyles\.primaryAction\}/);
   assert.doesNotMatch(publishActions, /className=\{styles\.(?:primaryButton|secondaryButton|textButton)\}/);
   assert.match(dialog, /aria-label="Close publishing" disabled=\{busy\} onClick=\{requestClose\}/);

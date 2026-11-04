@@ -14,6 +14,7 @@ export type VerifiedDataVisualBlock = Extract<
   }
 >;
 export type VerifiedDataVisualType = VerifiedDataVisualBlock["type"];
+export type ChartValueType = "percentage" | "number";
 
 const verifiedVisualNames: Record<VerifiedDataVisualType, string> = {
   "percentage-ring-group": "Percentage ring group",
@@ -25,13 +26,15 @@ export function verifiedDataVisualName(type: VerifiedDataVisualType) {
   return verifiedVisualNames[type];
 }
 
-function percentage(value: string) {
-  const normalized = value.replaceAll(",", "").replace("%", "").trim();
-  if (!/^-?\d+(?:\.\d+)?$/.test(normalized)) {
+export function parseChartValue(value: string, unit: DataVisualSourceBlock["data"]["unit"] = "percentage") {
+  if (unit === "unknown") return undefined;
+  const normalized = (unit === "percentage" ? value.replace(/%\s*$/, "") : value).trim();
+  const pattern = unit === "number" ? /^-?(?:\d+(?:\.\d+)?|\.\d+)$/ : /^(?:\d+(?:\.\d+)?|\.\d+)$/;
+  if (!pattern.test(normalized)) {
     return undefined;
   }
   const parsed = Number(normalized);
-  return Number.isFinite(parsed) && parsed >= 0 && parsed <= 100
+  return Number.isFinite(parsed) && (unit === "number" || (parsed >= 0 && parsed <= 100))
     ? parsed
     : undefined;
 }
@@ -40,14 +43,14 @@ function numericRows(block: DataVisualSourceBlock) {
   return block.data.rows.map((row) => ({
     id: row.id,
     label: row.cells[0]?.trim() || "",
-    values: row.cells.slice(1).map(percentage),
+    values: row.cells.slice(1).map(value => parseChartValue(value, block.data.unit)),
   }));
 }
 
 export function compatibleVerifiedVisuals(
   block: DataVisualSourceBlock,
 ): VerifiedDataVisualType[] {
-  if (block.data.unit !== "percentage") {
+  if (block.data.unit !== "percentage" && block.data.unit !== "number") {
     return [];
   }
   const rows = numericRows(block);
@@ -55,7 +58,8 @@ export function compatibleVerifiedVisuals(
   const hasCompleteValues = rows.every((row) =>
     row.values.every((value) => value !== undefined),
   );
-  if (!hasCompleteLabels || !hasCompleteValues) {
+  if (!hasCompleteLabels || !hasCompleteValues ||
+      block.data.rows.some(row => row.cells.length !== block.data.columns.length)) {
     return [];
   }
 
@@ -67,10 +71,10 @@ export function compatibleVerifiedVisuals(
   ) {
     compatible.push("horizontal-bar-chart");
   }
-  if (block.data.columns.length === 2 && rows.length === 3) {
+  if (block.data.unit === "percentage" && block.data.columns.length === 2 && rows.length === 3) {
     compatible.push("percentage-ring-group");
   }
-  if (block.data.columns.length === 3 && rows.length === 4) {
+  if (block.data.unit === "percentage" && block.data.columns.length === 3 && rows.length === 4) {
     compatible.push("grouped-column-comparison");
   }
   return block.data.recommendedVisualType
@@ -204,6 +208,8 @@ export function verifiedVisualMatchesSource(block: ReportBlock) {
       recommendedVisualType: block.verifiedSource.recommendedVisualType,
       subtitle: block.verifiedSource.subtitle,
       sourceNote: block.verifiedSource.sourceNote,
+      synthetic: block.verifiedSource.synthetic,
+      originalSource: block.verifiedSource.originalSource,
     },
     provenance: { kind: "imported" },
     source: block.source,

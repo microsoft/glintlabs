@@ -1,44 +1,48 @@
 .dialog {
-  width: min(1080px, calc(100vw - 48px));
+  --studio-field-border: #ebebeb;
+  width: min(1004px, calc(100vw - 48px));
   max-width: none;
   max-height: calc(100dvh - 48px);
   margin: auto;
   padding: 0;
   overflow: clip;
-  border: 1px solid var(--border, #dce0e5);
-  border-radius: 20px;
+  border: 0;
+  border-radius: 16px;
   background: var(--studio-surface, #fff);
-  color: var(--ink, #17232e);
-  box-shadow: 0 24px 100px rgb(15 23 42 / 24%);
-  font: 14px/1.5 Arial, sans-serif;
+  color: var(--colorNeutralForeground1, #242424);
+  box-shadow: var(--shadow16);
+  font: 14px/20px var(--fontFamilyBase, "Segoe UI", sans-serif);
 }
 
-.dialog::backdrop { background: rgb(18 27 39 / 48%); }
+.dialog::backdrop { background: rgb(0 0 0 / 70%); }
 .dialog *, .dialog *::before, .dialog *::after { box-sizing: border-box; }
-.shell { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: min(880px, calc(100dvh - 48px)); }
-.header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 12px 24px; border-bottom: 1px solid #e5e9ee; }
-.header h2 { margin: 0; font-size: 22px; line-height: 1.25; letter-spacing: -.6px; }
+.shell { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: min(852px, calc(100dvh - 48px)); }
+.header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 28px 32px 20px; border-bottom: 1px solid var(--colorNeutralStroke2); }
+.header h2 { margin: 0; font-size: 20px; line-height: 28px; font-weight: 600; }
 .eyebrow { display: block; color: #65717d; font-size: 11px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; }
-.closeButton { flex-shrink: 0; width: 44px; height: 44px; padding: 0; border: 1px solid #e1e5e9; border-radius: 50%; background: #fff; color: #34404c; cursor: pointer; font-size: 20px; line-height: 1; }
+.closeButton { display: grid; place-items: center; flex-shrink: 0; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 4px; background: transparent; color: var(--colorNeutralForeground1); cursor: pointer; }
 .closeButton:hover { background: #f3f5f7; }
-.body { min-width: 0; min-height: 0; padding: 24px; overflow: auto; overscroll-behavior: contain; scroll-padding-block: 24px; scrollbar-gutter: stable; }
-.detailsLayout { display: grid; grid-template-columns: minmax(0, 1fr) 364px; align-items: start; gap: 24px; }
-.fields { display: grid; gap: 16px; min-width: 0; margin: 0; padding: 0; border: 0; }
-.sectionLabel, .fields legend { font-size: 13px; font-weight: 700; }
-.fields legend { margin-bottom: 8px; }
+.body { min-width: 0; min-height: 0; padding: 32px; overflow: auto; overscroll-behavior: contain; scroll-padding-block: 32px; }
+.detailsLayout { display: grid; grid-template-columns: minmax(0, 1fr) 364px; align-items: start; gap: 28px; }
+.fields { display: grid; gap: 20px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.sectionLabel, .fields legend { font-size: 14px; font-weight: 600; }
+.fields legend { margin-bottom: 10px; }
 .fields > .helper { margin: -8px 0 0; }
 .helper, .field small { color: #65717d; font-size: 12px; line-height: 1.5; }
-.metaGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.cardBadgeFields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 160px); gap: 16px; min-width: 0; }
-.cardBadgeFields > :last-child { max-width: 160px; }
+.metaGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.publicationDates { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; min-width: 0; }
+.previewFields { max-width: 160px; margin: 20px 0 0; padding: 0; border: 0; }
 .wide { grid-column: 1 / -1; }
-.field { display: grid; align-content: start; gap: 8px; min-width: 0; }
-.field label { font-size: 13px; font-weight: 600; }
+.field { display: grid; align-content: start; gap: 10px; min-width: 0; }
+.field label { font-size: 14px; font-weight: 600; }
 .field input:not([type="checkbox"]), .field select, .field textarea, .fields > label input:not([type="checkbox"]) {
-  width: 100%; min-width: 0; min-height: 42px; padding: 10px 12px; border: 1px solid #c8cfd8; border-radius: 8px;
-  background: #fff; color: var(--ink, #17232e); font: inherit; line-height: 1.4;
+  width: 100%; min-width: 0; min-height: 40px; padding: 8px 12px; border: 1px solid var(--studio-field-border); border-radius: 12px;
+  background: var(--colorNeutralBackground1); color: var(--colorNeutralForeground1); font: 16px/22px var(--fontFamilyBase, "Segoe UI", sans-serif);
 }
-.field textarea { resize: vertical; }
+.field textarea { min-height: 64px; resize: vertical; }
+.field:has(.summaryAction) { position: relative; }
+.summaryAction { position: absolute; top: -6px; right: 0; }
+.field :is(input, select, textarea):hover:not(:disabled) { border-color: var(--colorNeutralStroke1Hover); }
 .summarySuggestion { display: grid; gap: 10px; padding: 12px; border: 1px solid #dfe5ec; border-radius: 8px; background: #f8fafd; }
 .summarySuggestion blockquote { margin: 0; overflow-wrap: anywhere; }
 .summarySuggestionActions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
@@ -52,19 +56,20 @@
 .pickerModes { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
 .pickerModes button { min-height: 44px; padding: 8px 12px; border: 1px solid #cdd6e0; border-radius: 8px; background: #fff; color: #344759; cursor: pointer; font: 600 12px/1.4 Arial, sans-serif; }
 .pickerModes button[aria-pressed="true"] { border-color: #173a64; background: #eaf1fb; color: #173a64; }
-.thumbnailChoices { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; max-height: 240px; padding: 6px; overflow: auto; border: 1px solid #dfe5ec; border-radius: 10px; }
+.thumbnailChoices { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; max-height: 200px; padding: 12px; overflow: auto; border: 1px solid var(--colorNeutralStroke2); border-radius: 12px; background: var(--colorNeutralBackground3); }
 .thumbnailChoices[aria-invalid="true"] { border-color: #b42318; }
-.thumbnailChoice { position: relative; display: grid; align-content: start; gap: 6px; min-width: 0; padding: 8px; border: 2px solid transparent; border-radius: 8px; background: #f6f8fb; cursor: pointer; text-align: center; }
-.thumbnailChoice:has(input:checked) { border-color: #173a64; background: #eaf1fb; }
+.thumbnailChoice { position: relative; display: grid; place-items: center; aspect-ratio: 1; min-width: 0; padding: 8px; border: 2px solid transparent; border-radius: 8px; background: var(--colorNeutralBackground1); cursor: pointer; text-align: center; }
+.thumbnailChoice:has(input:checked) { border-color: var(--colorBrandForeground1); background: var(--colorBrandBackground2); }
+.thumbnailChoice:hover { border-color: var(--colorNeutralStroke1Hover); }
 .thumbnailChoice:has(input:focus-visible) { outline: 2px solid var(--focus, #0874d1); outline-offset: 2px; }
 .thumbnailChoice img { justify-self: center; width: 72px; height: 72px; object-fit: contain; }
 .thumbnailChoice span { font-size: 11px; line-height: 1.3; overflow-wrap: anywhere; }
 .sourceIssues, .accessNotice { margin-top: 24px; }
-.addressInput { display: flex; align-items: center; min-width: 0; border: 1px solid #c8cfd8; border-radius: 8px; background: #f7f8fa; }
-.addressInput > span { flex-shrink: 0; padding-left: 12px; color: #667482; font-size: 12px; }
-.addressInput input:not([type="checkbox"]) { border: 0; border-radius: 0 8px 8px 0; background: transparent; }
-.homepagePlacement { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 216px); align-items: center; gap: 16px; min-width: 0; }
-.featureUntil { grid-template-columns: auto minmax(0, 1fr); align-items: center; }
+.addressInput { display: flex; align-items: center; min-width: 0; border: 1px solid var(--studio-field-border); border-radius: 12px; background: var(--colorNeutralBackground1); }
+.addressInput > span { flex-shrink: 0; padding-left: 12px; color: var(--colorNeutralForeground1); font-size: 16px; }
+.addressInput input:not([type="checkbox"]) { min-height: 38px; border: 0; border-radius: 0 12px 12px 0; padding-left: 0; background: transparent; }
+.featureUntil { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 8px; }
+.featureUntil .checkbox { min-height: 40px; }
 .featureUntil > .fieldError { grid-column: 1 / -1; }
 .featureUntil:has(input:disabled) > label { color: #65717d; }
 .featureUntil input:disabled { border-color: #d1d1d1; background: #f3f5f7; color: #65717d; cursor: not-allowed; }
@@ -74,6 +79,7 @@
 .checkbox input:disabled { cursor: not-allowed; }
 .checkbox small { display: block; margin-top: 7px; color: #5b6977; font-size: 12px; font-weight: 400; line-height: 1.5; }
 .catalogAside { position: sticky; top: 0; min-width: 0; }
+.previewHeading { margin: 0 0 8px; font-weight: 600; }
 .catalogCardPreview { margin: 0; }
 .detailsSection { min-width: 0; padding: 0; }
 .badge { display: inline-flex; align-items: center; flex-shrink: 0; min-height: 26px; padding: 4px 10px; border: 1px solid #dbe2eb; border-radius: 20px; background: #f3f6fa; color: #596b7e; font-size: 11px; font-weight: 600; white-space: nowrap; }
@@ -104,7 +110,7 @@
 .approvalCard strong { color: #213d60; line-height: 1.5; }
 .successCard { padding: 28px; border: 1px solid #cce2d4; border-radius: 14px; background: #f4fbf6; }
 .successCard h3 { margin: 16px 0 0; font-size: 23px; }
-.successCard h4 { margin: 16px 0 10px; font: 28px/1.3 Georgia, serif; overflow-wrap: anywhere; }
+.successCard h4 { margin: 16px 0 10px; font: 600 24px/32px var(--fontFamilyBase, "Segoe UI", sans-serif); overflow-wrap: anywhere; }
 .successCard p { color: #496854; }
 .emptyState { padding: 32px; border: 1px solid #e1e6ec; border-radius: 12px; background: #f8fafd; }
 .emptyState h4 { margin: 0 0 8px; }
@@ -119,19 +125,20 @@
 .accessForm { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 12px 20px; margin-top: 16px; }
 .accessActions { display: flex; align-items: center; gap: 12px; }
 .accessForm > .fieldError { grid-column: 1 / -1; color: #a9231b; }
-.footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 24px; border-top: 1px solid #e1e6ed; background: #fff; font-family: var(--fontFamilyBase, "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif); }
+.footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 28px 32px; border-top: 1px solid var(--colorNeutralStroke2); background: var(--colorNeutralBackground1); font-family: inherit; }
 .footerInfo { display: grid; justify-items: start; gap: 4px; min-width: 0; }
 .footerInfo > .textButton { min-height: 24px; padding: 0; font-size: 11px; }
 .draftActions { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .draftActions > button { flex-shrink: 0; min-height: var(--studio-action-height); }
 .footerStatus { display: flex; align-items: center; gap: 8px; min-width: 0; color: #6b7886; font-size: 12px; }
-.footerActions { display: flex; align-items: center; flex-shrink: 0; gap: 8px; }
-.primaryButton, .secondaryButton { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 11px 18px; border: 1px solid transparent; border-radius: 8px; cursor: pointer; font: 600 13px/1.4 Arial, sans-serif; text-align: center; text-decoration: none; }
-.primaryButton { border-color: #173a64; background: #173a64; color: #fff; }
-.primaryButton:hover { border-color: #102d50; background: #102d50; }
-.secondaryButton { border-color: #cdd6e0; background: #fff; color: #344759; }
+.footerActions { display: flex; align-items: center; flex-shrink: 0; gap: 20px; }
+.previewAction { border-color: transparent; background: var(--colorNeutralBackground3); }
+.primaryButton, .secondaryButton { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; padding: 8px 12px; border: 1px solid transparent; border-radius: 16px; cursor: pointer; font: 400 16px/22px var(--fontFamilyBase, "Segoe UI", sans-serif); text-align: center; text-decoration: none; }
+.primaryButton { border-color: var(--studio-action-background); background: var(--studio-action-background); color: var(--colorNeutralForegroundInverted); }
+.primaryButton:hover { border-color: var(--studio-action-background-hover); background: var(--studio-action-background-hover); }
+.secondaryButton { border-color: var(--colorNeutralStroke1); background: var(--colorNeutralBackground1); color: var(--colorNeutralForeground1); }
 .secondaryButton:hover { background: #f3f6fa; }
-.textButton { min-height: 44px; justify-self: start; padding: 6px 4px; border: 0; border-radius: 4px; background: transparent; color: #244e7b; cursor: pointer; font: 600 12px/1.5 Arial, sans-serif; text-align: left; }
+.textButton { min-height: 32px; justify-self: start; padding: 6px 4px; border: 0; border-radius: 4px; background: transparent; color: var(--colorBrandForeground1); cursor: pointer; font: 600 12px/20px var(--fontFamilyBase, "Segoe UI", sans-serif); text-align: left; }
 .textButton:hover { color: #14375f; text-decoration: underline; }
 .textLink { color: #244e7b; font-size: 13px; text-underline-offset: 3px; }
 .dialog button:disabled { cursor: not-allowed; }
@@ -151,6 +158,11 @@
   .footerActions { margin-left: auto; }
 }
 
+@media (min-width: 851px) {
+  .footerInfo { position: relative; }
+  .footerInfo > :is(.helper, .textButton) { position: absolute; top: calc(100% + 4px); left: 0; white-space: nowrap; }
+}
+
 @media (max-width: 600px) {
   .dialog { width: 100vw; max-height: 100dvh; border: 0; border-radius: 0; }
   .shell { height: 100dvh; }
@@ -158,8 +170,7 @@
   .header h2 { font-size: 21px; }
   .body { padding: 16px; }
   .metaGrid { grid-template-columns: minmax(0, 1fr); }
-  .cardBadgeFields { grid-template-columns: minmax(0, 1fr); }
-  .homepagePlacement { grid-template-columns: minmax(0, 1fr); }
+  .publicationDates { grid-template-columns: minmax(0, 1fr); }
   .field input:not([type="checkbox"]), .field select, .field textarea { min-height: 44px; font-size: 16px; }
   .sourceIssues { padding: 14px; }
   .previewCard, .reviewSummary, .successCard { padding: 20px 16px; }

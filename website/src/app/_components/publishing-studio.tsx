@@ -7,15 +7,17 @@ import {
   Caption1Strong,
   Subtitle1,
 } from "@fluentui/react-text";
-import { ArrowExpand16Regular } from "@fluentui/react-icons/svg/arrow-expand";
+import { ArrowBidirectionalLeftRight20Regular } from "@fluentui/react-icons/svg/arrow-bidirectional-left-right";
+import { ArrowUpload16Regular } from "@fluentui/react-icons/svg/arrow-upload";
 import { Checkmark16Regular } from "@fluentui/react-icons/svg/checkmark";
 import { ChevronDown16Regular } from "@fluentui/react-icons/svg/chevron-down";
-import { Desktop16Regular } from "@fluentui/react-icons/svg/desktop";
+import { Desktop20Regular } from "@fluentui/react-icons/svg/desktop";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
 import { DocumentText24Regular } from "@fluentui/react-icons/svg/document-text";
 import { Home20Regular } from "@fluentui/react-icons/svg/home";
-import { Phone16Regular } from "@fluentui/react-icons/svg/phone";
-import { Tablet16Regular } from "@fluentui/react-icons/svg/tablet";
+import { Phone20Regular } from "@fluentui/react-icons/svg/phone";
+import { Send16Regular } from "@fluentui/react-icons/svg/send";
+import { Tablet20Regular } from "@fluentui/react-icons/svg/tablet";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import {
@@ -75,15 +77,12 @@ import {
 } from "../../visualization/canonical-report-blocks";
 import {
   automaticallyVerifiedVisualType,
-  compatibleVerifiedVisuals,
-  createVerifiedDataVisual,
   verifiedVisualMatchesSource,
-  verifiedDataVisualName,
   type DataVisualSourceBlock,
-  type VerifiedDataVisualType,
 } from "../../visualization/verified-data-visual.ts";
 import styles from "./publishing-studio.module.css";
 import { StudioReportViewport } from "./studio-report-viewport";
+import { VerifiedChartEditor } from "./verified-chart-editor";
 
 const StudioReportRenderer = dynamic(
   () => import("../../report-system/report-renderer").then((module) => memo(module.ReportRenderer)),
@@ -247,15 +246,15 @@ const reportViewports: Array<{
 
 function ReportViewportIcon({ viewport }: { viewport: ReportViewport }) {
   if (viewport === "full-width") {
-    return <ArrowExpand16Regular aria-hidden="true" />;
+    return <ArrowBidirectionalLeftRight20Regular aria-hidden="true" />;
   }
   if (viewport === "desktop") {
-    return <Desktop16Regular aria-hidden="true" />;
+    return <Desktop20Regular aria-hidden="true" />;
   }
   if (viewport === "tablet") {
-    return <Tablet16Regular aria-hidden="true" />;
+    return <Tablet20Regular aria-hidden="true" />;
   }
-  return <Phone16Regular aria-hidden="true" />;
+  return <Phone20Regular aria-hidden="true" />;
 }
 
 const BRAND_CENTRAL_IMAGE_COLLECTIONS_URL =
@@ -419,6 +418,7 @@ function FilePicker({
 }) {
   return (
     <label className={styles.filePicker}>
+      <ArrowUpload16Regular aria-hidden="true" />
       <span>{label}</span>
       <input
         accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -652,6 +652,7 @@ function VisualEditor({
   const originalBlock = useRef(block).current;
   const [imageError, setImageError] = useState<string>();
   const [isReadingImage, setIsReadingImage] = useState(false);
+  const [isChartEditing, setIsChartEditing] = useState(false);
   const sourceBlock = useMemo<DataVisualSourceBlock | undefined>(() => {
     if (originalBlock.type === "data-visual-source") {
       return originalBlock;
@@ -676,6 +677,9 @@ function VisualEditor({
           recommendedVisualType:
             originalBlock.verifiedSource.recommendedVisualType,
           sourceNote: originalBlock.verifiedSource.sourceNote,
+          subtitle: originalBlock.verifiedSource.subtitle,
+          synthetic: originalBlock.verifiedSource.synthetic,
+          originalSource: originalBlock.verifiedSource.originalSource,
         },
         provenance: { kind: "imported" },
         source: originalBlock.source,
@@ -683,45 +687,7 @@ function VisualEditor({
     }
     return undefined;
   }, [originalBlock]);
-  const compatibleVisuals = useMemo(
-    () => (sourceBlock ? compatibleVerifiedVisuals(sourceBlock) : []),
-    [sourceBlock],
-  );
-  const initialType =
-    sourceBlock &&
-    (originalBlock.type === "percentage-ring-group" ||
-      originalBlock.type === "horizontal-bar-chart" ||
-      originalBlock.type === "grouped-column-comparison")
-      ? originalBlock.type
-      : sourceBlock?.data.recommendedVisualType &&
-          compatibleVisuals.includes(sourceBlock.data.recommendedVisualType)
-        ? sourceBlock.data.recommendedVisualType
-        : compatibleVisuals[0];
-  const [selectedType, setSelectedType] =
-    useState<VerifiedDataVisualType | undefined>(initialType);
-  const [verified, setVerified] = useState(
-    originalBlock.type !== "data-visual-source" && Boolean(sourceBlock),
-  );
-  const previewVerifiedAt = useRef(new Date().toISOString()).current;
-  const draft = useMemo(
-    () =>
-      sourceBlock && selectedType
-        ? createVerifiedDataVisual(
-            sourceBlock,
-            selectedType,
-            previewVerifiedAt,
-          )
-        : undefined,
-    [previewVerifiedAt, selectedType, sourceBlock],
-  );
-
-  useEffect(() => {
-    if (draft) {
-      onPreview(draft);
-    }
-  }, [draft, onPreview]);
-
-  if (originalBlock.type === "visual-placeholder") {
+  if (originalBlock.type === "visual-placeholder" && !isChartEditing) {
     return (
       <div className={styles.visualLibrary}>
         <div>
@@ -794,12 +760,15 @@ function VisualEditor({
           ) : null}
         </section>
         <section className={styles.integrityNotice}>
-          <Body1Strong block>Coded data visual unavailable</Body1Strong>
+          <Body1Strong block>Add a data chart</Body1Strong>
           <Body1 block>
-            This manuscript instruction does not contain verified structured
-            values. Add the approved data to the Word source and re-import it;
-            the Studio will not recreate values from pixels or sample content.
+            Paste a spreadsheet table, import CSV or TSV, or try clearly
+            labeled synthetic data. Review the values before applying the
+            chart to this report. Values are never inferred from pixels.
           </Body1>
+          <button className={styles.secondaryAction} type="button" onClick={() => setIsChartEditing(true)}>
+            Add chart
+          </button>
         </section>
         <button
           className={styles.secondaryAction}
@@ -812,7 +781,7 @@ function VisualEditor({
     );
   }
 
-  if (!sourceBlock) {
+  if (!sourceBlock && originalBlock.type !== "visual-placeholder") {
     return (
       <div className={styles.editor}>
         <section className={styles.integrityNotice}>
@@ -833,147 +802,8 @@ function VisualEditor({
     );
   }
 
-  return (
-    <div className={styles.editor}>
-      <div>
-        <Subtitle1 as="h2" block>
-          Convert approved data
-        </Subtitle1>
-        <Caption1 block>
-          Values remain locked to the reviewed Word source.
-        </Caption1>
-      </div>
-      <section className={styles.sourceEvidence}>
-        <Body1Strong block>{sourceBlock.data.title}</Body1Strong>
-        <Caption1 block>
-          {sourceBlock.data.sourceKind === "word-chart"
-            ? "Embedded Word chart data"
-            : sourceBlock.data.sourceKind === "word-table"
-              ? "Structured Word table"
-              : sourceBlock.data.sourceKind === "bitmap-ocr"
-                ? "Previously verified bitmap data"
-                : "Verified structured data"}{" "}
-          · {sourceBlock.data.sha256.slice(0, 12)}
-        </Caption1>
-        {sourceBlock.data.evidenceImage ? (
-          <figure className={styles.sourceEvidenceImage}>
-            <Image
-              alt={`Original source bitmap: ${sourceBlock.data.evidenceImage.fileName}`}
-              height={sourceBlock.data.evidenceImage.height}
-              src={sourceBlock.data.evidenceImage.dataUrl}
-              unoptimized
-              width={sourceBlock.data.evidenceImage.width}
-            />
-            <figcaption>
-              Original approved bitmap retained as evidence ·{" "}
-              {sourceBlock.data.evidenceImage.sourceAssetSha256.slice(0, 12)}
-            </figcaption>
-          </figure>
-        ) : null}
-        <div className={styles.sourceEvidenceTable}>
-          <table>
-            <thead>
-              <tr>
-                {sourceBlock.data.columns.map((column) => (
-                  <th key={column}>{column}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {sourceBlock.data.rows.map((row) => (
-                <tr key={row.id}>
-                  {row.cells.map((cell, index) => (
-                    <td key={index}>{cell}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-      {compatibleVisuals.length > 0 ? (
-        <fieldset className={styles.optionGroup}>
-          <legend>On-brand treatment</legend>
-          {compatibleVisuals.map((type) => (
-            <label key={type}>
-              <input
-                checked={selectedType === type}
-                name={`${sourceBlock.id}-visual-type`}
-                onChange={() => {
-                  setSelectedType(type);
-                  setVerified(false);
-                }}
-                type="radio"
-              />
-              <span>
-                <Body1Strong block>{verifiedDataVisualName(type)}</Body1Strong>
-                <Caption1 block>
-                  Uses the exact labels, ordering, and values shown above.
-                </Caption1>
-              </span>
-            </label>
-          ))}
-        </fieldset>
-      ) : (
-        <section className={styles.integrityNotice}>
-          <Body1Strong block>No safe visual mapping</Body1Strong>
-          <Body1 block>
-            The approved table shape or values do not match a supported Glint
-            Labs data component. The source table will remain unchanged.
-          </Body1>
-        </section>
-      )}
-      {selectedType ? (
-        <label className={styles.verificationCheck}>
-          <input
-            checked={verified}
-            onChange={(event) => setVerified(event.target.checked)}
-            type="checkbox"
-          />
-          <span>
-            <Body1Strong block>I verified the structured source</Body1Strong>
-            <Caption1 block>
-              The title, labels, order, values, units, and precision match the
-              approved Word content shown above.
-            </Caption1>
-          </span>
-        </label>
-      ) : null}
-
-      <div className={styles.editorActions}>
-        <button
-          className={styles.secondaryAction}
-          onClick={() => onCancel(originalBlock)}
-          type="button"
-        >
-          Cancel
-        </button>
-        <button
-          className={styles.primaryAction}
-          disabled={!draft || !verified}
-          onClick={() =>
-            draft &&
-            verified &&
-            onDone({
-              ...draft,
-              verifiedSource: {
-                ...draft.verifiedSource!,
-                verifiedAt: new Date().toISOString(),
-              },
-            })
-          }
-          type="button"
-        >
-          Use coded visual
-        </button>
-      </div>
-      {originalBlock.source.part === "studio" ? (
-        <button className={styles.dangerAction} onClick={onRemove} type="button">
-          Delete component
-        </button>
-      ) : null}
-    </div>
-  );
+  return <VerifiedChartEditor block={originalBlock} source={sourceBlock}
+    onPreview={onPreview} onDone={onDone} onCancel={() => onCancel(originalBlock)} onRemove={onRemove} />;
 }
 
 export function PublishingStudio() {
@@ -1056,6 +886,7 @@ export function PublishingStudio() {
   const selectedBlock = manifest?.blocks.find(
     (block) => block.id === selectedBlockId,
   );
+  const isVisualEditing = activeTool === "visuals" && !!selectedBlock && isVisualBlock(selectedBlock);
   const displayManifest = useMemo(() => manifest ? {
     ...manifest,
     blocks: manifest.blocks.map((block) => {
@@ -1263,7 +1094,7 @@ export function PublishingStudio() {
         1,
       );
       const availableHeight = Math.max(
-        observedCanvas.clientHeight - (reportViewport === "full-width" ? 0 : 80),
+        observedCanvas.clientHeight - 80,
         1,
       );
       setAvailableCanvasWidth(availableWidth);
@@ -1610,13 +1441,8 @@ export function PublishingStudio() {
     if (!block) {
       return false;
     }
-    if (
-      selectedBlockId &&
-      selectedBlockId !== blockId &&
-      !window.confirm(
-        "Close the current editor? Any unapplied changes will be discarded.",
-      )
-    ) {
+    if (selectedBlockId && selectedBlockId !== blockId) {
+      setStorageMessage("Apply or cancel your current edits before choosing another report item.");
       return false;
     }
     setSelectedBlockId(blockId);
@@ -1647,14 +1473,7 @@ export function PublishingStudio() {
   }
 
   function changeTool(tool?: Tool) {
-    if (
-      selectedBlockId &&
-      !window.confirm(
-        "Close the current editor? Any unapplied changes will be discarded.",
-      )
-    ) {
-      return;
-    }
+    if (!requireAppliedEdits()) return;
     if (pendingImageBlockId) {
       dispatch({ type: "remove-block", blockId: pendingImageBlockId });
       setPendingImageBlockId(undefined);
@@ -1682,6 +1501,21 @@ export function PublishingStudio() {
         ?.querySelector<HTMLButtonElement>('button[aria-label^="Edit image "]');
       (imageAttention ? publishActionRef.current : imageButton ?? publishActionRef.current)
         ?.focus({ preventScroll: true });
+    });
+  }
+
+  function restoreVisualEditorFocus(blockId: string) {
+    const keyboardFocus = document.activeElement?.matches(":focus-visible");
+    window.requestAnimationFrame(() => {
+      const button = reportSurfaceRef.current?.contentDocument
+        ?.getElementById(`report-block-${blockId}`)
+        ?.querySelector<HTMLButtonElement>("button");
+      if (button && keyboardFocus) {
+        // Keyboard focus visibility does not carry across the iframe boundary.
+        button.dataset.keyboardFocus = "true";
+        button.addEventListener("blur", () => { delete button.dataset.keyboardFocus; }, { once: true });
+      }
+      (button ?? publishActionRef.current)?.focus({ preventScroll: true });
     });
   }
 
@@ -1803,13 +1637,9 @@ export function PublishingStudio() {
     }
 
     if (activeTool === "visuals") {
-      return (
-        <PanelShell
-          closable={!selectedBlock || !isVisualBlock(selectedBlock)}
-          onClose={() => changeTool(undefined)}
-          title="Visuals"
-        >
-          {selectedBlock && isVisualBlock(selectedBlock) ? (
+      if (selectedBlock && isVisualBlock(selectedBlock)) {
+        return (
+          <section aria-label="Chart editor" className={styles.chartEditorSurface}>
             <VisualEditor
               block={selectedBlock}
               key={selectedBlock.id}
@@ -1817,6 +1647,7 @@ export function PublishingStudio() {
                 dispatch({ type: "change-block", block });
                 setSelectedBlockId(undefined);
                 setActiveTool(undefined);
+                restoreVisualEditorFocus(block.id);
               }}
               onCancel={(originalBlock) => {
                 if (
@@ -1832,6 +1663,7 @@ export function PublishingStudio() {
                 }
                 setSelectedBlockId(undefined);
                 setActiveTool(undefined);
+                restoreVisualEditorFocus(originalBlock.id);
               }}
               onChooseImage={(block) => {
                 dispatch({ type: "preview-block", block });
@@ -1842,7 +1674,11 @@ export function PublishingStudio() {
               onRemove={removeSelectedBlock}
               onPreview={previewVisual}
             />
-          ) : (
+          </section>
+        );
+      }
+      return (
+        <PanelShell onClose={() => changeTool(undefined)} title="Visuals">
             <div className={styles.panelSection}>
               <section className={styles.documentStatus}>
                 <Body1Strong block>Data visual status</Body1Strong>
@@ -1897,7 +1733,6 @@ export function PublishingStudio() {
                 </Body1>
               )}
             </div>
-          )}
         </PanelShell>
       );
     }
@@ -2054,6 +1889,7 @@ export function PublishingStudio() {
                 ref={publishActionRef}
                 type="button"
               >
+                <Send16Regular aria-hidden="true" />
                 Publish to Glint Labs
               </button>
               {integrity?.status === "unverified" ? (
@@ -2261,9 +2097,9 @@ export function PublishingStudio() {
       <div
         className={`${styles.workspace} ${
           activeTool ? styles.panelOpen : ""
-        }`}
+        } ${isVisualEditing ? styles.chartEditing : ""}`}
       >
-        {panelContent()}
+        {!isVisualEditing ? panelContent() : null}
 
         <main className={styles.canvas} id="main-content" ref={canvasRef}>
           {storageMessage ? (
@@ -2284,16 +2120,21 @@ export function PublishingStudio() {
                 <Image
                   alt=""
                   className={styles.startIllustration}
-                  height={146}
+                  height={128}
                   priority
                   src="/figma/illustrations/blue/create.png"
-                  width={146}
+                  width={128}
                 />
                 <div className={styles.startCardContent}>
                   <div className={styles.startCardCopy}>
                     <Subtitle1 as="h1" block>
                       Publish a report to Glint Labs
                     </Subtitle1>
+                    <Body1 className={styles.startCardDescription} block>
+                      {savedProjects.length > 0
+                        ? "Start with a Word document or continue a saved draft."
+                        : "Start with a Word document."}
+                    </Body1>
                   </div>
                   <div className={styles.startCardActions}>
                     <FilePicker label="Choose Word file" onChange={handleFile} />
@@ -2404,6 +2245,7 @@ export function PublishingStudio() {
             </div>
           ) : null}
         </main>
+        {isVisualEditing ? panelContent() : null}
       </div>
     </section>
   );

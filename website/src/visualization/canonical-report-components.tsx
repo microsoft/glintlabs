@@ -2,6 +2,7 @@ import { ArrowRight20Regular } from "@fluentui/react-icons";
 
 import type { CanonicalVisualBlock } from "./canonical-report-blocks";
 import { PercentageRingGroup } from "./percentage-ring-group";
+import { sortChartItems } from "./chart-order";
 import styles from "./canonical-report-components.module.css";
 
 function SourceNote({ children }: { children: string }) {
@@ -221,30 +222,56 @@ function HorizontalBarChart({
 }: {
   block: Extract<CanonicalVisualBlock, { type: "horizontal-bar-chart" }>;
 }) {
-  const maximumValue = Math.max(...block.items.map((item) => item.value), 1);
+  const presentation = block.presentation;
+  const items = sortChartItems(block.items, presentation?.sort);
+  const isNumber = block.verifiedSource?.unit === "number";
+  const minimum = isNumber ? Math.min(0, ...items.map(item => item.value)) : 0;
+  const maximum = isNumber ? Math.max(0, ...items.map(item => item.value)) || (minimum === 0 ? 1 : 0) : 100;
+  const magnitude = Math.max(Math.abs(minimum), maximum) || 1;
+  const span = (maximum / magnitude - minimum / magnitude) || 1;
+  const position = (value: number) => (value / magnitude - minimum / magnitude) / span * 100;
+  const colors = presentation?.palette === "teal" ? ["teal"] : presentation?.palette === "blue" || !presentation
+    ? ["blue"] : ["blue", "teal", "lavender", "mauve"];
+  const displayValue = (id: string, value: number) => {
+    const raw = block.verifiedSource?.rows.find(row => row.id === id)?.cells[1]?.replace(/%\s*$/, "").trim();
+    return `${raw && Number(raw) === value ? raw : value}${isNumber ? "" : "%"}`;
+  };
 
   return (
-    <figure className={`${styles.card} ${styles.horizontalChart}`}>
-      <h3>{block.title}</h3>
+    <figure className={`${styles.card} ${styles.horizontalChart}`} data-density={presentation?.density}>
+      {block.verifiedSource?.synthetic ? <p className={styles.chartSynthetic}>Synthetic example · Not research findings</p> : null}
+      <h3>{presentation?.title ?? block.title}</h3>
+      {presentation?.subtitle ? <p className={styles.chartSubtitle}>{presentation.subtitle}</p> : null}
       <div className={styles.rule} />
       <div className={styles.horizontalRows}>
-        {block.items.map((item) => (
+        {items.map((item) => (
           <div className={styles.horizontalRow} key={item.id}>
             <span>{item.label}</span>
             <div className={styles.horizontalValue}>
-              <div className={styles.horizontalBarTrack}>
-                <i style={{ width: `${(item.value / maximumValue) * 100}%` }} />
+              <div className={styles.horizontalBarTrack} aria-hidden="true">
+                <i style={{
+                  width: `${isNumber ? Math.abs(position(item.value) - position(0)) : item.value}%`,
+                  marginLeft: isNumber ? `${position(Math.min(0, item.value))}%` : undefined,
+                  background: `var(--chart-${colors[block.items.indexOf(item) % colors.length]})`,
+                }} />
+                {isNumber && minimum < 0 ? <b className={styles.chartZero} style={{ left: `${position(0)}%` }} /> : null}
               </div>
-              <strong>{item.value}%</strong>
+              <strong>{displayValue(item.id, item.value)}</strong>
             </div>
           </div>
         ))}
       </div>
-      <div className={styles.chartLegend}>
-        <i />
-        <span>{block.legend}</span>
+      {isNumber ? <p className={styles.chartScale}>Number scale: {minimum} to {maximum}</p> : null}
+      {presentation?.note ? <>
+        <div className={styles.rule} />
+        <p className={styles.chartNote}>{presentation.note}</p>
+      </> : null}
+      <div className={styles.chartDataTable}>
+        <table><caption>{presentation?.title ?? block.title} · Source order · {isNumber ? "Number" : "Percentage"} values</caption>
+          <thead><tr><th scope="col">Category</th><th scope="col">{isNumber ? block.legend.replace(/\s*\(%\)\s*$/, "") : block.legend}</th></tr></thead>
+          <tbody>{block.items.map(item => <tr key={item.id}><th scope="row">{item.label}</th><td>{displayValue(item.id, item.value)}</td></tr>)}</tbody>
+        </table>
       </div>
-      <SourceNote>{block.sourceNote}</SourceNote>
     </figure>
   );
 }

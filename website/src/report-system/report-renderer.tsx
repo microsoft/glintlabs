@@ -12,7 +12,6 @@ import { estimateReportReadingTime } from "../project/report-reading-time.ts";
 import { reportAuthor } from "../project/report-author.ts";
 import { ListeningMaturityScorecard } from "../visualization/listening-maturity-scorecard";
 import {
-  canonicalVisualOptions,
   isCanonicalVisualBlock,
 } from "../visualization/canonical-report-blocks";
 import { CanonicalReportComponent } from "../visualization/canonical-report-components";
@@ -280,29 +279,29 @@ function renderBlock(
       block.type === "percentage-ring-group" ||
       block.type === "horizontal-bar-chart" ||
       block.type === "grouped-column-comparison";
-    const visualName =
-      canonicalVisualOptions.find((option) => option.kind === block.type)?.name ??
-      "report component";
+    const canEdit = isAuthoring && isEditableVisual && Boolean(props.onSelectBlock);
     return (
       <div
         className={`${styles.canonicalVisual} ${
-          isEditableVisual ? styles.interactiveVisual : ""
+          canEdit ? `${styles.interactiveVisual} ${styles.chartAuthoring}` : ""
         } ${
-          isEditableVisual && props.selectedBlockId === block.id
+          canEdit && props.selectedBlockId === block.id
             ? styles.selected
             : ""
         }`}
         data-report-component={block.type}
       >
-        {isAuthoring && isEditableVisual && props.onSelectBlock ? (
-          <button
-            aria-label={`Edit ${visualName}`}
-            className={styles.editVisual}
-            onClick={() => props.onSelectBlock?.(block.id)}
-            type="button"
-          >
-            Edit component
-          </button>
+        {canEdit ? (
+          <div className={styles.chartEditToolbar}>
+            <button
+              aria-label={`Edit chart: ${block.title}`}
+              className={styles.chartEditAction}
+              onClick={() => props.onSelectBlock?.(block.id)}
+              type="button"
+            >
+              Edit chart
+            </button>
+          </div>
         ) : null}
         <CanonicalReportComponent block={block} />
       </div>
@@ -452,24 +451,27 @@ function renderBlock(
         : undefined;
 
       if (preview) {
+        const canEdit = isAuthoring && Boolean(props.onSelectBlock);
         return (
           <div
-            className={`${styles.interactiveVisual} ${
-              props.selectedBlockId === block.id ? styles.selected : ""
+            className={`${styles.canonicalVisual} ${
+              canEdit ? `${styles.interactiveVisual} ${styles.chartAuthoring}` : ""
+            } ${
+              canEdit && props.selectedBlockId === block.id ? styles.selected : ""
             }`}
             data-report-component={preview.type}
           >
-            {isAuthoring &&
-            props.onSelectBlock &&
-            !automaticallyVerifiedType ? (
-              <button
-                aria-label={`Review data ${block.data.title}`}
-                className={styles.editVisual}
-                onClick={() => props.onSelectBlock?.(block.id)}
-                type="button"
-              >
-                Review data
-              </button>
+            {canEdit ? (
+              <div className={styles.chartEditToolbar}>
+                <button
+                  aria-label={`${automaticallyVerifiedType ? "Edit chart" : "Review data"} ${block.data.title}`}
+                  className={styles.chartEditAction}
+                  onClick={() => props.onSelectBlock?.(block.id)}
+                  type="button"
+                >
+                  {automaticallyVerifiedType ? "Edit chart" : "Review data"}
+                </button>
+              </div>
             ) : null}
             <CanonicalReportComponent block={preview} />
           </div>

@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
+import { Send16Regular } from "@fluentui/react-icons/svg/send";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { preparePublicationPackage, publicationReadiness } from "../../../project/publication-package.ts";
 import {
@@ -386,7 +388,7 @@ export function PublicationPackageDialog({ project, onSave, onClose }: {
     <div className={styles.shell}>
       <header className={styles.header}>
         <h2 id="package-title" ref={titleRef} tabIndex={-1}>Publish report</h2>
-        <button className={styles.closeButton} aria-label="Close publishing" disabled={busy} onClick={requestClose} type="button">×</button>
+        <button className={styles.closeButton} aria-label="Close publishing" disabled={busy} onClick={requestClose} type="button"><Dismiss20Regular aria-hidden="true" /></button>
       </header>
       <div className={styles.body} ref={bodyRef} aria-busy={busy}>
         {error ? <div className={styles.error} ref={errorRef} role="alert" tabIndex={-1}>
@@ -410,7 +412,7 @@ export function PublicationPackageDialog({ project, onSave, onClose }: {
                         value={`illustration:${illustration.id}`} checked={metadata.thumbnail.source === illustration.src}
                         onChange={() => changeMetadata({ ...metadata, thumbnail: { source: illustration.src, alt: illustration.description, presentation: "illustration" } })} />
                       <Image src={illustration.src} unoptimized width={88} height={88} alt="" />
-                      <span>{illustration.label}</span>
+                      <span className={styles.srOnly}>{illustration.label}</span>
                     </label>)}
                   </div>
                   {isRetiredIllustration(metadata.thumbnail.source) ? <p className={styles.helper}>
@@ -425,13 +427,13 @@ export function PublicationPackageDialog({ project, onSave, onClose }: {
                   })} />
                 </DetailField>
                 <DetailField name="publication-summary" label="Short summary" error={detailError("summary")} wide>
-                  <textarea {...inputProps("summary", "publication-summary")} rows={2} maxLength={PUBLICATION_SUMMARY_MAX_LENGTH} ref={summaryRef} value={metadata.summary} onChange={event => changeMetadata({ ...metadata, summary: event.target.value })} />
-                  <button className={styles.textButton} type="button" ref={summaryButtonRef}
+                  <button className={`${styles.textButton} ${styles.summaryAction}`} type="button" ref={summaryButtonRef}
                     aria-expanded={summarySuggestion !== undefined}
                     aria-controls={summarySuggestion !== undefined ? "publication-summary-suggestion" : undefined}
                     onClick={() => setSummarySuggestion(suggestedPublicationSummary(project.manifest) ?? null)}>
                     Suggest summary
                   </button>
+                  <textarea {...inputProps("summary", "publication-summary")} rows={2} maxLength={PUBLICATION_SUMMARY_MAX_LENGTH} ref={summaryRef} value={metadata.summary} onChange={event => changeMetadata({ ...metadata, summary: event.target.value })} />
                   {summarySuggestion !== undefined ? (
                     <div className={styles.summarySuggestion} id="publication-summary-suggestion"
                       role="region" aria-label="Summary suggestion" aria-describedby="publication-summary-suggestion-text"
@@ -469,14 +471,22 @@ export function PublicationPackageDialog({ project, onSave, onClose }: {
               </div>
               <section className={styles.detailsSection} aria-label="Details">
                 <div className={styles.metaGrid}>
-                <div className={`${styles.cardBadgeFields} ${styles.wide}`}>
-                  <DetailField name="publication-date" label="Display date" error={detailError("displayDate")}>
+                <div className={`${styles.publicationDates} ${styles.wide}`}>
+                  <DetailField name="publication-date" label="Display on Reports page" error={detailError("displayDate")}>
                     <input {...inputProps("displayDate", "publication-date")} type="date" value={metadata.displayDate} onChange={event => changeMetadata({ ...metadata, displayDate: event.target.value })} />
                   </DetailField>
-                  <DetailField name="publication-employee-count" label="Employee count" hint="Leave blank to hide" error={detailError("employeeCount")} required={false}>
-                    <input {...inputProps("employeeCount", "publication-employee-count", true, false)} autoComplete="off" inputMode="numeric" pattern="[0-9]*"
-                      value={employeeCountInput} onChange={event => changeEmployeeCount(event.target.value)} />
-                  </DetailField>
+                  <div className={styles.field}>
+                    <label htmlFor="publication-featured-until">Feature on homepage until (optional)</label>
+                    <div className={styles.featureUntil}>
+                      <label className={styles.checkbox} htmlFor="publication-featured">
+                        <input id="publication-featured" name="publication-featured" type="checkbox" checked={metadata.catalog.featured}
+                          onChange={event => changeMetadata({ ...metadata, catalog: { featured: event.target.checked, featuredUntil: event.target.checked ? metadata.catalog.featuredUntil : null } })} />
+                        <span className={styles.srOnly}>Feature on the homepage</span>
+                      </label>
+                      <input {...inputProps("catalog.featuredUntil", "publication-featured-until", false, false)} disabled={!metadata.catalog.featured} min={metadata.displayDate || undefined} type="date" value={metadata.catalog.featuredUntil ?? ""} onChange={event => changeMetadata({ ...metadata, catalog: { ...metadata.catalog, featuredUntil: event.target.value || null } })} />
+                      {detailError("catalog.featuredUntil") ? <small className={styles.fieldError} id="publication-featured-until-error">{detailError("catalog.featuredUntil")}</small> : null}
+                    </div>
+                  </div>
                 </div>
                 <DetailField name="publication-slug" label="Report address" error={detailError("slug")} wide>
                   <div className={styles.addressInput}><span aria-hidden="true">/reports/</span>
@@ -484,22 +494,11 @@ export function PublicationPackageDialog({ project, onSave, onClose }: {
                   </div>
                   {slugSuggestion && slugSuggestion !== metadata.slug ? <button className={styles.textButton} type="button" onClick={() => { setAddressEdited(true); changeMetadata({ ...metadata, slug: slugSuggestion }); }}>Use suggested address</button> : null}
                 </DetailField>
-                <div className={`${styles.homepagePlacement} ${styles.wide}`}>
-                  <label className={styles.checkbox} htmlFor="publication-featured">
-                    <input id="publication-featured" name="publication-featured" type="checkbox" checked={metadata.catalog.featured}
-                      onChange={event => changeMetadata({ ...metadata, catalog: { featured: event.target.checked, featuredUntil: event.target.checked ? metadata.catalog.featuredUntil : null } })} />
-                    <span>Feature on the homepage</span>
-                  </label>
-                  <div className={`${styles.field} ${styles.featureUntil}`}>
-                    <label htmlFor="publication-featured-until"><span className={styles.srOnly}>Feature </span>Until</label>
-                    <input {...inputProps("catalog.featuredUntil", "publication-featured-until", false, false)} disabled={!metadata.catalog.featured} min={metadata.displayDate || undefined} type="date" value={metadata.catalog.featuredUntil ?? ""} onChange={event => changeMetadata({ ...metadata, catalog: { ...metadata.catalog, featuredUntil: event.target.value || null } })} />
-                    {detailError("catalog.featuredUntil") ? <small className={styles.fieldError} id="publication-featured-until-error">{detailError("catalog.featuredUntil")}</small> : null}
-                  </div>
-                </div>
                 </div>
               </section>
             </fieldset>
             <aside className={styles.catalogAside} aria-label="Draft catalog card">
+              <p className={styles.previewHeading}>Preview</p>
               <div className={styles.catalogCardPreview}>
                 <StudyCard preview headingLevel="h4" report={{
                   id: project.id,
@@ -516,6 +515,13 @@ export function PublicationPackageDialog({ project, onSave, onClose }: {
                   } : undefined,
                 }} />
               </div>
+              <fieldset className={styles.previewFields} disabled={busy}>
+                <legend className={styles.srOnly}>Catalog card details</legend>
+                <DetailField name="publication-employee-count" label="Employee count" hint="Leave blank to hide" error={detailError("employeeCount")} required={false}>
+                  <input {...inputProps("employeeCount", "publication-employee-count", true, false)} autoComplete="off" inputMode="numeric" pattern="[0-9]*"
+                    value={employeeCountInput} onChange={event => changeEmployeeCount(event.target.value)} />
+                </DetailField>
+              </fieldset>
             </aside>
           </div>
         </form>
@@ -547,12 +553,12 @@ export function PublicationPackageDialog({ project, onSave, onClose }: {
         <div className={styles.footerActions}>
           {websiteUpdate ? <button className={studioStyles.textAction} disabled={busy} onClick={requestClose} type="button">Done</button> : null}
           {websiteUpdate ? <a className={studioStyles.primaryAction} href={websiteUpdate.reportPath} rel="noopener noreferrer" target="_blank">View published report</a> : <>
-            {websiteStage && ownerAccess === true ? <a ref={previewLinkRef} className={studioStyles.secondaryAction} href={websiteStage.previewPath}
+            {websiteStage && ownerAccess === true ? <a ref={previewLinkRef} className={`${studioStyles.secondaryAction} ${styles.previewAction}`} href={websiteStage.previewPath}
               aria-disabled={busy || unlockAction !== undefined || undefined} tabIndex={busy || unlockAction ? -1 : undefined}
               onClick={event => { if (busy || unlockAction) event.preventDefault(); }} rel="noopener noreferrer" target="_blank">Preview report<span className={styles.srOnly}> (opens in a new tab)</span></a>
-              : <button ref={previewButtonRef} className={studioStyles.secondaryAction} disabled={busy || checkingAccess || unlockAction !== undefined} form="publication-details" type="submit">{operation === "preparing" ? "Preparing preview..." : "Preview report"}</button>}
+              : <button ref={previewButtonRef} className={`${studioStyles.secondaryAction} ${styles.previewAction}`} disabled={busy || checkingAccess || unlockAction !== undefined} form="publication-details" type="submit">{operation === "preparing" ? "Preparing preview..." : "Preview report"}</button>}
             <button ref={publishButtonRef} className={studioStyles.primaryAction} disabled={busy || checkingAccess || unlockAction !== undefined}
-              onClick={() => void runWebsiteAction("publish")} type="button">{operation === "publishing" ? "Publishing..." : "Publish report"}</button>
+              onClick={() => void runWebsiteAction("publish")} type="button"><Send16Regular aria-hidden="true" />{operation === "publishing" ? "Publishing..." : "Publish to Glint Labs"}</button>
           </>}
         </div>
       </footer>
