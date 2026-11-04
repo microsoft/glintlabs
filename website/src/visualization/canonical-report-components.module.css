@@ -669,18 +669,17 @@
 .horizontalDisclosureLabel { display: flex; align-items: center; gap: 8px; }
 .horizontalDisclosureLabel svg { flex: 0 0 16px; }
 .horizontalDisclosure[open] .horizontalDisclosureLabel svg { rotate: 180deg; }
-.horizontalBreakdown {
+.horizontalSupportingText {
   grid-column: 1 / -1;
   margin: 12px 0 0;
-  padding: 16px;
+  padding: 16px 16px 16px 32px;
   border-radius: 8px;
   background: var(--colorNeutralBackground2, #fafafa);
   font: 14px/20px "Segoe UI", sans-serif;
+  list-style: disc;
 }
-.horizontalBreakdown > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
-.horizontalBreakdown > div + div { margin-top: 12px; }
-.horizontalBreakdown dt { overflow-wrap: anywhere; }
-.horizontalBreakdown dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.horizontalSupportingText li { overflow-wrap: anywhere; }
+.horizontalSupportingText li + li { margin-top: 8px; }
 
 .seriesLegend {
   display: flex;

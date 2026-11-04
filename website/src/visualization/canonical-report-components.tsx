@@ -284,7 +284,9 @@ function HorizontalBarChart({
       <div className={styles.rule} />
       <div className={styles.horizontalRows}>
         {items.map((item) => {
-          const expandable = Boolean(item.breakdown?.length);
+          const bullets = item.supportingText?.split(/\r\n?|\n/).map(line => line.trim()).filter(Boolean)
+            ?? item.breakdown?.map(detail => `${detail.label}: ${displayBreakdownValue(item.id, detail.id, detail.value)}`) ?? [];
+          const expandable = bullets.length > 0;
           const Row = expandable ? "summary" : "div";
           const Value = expandable ? "span" : "div";
           const row = <Row className={styles.horizontalRow} key={item.id}>
@@ -305,12 +307,9 @@ function HorizontalBarChart({
           </Row>;
           return expandable ? <details className={styles.horizontalDisclosure} key={item.id}>
             {row}
-            <dl className={styles.horizontalBreakdown}>
-              {item.breakdown!.map(detail => <div key={detail.id}>
-                <dt>{detail.label}</dt>
-                <dd>{displayBreakdownValue(item.id, detail.id, detail.value)}</dd>
-              </div>)}
-            </dl>
+            <ul className={styles.horizontalSupportingText}>
+              {bullets.map((text, index) => <li key={index}>{text}</li>)}
+            </ul>
           </details> : row;
         })}
       </div>

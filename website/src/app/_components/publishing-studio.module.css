@@ -628,6 +628,11 @@
   flex-wrap: wrap;
 }
 
+.removeDialog { width: min(440px, calc(100vw - 32px)); }
+.removeDialog .publishDialogHeader { border-bottom: 0; }
+.removeDialog .publishDialogFooter { padding-top: 0; border-top: 0; }
+.removeDialog .dangerAction { min-height: 44px; padding-inline: 16px; }
+
 .publishDialogContent {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
@@ -2170,8 +2175,17 @@
 .chartSelectedHeader {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 32px;
+  gap: var(--spacingHorizontalS, 8px);
   padding-bottom: 0;
   border-bottom: 0;
+}
+
+.chartHeaderActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacingHorizontalS, 8px);
+  min-width: 0;
 }
 
 .chartEditorHeader h2:focus-visible {
@@ -2616,8 +2630,7 @@
 .chartDataGrid input[data-compact-value="true"] { padding-inline: 8px; }
 .chartCell { display: block; min-width: 0; }
 .chartCellLabel { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-.chartEditor .chartRemoveRow,
-.chartEditor .chartBreakdownRemove {
+.chartEditor .chartRemoveRow {
   position: relative;
   min-width: 32px;
   width: 32px;
@@ -2625,19 +2638,13 @@
   padding: 0;
   border-radius: var(--borderRadiusMedium, 8px);
 }
-.chartEditor .chartRemoveRow :global(.fui-Button__icon),
-.chartEditor .chartBreakdownRemove :global(.fui-Button__icon) { width: 16px; height: 16px; margin: 0; }
+.chartEditor .chartRemoveRow :global(.fui-Button__icon) { width: 16px; height: 16px; margin: 0; }
 
-.chartBreakdownEditor { margin-top: 8px; }
-.chartBreakdownEditor summary { min-height: 32px; color: var(--colorNeutralForeground2); font-size: 12px; line-height: 32px; cursor: pointer; }
-.chartBreakdownEditor summary:focus-visible { outline: 2px solid var(--colorBrandStroke1); outline-offset: 2px; }
-.chartBreakdownFields { display: grid; gap: 8px; margin-top: 8px; }
-.chartBreakdownRow { display: grid; grid-template-columns: minmax(0, 1fr) 72px 32px; gap: 8px; align-items: start; }
-@media (max-width: 479px) {
-  .chartBreakdownRow { grid-template-columns: minmax(0, 1fr) 32px; }
-  .chartBreakdownRow input { grid-column: 1; }
-  .chartBreakdownRow button { grid-column: 2; grid-row: 1 / span 2; }
-}
+.chartSupportingTextEditor { margin-top: var(--spacingVerticalS, 8px); }
+.chartSupportingTextEditor summary { min-height: 32px; color: var(--colorNeutralForeground2); font-size: 12px; line-height: 32px; cursor: pointer; }
+.chartSupportingTextEditor summary:focus-visible { outline: 2px solid var(--colorBrandStroke1); outline-offset: 2px; }
+.chartSupportingTextField { margin-top: var(--spacingVerticalS, 8px); }
+.chartSupportingTextField textarea { resize: vertical; }
 
 .chartEditorBody { padding-top: 24px; }
 .chartEditor .chartAction,

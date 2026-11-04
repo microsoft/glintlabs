@@ -882,6 +882,15 @@ export function PublishingStudio() {
   const [isSavingToLeave, setIsSavingToLeave] = useState(false);
   const [homeNavigationError, setHomeNavigationError] = useState<string>();
   const homeDialogRef = useRef<HTMLDialogElement>(null);
+  const [pendingRemoval, setPendingRemoval] = useState<ReportBlock>();
+  const removeDialogRef = useRef<HTMLDialogElement>(null);
+  const removalName = pendingRemoval?.type === "image" ? "image" : pendingRemoval && [
+    "data-visual-source", "horizontal-bar-chart", "paired-percentage-comparison",
+    "percentage-ring-group", "grouped-column-comparison",
+  ].includes(pendingRemoval.type) ? "chart" : "component";
+  useEffect(() => {
+    if (pendingRemoval) removeDialogRef.current?.showModal();
+  }, [pendingRemoval]);
   const [reportStyle, setReportStyle] =
     useState<ReportStyle>(DEFAULT_STUDIO_REPORT_STYLE);
   const [removedBlocks, setRemovedBlocks] = useState<RemovedBlock[]>([]);
@@ -1022,7 +1031,7 @@ export function PublishingStudio() {
     (visual) => visual.status === "review-required",
   );
   const removeBlock = useCallback(
-    (blockId: string) => {
+    (blockId: string, confirmed = false) => {
       if (!manifest || manifest.blocks.length <= 1) {
         return;
       }
@@ -1033,12 +1042,8 @@ export function PublishingStudio() {
       }
       const removed = result.removed;
 
-      if (
-        (removed.block.type === "image" || isVisualBlock(removed.block)) &&
-        !window.confirm(
-          "Delete this component and its content? You can undo this action for a short time.",
-        )
-      ) {
+      if (!confirmed && (removed.block.type === "image" || isVisualBlock(removed.block))) {
+        setPendingRemoval(removed.block);
         return;
       }
 
@@ -2039,6 +2044,38 @@ export function PublishingStudio() {
           project={packageProject}
         />
       ) : null}
+
+      <dialog
+        aria-describedby="remove-component-description"
+        aria-labelledby="remove-component-title"
+        className={`${styles.publishDialog} ${styles.removeDialog}`}
+        onClose={() => setPendingRemoval(undefined)}
+        ref={removeDialogRef}
+      >
+        <div className={styles.publishDialogContent}>
+          <div className={styles.publishDialogHeader}>
+            <div className={styles.publishDialogHeaderCopy}>
+              <h2 id="remove-component-title">Remove this {removalName}?</h2>
+              <Body1 id="remove-component-description">
+                This removes the {removalName} and its content from your report. You can undo this for a short time.
+              </Body1>
+            </div>
+          </div>
+          <div className={styles.publishDialogFooter}>
+            <button autoFocus className={styles.secondaryAction} onClick={() => removeDialogRef.current?.close()} type="button">
+              Cancel
+            </button>
+            <button className={styles.dangerAction} disabled={!pendingRemoval} type="button"
+              onClick={() => {
+                if (!pendingRemoval) return;
+                removeDialogRef.current?.close();
+                removeBlock(pendingRemoval.id, true);
+              }}>
+              Remove {removalName}
+            </button>
+          </div>
+        </div>
+      </dialog>
 
       <dialog
         aria-describedby="leave-studio-description"

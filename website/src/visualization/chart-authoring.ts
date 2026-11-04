@@ -130,6 +130,7 @@ export async function createStudioChartSource({
     columns: table.columns.map(value => value.trim()),
     rows: table.rows.map(row => ({
       id: row.id, cells: row.cells.map(value => value.trim()),
+      ...(row.supportingText?.trim() ? { supportingText: row.supportingText.trim() } : {}),
       ...(row.breakdown?.length ? { breakdown: row.breakdown.map(detail => ({
         id: detail.id, label: detail.label.trim(), value: detail.value.trim(),
       })) } : {}),

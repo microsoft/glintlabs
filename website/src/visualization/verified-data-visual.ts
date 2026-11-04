@@ -46,6 +46,7 @@ function numericRows(block: DataVisualSourceBlock) {
     id: row.id,
     label: row.cells[0]?.trim() || "",
     values: row.cells.slice(1).map(value => parseChartValue(value, block.data.unit)),
+    supportingText: row.supportingText?.trim(),
     breakdown: row.breakdown?.map(detail => ({
       id: detail.id, label: detail.label.trim(), value: parseChartValue(detail.value, block.data.unit),
     })),
@@ -143,6 +144,7 @@ export function createVerifiedDataVisual(
           id: row.id,
           label: row.label,
           value: row.values[0] as number,
+          ...(row.supportingText ? { supportingText: row.supportingText } : {}),
           ...(row.breakdown?.length ? { breakdown: row.breakdown.map(detail => ({
             ...detail, value: detail.value as number,
           })) } : {}),

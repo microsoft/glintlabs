@@ -66,6 +66,7 @@ export const structuredDataSchema = z.object({
       z.object({
         id: z.string().min(1),
         cells: z.array(z.string()).min(2),
+        supportingText: z.string().optional(),
         breakdown: z.array(z.object({
           id: z.string().min(1),
           label: z.string(),
@@ -285,6 +286,7 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
     presentation: chartPresentationSchema.optional(),
     title: z.string().min(1),
     items: z.array(chartItemSchema.extend({
+      supportingText: z.string().min(1).optional(),
       breakdown: z.array(chartItemSchema).min(1).optional(),
     })).min(2).max(12),
     legend: z.string().min(1),

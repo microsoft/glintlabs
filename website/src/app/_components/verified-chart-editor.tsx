@@ -226,42 +226,23 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
         row.id === rowId ? { ...row, cells: row.cells.map((cell, i) => i === column ? value : cell) } : row) },
     });
   }
-  function changeBreakdown(rowId: string, breakdown: ChartTable["rows"][number]["breakdown"]) {
-    if (!tableDraft) return;
-    changeData({ ...tableDraft, table: { ...tableDraft.table,
-      rows: tableDraft.table.rows.map(row => row.id === rowId ? { ...row, breakdown } : row),
-    } });
-  }
-  function breakdownEditor(row: ChartTable["rows"][number], rowIndex: number) {
+  function supportingTextEditor(row: ChartTable["rows"][number], rowIndex: number) {
     const category = row.cells[0].trim() || `category ${rowIndex + 1}`;
-    return <details className={styles.chartBreakdownEditor}>
-      <summary aria-label={`Breakdown for ${category}`}>
-        Breakdown{row.breakdown?.length ? ` (${row.breakdown.length})` : " (optional)"}
-      </summary>
-      <div className={styles.chartBreakdownFields}>
-        {row.breakdown?.map((detail, index) => <div key={detail.id} className={styles.chartBreakdownRow}>
-          <input type="text" maxLength={160} placeholder="Label" value={detail.label}
-            aria-label={`Breakdown label, category ${rowIndex + 1}, row ${index + 1}`}
-            aria-invalid={!detail.label.trim()}
-            onChange={event => changeBreakdown(row.id, row.breakdown!.map(item => item.id === detail.id
-              ? { ...item, label: event.target.value } : item))} />
-          <input type="text" inputMode="decimal" maxLength={24} placeholder={valueType === "percentage" ? "Value (%)" : "Value"}
-            value={valueType === "percentage" ? detail.value.replace(/%\s*$/, "").trim() : detail.value}
-            aria-label={`Breakdown value${valueType === "percentage" ? " (%)" : ""}, category ${rowIndex + 1}, row ${index + 1}`}
-            aria-invalid={parseChartValue(detail.value, valueType) === undefined}
-            onChange={event => changeBreakdown(row.id, row.breakdown!.map(item => item.id === detail.id
-              ? { ...item, value: event.target.value } : item))} />
-          <Button type="button" appearance="subtle" className={styles.chartBreakdownRemove}
-            aria-label={`Remove breakdown row ${index + 1} from ${category}`}
-            icon={<Delete16Regular aria-hidden="true" />}
-            onClick={() => changeBreakdown(row.id, row.breakdown!.filter(item => item.id !== detail.id))} />
-        </div>)}
-        <Button type="button" appearance="subtle" className={styles.chartAction}
-          aria-label={`Add breakdown row for ${category}`} icon={<Add16Regular aria-hidden="true" />}
-          onClick={() => changeBreakdown(row.id, [...row.breakdown ?? [], { id: crypto.randomUUID(), label: "", value: "" }])}>
-          Add row
-        </Button>
-      </div>
+    const text = row.supportingText ?? row.breakdown?.map(detail =>
+      `${detail.label}: ${detail.value.replace(/%\s*$/, "").trim()}${valueType === "percentage" ? "%" : ""}`).join("\n") ?? "";
+    return <details className={styles.chartSupportingTextEditor}>
+      <summary aria-label={`Supporting text for ${category}`}>Supporting text (optional)</summary>
+      <label className={`${styles.field} ${styles.chartSupportingTextField}`}>
+        <span className={styles.chartCellLabel}>Supporting text for {category}</span>
+        <textarea rows={3} value={text} placeholder="One bullet per line"
+          onChange={event => {
+            if (!tableDraft) return;
+            changeData({ ...tableDraft, table: { ...tableDraft.table,
+              rows: tableDraft.table.rows.map(item => item.id === row.id
+                ? { ...item, supportingText: event.target.value, breakdown: undefined } : item),
+            } });
+          }} />
+      </label>
     </details>;
   }
   function textField(key: "title" | "subtitle" | "note") {
@@ -322,7 +303,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
                 onBlur={() => setTouchedCells(previous => new Set(previous).add(`${row.id}:${column}`))}
                 onChange={event => editCell(row.id, column, event.target.value)} />
             </label> : cell}
-            {column === 0 && tableDraft && selectedType === "horizontal-bar-chart" ? breakdownEditor(row, rowIndex) : null}
+            {column === 0 && tableDraft && selectedType === "horizontal-bar-chart" ? supportingTextEditor(row, rowIndex) : null}
             {column === 0 && rowErrors.length ? <span id={`${prefix}-${row.id}-errors`} className={styles.inputError}>
               {rowErrors.map(item => item.message).join(" ")}
             </span> : null}
@@ -377,15 +358,18 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   </Menu>;
   return <div className={styles.chartEditor}>
     <header className={`${styles.chartEditorHeader} ${styles.chartSelectedHeader}`}>
-      <Dropdown aria-label="Chart type" className={`${styles.chartChoice} ${styles.chartTypeSelector}`}
-        button={{ ref: typeButton, className: styles.chartChoiceButton }} listbox={{ className: styles.chartControlPopup }}
-        placeholder="Choose a chart" value={chartChoice?.title ?? ""} selectedOptions={selectedType ? [selectedType] : []}
-        onOptionSelect={(_, data) => {
-          if (data.optionValue) changeChartType(data.optionValue as VerifiedDataVisualType);
-        }}>
-        {chartChoices.map(({ type, title }) => <Option key={type} value={type} checkIcon={null}
-          className={styles.chartMenuItem}>{title}</Option>)}
-      </Dropdown>
+      <div className={styles.chartHeaderActions}>
+        <Dropdown aria-label="Chart type" className={`${styles.chartChoice} ${styles.chartTypeSelector}`}
+          button={{ ref: typeButton, className: styles.chartChoiceButton }} listbox={{ className: styles.chartControlPopup }}
+          placeholder="Choose a chart" value={chartChoice?.title ?? ""} selectedOptions={selectedType ? [selectedType] : []}
+          onOptionSelect={(_, data) => {
+            if (data.optionValue) changeChartType(data.optionValue as VerifiedDataVisualType);
+          }}>
+          {chartChoices.map(({ type, title }) => <Option key={type} value={type} checkIcon={null}
+            className={styles.chartMenuItem}>{title}</Option>)}
+        </Dropdown>
+        {replacementMenu}
+      </div>
       <Button type="button" appearance="subtle" className={styles.chartEditorDismiss}
         icon={<Dismiss20Regular aria-hidden="true" />} aria-label="Close chart editor" onClick={onCancel} />
     </header>
@@ -452,7 +436,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
         <div className={styles.chartTableSection}>
           <div className={styles.chartTableHeader}>
             <h3>Chart data</h3>
-            {replacementMenu}
           </div>
           {dataSettings}
           {dataGrid("panel")}
