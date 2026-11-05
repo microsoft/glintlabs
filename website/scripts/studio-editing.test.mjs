@@ -362,7 +362,7 @@ test("Word chart data is immediately editable without copying or changing the or
     createStudioChartSource() { assert.fail("Opening a chart must not create replacement source data"); },
     Dismiss20Regular: "dismiss-icon", Delete16Regular: "delete-icon",
     TextEditStyle20Regular: "text-icon", DataBarVertical20Regular: "data-icon", Color20Regular: "color-icon", Checkmark16Regular: "check-icon",
-    DataBarHorizontal20Regular: "bar-icon", DataPie20Regular: "ring-icon", TextPercent20Regular: "percent-icon", ChevronDown20Regular: "chevron-icon",
+    DataBarHorizontal20Regular: "bar-icon", DataPie20Regular: "ring-icon", TextPercent20Regular: "percent-icon", ChevronDown16Regular: "chevron-icon",
     Add16Regular: "add-icon", ArrowUpload20Regular: "upload-icon", ClipboardPaste20Regular: "paste-icon",
     Button: "button", MenuButton: "button", Checkbox: "checkbox", Dropdown: "dropdown", Option: "option",
     Menu: "menu", MenuItem: "menuitem", MenuList: "menulist", MenuPopover: "popover", MenuTrigger: "trigger",
@@ -387,25 +387,21 @@ test("Word chart data is immediately editable without copying or changing the or
   assert.equal(editorHeader.some(node => node.type === "h2"), false,
     "The chart selector replaces the duplicate header title");
   const input = rendered.find(node => node.props?.["aria-label"] === "Value (%), row 1");
-  assert.ok(rendered.some(node => node.type === "h3" && node.props.children === "Chart data"),
-    "The data section is visibly labeled without repeating the source title");
-  assert.ok(rendered.findIndex(node => node.type === "h3" && node.props.children === "Chart data") <
-    rendered.findIndex(node => node.props?.id === "word-chart-sort-label"),
-  "Chart data introduces the section before its sorting and value-type controls");
-  assert.ok(rendered.some(node => node.type === "caption" && node.props.children === "Chart data"),
-    "The table retains its accessible name without an extra visible heading");
+  assert.equal(rendered.filter(node => node.type === "caption").length, 2,
+    "Each category retains an accessible table caption without an extra visible heading");
   assert.ok(rendered.some(node => node.type === "th" && node.props.children === "Value"),
     "The visible Value heading stays unit-neutral; input names retain percentage context");
   assert.ok(rendered.some(node => node.type === "th" && node.props.children === "Label"),
     "The editable label column is generic rather than derived from source headings");
   assert.ok(rendered.some(node => node.props?.["aria-label"] === "Label, row 1"),
     "Accessible input names match the generic column heading");
-  const valueTypes = rendered.find(node => node.props?.role === "radiogroup");
-  assert.ok(valueTypes, "Both value types are available as a segmented radio group");
-  assert.deepEqual(nodes(valueTypes).filter(node => node.type === "input").map(node =>
-    [node.props.value, node.props.checked]), [["percentage", true], ["number", false]]);
-  assert.ok(rendered.findIndex(node => node.props?.id === "word-chart-sort-label") <
-    rendered.findIndex(node => node.props?.id === "word-chart-value-type-label"),
+  const valueTypes = rendered.find(node => node.type === "dropdown" && node.props["aria-label"] === "Value type");
+  assert.ok(valueTypes, "Both value types are available in the compact dropdown");
+  assert.deepEqual(valueTypes.props.selectedOptions, ["percentage"]);
+  assert.deepEqual(nodes(valueTypes).filter(node => node.type === "option").map(node => node.props.value),
+    ["percentage", "number"]);
+  assert.ok(rendered.findIndex(node => node.props?.["aria-label"] === "Sort by") <
+    rendered.findIndex(node => node.props?.["aria-label"] === "Value type"),
   "Sort by precedes Value type in both visual and keyboard order");
   assert.ok(input, "Imported chart values can be edited directly");
   assert.equal(input.props.value, "24.00", "Percentage inputs omit the glyph without dropping source precision");
@@ -424,6 +420,40 @@ test("Word chart data is immediately editable without copying or changing the or
   input.props.onChange({ target: { value: "36" } });
   assert.ok(updates.some(value => value?.table?.rows[0].cells[1] === "36"));
   assert.deepEqual(original, before, "Editing a Studio copy leaves the Word source intact");
+  const bulletsSource = structuredClone(original);
+  bulletsSource.data.rows[0].breakdown = [
+    { id: "themes", label: "Identify themes", value: "62.50%" },
+    { id: "sentiment", label: "Analyze sentiment", value: "0" },
+  ];
+  bulletsSource.data.rows[1].supportingText = "One\nTwo\nThree\nFour\nFive\nSix";
+  const bulletView = nodes(render({
+    block: bulletsSource, source: bulletsSource, onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
+  }));
+  const researchBullets = bulletView.filter(node => node.type === "input" &&
+    /^Supporting bullet \d+ for Research$/.test(node.props["aria-label"] ?? ""));
+  assert.deepEqual(researchBullets.map(node => node.props.value),
+    ["Identify themes: 62.50%", "Analyze sentiment: 0%", "", ""],
+    "Legacy numeric breakdowns retain their precision in the four initial bullet slots");
+  assert.deepEqual(bulletView.filter(node => node.type === "input" &&
+    /^Supporting bullet \d+ for Support$/.test(node.props["aria-label"] ?? "")).map(node => node.props.value),
+    ["One", "Two", "Three", "Four", "Five", "Six", ""],
+    "Existing supporting text is never capped at four bullets");
+  researchBullets[0].props.onChange({ target: { value: "Reviewed finding" } });
+  const bulletEdit = updates.findLast(value => value?.table);
+  assert.equal(bulletEdit.table.rows[0].supportingText, "Reviewed finding\nAnalyze sentiment: 0%");
+  assert.equal(bulletEdit.table.rows[0].breakdown, undefined, "Only an actual edit replaces legacy details");
+  assert.equal(bulletEdit.table.rows[0].cells[1], "24.00%");
+  assert.equal(bulletEdit.table.rows[1].supportingText, "One\nTwo\nThree\nFour\nFive\nSix");
+  let pasteHandled = false;
+  researchBullets[0].props.onPaste({
+    clipboardData: { getData: () => "First\r\n\r\nThird\rFourth\nFifth" },
+    currentTarget: { value: "Identify themes: 62.50%", selectionStart: 0, selectionEnd: 23 },
+    preventDefault() { pasteHandled = true; },
+  });
+  assert.equal(pasteHandled, true);
+  assert.equal(updates.findLast(value => value?.table).table.rows[0].supportingText,
+    "First\n\nThird\nFourth\nFifth\nAnalyze sentiment: 0%",
+    "Multiline paste expands into separate bullets, retaining blank lines and following content");
   assert.deepEqual(rendered.filter(node => node.props?.role === "tab").map(node =>
     nodes(node).find(child => child.type === "span").props.children),
     ["Data", "Text", "Palette"], "The editor separates data, text and palette");
@@ -435,11 +465,11 @@ test("Word chart data is immediately editable without copying or changing the or
     const view = nodes(render({
       block: original, source: original, onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
     }));
-    assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, tab === "text" ? 3 : tab === "data" ? 4 : 0,
-      "Text contains the three single-line chart text fields; Data contains editable cells");
+    assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, tab === "text" ? 3 : tab === "data" ? 12 : 0,
+      "Text contains chart text fields; Data contains category cells and supporting-bullet inputs");
     assert.equal(view.filter(node => node.type === "select").length, 0, "Chart controls never open native operating-system menus");
-    assert.equal(view.filter(node => node.type === "dropdown").length, tab === "data" ? 2 : 1,
-      "Chart type is always available; Data adds Sort by, while palettes remain radio tiles");
+    assert.equal(view.filter(node => node.type === "dropdown").length, tab === "data" ? 3 : 1,
+      "Chart type is always available; Data adds Sort by and Value type, while palettes remain radio tiles");
     if (tab === "palette") {
       const palette = view.find(node => node.type === "input" && node.props.name === "word-chart-palette" && node.props.value === "teal");
       assert.ok(palette, "Each palette is directly selectable without opening a dropdown");

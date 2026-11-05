@@ -12,7 +12,7 @@ import { Delete16Regular } from "@fluentui/react-icons/svg/delete";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
 import { Menu, MenuItem, MenuList, MenuPopover, MenuTrigger } from "@fluentui/react-menu";
 import { Body1, Body1Strong, Caption1 } from "@fluentui/react-text";
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   chartPresentationSchema,
   pairedComparisonPresentationSchema,
@@ -231,22 +231,49 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     const category = row.cells[0].trim() || `category ${rowIndex + 1}`;
     const text = row.supportingText ?? row.breakdown?.map(detail =>
       `${detail.label}: ${detail.value.replace(/%\s*$/, "").trim()}${valueType === "percentage" ? "%" : ""}`).join("\n") ?? "";
+    const bullets = text.split(/\r\n?|\n/);
+    const slotCount = Math.max(4, bullets.length + (bullets.at(-1)?.trim() ? 1 : 0));
+    function changeBullets(lines: string[]) {
+      if (!tableDraft) return;
+      changeData({ ...tableDraft, table: { ...tableDraft.table,
+        rows: tableDraft.table.rows.map(item => item.id === row.id
+          ? { ...item, supportingText: lines.join("\n"), breakdown: undefined } : item),
+      } });
+    }
     return <details className={styles.chartSupportingTextEditor}>
-      <summary aria-label={`Supporting text for ${category}`}>
-        <span>Supporting text (optional)</span>
+      <summary aria-label={`Supporting bullets for ${category}`}>
+        <span>Supporting bullets (optional)</span>
         <ChevronDown16Regular aria-hidden="true" />
       </summary>
-      <label className={`${styles.field} ${styles.chartSupportingTextField}`}>
-        <span className={styles.chartCellLabel}>Supporting text for {category}</span>
-        <textarea rows={3} value={text} placeholder="One bullet per line"
-          onChange={event => {
-            if (!tableDraft) return;
-            changeData({ ...tableDraft, table: { ...tableDraft.table,
-              rows: tableDraft.table.rows.map(item => item.id === row.id
-                ? { ...item, supportingText: event.target.value, breakdown: undefined } : item),
-            } });
-          }} />
-      </label>
+      <div className={styles.chartSupportingBullets}>
+        {Array.from({ length: slotCount }, (_, index) => <label key={index}
+          className={`${styles.field} ${styles.chartSupportingBullet}`}>
+          <span className={styles.chartCellLabel}>Supporting bullet {index + 1} for {category}</span>
+          <input type="text" aria-label={`Supporting bullet ${index + 1} for ${category}`} value={bullets[index] ?? ""}
+            onChange={event => {
+              const next = Array.from({ length: Math.max(bullets.length, index + 1) }, (_, i) => bullets[i] ?? "");
+              next[index] = event.target.value;
+              changeBullets(next);
+            }}
+            onKeyDown={event => {
+              if (event.key !== "Enter" || event.nativeEvent.isComposing) return;
+              event.preventDefault();
+              event.stopPropagation();
+              event.currentTarget.closest("details")?.querySelectorAll("input")[index + 1]?.focus();
+            }}
+            onPaste={event => {
+              const pasted = event.clipboardData.getData("text/plain");
+              if (!/[\r\n]/.test(pasted)) return;
+              event.preventDefault();
+              const input = event.currentTarget;
+              const value = input.value.slice(0, input.selectionStart ?? 0) + pasted
+                + input.value.slice(input.selectionEnd ?? input.value.length);
+              const next = Array.from({ length: Math.max(bullets.length, index + 1) }, (_, i) => bullets[i] ?? "");
+              next.splice(index, 1, ...value.split(/\r\n?|\n/));
+              changeBullets(next);
+            }} />
+        </label>)}
+      </div>
     </details>;
   }
   function textField(key: "title" | "subtitle" | "note") {
@@ -276,26 +303,33 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       ...entries.filter(entry => !frozenOrder.includes(entry.row.id)),
     ] : sorted;
     return <>
-      <table className={styles.chartDataGrid} data-value-type={valueType} data-chart-type={selectedType}
-        data-series-count={table.columns.length - 1}
+      {tableDraft && isGrouped ? <div className={styles.chartSeriesFields}>
+        {table.columns.slice(1).map((name, index) => <label key={index} className={styles.field}>
+          <Body1Strong>Series {index + 1} name</Body1Strong>
+          <input type="text" value={name} maxLength={100} aria-invalid={!name.trim()}
+            onChange={event => changeData({ ...tableDraft, table: { ...tableDraft.table,
+              columns: table.columns.map((value, i) => i === index + 1 ? event.target.value : value) } })} />
+        </label>)}
+      </div> : null}
+      <div className={styles.chartCategoryList}
         onFocusCapture={() => { if (!frozenOrder) setFrozenOrder(displayed.map(entry => entry.row.id)); }}
         onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFrozenOrder(undefined); }}
         onKeyDown={event => {
-          if (event.key === "Enter" && event.target instanceof HTMLInputElement) {
+          if (event.key === "Enter" && !event.nativeEvent.isComposing && event.target instanceof HTMLInputElement) {
             event.preventDefault();
             setFrozenOrder(sorted.map(entry => entry.row.id));
           }
         }}>
-        <caption className={styles.chartCellLabel}>{tableDraft ? "Chart data" : "Original source values"}</caption>
-        <thead><tr>{headings.map((column, i) => <th scope="col" key={i}>
-          {tableDraft && isGrouped && i > 0 ? <input type="text" aria-label={`Series ${i} name`}
-            value={table.columns[i]} maxLength={100} aria-invalid={!table.columns[i].trim()}
-            onChange={event => changeData({ ...tableDraft, table: { ...tableDraft.table,
-              columns: table.columns.map((value, index) => index === i ? event.target.value : value) } })} /> : column}
-        </th>)}{canRemoveRows ? <th scope="col"><span className={styles.chartCellLabel}>Remove row</span></th> : null}</tr></thead>
-        <tbody>{displayed.map(({ row, rowIndex }, displayIndex) => {
+        {displayed.map(({ row, rowIndex }, displayIndex) => {
           const rowErrors = visibleErrors.filter(item => item.row === rowIndex);
-          return <Fragment key={row.id}><tr>{row.cells.map((cell, column) => <td key={column}>
+          return <div key={row.id} className={styles.chartCategory}>
+          <table className={styles.chartDataGrid} data-value-type={valueType} data-chart-type={selectedType}
+            data-series-count={table.columns.length - 1}>
+            <caption className={styles.chartCellLabel}>{tableDraft ? "Chart data" : "Original source values"}, category {displayIndex + 1}</caption>
+            <thead><tr>{headings.map((column, i) => <th scope="col" key={i}>{column}</th>)}
+              {canRemoveRows ? <th scope="col"><span className={styles.chartCellLabel}>Remove row</span></th> : null}
+            </tr></thead>
+            <tbody><tr>{row.cells.map((cell, column) => <td key={column}>
             {tableDraft ? <label className={styles.chartCell}>
               <span className={styles.chartCellLabel}>{headings[column]}{column > 0 && valueType === "percentage" ? " (%)" : ""}, row {displayIndex + 1}</span>
               <input aria-label={`${headings[column]}${column > 0 && valueType === "percentage" ? " (%)" : ""}, row ${displayIndex + 1}`} type="text"
@@ -314,19 +348,19 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
             aria-label={`Remove row ${displayIndex + 1}`} disabled={table.rows.length <= 2}
             icon={<Delete16Regular aria-hidden="true" />}
             onClick={() => changeData({ ...tableDraft, table: { ...tableDraft.table, rows: table.rows.filter(item => item.id !== row.id) } })}>
-          </Button></td> : null}</tr>
-          {tableDraft && selectedType === "horizontal-bar-chart" ? <tr className={styles.chartSupportingTextRow}>
-            <td colSpan={row.cells.length + (canRemoveRows ? 1 : 0)}>
-              {supportingTextEditor(row, rowIndex)}
-            </td>
-          </tr> : null}</Fragment>;
-        })}</tbody>
-      </table>
+          </Button></td> : null}</tr></tbody>
+          </table>
+          {tableDraft && selectedType === "horizontal-bar-chart" ? supportingTextEditor(row, rowIndex) : null}
+          </div>;
+        })}
+      </div>
     </>;
   }
   const dataSettings = selectedType === "horizontal-bar-chart" ? <div className={styles.chartDataSettings}>
       <Dropdown aria-label="Sort by" className={styles.chartChoice}
-        button={{ className: styles.chartChoiceButton }} listbox={{ className: styles.chartControlPopup }}
+        button={{ className: styles.chartChoiceButton,
+          children: <span className={styles.chartChoiceLabel}>{orders[presentation.sort]}</span> }}
+        listbox={{ className: styles.chartControlPopup }}
         value={orders[presentation.sort]} selectedOptions={[presentation.sort]}
         onOptionSelect={(_, data) => { if (data.optionValue) {
           setFrozenOrder(undefined);
@@ -336,7 +370,9 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
           className={styles.chartMenuItem}>{label}</Option>)}
       </Dropdown>
       <Dropdown aria-label="Value type" className={styles.chartChoice}
-        button={{ className: styles.chartChoiceButton }} listbox={{ className: styles.chartControlPopup }}
+        button={{ className: styles.chartChoiceButton,
+          children: <span className={styles.chartChoiceLabel}>{valueType === "percentage" ? "Percentage" : "Number"}</span> }}
+        listbox={{ className: styles.chartControlPopup }}
         value={valueType === "percentage" ? "Percentage" : "Number"} selectedOptions={[valueType]}
         onOptionSelect={(_, data) => {
           if (data.optionValue) changeValueType(data.optionValue as ChartValueType);
@@ -361,6 +397,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     </MenuPopover>
   </Menu>;
   return <div className={styles.chartEditor}>
+    <div>
     <header className={`${styles.chartEditorHeader} ${styles.chartSelectedHeader}`}>
       <div className={styles.chartHeaderActions}>
         <Dropdown aria-label="Chart type" className={`${styles.chartChoice} ${styles.chartTypeSelector}`}
@@ -377,7 +414,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       <Button type="button" appearance="subtle" className={styles.chartEditorDismiss}
         icon={<Dismiss20Regular aria-hidden="true" />} aria-label="Close chart editor" onClick={onCancel} />
     </header>
-    <div className={styles.chartEditorContent}>
     <div className={styles.chartEditorTools}>
     <div className={styles.chartTabs} role="tablist" aria-label="Chart editing">
       {visibleTabs.map(value => {
@@ -407,6 +443,8 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       } catch (cause) { setError(cause instanceof Error ? cause.message : "The table could not be imported."); }
     }} />
     </div>
+    </div>
+    <div className={styles.chartEditorContent}>
     <section id={`${block.id}-chart-panel`} role="tabpanel" aria-labelledby={`${block.id}-${tab}-tab`}
       data-chart-tab={tab} className={styles.chartEditorBody}>
       {error ? <Body1 className={styles.inputError} role="alert" block>{error}</Body1> : null}
@@ -417,9 +455,9 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
           <Caption1 block>No rows or series are removed automatically. The preview updates when the data is ready.</Caption1>
           {selectedType !== "horizontal-bar-chart" && valueType !== "percentage" ? <>
             <Caption1 block>Use percentages only if that is what your values represent.</Caption1>
-            <Button type="button" appearance="outline" onClick={() => changeValueType("percentage")}>Use percentage values</Button>
+            <Button type="button" className={styles.chartAction} appearance="outline" onClick={() => changeValueType("percentage")}>Use percentage values</Button>
           </> : null}
-          {isGrouped && tableDraft?.table.columns.length === 2 ? <Button type="button" appearance="outline"
+          {isGrouped && tableDraft?.table.columns.length === 2 ? <Button type="button" className={styles.chartAction} appearance="outline"
             onClick={() => changeData({ ...tableDraft, table: { columns: [...tableDraft.table.columns, "Series 2"],
               rows: tableDraft.table.rows.map(row => ({ ...row, cells: [...row.cells, ""] })) } })}>Add second series</Button> : null}
           {!isGrouped && tableDraft && tableDraft.table.columns.length > 2 ? <label className={styles.field}>
@@ -441,7 +479,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
           {dataSettings}
           {dataGrid("panel")}
           <div className={styles.chartDataActions}>
-            {tableDraft && (!fixedRows || tableDraft.table.rows.length < requiredRows!) ? <Button className={styles.chartAction} type="button" appearance="subtle"
+            {tableDraft && (!fixedRows || tableDraft.table.rows.length < requiredRows!) ? <Button className={styles.chartAction} type="button" appearance="outline"
               icon={<Add16Regular aria-hidden="true" />} disabled={tableDraft.table.rows.length >= 12}
               onClick={() => changeData({ ...tableDraft, table: { ...tableDraft.table,
                 rows: [...tableDraft.table.rows, { id: crypto.randomUUID(), cells: tableDraft.table.columns.map(() => "") }] } })}>Add category</Button> : null}
