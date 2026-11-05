@@ -283,6 +283,27 @@ test("bar supporting disclosures open for the editing preview and default to col
   assert.deepEqual(block, before, "Preview expansion does not become saved chart data");
 });
 
+test("chart drafts retain missing-value placeholders without redundant helper copy", () => {
+  const jsx = (type, props) => ({ type, props });
+  const text = node => Array.isArray(node) ? node.map(text).join(" ")
+    : !node || typeof node === "boolean" ? ""
+    : typeof node === "object" ? text(node.props?.children) : String(node);
+  const componentSource = ts.createSourceFile("chart-draft-preview.tsx", readFileSync(new URL(
+    "../src/report-system/chart-draft-preview.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const render = componentFunction("ChartDraftPreview", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {}, parseChartValue,
+  }, componentSource);
+  for (const type of ["horizontal-bar-chart", "paired-percentage-comparison", "percentage-ring-group", "grouped-column-comparison"]) {
+    const preview = text(render({ draft: {
+      blockId: "draft", type, title: "Comparison", table: { columns: [], rows: [] }, unit: "percentage",
+    } }));
+    assert.doesNotMatch(preview, /Draft preview|Missing values are shown|Complete the data to apply/,
+      `${type} omits redundant helper copy`);
+    assert.match(preview, /—/, `${type} still marks missing values without inventing data`);
+  }
+});
+
 test("chart review issues remain actionable without duplicating source warnings or accepting unverified data", () => {
   const manifest = { reviewItems: [
     { id: "source-review", blockId: "chart-1", severity: "warning", message: "Check chart values." },
@@ -323,7 +344,7 @@ test("switching report items and tools cannot apply unreviewed chart previews", 
   assert.equal(messages.length, 2, "both exits require Apply or Cancel");
 });
 
-test("Studio-authored charts omit note and source footers without changing their evidence or existing report notes", async () => {
+test("Studio-authored charts omit source footers while paired comparisons retain optional notes", async () => {
   const jsx = (type, props) => ({ type, props });
   const text = node => Array.isArray(node) ? node.map(text).join(" ")
     : !node || typeof node === "boolean" ? ""
@@ -357,8 +378,14 @@ test("Studio-authored charts omit note and source footers without changing their
       exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {}, sortChartItems,
       SourceNote: ({ children }) => jsx("figcaption", { children }),
     }, componentSource);
-    assert.doesNotMatch(text(render({ block })), /Test|Source: Chart data|Author-provided Studio table/,
-      `${type} has no Studio-authored footer in its shared report renderer`);
+    const studioText = text(render({ block }));
+    assert.doesNotMatch(studioText, /Source: Chart data|Author-provided Studio table/,
+      `${type} omits generated source footers`);
+    if (type === "paired-percentage-comparison") {
+      assert.match(studioText, /Test/, "Paired comparisons retain the optional explanatory note from Figma");
+    } else {
+      assert.doesNotMatch(studioText, /Test/, "Other chart footer behavior is unchanged");
+    }
     assert.deepEqual(block, before, "Rendering preserves source evidence and the saved presentation");
     const existing = { ...block, source: { part: "word/document.xml", index: 0 } };
     assert.match(text(render({ block: existing })), /Test/, "Existing report notes remain visible");
@@ -556,10 +583,11 @@ test("Word chart data is immediately editable without copying or changing the or
     ...createVerifiedDataVisual(pairSource, "paired-percentage-comparison", "2026-11-03T20:00:00.000Z"),
     presentation: { title: "Two findings", leadIns: ["While...", "Only..."], note: "", palette: "brand" },
   };
-  for (const tab of ["data", "text"]) {
+  for (const part of ["word/document.xml", "studio"]) for (const tab of ["data", "text"]) {
     selectedTab = tab;
     const view = nodes(render({
-      block: pair, source: pairSource, onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
+      block: { ...pair, source: { ...pair.source, part } }, source: pairSource,
+      onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
     }));
     if (tab === "data") {
       assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, 4);

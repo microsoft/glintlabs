@@ -240,11 +240,11 @@ function PairedPercentageComparison({
           </div>;
         })}
       </div>
-      {block.source.part !== "studio" ? <>
+      {block.source.part !== "studio" || presentation?.note?.trim() ? <>
         <div className={styles.pairedRule} aria-hidden="true" />
         <figcaption className={styles.pairedFootnote}>
           {presentation?.note ? <p>{presentation.note}</p> : null}
-          <p>{block.footnote}</p>
+          {block.source.part !== "studio" ? <p>{block.footnote}</p> : null}
         </figcaption>
       </> : null}
     </figure>

@@ -474,7 +474,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
               onChange={event => setLeadIns(previous => index === 0
                 ? [event.target.value, previous[1]] : [previous[0], event.target.value])} />
           </label>) : selectedType !== "percentage-ring-group" ? textField("subtitle") : null}
-          {block.source.part !== "studio" && intent !== "insert" ? textField("note") : null}
+          {isPaired || (block.source.part !== "studio" && intent !== "insert") ? textField("note") : null}
           {!presentationValid ? <Caption1 className={styles.inputError}>Use a title of 1–120 characters.</Caption1> : null}
         </>
       </> : <fieldset className={styles.chartPalettes} role="radiogroup" aria-label="Palette" data-paired={isPaired || undefined}>

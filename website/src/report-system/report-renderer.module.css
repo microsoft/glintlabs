@@ -807,9 +807,7 @@
   color: var(--report-text);
   background: var(--report-canvas);
 }
-.draftChartHeading { display: grid; gap: 8px; margin-bottom: 24px; }
-.draftChartHeading > span,
-.draftChartHelp { color: var(--report-muted, #616161); font: 400 12px/20px "Segoe UI", sans-serif; }
+.draftChartHeading { margin-bottom: 24px; }
 .draftChartHeading h3 { margin: 0; font: 600 24px/32px "Segoe UI", sans-serif; }
 .draftChartBody { display: grid; gap: 24px; }
 .draftChartItem { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) auto; align-items: center; gap: 16px; overflow-wrap: anywhere; }
@@ -824,7 +822,6 @@
 .draftColumns { display: flex; align-items: flex-end; justify-content: center; gap: 8px; width: 100%; }
 .draftColumns > div { display: grid; gap: 8px; min-width: 0; flex: 1; }
 .draftColumns i { display: block; height: 120px; border: 1px dashed var(--report-muted, #616161); border-radius: 4px 4px 0 0; background: var(--report-panel, #fafafa); }
-.draftChartHelp { margin: 24px 0 0; }
 @media (max-width: 479px) {
   .draftChart { padding: 24px; }
   .draftChartHeading h3 { font-size: 20px; line-height: 28px; }
@@ -1363,6 +1360,17 @@
 
 .chartAuthoring > figure > :first-child {
   padding-inline-end: 96px;
+}
+
+.chartAuthoring[data-report-component="paired-percentage-comparison"] > figure > :first-child {
+  padding-inline-end: 0;
+}
+
+.chartAuthoring[data-report-component="paired-percentage-comparison"] > .chartEditToolbar {
+  z-index: 6;
+  top: -48px;
+  right: 0;
+  padding-block-end: var(--spacingVerticalS, 8px);
 }
 
 .chartEditToolbar {

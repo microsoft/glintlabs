@@ -1027,6 +1027,8 @@
 .pairedComparison {
   --paired-primary: #294482;
   --paired-secondary: #5c8df8;
+  --report-heading: #000;
+  --report-text: #000;
   position: relative;
   display: grid;
   gap: 48px;
@@ -1035,6 +1037,7 @@
   border-color: #cedeff;
   border-radius: 20px;
   font-family: "Segoe Sans", "Segoe UI Variable", "Segoe UI", sans-serif;
+  color: var(--report-text);
   text-align: center;
   overflow-wrap: anywhere;
 }
@@ -1062,6 +1065,8 @@
   font-size: 24px;
   font-weight: 600;
   line-height: 28px;
+  letter-spacing: -0.15px;
+  font-variation-settings: "opsz" 36;
 }
 
 .pairedMetrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
@@ -1071,11 +1076,11 @@
 .pairedLeadIn::after { flex: 1; height: 1px; background: #eff4ff; content: ""; }
 .pairedFinding { display: grid; gap: 4px; }
 .pairedLeadIn,
-.pairedFinding p { font-size: 20px; font-weight: 550; line-height: 24px; }
-.pairedFinding strong { color: var(--paired-primary); font-size: 56px; font-weight: 420; line-height: 68px; }
+.pairedFinding p { font-size: 20px; font-weight: 550; line-height: 24px; letter-spacing: -0.15px; font-variation-settings: "opsz" 10.5; }
+.pairedFinding strong { color: var(--paired-primary); font-size: 56px; font-weight: 420; line-height: 68px; letter-spacing: -0.75px; font-variation-settings: "opsz" 36; }
 .pairedMetric:nth-child(2) strong { color: var(--paired-secondary); }
 .pairedRule { height: 1px; background: #eff4ff; }
-.pairedFootnote { display: grid; gap: 8px; font-size: 12px; font-weight: 420; font-style: italic; line-height: 16px; }
+.pairedFootnote { display: grid; gap: 8px; font-size: 12px; font-weight: 420; font-style: italic; line-height: 16px; font-variation-settings: "opsz" 8; }
 .pairedComparison .chartSynthetic { font-size: 12px; line-height: 16px; }
 
 :global([data-report-style="new-fluent-colors"]) .card {

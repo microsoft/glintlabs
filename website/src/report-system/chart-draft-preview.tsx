@@ -27,7 +27,6 @@ export function ChartDraftPreview({ draft }: { draft: ChartDraftPreviewData }) {
   }
   return <figure className={styles.draftChart} data-chart-draft={draft.type} aria-label="Draft chart preview with missing-value placeholders">
     <figcaption className={styles.draftChartHeading}>
-      <span>Draft preview</span>
       <h3>{draft.title.trim() || "Chart title"}</h3>
     </figcaption>
     <div className={styles.draftChartBody} data-chart-type={draft.type}>
@@ -45,6 +44,5 @@ export function ChartDraftPreview({ draft }: { draft: ChartDraftPreviewData }) {
         {paired || rings || grouped ? <span>{row.cells[0].trim() || "—"}</span> : null}
       </div>)}
     </div>
-    <p className={styles.draftChartHelp}>Missing values are shown as —. Complete the data to apply this chart.</p>
   </figure>;
 }
