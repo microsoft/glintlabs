@@ -548,9 +548,8 @@ export function PublicationPackageDialog({ project, onSave, onClose }: {
             {!websiteUpdate ? <button className={studioStyles.secondaryAction} disabled={busy} onClick={() => void savePreparation()} type="button">Save draft</button> : null}
             <div className={styles.footerStatus} role="status">{busy ? <span className={styles.spinner} aria-hidden="true" /> : null}<span>{footerHint}</span></div>
           </div>
-          {ownerAccess === true && !websiteUpdate ? ownerKeyRequired
-            ? <button className={styles.textButton} disabled={busy} onClick={() => void lockPublishing()} type="button">Lock publishing</button>
-            : <span className={styles.helper}>Private test access · No owner key needed</span> : null}
+          {ownerAccess === true && !websiteUpdate && ownerKeyRequired
+            ? <button className={styles.textButton} disabled={busy} onClick={() => void lockPublishing()} type="button">Lock publishing</button> : null}
         </div>
         <div className={styles.footerActions}>
           {websiteUpdate ? <button className={studioStyles.textAction} disabled={busy} onClick={requestClose} type="button">Done</button> : null}
