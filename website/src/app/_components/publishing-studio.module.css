@@ -2159,6 +2159,8 @@
   line-height: var(--lineHeightBase300, 20px);
 }
 
+.chartEditor:focus { outline: none; }
+
 .chartEditorHeader {
   display: flex;
   align-items: center;

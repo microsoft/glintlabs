@@ -56,6 +56,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   ] as const;
   const [tab, setTab] = useState<(typeof tabs)[number]>("data");
   const typeButton = useRef<HTMLButtonElement>(null);
+  const editorContainer = useRef<HTMLDivElement>(null);
   const [dataSource, setDataSource] = useState(source);
   const [editable, setEditable] = useState<EditableData | undefined>(() => {
     if (intent !== "insert") return;
@@ -150,7 +151,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       : { ...visual, presentation };
   }, [dataReady, dataSource, pairedPresentation, presentation, presentationValid, previewAt, selectedType]);
 
-  useEffect(() => { typeButton.current?.focus(); }, []);
+  useEffect(() => { editorContainer.current?.focus({ preventScroll: true }); }, []);
 
   useEffect(() => {
     if (!editable || errors.length || !sourceNameValid) return;
@@ -407,7 +408,8 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
           className={styles.chartMenuItem}>{unit === "percentage" ? "Percentage" : "Number"}</Option>)}
       </Dropdown>
   </div> : null;
-  return <div className={styles.chartEditor}>
+  return <div className={styles.chartEditor} ref={editorContainer}
+    role="group" aria-label="Chart settings" tabIndex={-1}>
     <div>
     <header className={`${styles.chartEditorHeader} ${styles.chartSelectedHeader}`}>
       <div className={styles.chartHeaderActions}>
@@ -513,13 +515,11 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
         {hasLeadIns || (block.source.part !== "studio" && intent !== "insert") ? textField("note") : null}
         {busy && !errors.length && sourceNameValid ? <Caption1 role="status">Updating chart data…</Caption1> : null}
       </> : <fieldset className={styles.chartPalettes} role="radiogroup" aria-label="Palette" data-paired={hasLeadIns || undefined}>
-        <legend>Palette</legend>
-        <Caption1>Choose a palette to preview it on the chart.</Caption1>
         {Object.entries(palettes).map(([value, label]) => <label key={value} className={styles.chartPaletteTile}>
           <input type="radio" name={`${block.id}-palette`} value={value} checked={presentation.palette === value}
             onChange={() => setPresentation(current => ({ ...current, palette: value as ChartPresentation["palette"] }))} />
           <span className={styles.chartPaletteSwatches} data-palette={value} aria-hidden="true">
-            <i /><i />{!isPaired ? <><i /><i /></> : null}
+            <i /><i />{!hasLeadIns ? <><i /><i /></> : null}
           </span>
           <span className={styles.chartPaletteLabel}><Body1Strong>{label}</Body1Strong>
             <Checkmark16Regular className={styles.chartPaletteCheck} aria-hidden="true" /></span>
