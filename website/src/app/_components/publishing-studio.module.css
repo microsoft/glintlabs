@@ -403,6 +403,7 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   padding: 24px;
   overscroll-behavior: contain;
 }
@@ -1762,6 +1763,10 @@
   box-shadow: 0 0 0 1px var(--report-rule), var(--studio-shadow);
 }
 
+.fullWidthCanvas .reportFrame {
+  border-radius: 0;
+}
+
 .reportSurface {
   display: block;
   width: var(--canvas-width, 1440px);
@@ -2094,6 +2099,7 @@
 .chartEditorSurface > .visualLibrary,
 .chartEditorSurface > .editor {
   overflow-y: auto;
+  scrollbar-gutter: stable;
   padding: var(--spacingHorizontalXXL, 24px);
 }
 
@@ -2204,6 +2210,7 @@
 .chartEditorContent {
   min-height: 0;
   overflow-y: auto;
+  scrollbar-gutter: stable;
   overscroll-behavior: contain;
 }
 
@@ -2223,6 +2230,7 @@
 
 .chartEditor > .chartEditorBody {
   overflow-y: auto;
+  scrollbar-gutter: stable;
   overscroll-behavior: contain;
 }
 
@@ -2402,7 +2410,6 @@
 .chartPaletteLabel { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .chartPaletteCheck { visibility: hidden; color: var(--colorNeutralForeground1); }
 .chartPaletteTile:has(input:checked) .chartPaletteCheck { visibility: visible; }
-.chartEditor .chartReplaceAction { width: auto; min-height: 32px; height: 32px; padding: 4px 8px; font-size: 12px; }
 
 .chartTabs {
   display: flex;
@@ -2448,14 +2455,6 @@
 }
 .chartTabs button[aria-selected="true"]::after {
   background: var(--colorNeutralForeground1);
-}
-.chartTabs button:hover {
-  color: var(--colorNeutralForeground1);
-  background: var(--colorSubtleBackgroundHover);
-}
-.chartTabs button:active {
-  color: var(--colorNeutralForeground1);
-  background: var(--colorSubtleBackgroundPressed);
 }
 .chartEditorDismiss svg { width: 20px; height: 20px; flex-shrink: 0; }
 .chartTabs button:focus-visible { outline: 2px solid var(--colorStrokeFocus2); outline-offset: 2px; }
@@ -2549,17 +2548,6 @@
   border-radius: var(--borderRadiusSmall);
   font-size: var(--fontSizeBase300);
   line-height: var(--lineHeightBase300);
-}
-
-.chartPasteEditor {
-  display: grid;
-  gap: var(--spacingVerticalM, 12px);
-}
-
-.chartPasteActions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacingHorizontalM, 12px);
 }
 
 .chartTableSection {

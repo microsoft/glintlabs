@@ -1,16 +1,12 @@
 "use client";
 
-import { Button, MenuButton } from "@fluentui/react-button";
-import { Checkbox } from "@fluentui/react-checkbox";
+import { Button } from "@fluentui/react-button";
 import { Dropdown, Option } from "@fluentui/react-combobox";
 import { Add16Regular } from "@fluentui/react-icons/svg/add";
-import { ArrowUpload20Regular } from "@fluentui/react-icons/svg/arrow-upload";
-import { ClipboardPaste20Regular } from "@fluentui/react-icons/svg/clipboard-paste";
 import { Checkmark16Regular } from "@fluentui/react-icons/svg/checkmark";
 import { ChevronDown16Regular } from "@fluentui/react-icons/svg/chevron-down";
 import { Delete16Regular } from "@fluentui/react-icons/svg/delete";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
-import { Menu, MenuItem, MenuList, MenuPopover, MenuTrigger } from "@fluentui/react-menu";
 import { Body1, Body1Strong, Caption1 } from "@fluentui/react-text";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -21,7 +17,6 @@ import {
 } from "../../manifest/report-manifest.ts";
 import {
   createStudioChartSource,
-  parseChartTable,
   validateChartTable,
   type ChartTable,
 } from "../../visualization/chart-authoring.ts";
@@ -74,10 +69,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
-  const [pasteOpen, setPasteOpen] = useState(false);
-  const [replacementOpen, setReplacementOpen] = useState(false);
-  const [paste, setPaste] = useState("");
-  const [header, setHeader] = useState(true);
   const [valueType, setValueType] = useState<ChartValueType>(source?.data.unit === "number" ? "number" : "percentage");
   const [frozenOrder, setFrozenOrder] = useState<string[]>();
   const [touchedCells, setTouchedCells] = useState<Set<string>>(() => new Set());
@@ -102,9 +93,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   const chartChoice = chartChoices.find(choice => choice.type === selectedType);
   const requiredRows = chartChoice?.rows;
   const fixedRows = Boolean(requiredRows);
-  const replacementButton = useRef<HTMLButtonElement>(null);
-  const fileInput = useRef<HTMLInputElement>(null);
-  const pasteInput = useRef<HTMLTextAreaElement>(null);
   const palettes = { brand: "Glint Labs", blue: "Blue", teal: "Teal" };
   const orders = { source: "Source order", descending: "Highest to lowest", ascending: "Lowest to highest", alphabetical: "Alphabetical" };
   const previewAt = useRef(
@@ -143,7 +131,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   }, [dataReady, dataSource, pairedPresentation, presentation, presentationValid, previewAt, selectedType]);
 
   useEffect(() => { typeButton.current?.focus(); }, []);
-  useEffect(() => { if (pasteOpen) pasteInput.current?.focus(); }, [pasteOpen]);
 
   useEffect(() => {
     if (!editable || errors.length || !sourceNameValid) return;
@@ -209,8 +196,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     changeData({ table, sourceName: sourceName.trim().slice(0, 200) || "Chart data", synthetic });
     setSelectedType(selectedType ?? "horizontal-bar-chart");
     setTab("data");
-    setPasteOpen(false);
-    setReplacementOpen(false);
   }
   function copySource() {
     if (!dataSource || dataSource.data.columns.length !== 2 || dataSource.data.unit === "unknown") return;
@@ -232,7 +217,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     const text = row.supportingText ?? row.breakdown?.map(detail =>
       `${detail.label}: ${detail.value.replace(/%\s*$/, "").trim()}${valueType === "percentage" ? "%" : ""}`).join("\n") ?? "";
     const bullets = text.split(/\r\n?|\n/);
-    const slotCount = Math.max(4, bullets.length + (bullets.at(-1)?.trim() ? 1 : 0));
+    const slotCount = Math.max(3, bullets.length + (bullets.at(-1)?.trim() ? 1 : 0));
     function changeBullets(lines: string[]) {
       if (!tableDraft) return;
       changeData({ ...tableDraft, table: { ...tableDraft.table,
@@ -381,21 +366,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
           className={styles.chartMenuItem}>{unit === "percentage" ? "Percentage" : "Number"}</Option>)}
       </Dropdown>
   </div> : null;
-  const replacementMenu = <Menu open={replacementOpen} onOpenChange={(_, data) => setReplacementOpen(data.open)}
-    positioning={{ position: "below", align: "end", offset: 8 }}>
-    <MenuTrigger disableButtonEnhancement>
-      <MenuButton type="button" ref={replacementButton}
-        className={`${styles.chartAction} ${styles.chartReplaceAction}`}>{intent === "insert" ? "Add data" : "Replace data"}</MenuButton>
-    </MenuTrigger>
-    <MenuPopover className={styles.chartControlPopup}>
-      <MenuList aria-label="Replace data">
-        <MenuItem className={styles.chartMenuItem} icon={<ClipboardPaste20Regular aria-hidden="true" />}
-          onClick={() => { setTab("data"); setPasteOpen(true); setError(undefined); }}>Paste a table</MenuItem>
-        <MenuItem className={styles.chartMenuItem} icon={<ArrowUpload20Regular aria-hidden="true" />}
-          onClick={() => fileInput.current?.click()}>Import CSV or TSV</MenuItem>
-      </MenuList>
-    </MenuPopover>
-  </Menu>;
   return <div className={styles.chartEditor}>
     <div>
     <header className={`${styles.chartEditorHeader} ${styles.chartSelectedHeader}`}>
@@ -409,7 +379,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
           {chartChoices.map(({ type, title }) => <Option key={type} value={type} checkIcon={null}
             className={styles.chartMenuItem}>{title}</Option>)}
         </Dropdown>
-        {intent === "insert" ? replacementMenu : null}
       </div>
       <Button type="button" appearance="subtle" className={styles.chartEditorDismiss}
         icon={<Dismiss20Regular aria-hidden="true" />} aria-label="Close chart editor" onClick={onCancel} />
@@ -434,14 +403,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
         </button>;
       })}
     </div>
-    <input ref={fileInput} hidden type="file" accept=".csv,.tsv,.txt" onChange={async event => {
-      const file = event.target.files?.[0]; event.target.value = "";
-      if (!file) return;
-      try {
-        if (file.size > 200000) throw new Error("Choose a table smaller than 200 KB.");
-        replaceTable(parseChartTable(await file.text(), true, selectedType), file.name);
-      } catch (cause) { setError(cause instanceof Error ? cause.message : "The table could not be imported."); }
-    }} />
     </div>
     </div>
     <div className={styles.chartEditorContent}>
@@ -485,22 +446,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
                 rows: [...tableDraft.table.rows, { id: crypto.randomUUID(), cells: tableDraft.table.columns.map(() => "") }] } })}>Add category</Button> : null}
           </div>
         </div>
-        {pasteOpen ? <div className={styles.chartPasteEditor}>
-          <label className={styles.field}><Body1Strong>Table contents</Body1Strong>
-            <textarea ref={pasteInput} rows={7} maxLength={200000} value={paste} onChange={event => setPaste(event.target.value)}
-              placeholder={isGrouped ? "Group\tSeries 1\tSeries 2\nFirst group\t24.00%\t36%\n..." : "Team\tPercentage\nResearch\t24.00%\nSupport\t0"} /></label>
-          <Checkbox checked={header} label="First row contains column headings"
-            onChange={(_, data) => setHeader(data.checked === true)} />
-          <div className={styles.chartPasteActions}>
-            <Button type="button" className={styles.chartAction} onClick={() => {
-              try { replaceTable(parseChartTable(paste, header, selectedType), "Pasted spreadsheet table"); }
-              catch (cause) { setError(cause instanceof Error ? cause.message : "Check the table and try again."); }
-            }}>Review pasted table</Button>
-            <Button type="button" className={styles.chartAction} onClick={() => {
-              setPasteOpen(false); replacementButton.current?.focus();
-            }}>Cancel paste</Button>
-          </div>
-        </div> : null}
         {!tableDraft && dataSource && dataSource.data.unit !== "unknown" && dataSource.data.columns.length === 2 ?
           <Button type="button" className={styles.chartAction} onClick={copySource}>Edit as bar chart</Button> : null}
         {!dataSource && !editable && (selectedType === "horizontal-bar-chart" || isPaired) ? <section className={styles.integrityNotice}>

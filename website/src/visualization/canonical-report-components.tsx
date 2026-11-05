@@ -253,8 +253,10 @@ function PairedPercentageComparison({
 
 function HorizontalBarChart({
   block,
+  expandSupportingBullets,
 }: {
   block: Extract<CanonicalVisualBlock, { type: "horizontal-bar-chart" }>;
+  expandSupportingBullets?: boolean;
 }) {
   const presentation = block.presentation;
   const items = sortChartItems(block.items, presentation?.sort);
@@ -305,7 +307,8 @@ function HorizontalBarChart({
               <strong>{displayValue(item.id, item.value)}</strong>
             </Value>
           </Row>;
-          return expandable ? <details className={styles.horizontalDisclosure} key={item.id}>
+          return expandable ? <details className={styles.horizontalDisclosure} key={item.id}
+            open={expandSupportingBullets || undefined}>
             {row}
             <ul className={styles.horizontalSupportingText}>
               {bullets.map((text, index) => <li key={index}>{text}</li>)}
@@ -471,8 +474,10 @@ function TwoColumnInsight({
 
 export function CanonicalReportComponent({
   block,
+  expandSupportingBullets,
 }: {
   block: CanonicalVisualBlock;
+  expandSupportingBullets?: boolean;
 }) {
   switch (block.type) {
     case "listening-approach-continuum":
@@ -492,7 +497,7 @@ export function CanonicalReportComponent({
     case "paired-percentage-comparison":
       return <PairedPercentageComparison block={block} />;
     case "horizontal-bar-chart":
-      return <HorizontalBarChart block={block} />;
+      return <HorizontalBarChart block={block} expandSupportingBullets={expandSupportingBullets} />;
     case "grouped-column-comparison":
       return <GroupedColumnComparison block={block} />;
     case "before-after-comparison":

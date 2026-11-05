@@ -672,7 +672,7 @@
 .horizontalSupportingText {
   grid-column: 1 / -1;
   margin: 12px 0 0;
-  padding: 16px 16px 16px 32px;
+  padding: 0 16px 16px 32px;
   border-radius: 8px;
   font: 14px/20px "Segoe UI", sans-serif;
   list-style: disc;

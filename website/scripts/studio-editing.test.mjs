@@ -239,8 +239,48 @@ test("automatically verified Word charts remain editable in Studio but not Reade
     assert.equal(button.props.children, "Edit chart");
     button.props.onClick();
     assert.equal(render(block, { ...props, mode: "read" }).props.children[0], null);
+    for (const [state, expected] of [
+      [props, false],
+      [{ ...props, selectedBlockId: block.id }, true],
+      [{ ...props, selectedBlockId: "another-chart" }, false],
+      [{ ...props, selectedBlockId: block.id, mode: "read" }, false],
+    ]) {
+      assert.equal(render(block, state).props.children[1].props.expandSupportingBullets, expected,
+        "Only the chart being edited temporarily expands supporting bullets; Reader stays at rest");
+    }
   }
   assert.deepEqual(selected, [source.id, source.id]);
+});
+
+test("bar supporting disclosures open for the editing preview and default to collapsed", async () => {
+  const source = await createStudioChartSource({
+    id: "supporting-preview", sourceName: "Chart data", synthetic: false,
+    table: { columns: ["Category", "Percentage"], rows: [
+      { id: "first", cells: ["First", "24.00"], supportingText: "First point\nSecond point" },
+      { id: "second", cells: ["Second", "36"] },
+    ] },
+  });
+  const block = createVerifiedDataVisual(source, "horizontal-bar-chart", "2026-11-04T22:00:00.000Z");
+  const before = structuredClone(block);
+  const disclosures = [];
+  const jsx = (type, props) => {
+    if (type === "details") disclosures.push(props);
+    return { type, props };
+  };
+  const componentSource = ts.createSourceFile("chart.tsx", readFileSync(new URL(
+    "../src/visualization/canonical-report-components.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const render = componentFunction("HorizontalBarChart", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {}, sortChartItems,
+    ChevronDown16Regular: "chevron-icon",
+  }, componentSource);
+  for (const [expandSupportingBullets, expected] of [[undefined, false], [true, true], [false, false]]) {
+    disclosures.length = 0;
+    render({ block, expandSupportingBullets });
+    assert.deepEqual(disclosures.map(props => Boolean(props.open)), [expected],
+      "Only a category with supporting text expands, and only in the editing preview");
+  }
+  assert.deepEqual(block, before, "Preview expansion does not become saved chart data");
 });
 
 test("chart review issues remain actionable without duplicating source warnings or accepting unverified data", () => {
@@ -386,6 +426,17 @@ test("Word chart data is immediately editable without copying or changing the or
     "The dropdown contains only the four chart names");
   assert.equal(editorHeader.some(node => node.type === "h2"), false,
     "The chart selector replaces the duplicate header title");
+  for (const initialType of ["horizontal-bar-chart", "paired-percentage-comparison", "percentage-ring-group", "grouped-column-comparison"]) {
+    const insertion = nodes(render({
+      block: { id: "new-chart", type: "visual-placeholder", source: { part: "studio", index: 0 } },
+      initialType, intent: "insert", onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
+    }));
+    assert.equal(nodes(insertion.find(node => node.type === "header")).some(node =>
+      node.type === "button" && /^(Add|Replace) data$/.test(node.props.children)), false,
+    `${initialType} insertion has no Add data button`);
+    assert.ok(insertion.some(node => node.props?.["aria-label"] === "Label, row 1"),
+      `${initialType} retains direct manual data entry`);
+  }
   const input = rendered.find(node => node.props?.["aria-label"] === "Value (%), row 1");
   assert.equal(rendered.filter(node => node.type === "caption").length, 2,
     "Each category retains an accessible table caption without an extra visible heading");
@@ -432,8 +483,8 @@ test("Word chart data is immediately editable without copying or changing the or
   const researchBullets = bulletView.filter(node => node.type === "input" &&
     /^Supporting bullet \d+ for Research$/.test(node.props["aria-label"] ?? ""));
   assert.deepEqual(researchBullets.map(node => node.props.value),
-    ["Identify themes: 62.50%", "Analyze sentiment: 0%", "", ""],
-    "Legacy numeric breakdowns retain their precision in the four initial bullet slots");
+    ["Identify themes: 62.50%", "Analyze sentiment: 0%", ""],
+    "Legacy numeric breakdowns retain their precision in the three initial bullet slots");
   assert.deepEqual(bulletView.filter(node => node.type === "input" &&
     /^Supporting bullet \d+ for Support$/.test(node.props["aria-label"] ?? "")).map(node => node.props.value),
     ["One", "Two", "Three", "Four", "Five", "Six", ""],
@@ -465,7 +516,7 @@ test("Word chart data is immediately editable without copying or changing the or
     const view = nodes(render({
       block: original, source: original, onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
     }));
-    assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, tab === "text" ? 3 : tab === "data" ? 12 : 0,
+    assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, tab === "text" ? 3 : tab === "data" ? 10 : 0,
       "Text contains chart text fields; Data contains category cells and supporting-bullet inputs");
     assert.equal(view.filter(node => node.type === "select").length, 0, "Chart controls never open native operating-system menus");
     assert.equal(view.filter(node => node.type === "dropdown").length, tab === "data" ? 3 : 1,

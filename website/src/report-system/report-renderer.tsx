@@ -314,7 +314,8 @@ function renderBlock(
             </button>
           </div>
         ) : null}
-        <CanonicalReportComponent block={block} />
+        <CanonicalReportComponent block={block}
+          expandSupportingBullets={canEdit && props.selectedBlockId === block.id} />
       </div>
     );
   }
@@ -494,7 +495,8 @@ function renderBlock(
                 </button>
               </div>
             ) : null}
-            <CanonicalReportComponent block={preview} />
+            <CanonicalReportComponent block={preview}
+              expandSupportingBullets={canEdit && props.selectedBlockId === block.id} />
           </div>
         );
       }
