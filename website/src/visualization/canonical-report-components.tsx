@@ -266,7 +266,7 @@ function HorizontalBarChart({
   const magnitude = Math.max(Math.abs(minimum), maximum) || 1;
   const span = (maximum / magnitude - minimum / magnitude) || 1;
   const position = (value: number) => (value / magnitude - minimum / magnitude) / span * 100;
-  const colors = presentation?.palette === "teal" ? ["teal"] : presentation?.palette === "blue" || !presentation
+  const colors = presentation?.palette === "teal" ? ["teal"] : presentation?.palette === "blue"
     ? ["blue"] : ["blue", "teal", "lavender", "mauve"];
   const displayValue = (id: string, value: number) => {
     const raw = block.verifiedSource?.rows.find(row => row.id === id)?.cells[1]?.replace(/%\s*$/, "").trim();

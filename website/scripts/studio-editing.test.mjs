@@ -252,6 +252,46 @@ test("automatically verified Word charts remain editable in Studio but not Reade
   assert.deepEqual(selected, [source.id, source.id]);
 });
 
+test("bar charts default to Glint Labs before editing and preserve explicit palettes", () => {
+  const source = {
+    id: "palette-default", type: "data-visual-source",
+    source: { part: "word/document.xml", index: 1 },
+    data: {
+      sourceKind: "word-table", title: "Teams", unit: "percentage",
+      recommendedVisualType: "horizontal-bar-chart", sha256: "a".repeat(64),
+      columns: ["Team", "Percentage"],
+      rows: ["Product", "Support", "Engineering", "Operations"].map((label, index) => ({
+        id: `row-${index}`, cells: [label, String(20 + index * 10)],
+      })),
+    },
+  };
+  const block = createDataVisualPreview(source, "horizontal-bar-chart");
+  const before = structuredClone(block);
+  const backgrounds = [];
+  const jsx = (type, props) => {
+    if (type === "i" && props.style?.background) backgrounds.push(props.style.background);
+    return { type, props };
+  };
+  const componentSource = ts.createSourceFile("chart.tsx", readFileSync(new URL(
+    "../src/visualization/canonical-report-components.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const render = componentFunction("HorizontalBarChart", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {}, sortChartItems,
+  }, componentSource);
+  for (const [palette, expected] of [
+    [undefined, ["blue", "teal", "lavender", "mauve"]],
+    ["brand", ["blue", "teal", "lavender", "mauve"]],
+    ["blue", ["blue", "blue", "blue", "blue"]],
+    ["teal", ["teal", "teal", "teal", "teal"]],
+  ]) {
+    backgrounds.length = 0;
+    render({ block: palette ? { ...block, presentation: { palette } } : block });
+    assert.deepEqual(backgrounds, expected.map(color => `var(--chart-${color})`),
+      `${palette ?? "No saved presentation"} uses the selected or default palette`);
+  }
+  assert.deepEqual(block, before, "Resolving the default does not rewrite the imported chart");
+});
+
 test("bar supporting disclosures open for the editing preview and default to collapsed", async () => {
   const source = await createStudioChartSource({
     id: "supporting-preview", sourceName: "Chart data", synthetic: false,
