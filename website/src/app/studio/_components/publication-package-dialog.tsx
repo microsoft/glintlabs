@@ -473,6 +473,10 @@ export function PublicationPackageDialog({ project, onSave, onClose }: {
               </div>
               <section className={styles.detailsSection} aria-label="Details">
                 <div className={styles.metaGrid}>
+                <DetailField name="publication-employee-count" label="Employee count" hint="Leave blank to hide" error={detailError("employeeCount")} required={false}>
+                  <input {...inputProps("employeeCount", "publication-employee-count", true, false)} autoComplete="off" inputMode="numeric" pattern="[0-9]*"
+                    value={employeeCountInput} onChange={event => changeEmployeeCount(event.target.value)} />
+                </DetailField>
                 <div className={`${styles.publicationDates} ${styles.wide}`}>
                   <DetailField name="publication-date" label="Display on Reports page" error={detailError("displayDate")}>
                     <input {...inputProps("displayDate", "publication-date")} type="date" value={metadata.displayDate} onChange={event => changeMetadata({ ...metadata, displayDate: event.target.value })} />
@@ -517,13 +521,6 @@ export function PublicationPackageDialog({ project, onSave, onClose }: {
                   } : undefined,
                 }} />
               </div>
-              <fieldset className={styles.previewFields} disabled={busy}>
-                <legend className={styles.srOnly}>Catalog card details</legend>
-                <DetailField name="publication-employee-count" label="Employee count" hint="Leave blank to hide" error={detailError("employeeCount")} required={false}>
-                  <input {...inputProps("employeeCount", "publication-employee-count", true, false)} autoComplete="off" inputMode="numeric" pattern="[0-9]*"
-                    value={employeeCountInput} onChange={event => changeEmployeeCount(event.target.value)} />
-                </DetailField>
-              </fieldset>
             </aside>
           </div>
         </form>

@@ -31,7 +31,6 @@
 .helper, .field small { color: var(--colorNeutralForeground3); font-size: 12px; line-height: 16px; }
 .metaGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
 .publicationDates { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; min-width: 0; }
-.previewFields { max-width: 160px; margin: 20px 0 0; padding: 0; border: 0; }
 .wide { grid-column: 1 / -1; }
 .field { display: grid; align-content: start; gap: 8px; min-width: 0; }
 .field label { font-size: 14px; font-weight: 600; }
