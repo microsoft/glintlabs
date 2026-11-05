@@ -17,6 +17,10 @@ export function PercentageRingGroup({
     ? block.verifiedSource?.synthetic ? "Synthetic example · Not research findings" : undefined
     : block.footnote;
   const hasFootnote = Boolean(note || footnote);
+  function displayValue(id: string, value: number) {
+    const raw = block.verifiedSource?.rows.find(row => row.id === id)?.cells[1]?.replace(/%\s*$/, "").trim();
+    return `${raw && Number(raw) === value ? raw : value}%`;
+  }
   return (
     <figure
       className={styles.visual}
@@ -33,7 +37,7 @@ export function PercentageRingGroup({
             <div className={styles.metric}>
               <div
                 className={styles.ring}
-                aria-label={`${metric.value}%`}
+                aria-label={displayValue(metric.id, metric.value)}
                 role="img"
               >
                 <svg aria-hidden="true" viewBox="0 0 154 154">
@@ -61,7 +65,7 @@ export function PercentageRingGroup({
                     strokeDashoffset={metric.value}
                   />
                 </svg>
-                <strong>{metric.value}%</strong>
+                <strong>{displayValue(metric.id, metric.value)}</strong>
               </div>
               <p>{metric.description}</p>
             </div>

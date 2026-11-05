@@ -2567,8 +2567,13 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--spacingHorizontalXXL, 24px);
-  margin-bottom: var(--spacingVerticalXXXL, 32px);
+  margin-top: var(--spacingVerticalXXXL, 32px);
 }
+.chartFindingFields { display: grid; gap: var(--spacingVerticalM, 12px); }
+.chartValueFields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--spacingHorizontalM, 12px); }
+.chartValueFields:has(> :only-child) { grid-template-columns: minmax(0, 120px); }
+.chartCategoryActions { display: flex; justify-content: flex-end; }
+.chartCategoryActions .chartRemoveRow { inset-inline-start: 0; }
 .chartCategoryList { display: grid; gap: var(--spacingVerticalXXXL, 32px); }
 .chartCategory { min-width: 0; padding-bottom: var(--spacingVerticalXXXL, 32px); border-bottom: 1px solid var(--studio-field-border); }
 .chartDataGrid { width: 100%; table-layout: fixed; border-collapse: collapse; }

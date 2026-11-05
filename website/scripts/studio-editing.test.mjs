@@ -245,8 +245,11 @@ test("automatically verified Word charts remain editable in Studio but not Reade
       [{ ...props, selectedBlockId: "another-chart" }, false],
       [{ ...props, selectedBlockId: block.id, mode: "read" }, false],
     ]) {
-      assert.equal(render(block, state).props.children[1].props.expandSupportingBullets, expected,
+      const preview = render(block, { ...state, chartEditingOrder: { blockId: block.id, rowIds: ["b", "a"] } }).props.children[1];
+      assert.equal(preview.props.expandSupportingBullets, expected,
         "Only the chart being edited temporarily expands supporting bullets; Reader stays at rest");
+      assert.deepEqual(preview.props.editingOrder, expected ? ["b", "a"] : undefined,
+        "Only the selected authoring preview receives the temporary editing order");
     }
   }
   assert.deepEqual(selected, [source.id, source.id]);
@@ -323,6 +326,35 @@ test("bar supporting disclosures open for the editing preview and default to col
   assert.deepEqual(block, before, "Preview expansion does not become saved chart data");
 });
 
+test("bar preview follows focused editing order without changing saved sorting or evidence", async () => {
+  const source = await createStudioChartSource({
+    id: "focused-order", sourceName: "Teams", synthetic: false,
+    table: { columns: ["Label", "Value"], rows: [
+      { id: "alpha", cells: ["Alpha", "1.25"] }, { id: "beta", cells: ["Beta", "47.00"] },
+    ] },
+  });
+  const block = { ...createVerifiedDataVisual(source, "horizontal-bar-chart", "2026-11-05T02:00:00.000Z"),
+    presentation: { title: "Teams", subtitle: "", note: "", palette: "brand", density: "comfortable", sort: "descending" } };
+  const before = structuredClone(block);
+  const labels = [];
+  const jsx = (type, props) => {
+    if (props.className === "row") labels.push(props.children[0].props.children[0]);
+    return { type, props };
+  };
+  const componentSource = ts.createSourceFile("chart.tsx", readFileSync(new URL(
+    "../src/visualization/canonical-report-components.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const render = componentFunction("HorizontalBarChart", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: { horizontalRow: "row" }, sortChartItems,
+  }, componentSource);
+  for (const [editingOrder, expected] of [[undefined, ["Beta", "Alpha"]], [["alpha", "beta"], ["Alpha", "Beta"]], [undefined, ["Beta", "Alpha"]]]) {
+    labels.length = 0;
+    render({ block, editingOrder });
+    assert.deepEqual(labels, expected, "The preview freezes only while an editing order is supplied");
+  }
+  assert.deepEqual(block, before, "Source rows, selected sort, values and evidence are never reordered or rewritten");
+});
+
 test("chart drafts retain missing-value placeholders without redundant helper copy", () => {
   const jsx = (type, props) => ({ type, props });
   const text = node => Array.isArray(node) ? node.map(text).join(" ")
@@ -341,6 +373,63 @@ test("chart drafts retain missing-value placeholders without redundant helper co
     assert.doesNotMatch(preview, /Draft preview|Missing values are shown|Complete the data to apply/,
       `${type} omits redundant helper copy`);
     assert.match(preview, /—/, `${type} still marks missing values without inventing data`);
+  }
+});
+
+test("incomplete chart previews retain their subtitle, series, paired headings and note", () => {
+  const jsx = (type, props) => ({ type, props });
+  const text = node => Array.isArray(node) ? node.map(text).join(" ")
+    : !node || typeof node === "boolean" ? "" : typeof node === "object" ? text(node.props?.children) : String(node);
+  const componentSource = ts.createSourceFile("chart-draft-preview.tsx", readFileSync(new URL(
+    "../src/report-system/chart-draft-preview.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const render = componentFunction("ChartDraftPreview", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {}, parseChartValue,
+  }, componentSource);
+  const table = { columns: ["Label", "Current", "Earlier"], rows: Array.from({ length: 4 }, (_, index) => ({
+    id: `row-${index}`, cells: [`Category ${index + 1}`, index ? "83.00" : "", "43.50"],
+  })) };
+  const grid = text(render({ draft: {
+    blockId: "grid", type: "grouped-column-comparison", title: "Teams", subtitle: "Two independent series", table, unit: "percentage",
+  } }));
+  for (const value of ["Teams", "Two independent series", "Current", "Earlier", "—", "83.00%", "43.50%"]) {
+    assert.ok(grid.includes(value), `Incomplete grid retains ${value}`);
+  }
+  const paired = text(render({ draft: {
+    blockId: "pair", type: "paired-percentage-comparison", title: "Findings",
+    leadIns: ["While...", "Only..."], note: "Independent findings", unit: "percentage",
+    table: { columns: ["Label", "Value"], rows: table.rows.slice(0, 2).map(row => ({ ...row, cells: row.cells.slice(0, 2) })) },
+  } }));
+  for (const value of ["While...", "Only...", "Independent findings", "—", "83.00%"]) {
+    assert.ok(paired.includes(value), `Incomplete paired chart retains ${value}`);
+  }
+});
+
+test("ring and comparison grid displays preserve verified decimal precision", async () => {
+  const jsx = (type, props) => ({ type, props });
+  const text = node => Array.isArray(node) ? node.map(text).join(" ")
+    : !node || typeof node === "boolean" ? "" : typeof node === "object" ? text(node.props?.children) : String(node);
+  for (const [type, name, file, count, columns] of [
+    ["percentage-ring-group", "PercentageRingGroup", "percentage-ring-group.tsx", 3, ["Category", "Value"]],
+    ["grouped-column-comparison", "GroupedColumnComparison", "canonical-report-components.tsx", 4, ["Category", "Current", "Earlier"]],
+  ]) {
+    const source = await createStudioChartSource({
+      id: type, sourceName: "Precision", synthetic: false, visualType: type,
+      table: { columns, rows: Array.from({ length: count }, (_, index) => ({
+        id: `row-${index}`, cells: [`Category ${index + 1}`, index ? "43.50" : "83.00", ...(columns.length === 3 ? ["12.500"] : [])],
+      })) },
+    });
+    const block = createVerifiedDataVisual(source, type, "2026-11-05T02:00:00.000Z");
+    const before = structuredClone(block);
+    const componentSource = ts.createSourceFile(file, readFileSync(new URL(
+      `../src/visualization/${file}`, import.meta.url), "utf8"), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    const render = componentFunction(name, {
+      exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {}, SourceNote: "note",
+    }, componentSource);
+    const output = text(render({ block }));
+    assert.ok(output.includes("83.00%") && output.includes("43.50%"), `${type} keeps entered precision`);
+    if (columns.length === 3) assert.ok(output.includes("12.500%"));
+    assert.deepEqual(block, before, "Display formatting leaves verified values and evidence unchanged");
   }
 });
 
@@ -434,6 +523,53 @@ test("Studio-authored charts omit source footers while paired comparisons retain
     }
     const synthetic = { ...block, verifiedSource: { ...block.verifiedSource, synthetic: true } };
     assert.match(text(render({ block: synthetic })), /Synthetic example/, "Synthetic data stays clearly identified");
+  }
+});
+
+test("chart content fields follow the visual reading order for every chart type", () => {
+  const editorSource = ts.createSourceFile("verified-chart-editor.tsx", readFileSync(new URL(
+    "../src/app/_components/verified-chart-editor.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const jsx = (type, props) => ({ type, props });
+  const render = componentFunction("VerifiedChartEditor", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {},
+    useRef: current => ({ current }), useState: initial => [typeof initial === "function" ? initial() : initial, () => {}],
+    useEffect() {}, useMemo: callback => callback(),
+    chartPresentationSchema, pairedComparisonPresentationSchema, compatibleVerifiedVisuals,
+    createVerifiedDataVisual, parseChartValue, sortChartItems, validateChartTable,
+    Button: "button", Dropdown: "dropdown", Option: "option", Caption1: "caption",
+    Body1: "body", Body1Strong: "strong", Dismiss20Regular: "dismiss",
+    Add16Regular: "add", Delete16Regular: "delete", ChevronDown16Regular: "chevron", Checkmark16Regular: "check",
+  }, editorSource);
+  const nodes = node => !node || typeof node !== "object" ? []
+    : [node, ...[node.props?.children].flat(Infinity).flatMap(nodes)];
+  const text = node => Array.isArray(node) ? node.map(text).join("")
+    : !node || typeof node === "boolean" ? "" : typeof node === "object" ? text(node.props?.children) : String(node);
+  for (const [type, expected] of [
+    ["horizontal-bar-chart", ["Title", "Subtitle (optional)", "Label, row 1", "Value (%), row 1",
+      "Supporting bullet 1 for category 1", "Label, row 2", "Value (%), row 2"]],
+    ["paired-percentage-comparison", ["Title", "First heading (optional)", "Value (%), row 1", "Label, row 1",
+      "Second heading (optional)", "Value (%), row 2", "Label, row 2", "Note (optional)"]],
+    ["percentage-ring-group", ["Title", "Value (%), row 1", "Label, row 1",
+      "Value (%), row 2", "Label, row 2", "Value (%), row 3", "Label, row 3"]],
+    ["grouped-column-comparison", ["Title", "Subtitle (optional)", "Series 1 (%), row 1",
+      "Series 2 (%), row 1", "Label, row 1", "Series 1 (%), row 4", "Series 2 (%), row 4",
+      "Label, row 4", "Series 1 name", "Series 2 name"]],
+  ]) {
+    const view = nodes(render({
+      block: { id: "new-chart", type: "visual-placeholder", source: { part: "studio", index: 0 } },
+      initialType: type, intent: "insert", onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
+    }));
+    const names = view.filter(node => node.type === "label").flatMap(label => {
+      const input = nodes(label).find(node => node.type === "input" || node.type === "textarea");
+      return input ? [input.props["aria-label"] ?? text(label)] : [];
+    });
+    const positions = expected.map(name => names.indexOf(name));
+    assert.ok(positions.every(index => index >= 0), `${type} exposes all content fields together: ${names.join(" -> ")}`);
+    assert.deepEqual(positions, [...positions].sort((a, b) => a - b), `${type} follows the chart's reading order`);
+    assert.deepEqual(view.filter(node => node.props?.role === "tab").map(text),
+      type === "horizontal-bar-chart" || type === "paired-percentage-comparison" ? ["Content", "Palette"] : ["Content"],
+      "Content is not split between Data and Text tabs");
   }
 });
 
@@ -574,20 +710,20 @@ test("Word chart data is immediately editable without copying or changing the or
     "Multiline paste expands into separate bullets, retaining blank lines and following content");
   assert.deepEqual(rendered.filter(node => node.props?.role === "tab").map(node =>
     nodes(node).find(child => child.type === "span").props.children),
-    ["Data", "Text", "Palette"], "The editor separates data, text and palette");
+    ["Content", "Palette"], "The editor keeps all content together and palettes separate");
   assert.ok(rendered.filter(node => node.props?.role === "tab").every(tab =>
     nodes(tab).every(node => !String(node.type).endsWith("-icon"))),
   "Chart editing tabs use text labels without decorative icons");
-  for (const tab of ["text", "data", "palette"]) {
+  for (const tab of ["data", "palette"]) {
     selectedTab = tab;
     const view = nodes(render({
       block: original, source: original, onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
     }));
-    assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, tab === "text" ? 3 : tab === "data" ? 10 : 0,
-      "Text contains chart text fields; Data contains category cells and supporting-bullet inputs");
+    assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, tab === "data" ? 13 : 0,
+      "Content contains chart text, category cells and supporting-bullet inputs together");
     assert.equal(view.filter(node => node.type === "select").length, 0, "Chart controls never open native operating-system menus");
     assert.equal(view.filter(node => node.type === "dropdown").length, tab === "data" ? 3 : 1,
-      "Chart type is always available; Data adds Sort by and Value type, while palettes remain radio tiles");
+      "Chart type is always available; Content adds Sort by and Value type, while palettes remain radio tiles");
     if (tab === "palette") {
       const palette = view.find(node => node.type === "input" && node.props.name === "word-chart-palette" && node.props.value === "teal");
       assert.ok(palette, "Each palette is directly selectable without opening a dropdown");
@@ -595,14 +731,14 @@ test("Word chart data is immediately editable without copying or changing the or
       assert.equal(updates.at(-1)({ palette: "brand", sort: "source" }).palette, "teal");
       assert.deepEqual(original, before, "An appearance choice cannot rewrite the source");
     }
-    if (tab === "text") {
+    if (tab === "data") {
       assert.ok(view.some(node => node.type === "strong" && node.props.children === "Title"));
     }
   }
   assert.equal(rendered.some(node => node.type === "button" && node.props.children === "Remove chart"), false,
     "Imported charts keep their existing removal restriction");
   let removed = 0;
-  for (const tab of ["text", "data"]) {
+  for (const tab of ["data", "palette"]) {
     selectedTab = tab;
     const studioBlock = { ...original, source: { ...original.source, part: "studio" } };
     const view = nodes(render({
@@ -623,23 +759,20 @@ test("Word chart data is immediately editable without copying or changing the or
     ...createVerifiedDataVisual(pairSource, "paired-percentage-comparison", "2026-11-03T20:00:00.000Z"),
     presentation: { title: "Two findings", leadIns: ["While...", "Only..."], note: "", palette: "brand" },
   };
-  for (const part of ["word/document.xml", "studio"]) for (const tab of ["data", "text"]) {
-    selectedTab = tab;
+  for (const part of ["word/document.xml", "studio"]) {
+    selectedTab = "data";
     const view = nodes(render({
       block: { ...pair, source: { ...pair.source, part } }, source: pairSource,
       onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
     }));
-    if (tab === "data") {
-      assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, 4);
-      assert.equal(view.some(node => node.props?.["aria-label"] === "Remove row 1"), false);
-      assert.equal(view.some(node => node.type === "button" && node.props.children === "Add category"), false);
-      assert.equal(view.some(node => node.props?.role === "radiogroup"), false,
-        "Paired percentages cannot switch to a Number unit");
-      assert.ok(view.some(node => node.props?.role === "tab" && nodes(node).some(child => child.props?.children === "Palette")));
-    } else {
-      assert.deepEqual(view.filter(node => node.type === "input" && node.props.type === "text")
-        .map(node => node.props.value), ["Two findings", "While...", "Only...", ""]);
-    }
+    assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, 8);
+    assert.equal(view.some(node => node.props?.["aria-label"] === "Remove row 1"), false);
+    assert.equal(view.some(node => node.type === "button" && node.props.children === "Add category"), false);
+    assert.equal(view.some(node => node.props?.role === "radiogroup"), false,
+      "Paired percentages cannot switch to a Number unit");
+    assert.ok(view.some(node => node.props?.role === "tab" && nodes(node).some(child => child.props?.children === "Palette")));
+    assert.deepEqual(view.filter(node => node.type === "input" && node.props.type === "text")
+      .map(node => node.props.value), ["Two findings", "While...", "24.00", "Research", "Only...", "0", "Support", ""]);
   }
   selectedTab = "data";
   for (const [initialType, cells] of [

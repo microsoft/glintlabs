@@ -62,6 +62,7 @@ type ReportRendererProps = {
   insertionFocus?: { beforeBlockId: string; onRestored: () => void };
   reportStyle?: ReportStyle;
   selectedBlockId?: string;
+  chartEditingOrder?: { blockId: string; rowIds: string[] };
 };
 
 function headingTag(level: number): ElementType {
@@ -315,6 +316,8 @@ function renderBlock(
           </div>
         ) : null}
         <CanonicalReportComponent block={block}
+          editingOrder={canEdit && props.selectedBlockId === block.id && props.chartEditingOrder?.blockId === block.id
+            ? props.chartEditingOrder.rowIds : undefined}
           expandSupportingBullets={canEdit && props.selectedBlockId === block.id} />
       </div>
     );
@@ -496,6 +499,8 @@ function renderBlock(
               </div>
             ) : null}
             <CanonicalReportComponent block={preview}
+              editingOrder={canEdit && props.selectedBlockId === block.id && props.chartEditingOrder?.blockId === block.id
+                ? props.chartEditingOrder.rowIds : undefined}
               expandSupportingBullets={canEdit && props.selectedBlockId === block.id} />
           </div>
         );

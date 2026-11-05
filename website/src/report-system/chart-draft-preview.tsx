@@ -6,6 +6,9 @@ export type ChartDraftPreviewData = {
   blockId: string;
   type: VerifiedDataVisualType;
   title: string;
+  subtitle?: string;
+  leadIns?: [string, string];
+  note?: string;
   table: ChartTable;
   unit: ChartValueType;
 };
@@ -28,9 +31,11 @@ export function ChartDraftPreview({ draft }: { draft: ChartDraftPreviewData }) {
   return <figure className={styles.draftChart} data-chart-draft={draft.type} aria-label="Draft chart preview with missing-value placeholders">
     <figcaption className={styles.draftChartHeading}>
       <h3>{draft.title.trim() || "Chart title"}</h3>
+      {draft.subtitle?.trim() ? <p>{draft.subtitle}</p> : null}
     </figcaption>
     <div className={styles.draftChartBody} data-chart-type={draft.type}>
-      {rows.map(row => <div key={row.id} className={styles.draftChartItem}>
+      {rows.map((row, index) => <div key={row.id} className={styles.draftChartItem}>
+        {paired && draft.leadIns?.[index] ? <p>{draft.leadIns[index]}</p> : null}
         {rings ? <div className={styles.draftRing}>
           <svg viewBox="0 0 120 120" aria-hidden="true">
             <circle cx="60" cy="60" r="48" />
@@ -44,5 +49,9 @@ export function ChartDraftPreview({ draft }: { draft: ChartDraftPreviewData }) {
         {paired || rings || grouped ? <span>{row.cells[0].trim() || "—"}</span> : null}
       </div>)}
     </div>
+    {grouped ? <div className={styles.draftChartLegend}>
+      {[1, 2].map(column => <span key={column}>{draft.table.columns[column]?.trim() || "—"}</span>)}
+    </div> : null}
+    {draft.note?.trim() ? <p className={styles.draftChartNote}>{draft.note}</p> : null}
   </figure>;
 }

@@ -676,7 +676,7 @@ function VisualEditor({
   onCancel: (block: VisualBlock) => void;
   onChooseImage: (block: ImageBlock) => void;
   onRemove: () => void;
-  onPreview: (block: ReportBlock) => void;
+  onPreview: (block: ReportBlock, editingOrder?: string[]) => void;
   onDraftPreview?: (draft: ChartDraftPreviewData | undefined) => void;
 }) {
   const originalBlock = useRef(block).current;
@@ -852,6 +852,7 @@ export function PublishingStudio() {
   const [activeTool, setActiveTool] = useState<Tool>();
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
   const [chartDraftPreview, setChartDraftPreview] = useState<ChartDraftPreviewData>();
+  const [chartEditingOrder, setChartEditingOrder] = useState<{ blockId: string; rowIds: string[] }>();
   const [chartInsertion, setChartInsertion] = useState<{
     beforeBlockId?: string;
     block: Extract<ReportBlock, { type: "visual-placeholder" }>;
@@ -864,8 +865,9 @@ export function PublishingStudio() {
   useEffect(() => {
     if (chartInsertion && !chartInsertion.type) chartPickerHeading.current?.focus();
   }, [chartInsertion]);
-  const previewInsertedChart = useCallback((block: ReportBlock) => {
+  const previewInsertedChart = useCallback((block: ReportBlock, rowIds?: string[]) => {
     setChartInsertion(current => current ? { ...current, preview: block } : current);
+    setChartEditingOrder(rowIds ? { blockId: block.id, rowIds } : undefined);
   }, []);
   const previewInsertedChartDraft = useCallback((draftPreview: ChartDraftPreviewData | undefined) => {
     setChartInsertion(current => current ? {
@@ -940,7 +942,10 @@ export function PublishingStudio() {
     documentMenuRef.current?.removeAttribute("open");
   }, []);
   const previewVisual = useCallback(
-    (block: ReportBlock) => dispatch({ type: "preview-block", block }),
+    (block: ReportBlock, rowIds?: string[]) => {
+      dispatch({ type: "preview-block", block });
+      setChartEditingOrder(rowIds ? { blockId: block.id, rowIds } : undefined);
+    },
     [],
   );
 
@@ -2417,6 +2422,7 @@ export function PublishingStudio() {
                     onSelectText={selectedBlockId ? undefined : openTextCallout}
                     reportStyle={reportStyle}
                     selectedBlockId={selectedBlockId}
+                    chartEditingOrder={chartEditingOrder}
                     previewViewport
                   />
                 </StudioReportViewport>

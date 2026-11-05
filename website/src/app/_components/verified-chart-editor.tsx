@@ -36,7 +36,7 @@ type EditableData = { table: ChartTable; sourceName: string; synthetic: boolean 
 type Props = {
   block: ReportBlock;
   source?: DataVisualSourceBlock;
-  onPreview: (block: ReportBlock) => void;
+  onPreview: (block: ReportBlock, editingOrder?: string[]) => void;
   onDraftPreview?: (draft: ChartDraftPreviewData | undefined) => void;
   onDone: (block: ReportBlock) => void;
   onCancel: () => void;
@@ -46,7 +46,7 @@ type Props = {
 };
 
 export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, onDone, onCancel, onRemove, initialType = "horizontal-bar-chart", intent = "edit" }: Props) {
-  const tabs = ["data", "text", "palette"] as const;
+  const tabs = ["data", "palette"] as const;
   const chartChoices = [
     { type: "horizontal-bar-chart", title: "Bar chart", rows: undefined },
     { type: "paired-percentage-comparison", title: "Paired comparison", rows: 2 },
@@ -114,6 +114,23 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     if (!editable) return [];
     return validateChartTable(editable.table, valueType, selectedType);
   }, [editable, selectedType, valueType]);
+  const displayedRows = useMemo(() => {
+    const table = tableDraft?.table ?? dataSource?.data;
+    if (!table) return [];
+    const entries = table.rows.map((row, rowIndex) => ({
+      row, rowIndex, label: row.cells[0].trim(), value: parseChartValue(row.cells[1], valueType) ?? 0,
+      invalid: !row.cells[0].trim() || parseChartValue(row.cells[1], valueType) === undefined || errors.some(item => item.row === rowIndex),
+    }));
+    const order = selectedType === "horizontal-bar-chart" ? presentation.sort : "source";
+    const sorted = order === "source" ? entries : [
+      ...sortChartItems(entries.filter(entry => !entry.invalid), order),
+      ...entries.filter(entry => entry.invalid),
+    ];
+    return frozenOrder ? [
+      ...frozenOrder.flatMap(id => entries.filter(entry => entry.row.id === id)),
+      ...entries.filter(entry => !frozenOrder.includes(entry.row.id)),
+    ] : sorted;
+  }, [dataSource, errors, frozenOrder, presentation.sort, selectedType, tableDraft, valueType]);
   const visibleErrors = errors.filter(item => item.row < 0 ||
     touchedCells.has(`${editable?.table.rows[item.row]?.id}:${item.column}`));
   const sourceNameValid = !editable || Boolean(editable.sourceName.trim() && editable.sourceName.length <= 200);
@@ -146,13 +163,17 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     return () => { active = false; };
   }, [block.id, editable, errors.length, selectedType, source, sourceNameValid, valueType]);
 
-  useEffect(() => { if (draft) onPreview(draft); }, [draft, onPreview]);
+  useEffect(() => { if (draft) onPreview(draft, frozenOrder); }, [draft, frozenOrder, onPreview]);
   useEffect(() => {
     onDraftPreview?.(!draft && selectedType ? {
       blockId: block.id, type: selectedType, title: presentation.title,
-      table: tableDraft?.table ?? { columns: [], rows: [] }, unit: valueType,
+      subtitle: !isPaired && selectedType !== "percentage-ring-group" ? presentation.subtitle : undefined,
+      leadIns: isPaired ? leadIns : undefined,
+      note: isPaired || (block.source.part !== "studio" && intent !== "insert") ? presentation.note : undefined,
+      table: { columns: tableDraft?.table.columns ?? [], rows: displayedRows.map(entry => entry.row) }, unit: valueType,
     } : undefined);
-  }, [block.id, draft, onDraftPreview, presentation.title, selectedType, tableDraft, valueType]);
+  }, [block.id, block.source.part, displayedRows, draft, intent, isPaired, leadIns, onDraftPreview,
+    presentation.note, presentation.subtitle, presentation.title, selectedType, tableDraft, valueType]);
 
   function changeData(next: EditableData) {
     setEditable(next);
@@ -206,6 +227,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   }
   function editCell(rowId: string, column: number, value: string) {
     if (!tableDraft) return;
+    if (!frozenOrder) setFrozenOrder(displayedRows.map(entry => entry.row.id));
     changeData({
       ...tableDraft,
       table: { ...tableDraft.table, rows: tableDraft.table.rows.map(row =>
@@ -269,25 +291,82 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
         aria-invalid={key === "title" && (!presentation.title.trim() || presentation.title.length > 120)}
         onChange={event => setPresentation(value => ({ ...value, [key]: event.target.value }))} /></label>;
   }
+  function leadInField(index: number) {
+    if (index > 1) return null;
+    return <label className={styles.field}>
+      <Body1Strong>{index === 0 ? "First heading (optional)" : "Second heading (optional)"}</Body1Strong>
+      <input type="text" maxLength={80} value={leadIns[index]} placeholder="Text..."
+        onChange={event => setLeadIns(previous => index === 0
+          ? [event.target.value, previous[1]] : [previous[0], event.target.value])} />
+    </label>;
+  }
   function dataGrid(prefix: string) {
     const table = tableDraft?.table ?? dataSource?.data;
     if (!table) return null;
     const headings = tableDraft ? isGrouped || table.columns.length > 2 ? ["Label", ...table.columns.slice(1)] : ["Label", "Value"] : table.columns;
     const canRemoveRows = tableDraft && (!fixedRows || table.rows.length > requiredRows!);
-    const entries = table.rows.map((row, rowIndex) => ({
-      row, rowIndex, label: row.cells[0].trim(), value: parseChartValue(row.cells[1], valueType) ?? 0,
-      invalid: !row.cells[0].trim() || parseChartValue(row.cells[1], valueType) === undefined || errors.some(item => item.row === rowIndex),
-    }));
-    const order = selectedType === "horizontal-bar-chart" ? presentation.sort : "source";
-    const sorted = order === "source" ? entries : [
-      ...sortChartItems(entries.filter(entry => !entry.invalid), order),
-      ...entries.filter(entry => entry.invalid),
-    ];
-    const displayed = frozenOrder ? [
-      ...frozenOrder.flatMap(id => entries.filter(entry => entry.row.id === id)),
-      ...entries.filter(entry => !frozenOrder.includes(entry.row.id)),
-    ] : sorted;
+    const removeRow = (rowId: string, displayIndex: number) =>
+      <Button className={styles.chartRemoveRow} type="button" appearance="subtle"
+        aria-label={`Remove row ${displayIndex + 1}`} disabled={table.rows.length <= 2}
+        icon={<Delete16Regular aria-hidden="true" />}
+        onClick={() => { if (tableDraft) changeData({ ...tableDraft, table: {
+          ...tableDraft.table, rows: table.rows.filter(item => item.id !== rowId),
+        } }); }} />;
     return <>
+      <div className={styles.chartCategoryList}
+        onFocusCapture={() => { if (!frozenOrder) setFrozenOrder(displayedRows.map(entry => entry.row.id)); }}
+        onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFrozenOrder(undefined); }}
+        onKeyDown={event => {
+          if (event.key === "Enter" && !event.nativeEvent.isComposing && event.target instanceof HTMLInputElement) {
+            event.preventDefault();
+            setFrozenOrder(undefined);
+          }
+        }}>
+        {displayedRows.map(({ row, rowIndex }, displayIndex) => {
+          const rowErrors = visibleErrors.filter(item => item.row === rowIndex);
+          function cellInput(column: number, stacked = false) {
+            const cell = row.cells[column];
+            const label = `${headings[column]}${column > 0 && valueType === "percentage" ? " (%)" : ""}, row ${displayIndex + 1}`;
+            return <label key={column} className={stacked ? styles.field : styles.chartCell}>
+              {stacked ? <Body1Strong>{headings[column]}</Body1Strong> : <span className={styles.chartCellLabel}>{label}</span>}
+              <input aria-label={label} type="text"
+                inputMode={column ? "decimal" : "text"} maxLength={column ? 24 : 160}
+                data-compact-value={column > 0 && cell.replace(/%\s*$/, "").trim().length > 4 ? true : undefined}
+                value={column > 0 && valueType === "percentage" ? cell.replace(/%\s*$/, "").trim() : cell}
+                aria-invalid={rowErrors.some(item => item.column === column)}
+                aria-describedby={rowErrors.some(item => item.column === column) ? `${prefix}-${row.id}-errors` : undefined}
+                onBlur={() => setTouchedCells(previous => new Set(previous).add(`${row.id}:${column}`))}
+                onChange={event => editCell(row.id, column, event.target.value)} />
+            </label>;
+          }
+          return <div key={row.id} className={styles.chartCategory} role="group"
+            aria-label={`${isPaired ? "Finding" : "Category"} ${displayIndex + 1}`}>
+          {tableDraft && selectedType !== "horizontal-bar-chart" ? <div className={styles.chartFindingFields}>
+            {isPaired ? leadInField(displayIndex) : null}
+            <div className={styles.chartValueFields}>{row.cells.slice(1).map((_, index) => cellInput(index + 1, true))}</div>
+            {cellInput(0, true)}
+            {rowErrors.length ? <span id={`${prefix}-${row.id}-errors`} className={styles.inputError}>
+              {rowErrors.map(item => item.message).join(" ")}
+            </span> : null}
+            {canRemoveRows ? <div className={styles.chartCategoryActions}>{removeRow(row.id, displayIndex)}</div> : null}
+          </div> :
+          <table className={styles.chartDataGrid} data-value-type={valueType} data-chart-type={selectedType}
+            data-series-count={table.columns.length - 1}>
+            <caption className={styles.chartCellLabel}>{tableDraft ? "Chart data" : "Original source values"}, category {displayIndex + 1}</caption>
+            <thead><tr>{headings.map((column, i) => <th scope="col" key={i}>{column}</th>)}
+              {canRemoveRows ? <th scope="col"><span className={styles.chartCellLabel}>Remove row</span></th> : null}
+            </tr></thead>
+            <tbody><tr>{row.cells.map((cell, column) => <td key={column}>
+            {tableDraft ? cellInput(column) : cell}
+            {column === 0 && rowErrors.length ? <span id={`${prefix}-${row.id}-errors`} className={styles.inputError}>
+              {rowErrors.map(item => item.message).join(" ")}
+            </span> : null}
+          </td>)}{canRemoveRows ? <td>{removeRow(row.id, displayIndex)}</td> : null}</tr></tbody>
+          </table>}
+          {tableDraft && selectedType === "horizontal-bar-chart" ? supportingTextEditor(row, rowIndex) : null}
+          </div>;
+        })}
+      </div>
       {tableDraft && isGrouped ? <div className={styles.chartSeriesFields}>
         {table.columns.slice(1).map((name, index) => <label key={index} className={styles.field}>
           <Body1Strong>Series {index + 1} name</Body1Strong>
@@ -296,49 +375,6 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
               columns: table.columns.map((value, i) => i === index + 1 ? event.target.value : value) } })} />
         </label>)}
       </div> : null}
-      <div className={styles.chartCategoryList}
-        onFocusCapture={() => { if (!frozenOrder) setFrozenOrder(displayed.map(entry => entry.row.id)); }}
-        onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFrozenOrder(undefined); }}
-        onKeyDown={event => {
-          if (event.key === "Enter" && !event.nativeEvent.isComposing && event.target instanceof HTMLInputElement) {
-            event.preventDefault();
-            setFrozenOrder(sorted.map(entry => entry.row.id));
-          }
-        }}>
-        {displayed.map(({ row, rowIndex }, displayIndex) => {
-          const rowErrors = visibleErrors.filter(item => item.row === rowIndex);
-          return <div key={row.id} className={styles.chartCategory}>
-          <table className={styles.chartDataGrid} data-value-type={valueType} data-chart-type={selectedType}
-            data-series-count={table.columns.length - 1}>
-            <caption className={styles.chartCellLabel}>{tableDraft ? "Chart data" : "Original source values"}, category {displayIndex + 1}</caption>
-            <thead><tr>{headings.map((column, i) => <th scope="col" key={i}>{column}</th>)}
-              {canRemoveRows ? <th scope="col"><span className={styles.chartCellLabel}>Remove row</span></th> : null}
-            </tr></thead>
-            <tbody><tr>{row.cells.map((cell, column) => <td key={column}>
-            {tableDraft ? <label className={styles.chartCell}>
-              <span className={styles.chartCellLabel}>{headings[column]}{column > 0 && valueType === "percentage" ? " (%)" : ""}, row {displayIndex + 1}</span>
-              <input aria-label={`${headings[column]}${column > 0 && valueType === "percentage" ? " (%)" : ""}, row ${displayIndex + 1}`} type="text"
-                inputMode={column ? "decimal" : "text"} maxLength={column ? 24 : 160}
-                data-compact-value={column > 0 && cell.replace(/%\s*$/, "").trim().length > 4 ? true : undefined}
-                value={column > 0 && valueType === "percentage" ? cell.replace(/%\s*$/, "").trim() : cell}
-                aria-invalid={rowErrors.some(item => item.column === column)}
-                aria-describedby={rowErrors.some(item => item.column === column) ? `${prefix}-${row.id}-errors` : undefined}
-                onBlur={() => setTouchedCells(previous => new Set(previous).add(`${row.id}:${column}`))}
-                onChange={event => editCell(row.id, column, event.target.value)} />
-            </label> : cell}
-            {column === 0 && rowErrors.length ? <span id={`${prefix}-${row.id}-errors`} className={styles.inputError}>
-              {rowErrors.map(item => item.message).join(" ")}
-            </span> : null}
-          </td>)}{canRemoveRows ? <td><Button className={styles.chartRemoveRow} type="button" appearance="subtle"
-            aria-label={`Remove row ${displayIndex + 1}`} disabled={table.rows.length <= 2}
-            icon={<Delete16Regular aria-hidden="true" />}
-            onClick={() => changeData({ ...tableDraft, table: { ...tableDraft.table, rows: table.rows.filter(item => item.id !== row.id) } })}>
-          </Button></td> : null}</tr></tbody>
-          </table>
-          {tableDraft && selectedType === "horizontal-bar-chart" ? supportingTextEditor(row, rowIndex) : null}
-          </div>;
-        })}
-      </div>
     </>;
   }
   const dataSettings = selectedType === "horizontal-bar-chart" ? <div className={styles.chartDataSettings}>
@@ -399,7 +435,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
           }
         }}
         onClick={() => setTab(value)}>
-          <span>{value === "text" ? "Text" : value === "data" ? "Data" : "Palette"}</span>
+          <span>{value === "data" ? "Content" : "Palette"}</span>
         </button>;
       })}
     </div>
@@ -410,6 +446,9 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       data-chart-tab={tab} className={styles.chartEditorBody}>
       {error ? <Body1 className={styles.inputError} role="alert" block>{error}</Body1> : null}
       {tab === "data" ? <>
+        {textField("title")}
+        {!presentationValid ? <Caption1 className={styles.inputError}>Use a title of 1–120 characters.</Caption1> : null}
+        {!isPaired && selectedType !== "percentage-ring-group" ? textField("subtitle") : null}
         {errors.some(item => item.row < 0) ? <section className={styles.chartDataGuidance} aria-label="Required data changes">
           <Body1Strong block>Adjust data for this chart</Body1Strong>
           {errors.filter(item => item.row < 0).map((item, index) => <Body1 block key={index}>{item.message}</Body1>)}
@@ -464,19 +503,8 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
                 ? "Independent findings; values do not need to total 100%." : "Separate groups; values do not need to total 100%." }));
           }}>Use synthetic example</Button>
         </section> : null}
+        {isPaired || (block.source.part !== "studio" && intent !== "insert") ? textField("note") : null}
         {busy && !errors.length && sourceNameValid ? <Caption1 role="status">Updating chart data…</Caption1> : null}
-      </> : tab === "text" ? <>
-        <>
-          {textField("title")}
-          {isPaired ? leadIns.map((leadIn, index) => <label key={index} className={styles.field}>
-            <Body1Strong>{index === 0 ? "First heading (optional)" : "Second heading (optional)"}</Body1Strong>
-            <input type="text" maxLength={80} value={leadIn} placeholder="Text..."
-              onChange={event => setLeadIns(previous => index === 0
-                ? [event.target.value, previous[1]] : [previous[0], event.target.value])} />
-          </label>) : selectedType !== "percentage-ring-group" ? textField("subtitle") : null}
-          {isPaired || (block.source.part !== "studio" && intent !== "insert") ? textField("note") : null}
-          {!presentationValid ? <Caption1 className={styles.inputError}>Use a title of 1–120 characters.</Caption1> : null}
-        </>
       </> : <fieldset className={styles.chartPalettes} role="radiogroup" aria-label="Palette" data-paired={isPaired || undefined}>
         <legend>Palette</legend>
         <Caption1>Choose a palette to preview it on the chart.</Caption1>

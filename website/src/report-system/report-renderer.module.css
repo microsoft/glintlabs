@@ -809,6 +809,9 @@
 }
 .draftChartHeading { margin-bottom: 24px; }
 .draftChartHeading h3 { margin: 0; font: 600 24px/32px "Segoe UI", sans-serif; }
+.draftChartHeading p { margin: 12px 0 0; }
+.draftChartLegend { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; margin-top: 24px; }
+.draftChartNote { margin: 24px 0 0; font-size: 12px; line-height: 16px; font-style: italic; }
 .draftChartBody { display: grid; gap: 24px; }
 .draftChartItem { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) auto; align-items: center; gap: 16px; overflow-wrap: anywhere; }
 .draftChartItem > span { min-width: 0; }

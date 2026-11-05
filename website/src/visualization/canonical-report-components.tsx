@@ -254,12 +254,18 @@ function PairedPercentageComparison({
 function HorizontalBarChart({
   block,
   expandSupportingBullets,
+  editingOrder,
 }: {
   block: Extract<CanonicalVisualBlock, { type: "horizontal-bar-chart" }>;
   expandSupportingBullets?: boolean;
+  editingOrder?: string[];
 }) {
   const presentation = block.presentation;
-  const items = sortChartItems(block.items, presentation?.sort);
+  const sortedItems = sortChartItems(block.items, presentation?.sort);
+  const items = editingOrder ? [
+    ...editingOrder.flatMap(id => sortedItems.filter(item => item.id === id)),
+    ...sortedItems.filter(item => !editingOrder.includes(item.id)),
+  ] : sortedItems;
   const isNumber = block.verifiedSource?.unit === "number";
   const minimum = isNumber ? Math.min(0, ...items.map(item => item.value)) : 0;
   const maximum = isNumber ? Math.max(0, ...items.map(item => item.value)) || (minimum === 0 ? 1 : 0) : 100;
@@ -341,6 +347,10 @@ function GroupedColumnComparison({
 }: {
   block: Extract<CanonicalVisualBlock, { type: "grouped-column-comparison" }>;
 }) {
+  function displayValue(id: string, column: number, value: number) {
+    const raw = block.verifiedSource?.rows.find(row => row.id === id)?.cells[column]?.replace(/%\s*$/, "").trim();
+    return `${raw && Number(raw) === value ? raw : value}%`;
+  }
   return (
     <figure className={`${styles.card} ${styles.groupedColumns}`}>
       <h3>{block.presentation?.title ?? block.title}</h3>
@@ -352,7 +362,7 @@ function GroupedColumnComparison({
             <div className={styles.columns}>
               {group.values.map((value, index) => (
                 <div className={styles.column} key={`${group.id}-${index}`}>
-                  <strong>{value}%</strong>
+                  <strong>{displayValue(group.id, index + 1, value)}</strong>
                   <i
                     className={index === 0 ? styles.columnPrimary : styles.columnSecondary}
                     style={{ height: `${value * 2.15}px` }}
@@ -475,9 +485,11 @@ function TwoColumnInsight({
 export function CanonicalReportComponent({
   block,
   expandSupportingBullets,
+  editingOrder,
 }: {
   block: CanonicalVisualBlock;
   expandSupportingBullets?: boolean;
+  editingOrder?: string[];
 }) {
   switch (block.type) {
     case "listening-approach-continuum":
@@ -497,7 +509,7 @@ export function CanonicalReportComponent({
     case "paired-percentage-comparison":
       return <PairedPercentageComparison block={block} />;
     case "horizontal-bar-chart":
-      return <HorizontalBarChart block={block} expandSupportingBullets={expandSupportingBullets} />;
+      return <HorizontalBarChart block={block} expandSupportingBullets={expandSupportingBullets} editingOrder={editingOrder} />;
     case "grouped-column-comparison":
       return <GroupedColumnComparison block={block} />;
     case "before-after-comparison":
