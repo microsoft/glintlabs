@@ -735,8 +735,6 @@
 }
 
 .groupedColumns {
-  height: 586px;
-  min-height: 586px;
   padding: 38px 32px 32px;
 }
 
@@ -760,22 +758,22 @@
 
 .columnGroups {
   display: grid;
-  grid-template-columns: repeat(4, 108px);
-  gap: 56px;
-  height: 263px;
-  padding-left: 43px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
 }
 
 .columnGroup {
   display: grid;
-  grid-template-rows: 211px 40px;
+  grid-template-rows: 244px auto;
   gap: 12px;
+  min-width: 0;
   text-align: center;
 }
 
 .columns {
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   gap: 12px;
   border-bottom: 1px solid #a8a8a8;
 }
@@ -1214,17 +1212,13 @@
 
   .columnGroups {
     gap: 28px 12px;
-    padding-left: 0;
   }
 
   .columnGroup {
-    grid-template-rows: 211px auto;
     gap: 8px;
-    min-width: 0;
   }
 
   .columns {
-    justify-content: center;
     gap: 6px;
   }
 

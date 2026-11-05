@@ -817,6 +817,7 @@
 .draftChartItem > span { min-width: 0; }
 .draftBar { height: 24px; border: 1px dashed var(--report-muted, #616161); border-radius: 4px; background: var(--report-panel, #fafafa); }
 .draftChartBody:not([data-chart-type="horizontal-bar-chart"]) { grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); }
+.draftChartBody[data-chart-type="grouped-column-comparison"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .draftChartBody:not([data-chart-type="horizontal-bar-chart"]) .draftChartItem { display: flex; flex-direction: column; justify-content: flex-end; text-align: center; }
 .draftFinding { font: 600 48px/56px "Segoe UI", sans-serif; }
 .draftRing { position: relative; width: min(120px, 100%); aspect-ratio: 1; }
