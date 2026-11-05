@@ -2387,31 +2387,27 @@
   --chart-paired-primary: #294482;
   --chart-paired-blue: #5c8df8;
   display: grid;
-  gap: var(--spacingVerticalXXL, 24px);
+  gap: var(--spacingVerticalS, 8px);
   min-width: 0;
   margin: 0;
   padding: 0;
   border: 0;
 }
-.chartPalettes legend { margin-bottom: 8px; padding: 0; font-weight: 600; }
-.chartPalettes > span { color: var(--colorNeutralForeground3); }
-.chartPaletteTile { position: relative; display: grid; gap: 12px; padding: 16px; border: 1px solid var(--studio-field-border); border-radius: var(--studio-action-radius); cursor: pointer; }
-.chartPaletteTile:has(input:checked) { border-color: var(--colorNeutralForeground1); background: var(--colorNeutralBackground1); }
+.chartPaletteTile { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 48px; padding: 8px 12px; border: 0; border-radius: var(--borderRadiusMedium); cursor: pointer; }
+.chartPaletteTile:has(input:checked) { background: var(--colorNeutralBackground3); }
 .chartPaletteTile:hover { background: var(--colorNeutralBackground1Hover); }
 .chartPaletteTile:active { background: var(--colorNeutralBackground1Pressed); }
-.chartPaletteTile:has(input:focus-visible) { outline: 2px solid var(--colorStrokeFocus2); outline-offset: 2px; }
-.chartPaletteTile input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
-.chartPaletteSwatches { display: flex; gap: 4px; }
-.chartPaletteSwatches i { flex: 1; height: 24px; border-radius: var(--borderRadiusSmall); background: var(--chart-blue); }
+.chartPaletteTile input { width: 16px; height: 16px; margin: 0; accent-color: var(--colorBrandBackground); cursor: pointer; }
+.chartPaletteTile input:focus-visible { outline: 2px solid var(--colorStrokeFocus2); outline-offset: 2px; }
+.chartPaletteSwatches { display: flex; align-items: center; justify-content: flex-end; gap: 4px; width: 76px; }
+.chartPaletteSwatches i { flex: 0 0 16px; height: 12px; border-radius: var(--borderRadiusSmall); background: var(--chart-blue); }
 .chartPaletteSwatches[data-palette="brand"] i:nth-child(2) { background: var(--chart-teal); }
 .chartPaletteSwatches[data-palette="brand"] i:nth-child(3) { background: var(--chart-lavender); }
 .chartPaletteSwatches[data-palette="brand"] i:nth-child(4) { background: var(--chart-mauve); }
 .chartPaletteSwatches[data-palette="teal"] i { background: var(--chart-teal); }
 .chartPalettes[data-paired] .chartPaletteSwatches:not([data-palette="teal"]) i { background: var(--chart-paired-blue); }
 .chartPalettes[data-paired] .chartPaletteSwatches[data-palette="brand"] i:first-child { background: var(--chart-paired-primary); }
-.chartPaletteLabel { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.chartPaletteCheck { visibility: hidden; color: var(--colorNeutralForeground1); }
-.chartPaletteTile:has(input:checked) .chartPaletteCheck { visibility: visible; }
+.chartPaletteLabel { min-width: 0; }
 
 .chartTabs {
   display: flex;

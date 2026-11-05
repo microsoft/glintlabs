@@ -3,7 +3,6 @@
 import { Button } from "@fluentui/react-button";
 import { Dropdown, Option } from "@fluentui/react-combobox";
 import { Add16Regular } from "@fluentui/react-icons/svg/add";
-import { Checkmark16Regular } from "@fluentui/react-icons/svg/checkmark";
 import { ChevronDown16Regular } from "@fluentui/react-icons/svg/chevron-down";
 import { Delete16Regular } from "@fluentui/react-icons/svg/delete";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
@@ -518,11 +517,10 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
         {Object.entries(palettes).map(([value, label]) => <label key={value} className={styles.chartPaletteTile}>
           <input type="radio" name={`${block.id}-palette`} value={value} checked={presentation.palette === value}
             onChange={() => setPresentation(current => ({ ...current, palette: value as ChartPresentation["palette"] }))} />
+          <span className={styles.chartPaletteLabel}><Body1>{label}</Body1></span>
           <span className={styles.chartPaletteSwatches} data-palette={value} aria-hidden="true">
-            <i /><i />{!hasLeadIns ? <><i /><i /></> : null}
+            <i />{value === "brand" ? <><i />{!hasLeadIns ? <><i /><i /></> : null}</> : null}
           </span>
-          <span className={styles.chartPaletteLabel}><Body1Strong>{label}</Body1Strong>
-            <Checkmark16Regular className={styles.chartPaletteCheck} aria-hidden="true" /></span>
         </label>)}
       </fieldset>}
     </section>
