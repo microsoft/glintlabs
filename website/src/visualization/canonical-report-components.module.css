@@ -1081,6 +1081,13 @@
 .pairedFootnote { display: grid; gap: 8px; font-size: 12px; font-weight: 420; font-style: italic; line-height: 16px; font-variation-settings: "opsz" 8; }
 .pairedComparison .chartSynthetic { font-size: 12px; line-height: 16px; }
 
+.comparisonGrid { gap: 32px; }
+.comparisonGrid[data-chart-draft] { margin: 0; }
+.comparisonGridRow { display: grid; gap: 20px; }
+.comparisonGridFindings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.comparisonGrid .pairedFinding { align-content: start; gap: 6px; min-width: 0; }
+.comparisonGridRow:nth-of-type(2) strong { color: var(--paired-secondary); }
+
 :global([data-report-style="new-fluent-colors"]) .card {
   border-color: var(--report-rule);
   color: var(--report-text);
@@ -1277,6 +1284,10 @@
   .pairedComparison { gap: 32px; padding: 24px 20px; }
   .pairedComparison h3 { font-size: 20px; line-height: 26px; }
   .pairedMetrics { grid-template-columns: 1fr; gap: 32px; }
+  .comparisonGridFindings { gap: 16px; }
+  .comparisonGrid .pairedFinding strong { font-size: clamp(20px, 7cqi, 32px); line-height: 1.2; }
+  .comparisonGrid .pairedFinding p,
+  .comparisonGrid .pairedLeadIn { font-size: 16px; line-height: 22px; }
 
   .horizontalChart {
     padding: 24px 20px;

@@ -1354,6 +1354,7 @@
 }
 
 .chartAuthoring[data-report-component="horizontal-bar-chart"],
+.chartAuthoring[data-report-component="percentage-comparison-grid"],
 .chartAuthoring[data-report-component="paired-percentage-comparison"] {
   border-radius: 20px;
 }
@@ -1366,11 +1367,13 @@
   padding-inline-end: 96px;
 }
 
-.chartAuthoring[data-report-component="paired-percentage-comparison"] > figure > :first-child {
+.chartAuthoring[data-report-component="paired-percentage-comparison"] > figure > :first-child,
+.chartAuthoring[data-report-component="percentage-comparison-grid"] > figure > :first-child {
   padding-inline-end: 0;
 }
 
-.chartAuthoring[data-report-component="paired-percentage-comparison"] > .chartEditToolbar {
+.chartAuthoring[data-report-component="paired-percentage-comparison"] > .chartEditToolbar,
+.chartAuthoring[data-report-component="percentage-comparison-grid"] > .chartEditToolbar {
   z-index: 6;
   top: -48px;
   right: 0;

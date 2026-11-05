@@ -145,6 +145,46 @@ test("paired comparisons require exactly two independently valid percentage find
   }
 });
 
+test("percentage comparison grids preserve four independent findings, row headings and evidence", async () => {
+  const table = {
+    columns: ["Finding", "Percentage"],
+    rows: [
+      { id: "meeting", cells: ["Discussed team feedback", "38.00%"] },
+      { id: "plan", cells: ["Created an action plan", "29"] },
+      { id: "accountable", cells: ["Accountable for follow-through", "80"] },
+      { id: "changes", cells: ["Saw meaningful changes", "75.125"] },
+    ],
+  };
+  const edited = await createStudioChartSource({
+    id: "four-findings", table, sourceName: "Reviewed action-taking findings", synthetic: false,
+    visualType: "percentage-comparison-grid",
+  });
+  const visual = createVerifiedDataVisual(edited, "percentage-comparison-grid", "2026-11-05T03:40:00.000Z");
+  assert.ok(visual.type === "percentage-comparison-grid");
+  assert.deepEqual(visual.metrics.map(metric => metric.value), [38, 29, 80, 75.125]);
+  const presentation = {
+    title: "The action-taking paradox", leadIns: ["In the last six months, only...", "Yet..."],
+    note: "Independent findings, not parts of a total.", palette: "brand",
+  };
+  const restored = reportBlockSchema.parse({ ...visual, presentation });
+  assert.ok(restored.type === "percentage-comparison-grid");
+  assert.deepEqual(restored.presentation, presentation);
+  assert.deepEqual(restored.verifiedSource?.rows, table.rows);
+  assert.equal(verifiedVisualMatchesSource(restored), true);
+  assert.equal(verifiedVisualMatchesSource({
+    ...restored, metrics: restored.metrics.map((metric, index) => index ? metric : { ...metric, value: 39 }),
+  }), false, "A metric change cannot keep its source approval");
+  for (const invalid of [
+    { ...table, rows: table.rows.slice(0, 3) },
+    { columns: ["Finding", "First", "Second"], rows: table.rows.map(row => ({ ...row, cells: [...row.cells, "40"] })) },
+    { ...table, rows: table.rows.map((row, index) => index ? row : { ...row, cells: ["Missing", ""] }) },
+    { ...table, rows: table.rows.map((row, index) => index ? row : { ...row, cells: ["Out of range", "101"] }) },
+  ]) {
+    assert.ok(validateChartTable(invalid, "percentage", "percentage-comparison-grid").length);
+  }
+  assert.ok(validateChartTable(table, "number", "percentage-comparison-grid").length);
+});
+
 test("paired comparisons preserve precision, provenance and independent totals through save and restore", async () => {
   const edited = await createStudioChartSource({
     id: source.id,

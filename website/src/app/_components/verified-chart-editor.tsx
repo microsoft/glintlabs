@@ -51,7 +51,8 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
     { type: "horizontal-bar-chart", title: "Bar chart", rows: undefined },
     { type: "paired-percentage-comparison", title: "Paired comparison", rows: 2 },
     { type: "percentage-ring-group", title: "Percentage rings", rows: 3 },
-    { type: "grouped-column-comparison", title: "Percentage comparison grid", rows: 4 },
+    { type: "percentage-comparison-grid", title: "Percentage comparison grid", rows: 4 },
+    { type: "grouped-column-comparison", title: "Grouped column comparison", rows: 4 },
   ] as const;
   const [tab, setTab] = useState<(typeof tabs)[number]>("data");
   const typeButton = useRef<HTMLButtonElement>(null);
@@ -59,7 +60,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   const [editable, setEditable] = useState<EditableData | undefined>(() => {
     if (intent !== "insert") return;
     const columns = initialType === "grouped-column-comparison" ? ["Label", "Series 1", "Series 2"] : ["Label", "Value"];
-    const rows = initialType === "percentage-ring-group" ? 3 : initialType === "grouped-column-comparison" ? 4 : 2;
+    const rows = initialType === "percentage-ring-group" ? 3 : initialType === "grouped-column-comparison" || initialType === "percentage-comparison-grid" ? 4 : 2;
     return {
       table: { columns, rows: Array.from({ length: rows }, (_, index) => ({
         id: `${block.id}-row-${index + 1}`, cells: columns.map(() => ""),
@@ -73,23 +74,25 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   const [frozenOrder, setFrozenOrder] = useState<string[]>();
   const [touchedCells, setTouchedCells] = useState<Set<string>>(() => new Set());
   const [selectedType, setSelectedType] = useState<VerifiedDataVisualType | undefined>(
-    block.type === "horizontal-bar-chart" || block.type === "percentage-ring-group" || block.type === "grouped-column-comparison" || block.type === "paired-percentage-comparison"
+    block.type === "horizontal-bar-chart" || block.type === "percentage-ring-group" || block.type === "grouped-column-comparison" || block.type === "paired-percentage-comparison" || block.type === "percentage-comparison-grid"
       ? block.type : source ? compatibleVerifiedVisuals(source)[0] : initialType,
   );
   const [presentation, setPresentation] = useState<ChartPresentation>(
     (block.type === "horizontal-bar-chart" || block.type === "paired-percentage-comparison" ||
-      block.type === "percentage-ring-group" || block.type === "grouped-column-comparison") && block.presentation
+      block.type === "percentage-ring-group" || block.type === "grouped-column-comparison" || block.type === "percentage-comparison-grid") && block.presentation
       ? { subtitle: "", density: "comfortable", sort: "source", ...block.presentation } : {
       title: source?.data.title ?? (intent === "insert" ? "Comparison" : "Percentage comparison"), subtitle: "", note: "",
       palette: "brand", density: "comfortable", sort: "source",
     },
   );
   const [leadIns, setLeadIns] = useState<[string, string]>(
-    block.type === "paired-percentage-comparison" && block.presentation ? block.presentation.leadIns : ["", ""],
+    (block.type === "paired-percentage-comparison" || block.type === "percentage-comparison-grid") && block.presentation ? block.presentation.leadIns : ["", ""],
   );
   const isPaired = selectedType === "paired-percentage-comparison";
+  const isGrid = selectedType === "percentage-comparison-grid";
+  const hasLeadIns = isPaired || isGrid;
   const isGrouped = selectedType === "grouped-column-comparison";
-  const visibleTabs = tabs.filter(value => value !== "palette" || selectedType === "horizontal-bar-chart" || isPaired);
+  const visibleTabs = tabs.filter(value => value !== "palette" || selectedType === "horizontal-bar-chart" || hasLeadIns);
   const chartChoice = chartChoices.find(choice => choice.type === selectedType);
   const requiredRows = chartChoice?.rows;
   const fixedRows = Boolean(requiredRows);
@@ -138,12 +141,12 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   const pairedPresentation = useMemo(() => ({
     title: presentation.title, note: presentation.note, palette: presentation.palette, leadIns,
   }), [leadIns, presentation.title, presentation.note, presentation.palette]);
-  const presentationValid = isPaired ? pairedComparisonPresentationSchema.safeParse(pairedPresentation).success
+  const presentationValid = hasLeadIns ? pairedComparisonPresentationSchema.safeParse(pairedPresentation).success
     : chartPresentationSchema.safeParse(presentation).success;
   const draft = useMemo(() => {
     if (!dataReady || !dataSource || !selectedType || !compatibleVerifiedVisuals(dataSource).includes(selectedType) || !presentationValid) return;
     const visual = createVerifiedDataVisual(dataSource, selectedType, previewAt);
-    return visual.type === "paired-percentage-comparison" ? { ...visual, presentation: pairedPresentation }
+    return visual.type === "paired-percentage-comparison" || visual.type === "percentage-comparison-grid" ? { ...visual, presentation: pairedPresentation }
       : { ...visual, presentation };
   }, [dataReady, dataSource, pairedPresentation, presentation, presentationValid, previewAt, selectedType]);
 
@@ -167,13 +170,13 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   useEffect(() => {
     onDraftPreview?.(!draft && selectedType ? {
       blockId: block.id, type: selectedType, title: presentation.title,
-      subtitle: !isPaired && selectedType !== "percentage-ring-group" ? presentation.subtitle : undefined,
-      leadIns: isPaired ? leadIns : undefined,
-      note: isPaired || (block.source.part !== "studio" && intent !== "insert") ? presentation.note : undefined,
+      subtitle: !hasLeadIns && selectedType !== "percentage-ring-group" ? presentation.subtitle : undefined,
+      leadIns: hasLeadIns ? leadIns : undefined, palette: presentation.palette,
+      note: hasLeadIns || (block.source.part !== "studio" && intent !== "insert") ? presentation.note : undefined,
       table: { columns: tableDraft?.table.columns ?? [], rows: displayedRows.map(entry => entry.row) }, unit: valueType,
     } : undefined);
-  }, [block.id, block.source.part, displayedRows, draft, intent, isPaired, leadIns, onDraftPreview,
-    presentation.note, presentation.subtitle, presentation.title, selectedType, tableDraft, valueType]);
+  }, [block.id, block.source.part, displayedRows, draft, hasLeadIns, intent, leadIns, onDraftPreview,
+    presentation.note, presentation.palette, presentation.subtitle, presentation.title, selectedType, tableDraft, valueType]);
 
   function changeData(next: EditableData) {
     setEditable(next);
@@ -294,7 +297,8 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
   function leadInField(index: number) {
     if (index > 1) return null;
     return <label className={styles.field}>
-      <Body1Strong>{index === 0 ? "First heading (optional)" : "Second heading (optional)"}</Body1Strong>
+      <Body1Strong>{isGrid ? index === 0 ? "First row heading (optional)" : "Second row heading (optional)"
+        : index === 0 ? "First heading (optional)" : "Second heading (optional)"}</Body1Strong>
       <input type="text" maxLength={80} value={leadIns[index]} placeholder="Text..."
         onChange={event => setLeadIns(previous => index === 0
           ? [event.target.value, previous[1]] : [previous[0], event.target.value])} />
@@ -340,9 +344,10 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
             </label>;
           }
           return <div key={row.id} className={styles.chartCategory} role="group"
-            aria-label={`${isPaired ? "Finding" : "Category"} ${displayIndex + 1}`}>
+            aria-label={`${hasLeadIns ? "Finding" : "Category"} ${displayIndex + 1}`}>
           {tableDraft && selectedType !== "horizontal-bar-chart" ? <div className={styles.chartFindingFields}>
             {isPaired ? leadInField(displayIndex) : null}
+            {isGrid && displayIndex % 2 === 0 ? leadInField(displayIndex / 2) : null}
             <div className={styles.chartValueFields}>{row.cells.slice(1).map((_, index) => cellInput(index + 1, true))}</div>
             {cellInput(0, true)}
             {rowErrors.length ? <span id={`${prefix}-${row.id}-errors`} className={styles.inputError}>
@@ -412,7 +417,9 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
           onOptionSelect={(_, data) => {
             if (data.optionValue) changeChartType(data.optionValue as VerifiedDataVisualType);
           }}>
-          {chartChoices.map(({ type, title }) => <Option key={type} value={type} checkIcon={null}
+          {chartChoices.filter(choice => choice.type !== "grouped-column-comparison" ||
+            selectedType === "grouped-column-comparison" || block.type === "grouped-column-comparison" ||
+            source?.data.columns.length === 3).map(({ type, title }) => <Option key={type} value={type} checkIcon={null}
             className={styles.chartMenuItem}>{title}</Option>)}
         </Dropdown>
       </div>
@@ -448,7 +455,7 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
       {tab === "data" ? <>
         {textField("title")}
         {!presentationValid ? <Caption1 className={styles.inputError}>Use a title of 1–120 characters.</Caption1> : null}
-        {!isPaired && selectedType !== "percentage-ring-group" ? textField("subtitle") : null}
+        {!hasLeadIns && selectedType !== "percentage-ring-group" ? textField("subtitle") : null}
         {errors.some(item => item.row < 0) ? <section className={styles.chartDataGuidance} aria-label="Required data changes">
           <Body1Strong block>Adjust data for this chart</Body1Strong>
           {errors.filter(item => item.row < 0).map((item, index) => <Body1 block key={index}>{item.message}</Body1>)}
@@ -503,9 +510,9 @@ export function VerifiedChartEditor({ block, source, onPreview, onDraftPreview, 
                 ? "Independent findings; values do not need to total 100%." : "Separate groups; values do not need to total 100%." }));
           }}>Use synthetic example</Button>
         </section> : null}
-        {isPaired || (block.source.part !== "studio" && intent !== "insert") ? textField("note") : null}
+        {hasLeadIns || (block.source.part !== "studio" && intent !== "insert") ? textField("note") : null}
         {busy && !errors.length && sourceNameValid ? <Caption1 role="status">Updating chart data…</Caption1> : null}
-      </> : <fieldset className={styles.chartPalettes} role="radiogroup" aria-label="Palette" data-paired={isPaired || undefined}>
+      </> : <fieldset className={styles.chartPalettes} role="radiogroup" aria-label="Palette" data-paired={hasLeadIns || undefined}>
         <legend>Palette</legend>
         <Caption1>Choose a palette to preview it on the chart.</Caption1>
         {Object.entries(palettes).map(([value, label]) => <label key={value} className={styles.chartPaletteTile}>

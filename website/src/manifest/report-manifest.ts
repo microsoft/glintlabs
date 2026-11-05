@@ -25,6 +25,7 @@ const imageSourceSchema = z.union([
 ]);
 const verifiedVisualTypeSchema = z.enum([
   "paired-percentage-comparison",
+  "percentage-comparison-grid",
   "percentage-ring-group",
   "horizontal-bar-chart",
   "grouped-column-comparison",
@@ -194,6 +195,18 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
       )
       .length(3),
     footnote: z.string().min(1),
+    verifiedSource: verifiedDataSourceSchema.optional(),
+  }),
+  baseBlockSchema.extend({
+    type: z.literal("percentage-comparison-grid"),
+    title: z.string().min(1),
+    metrics: z.array(z.object({
+      id: z.string().min(1),
+      value: percentageSchema,
+      description: z.string().min(1),
+    })).length(4),
+    footnote: z.string().min(1),
+    presentation: pairedComparisonPresentationSchema.optional(),
     verifiedSource: verifiedDataSourceSchema.optional(),
   }),
   baseBlockSchema.extend({

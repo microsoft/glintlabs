@@ -217,6 +217,41 @@ function PullQuote({
   );
 }
 
+export function PercentageComparisonGrid({
+  title, leadIns, findings, note, sourceNote, palette, synthetic, draft,
+}: {
+  title: string;
+  leadIns?: [string, string];
+  findings: { id: string; value: string; description: string }[];
+  note?: string;
+  sourceNote?: string;
+  palette?: string;
+  synthetic?: boolean;
+  draft?: boolean;
+}) {
+  return <figure className={`${styles.card} ${styles.pairedComparison} ${styles.comparisonGrid}`}
+    data-palette={palette} data-chart-draft={draft ? "percentage-comparison-grid" : undefined}
+    aria-label={draft ? "Draft chart preview with missing-value placeholders" : undefined}>
+    {synthetic ? <p className={styles.chartSynthetic}>Synthetic example · Not research findings</p> : null}
+    <h3>{title}</h3>
+    {[0, 1].map(row => <section key={row} className={styles.comparisonGridRow}
+      aria-label={leadIns?.[row] || (row === 0 ? "First row" : "Second row")}>
+      {leadIns?.[row]?.trim() ? <p className={styles.pairedLeadIn}>{leadIns[row]}</p> : null}
+      <div className={styles.comparisonGridFindings}>
+        {findings.slice(row * 2, row * 2 + 2).map(finding =>
+          <div className={styles.pairedFinding} data-percentage-finding key={finding.id}>
+            <strong>{finding.value}</strong>
+            <p>{finding.description}</p>
+          </div>)}
+      </div>
+    </section>)}
+    {note?.trim() || sourceNote ? <figcaption className={styles.pairedFootnote}>
+      {note?.trim() ? <p>{note}</p> : null}
+      {sourceNote ? <p>{sourceNote}</p> : null}
+    </figcaption> : null}
+  </figure>;
+}
+
 function PairedPercentageComparison({
   block,
 }: {
@@ -508,6 +543,18 @@ export function CanonicalReportComponent({
       return <PercentageRingGroup block={block} />;
     case "paired-percentage-comparison":
       return <PairedPercentageComparison block={block} />;
+    case "percentage-comparison-grid":
+      return <PercentageComparisonGrid title={block.presentation?.title ?? block.title}
+        leadIns={block.presentation?.leadIns} palette={block.presentation?.palette}
+        note={block.presentation?.note} synthetic={block.verifiedSource?.synthetic}
+        sourceNote={block.source.part !== "studio" ? block.footnote : undefined}
+        findings={block.metrics.map(metric => {
+          const raw = block.verifiedSource?.rows.find(row => row.id === metric.id)?.cells[1]?.replace(/%\s*$/, "").trim();
+          return {
+            id: metric.id, description: metric.description,
+            value: `${raw && Number(raw) === metric.value ? raw : metric.value}%`,
+          };
+        })} />;
     case "horizontal-bar-chart":
       return <HorizontalBarChart block={block} expandSupportingBullets={expandSupportingBullets} editingOrder={editingOrder} />;
     case "grouped-column-comparison":

@@ -9,6 +9,7 @@ export const canonicalVisualTypes = [
   "pull-quote",
   "percentage-ring-group",
   "paired-percentage-comparison",
+  "percentage-comparison-grid",
   "horizontal-bar-chart",
   "grouped-column-comparison",
   "before-after-comparison",
@@ -66,6 +67,11 @@ export const canonicalVisualOptions: Array<{
     kind: "paired-percentage-comparison",
     name: "Paired percentage comparison",
     reason: "Contrast two independent percentage findings",
+  },
+  {
+    kind: "percentage-comparison-grid",
+    name: "Percentage comparison grid",
+    reason: "Show four independent percentage findings in two rows",
   },
   {
     kind: "horizontal-bar-chart",
@@ -272,6 +278,18 @@ export function createCanonicalVisualBlock(
         metrics: [
           { id: `${id}-metric-1`, value: 83, description: "See an opportunity" },
           { id: `${id}-metric-2`, value: 43, description: "Have a clear plan" },
+        ],
+        footnote: "Synthetic example. Not research findings.",
+      };
+    case "percentage-comparison-grid":
+      return {
+        id, source, type,
+        title: "Four findings in two rows",
+        metrics: [
+          { id: `${id}-metric-1`, value: 38, description: "First illustrative finding" },
+          { id: `${id}-metric-2`, value: 29, description: "Second illustrative finding" },
+          { id: `${id}-metric-3`, value: 80, description: "Third illustrative finding" },
+          { id: `${id}-metric-4`, value: 75, description: "Fourth illustrative finding" },
         ],
         footnote: "Synthetic example. Not research findings.",
       };

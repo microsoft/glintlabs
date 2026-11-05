@@ -288,6 +288,7 @@ function renderBlock(
   if (isCanonicalVisualBlock(block)) {
     const isEditableVisual =
       block.type === "percentage-ring-group" ||
+      block.type === "percentage-comparison-grid" ||
       block.type === "paired-percentage-comparison" ||
       block.type === "horizontal-bar-chart" ||
       block.type === "grouped-column-comparison";

@@ -1,5 +1,6 @@
 import type { ChartTable } from "../visualization/chart-authoring.ts";
 import { parseChartValue, type ChartValueType, type VerifiedDataVisualType } from "../visualization/verified-data-visual.ts";
+import { PercentageComparisonGrid } from "../visualization/canonical-report-components";
 import styles from "./report-renderer.module.css";
 
 export type ChartDraftPreviewData = {
@@ -9,15 +10,17 @@ export type ChartDraftPreviewData = {
   subtitle?: string;
   leadIns?: [string, string];
   note?: string;
+  palette?: string;
   table: ChartTable;
   unit: ChartValueType;
 };
 
 export function ChartDraftPreview({ draft }: { draft: ChartDraftPreviewData }) {
   const grouped = draft.type === "grouped-column-comparison";
+  const grid = draft.type === "percentage-comparison-grid";
   const paired = draft.type === "paired-percentage-comparison";
   const rings = draft.type === "percentage-ring-group";
-  const requiredRows = grouped ? 4 : paired ? 2 : rings ? 3 : undefined;
+  const requiredRows = grouped || grid ? 4 : paired ? 2 : rings ? 3 : undefined;
   const shapeFits = draft.table.columns.length === (grouped ? 3 : 2) &&
     (!requiredRows || draft.table.rows.length === requiredRows) &&
     (draft.type === "horizontal-bar-chart" || draft.unit === "percentage");
@@ -28,7 +31,11 @@ export function ChartDraftPreview({ draft }: { draft: ChartDraftPreviewData }) {
     const number = parseChartValue(raw ?? "", draft.unit);
     return number === undefined ? "—" : `${raw!.replace(/%\s*$/, "").trim()}${draft.unit === "percentage" ? "%" : ""}`;
   }
-  return <figure className={styles.draftChart} data-chart-draft={draft.type} aria-label="Draft chart preview with missing-value placeholders">
+  const figure = grid ? <PercentageComparisonGrid draft title={draft.title.trim() || "Chart title"}
+    leadIns={draft.leadIns} note={draft.note} palette={draft.palette}
+    findings={rows.map(row => ({
+      id: row.id, value: value(row.cells[1]), description: row.cells[0].trim() || "—",
+    }))} /> : <figure className={styles.draftChart} data-chart-draft={draft.type} aria-label="Draft chart preview with missing-value placeholders">
     <figcaption className={styles.draftChartHeading}>
       <h3>{draft.title.trim() || "Chart title"}</h3>
       {draft.subtitle?.trim() ? <p>{draft.subtitle}</p> : null}
@@ -54,4 +61,8 @@ export function ChartDraftPreview({ draft }: { draft: ChartDraftPreviewData }) {
     </div> : null}
     {draft.note?.trim() ? <p className={styles.draftChartNote}>{draft.note}</p> : null}
   </figure>;
+  return <div className={`${styles.canonicalVisual} ${styles.interactiveVisual} ${styles.chartAuthoring} ${styles.selected}`}
+    data-report-component={draft.type}>
+    {figure}
+  </div>;
 }

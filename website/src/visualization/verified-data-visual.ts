@@ -10,6 +10,7 @@ export type VerifiedDataVisualBlock = Extract<
     type:
       | "percentage-ring-group"
       | "paired-percentage-comparison"
+      | "percentage-comparison-grid"
       | "horizontal-bar-chart"
       | "grouped-column-comparison";
   }
@@ -19,6 +20,7 @@ export type ChartValueType = "percentage" | "number";
 
 const verifiedVisualNames: Record<VerifiedDataVisualType, string> = {
   "paired-percentage-comparison": "Paired percentage comparison",
+  "percentage-comparison-grid": "Percentage comparison grid",
   "percentage-ring-group": "Percentage ring group",
   "horizontal-bar-chart": "Horizontal bar chart",
   "grouped-column-comparison": "Grouped column comparison",
@@ -83,6 +85,9 @@ export function compatibleVerifiedVisuals(
   }
   if (block.data.unit === "percentage" && block.data.columns.length === 2 && rows.length === 3) {
     compatible.push("percentage-ring-group");
+  }
+  if (block.data.unit === "percentage" && block.data.columns.length === 2 && rows.length === 4) {
+    compatible.push("percentage-comparison-grid");
   }
   if (block.data.unit === "percentage" && block.data.columns.length === 3 && rows.length === 4) {
     compatible.push("grouped-column-comparison");
@@ -155,6 +160,7 @@ export function createVerifiedDataVisual(
           "Source: approved structured data from the reviewed Word report.",
       };
     case "paired-percentage-comparison":
+    case "percentage-comparison-grid":
     case "percentage-ring-group":
       return {
         ...shared,
@@ -197,6 +203,7 @@ export function verifiedVisualMatchesSource(block: ReportBlock) {
   if (
     block.type !== "percentage-ring-group" &&
     block.type !== "paired-percentage-comparison" &&
+    block.type !== "percentage-comparison-grid" &&
     block.type !== "horizontal-bar-chart" &&
     block.type !== "grouped-column-comparison"
   ) {
@@ -242,6 +249,7 @@ export function verifiedVisualMatchesSource(block: ReportBlock) {
         JSON.stringify(block.items) === JSON.stringify(expected.items)
       );
     case "paired-percentage-comparison":
+    case "percentage-comparison-grid":
     case "percentage-ring-group":
       return (
         expected.type === block.type &&

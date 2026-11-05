@@ -23,6 +23,7 @@ function blockText(block: ReportBlock): (string | undefined)[] {
     case "branded-visual":
       return [block.title, ...block.values];
     case "paired-percentage-comparison":
+    case "percentage-comparison-grid":
       return [
         block.presentation?.title ?? block.title, ...(block.presentation?.leadIns ?? []),
         ...block.metrics.map(metric => metric.description), block.presentation?.note, block.footnote,

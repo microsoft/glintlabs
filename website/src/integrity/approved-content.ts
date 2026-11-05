@@ -114,6 +114,7 @@ function semanticBlock(block: ReportBlock) {
 
   if (
     (block.type === "percentage-ring-group" ||
+      block.type === "percentage-comparison-grid" ||
       block.type === "paired-percentage-comparison" ||
       block.type === "listening-methods-comparison" ||
       block.type === "horizontal-bar-chart" ||
@@ -247,6 +248,7 @@ export function evaluateApprovedContentIntegrity(
   const unsafeVisual = manifest.blocks.find(
     (block) =>
       (block.type === "percentage-ring-group" ||
+        block.type === "percentage-comparison-grid" ||
         block.type === "paired-percentage-comparison" ||
         block.type === "horizontal-bar-chart" ||
         block.type === "grouped-column-comparison") &&

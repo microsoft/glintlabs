@@ -10,11 +10,11 @@ export function validateChartTable(table: ChartTable, unit: ChartValueType = "pe
   if (table.columns.length !== columns || table.columns.some(value => !value.trim() || value.length > 100)) {
     errors.push({ row: -1, column: -1, message: `Use ${columns === 3 ? "three" : "two"} column headings, each between 1 and 100 characters.` });
   }
-  const fixedRows = visualType === "percentage-ring-group" ? 3 : visualType === "grouped-column-comparison" ? 4 : visualType === "paired-percentage-comparison" ? 2 : undefined;
+  const fixedRows = visualType === "percentage-ring-group" ? 3 : visualType === "grouped-column-comparison" || visualType === "percentage-comparison-grid" ? 4 : visualType === "paired-percentage-comparison" ? 2 : undefined;
   if (fixedRows && table.rows.length !== fixedRows) {
     errors.push({ row: -1, column: -1, message: visualType === "grouped-column-comparison"
       ? "Use exactly four categories and two percentage series."
-      : `Use exactly ${fixedRows === 3 ? "three" : "two"} percentage findings.` });
+      : `Use exactly ${fixedRows === 4 ? "four" : fixedRows === 3 ? "three" : "two"} percentage findings.` });
   } else if (table.rows.length < 2 || table.rows.length > 12) {
     errors.push({ row: -1, column: -1, message: "Use between 2 and 12 categories." });
   }

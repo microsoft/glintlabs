@@ -15,7 +15,6 @@ import { CheckmarkCircle20Regular } from "@fluentui/react-icons/svg/checkmark-ci
 import { ChevronDown16Regular } from "@fluentui/react-icons/svg/chevron-down";
 import { Desktop20Regular } from "@fluentui/react-icons/svg/desktop";
 import { DataBarHorizontal20Regular } from "@fluentui/react-icons/svg/data-bar-horizontal";
-import { DataBarVertical20Regular } from "@fluentui/react-icons/svg/data-bar-vertical";
 import { DataPie20Regular } from "@fluentui/react-icons/svg/data-pie";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
 import { DocumentText24Regular } from "@fluentui/react-icons/svg/document-text";
@@ -180,6 +179,7 @@ type VisualBlock = Extract<
       | "branded-visual"
       | "percentage-ring-group"
       | "paired-percentage-comparison"
+      | "percentage-comparison-grid"
       | "listening-maturity-scorecard"
       | "listening-approach-continuum"
       | "featured-statistic"
@@ -690,6 +690,7 @@ function VisualEditor({
     }
     if (
       (originalBlock.type === "percentage-ring-group" ||
+        originalBlock.type === "percentage-comparison-grid" ||
         originalBlock.type === "paired-percentage-comparison" ||
         originalBlock.type === "horizontal-bar-chart" ||
         originalBlock.type === "grouped-column-comparison") &&
@@ -888,7 +889,7 @@ export function PublishingStudio() {
   const removeDialogRef = useRef<HTMLDialogElement>(null);
   const removalName = pendingRemoval?.type === "image" ? "image" : pendingRemoval && [
     "data-visual-source", "horizontal-bar-chart", "paired-percentage-comparison",
-    "percentage-ring-group", "grouped-column-comparison",
+    "percentage-ring-group", "percentage-comparison-grid", "grouped-column-comparison",
   ].includes(pendingRemoval.type) ? "chart" : "component";
   useEffect(() => {
     if (pendingRemoval) removeDialogRef.current?.showModal();
@@ -1013,6 +1014,7 @@ export function PublishingStudio() {
 
       if (
         block.type !== "percentage-ring-group" &&
+        block.type !== "percentage-comparison-grid" &&
         block.type !== "paired-percentage-comparison" &&
         block.type !== "horizontal-bar-chart" &&
         block.type !== "grouped-column-comparison"
@@ -1717,7 +1719,7 @@ export function PublishingStudio() {
                 ["horizontal-bar-chart", "Bar chart", "Compare values", DataBarHorizontal20Regular],
                 ["paired-percentage-comparison", "Paired comparison", "Show two percentage findings", TextPercent20Regular],
                 ["percentage-ring-group", "Percentage rings", "Show three percentage findings", DataPie20Regular],
-                ["grouped-column-comparison", "Percentage comparison grid", "Compare two series across four groups", DataBarVertical20Regular],
+                ["percentage-comparison-grid", "Percentage comparison grid", "Show four percentage findings in two rows", TextPercent20Regular],
               ] as const).map(([type, title, description, Icon]) => <Button key={type} type="button"
                 className={styles.chartTypeCard}
                 onClick={() => setChartInsertion(current => current ? { ...current, type } : current)}>

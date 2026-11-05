@@ -552,6 +552,9 @@ test("chart content fields follow the visual reading order for every chart type"
       "Second heading (optional)", "Value (%), row 2", "Label, row 2", "Note (optional)"]],
     ["percentage-ring-group", ["Title", "Value (%), row 1", "Label, row 1",
       "Value (%), row 2", "Label, row 2", "Value (%), row 3", "Label, row 3"]],
+    ["percentage-comparison-grid", ["Title", "First row heading (optional)", "Value (%), row 1", "Label, row 1",
+      "Value (%), row 2", "Label, row 2", "Second row heading (optional)", "Value (%), row 3", "Label, row 3",
+      "Value (%), row 4", "Label, row 4", "Note (optional)"]],
     ["grouped-column-comparison", ["Title", "Subtitle (optional)", "Series 1 (%), row 1",
       "Series 2 (%), row 1", "Label, row 1", "Series 1 (%), row 4", "Series 2 (%), row 4",
       "Label, row 4", "Series 1 name", "Series 2 name"]],
@@ -568,9 +571,63 @@ test("chart content fields follow the visual reading order for every chart type"
     assert.ok(positions.every(index => index >= 0), `${type} exposes all content fields together: ${names.join(" -> ")}`);
     assert.deepEqual(positions, [...positions].sort((a, b) => a - b), `${type} follows the chart's reading order`);
     assert.deepEqual(view.filter(node => node.props?.role === "tab").map(text),
-      type === "horizontal-bar-chart" || type === "paired-percentage-comparison" ? ["Content", "Palette"] : ["Content"],
+      type === "horizontal-bar-chart" || type === "paired-percentage-comparison" || type === "percentage-comparison-grid"
+        ? ["Content", "Palette"] : ["Content"],
       "Content is not split between Data and Text tabs");
   }
+});
+
+test("percentage grids show four standalone findings in both complete and missing-value previews", async () => {
+  const jsx = (type, props) => ({ type, props });
+  const scope = { exports: {}, require() { return { jsx, jsxs: jsx }; },
+    styles: { canonicalVisual: "canonical", interactiveVisual: "interactive", chartAuthoring: "authoring", selected: "selected" },
+    parseChartValue };
+  const canonicalSource = ts.createSourceFile("canonical-report-components.tsx", readFileSync(new URL(
+    "../src/visualization/canonical-report-components.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const PercentageComparisonGrid = componentFunction("PercentageComparisonGrid", scope, canonicalSource);
+  const render = componentFunction("CanonicalReportComponent", { ...scope, PercentageComparisonGrid }, canonicalSource);
+  const previewSource = ts.createSourceFile("chart-draft-preview.tsx", readFileSync(new URL(
+    "../src/report-system/chart-draft-preview.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const preview = componentFunction("ChartDraftPreview", { ...scope, PercentageComparisonGrid }, previewSource);
+  const nodes = node => !node || typeof node !== "object" ? []
+    : typeof node.type === "function" ? nodes(node.type(node.props))
+      : [node, ...[node.props?.children].flat(Infinity).flatMap(nodes)];
+  const text = node => Array.isArray(node) ? node.map(text).join(" ")
+    : !node || typeof node === "boolean" ? "" : typeof node === "object"
+      ? text(typeof node.type === "function" ? node.type(node.props) : node.props?.children) : String(node);
+  const table = { columns: ["Finding", "Percentage"], rows: [
+    { id: "one", cells: ["First finding", "38.00"] }, { id: "two", cells: ["Second finding", "29"] },
+    { id: "three", cells: ["Third finding", "80"] }, { id: "four", cells: ["Fourth finding", "75.125"] },
+  ] };
+  const source = await createStudioChartSource({
+    id: "grid", sourceName: "Chart data", table, synthetic: false, visualType: "percentage-comparison-grid",
+  });
+  const presentation = {
+    title: "Four findings", leadIns: ["In the last six months...", "Yet..."], palette: "brand", note: "Independent findings.",
+  };
+  const block = { ...createVerifiedDataVisual(source, "percentage-comparison-grid", "2026-11-05T03:40:00.000Z"), presentation };
+  const before = structuredClone(block);
+  const complete = render({ block });
+  const incomplete = preview({ draft: {
+    blockId: "grid", type: "percentage-comparison-grid", title: presentation.title,
+    leadIns: presentation.leadIns, note: presentation.note, palette: "brand", unit: "percentage",
+    table: { ...table, rows: table.rows.map((row, index) => index ? row : { ...row, cells: ["First finding", ""] }) },
+  } });
+  assert.equal(incomplete.props.className, "canonical interactive authoring selected",
+    "An incomplete grid retains the selected chart authoring wrapper");
+  for (const view of [complete, incomplete]) {
+    const findings = nodes(view).filter(node => node.props?.["data-percentage-finding"]);
+    assert.equal(findings.length, 4);
+    assert.equal(nodes(view).filter(node => node.type === "strong").length, 4);
+    assert.equal(nodes(view).filter(node => node.type === "i").length, 0, "Neither state has bars");
+    for (const token of ["In the last six months...", "Yet...", "Independent findings.", "75.125%"]) assert.ok(text(view).includes(token));
+    assert.doesNotMatch(text(view), /Source: Chart data|Series 1|Series 2/);
+  }
+  assert.match(text(complete), /38\.00%/);
+  assert.match(text(incomplete), /—/);
+  assert.deepEqual(block, before, "Rendering does not change verified evidence");
 });
 
 test("Word chart data is immediately editable without copying or changing the original on open", () => {
