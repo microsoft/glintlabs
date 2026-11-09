@@ -152,6 +152,14 @@ because a command is retried or an unrelated repository file changed.
 The report contract defines score presentation for reports and interpretations;
 use item-level scores and changes, not cross-item averages.
 
+On both Attrition analysis and Attrition insights, show a visible **Baseline
+survey** label immediately after the introduction, near the controls. Resolve
+the title from the configured predictor cycle, not the current Correlation
+cycle selection or latest cycle by default, and include the confirmed completion
+date when available. If only the confirmed cycle ID is recorded, display it;
+if baseline metadata is unavailable, state **Not recorded** rather than guess.
+The label stays fixed when segment or outcome-window controls change.
+
 ## Analysis QA
 
 Apply this gate before interpreting new or existing outputs, or on its own
@@ -168,6 +176,18 @@ guardrails. Do not request respondent-level rows for QA.
 | Statistical caution | Correlations are non-causal, factors are stable enough for their intended use, and attrition results remain aggregate associations. |
 | Comparison validity | Item wording, scale, and populations are comparable across cycles. |
 | Interpretation readiness | Inspected outputs support the requested narrative, with limitations carried forward. |
+
+For attrition, inspect the standalone `attrition.csv`, the report's download
+target and embedded aggregate JSON, and the copy in the share ZIP, not just
+visible tables. If either
+favorable or unfavorable category is below the configured minimum (at least
+five), both category counts, both rates, and the multiplier must be blank/null
+before serialization. Keep the report's explicit suppressed state; missing
+counts are not zero. A suppressed visual with disclosive downloads fails QA.
+After fixing an export leak, rerun the official analyses and repeatability,
+regenerate the report and ZIP, and verify CSV copies agree and embedded
+suppressed metrics remain null.
+Do not share or interpret previously generated unsafe packages.
 
 Return **Not ready** and stop interpretation when outputs cannot be inspected,
 repeatability failed, required segment suppression is absent, attrition results

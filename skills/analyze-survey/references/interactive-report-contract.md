@@ -224,9 +224,17 @@ other tabs must not reset its selection.
   disable one control because the other has a value. State this additive
   behavior in on-page help text next to the filters.
 - Scores change, Attrition analysis, Attrition insights, and Downloads do not
-  wire into the Survey cycle selector: Scores change and Attrition insights
-  already manage explicit cycle-pair comparisons, and Attrition analysis is
-  anchored to one fixed baseline cycle by construction.
+  wire into the Survey cycle selector. Scores change manages explicit
+  cycle-pair comparisons; both attrition tabs use the fixed predictor baseline
+  and their own outcome-window controls.
+- On both attrition tabs, show **Baseline survey: &lt;predictor survey title&gt;**
+  immediately after the introduction and near the controls, with the confirmed
+  completion date when available. Resolve the title from the configured
+  predictor cycle's metadata before numeric bucketing; never borrow the
+  Correlation selector's current cycle or assume the latest survey. When only
+  the confirmed cycle ID is available, show that ID; when baseline metadata
+  is unavailable, explicitly show **Not recorded**. Escape metadata as text.
+  Keep the label unchanged when the segment or outcome window changes.
 - Treat it as a parent filter. Attrition insights must select their displayed
   dimensions within the selected segment.
 - Use saved aggregate values in the browser. Do not embed or recalculate from
@@ -376,8 +384,13 @@ exploratory, and attrition results are not individual predictions.
   comma-separated text with spreadsheet-safe cells from the download button.
   Report clipboard and export failures explicitly.
 - Do not display favorable or unfavorable counts or percentages in the report.
-  Retain them only in the privacy-safe aggregate artifact for auditability and
-  suppression enforcement.
+  Retain them only for eligible categories in the privacy-safe aggregate
+  artifact for auditability and suppression enforcement. When either category
+  is below the configured minimum, blank both category counts, both rates,
+  and the multiplier in `attrition.csv` before writing it. Apply the same
+  suppression to standalone downloads, embedded downloads, and ZIP copies.
+  Missing category counts retain the explicit suppressed state in the report;
+  never treat them as zero. Visible-cell suppression alone is insufficient.
 - If attrition cannot run, omit both Attrition analysis and Attrition insights.
 - Never generate synthetic attrition outcomes.
 - Calculate a two-sided Fisher exact test from the favorable and unfavorable

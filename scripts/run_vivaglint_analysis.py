@@ -123,8 +123,28 @@ def score_export_frame(name: str, frame: pd.DataFrame, scale_points: int) -> pd.
     return frame
 
 
-def write_csv(output_dir: Path, name: str, frame: pd.DataFrame, scale_points: int) -> str:
+def write_csv(
+    output_dir: Path,
+    name: str,
+    frame: pd.DataFrame,
+    scale_points: int,
+    minimum_category_n: int = 5,
+) -> str:
     artifact = f"{name}.csv"
+    if name == "attrition":
+        if minimum_category_n < 5:
+            raise ValueError("Attrition minimum_category_n must be at least 5.")
+        frame = frame.copy()
+        eligible = (
+            frame[["favorable_n", "unfavorable_n"]]
+            .ge(minimum_category_n)
+            .all(axis=1)
+        )
+        metrics = [
+            "favorable_n", "favorable_attrition",
+            "unfavorable_n", "unfavorable_attrition", "attrition_ratio",
+        ]
+        frame[metrics] = frame[metrics].where(eligible, axis=0)
     score_export_frame(name, frame, scale_points).to_csv(output_dir / artifact, index=False)
     return artifact
 
@@ -731,6 +751,11 @@ def main() -> int:
     if "attrition" in requested:
         start_step("attrition")
         embedded_attrition = config.get("embedded_attrition")
+        minimum_category_n = max(
+            5,
+            min_group_size,
+            int((embedded_attrition or {}).get("minimum_category_n", min_group_size)),
+        )
         attrition_file = resolve_path(config_path, config.get("attrition_file"))
         term_date_col = config.get("term_date_col")
         if embedded_attrition:
@@ -748,7 +773,9 @@ def main() -> int:
                     emp_id_col,
                     min_group_size,
                 )
-                return write_csv(output_dir, "attrition", frame, scale_points)
+                return write_csv(
+                    output_dir, "attrition", frame, scale_points, minimum_category_n
+                )
             result = run_step("attrition", attrition)
             analyses.append(result)
             if result.artifact:
@@ -800,7 +827,9 @@ def main() -> int:
                     frames.append(segmented)
 
                 frame = pd.concat(frames, ignore_index=True, sort=False)
-                return write_csv(output_dir, "attrition", frame, scale_points)
+                return write_csv(
+                    output_dir, "attrition", frame, scale_points, minimum_category_n
+                )
             result = run_step("attrition", attrition)
             analyses.append(result)
             if result.artifact:

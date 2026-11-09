@@ -5,41 +5,56 @@ See `catalog.json` for the machine-readable list of resources and
 This file is the authoritative retrieval contract; the other two files are
 generated or curated views that must never override it.
 
-## Primary source: the saved External-tab snapshot
+## Collection precedence: new catalog before the original vault
 
-The workbook that backs this vault is:
+Filter for relevance and applicability before ranking. Among sources that answer
+the question, use this order:
 
-```text
-https://microsoft.sharepoint-df.com/:x:/t/EVE/cQpI5FMS_jROSLEqT1-GT-KsEgUClfK5_gr5DhPyL0MFgifvGw
-```
+1. **New catalog:** the reviewed published Research Drops registered with
+   `group: research-drop` in `theme-index.json`.
+2. **Original vault:** the `catalog.json` resources, retaining their existing
+   column-J order: `top5` / `curated`-equivalent > `high` > `medium` > `low`.
 
-Observed workbook name: `People_Science_Content_full_index.xlsx`. Use **only**
-the worksheet named `External`. This workbook is IRM/RMS-protected, so it
-cannot be fetched with a plain unauthenticated request; see
-`workbook-schema.json`'s `access_notes` for how to refresh it.
+The collection preference is an explicit user-directed retrieval policy, not a
+claim that every Drop is newer, stronger evidence, or suitable for every question.
+An irrelevant Drop never displaces applicable vault documentation or research.
+Preserve populations, methods, dates, product validity, and contradictory evidence.
+Within the new collection, use relevance; do not invent workbook priorities.
+A Drop's null `priority_tier` means no workbook rank, not lower global priority.
+Unreviewed live discoveries do not automatically join the new catalog.
 
-Rather than re-fetching the live workbook on every retrieval, this skill keeps
-a point-in-time copy of every `External` row in
-`references/external-tab-snapshot.json`, and a curated, enriched view of the
-same rows (plus a few supplementary entries) in `references/catalog.json`.
-**Prefer the local snapshot and catalog for normal retrieval.** Only re-open
-the live workbook when the snapshot is stale (see `workbook-schema.json`'s
-`staleness_check`) or a question needs material published after the
-snapshot's `retrieved_at` date.
+Start with `corpus-guide.md` and the generated `topic-lookup.md`; use
+`theme-lookup.md` or `theme-index.json` for individual source profiles.
+These repository files and their public source links do not depend on private
+SharePoint or a local extraction cache. Ownership records are provenance only.
+`prioritized-resources.md` lists only the original vault and preserves its order.
 
-### Ranking: column J drives priority, not channel
+## Original-vault source: the repository context catalog
+
+Use this context folder's `catalog.json` for original-vault metadata. Its priorities
+were derived from the publisher's saved `External` worksheet and do not
+require access to that workbook. Normal users must not refresh a private
+workbook, retrieve ownership records, or install Work IQ.
+
+If the review is old or coverage is insufficient, check the public sources
+below and disclose the review date and any gap. Workbook maintenance belongs
+to authorized publishers, separately documented in the repository's
+`references/maintenance/knowledge-vault/README.md`; it is not a public runtime
+dependency.
+
+### Within the original vault: column J drives priority, not channel
 
 Column J, `Priority to add to context library`, is the authoritative ranking
-signal. It has four levels, from highest to lowest:
+signal within that collection. It has four levels, from highest to lowest:
 
-1. `top5` - the small set of resources judged most essential; always check
-   these first and lean on them most heavily.
+1. `top5` - the small set judged most essential within the original vault.
 2. `high`
 3. `medium`
 4. `low`
 
 `catalog.json` carries this as each entry's `priority_tier` field. When two
-resources could both answer a question, prefer the higher `priority_tier`.
+original-vault resources could both answer a question, prefer the higher
+`priority_tier`; this does not override the new catalog's collection precedence.
 A fifth value, `curated`, marks resources that are **not** present in the
 External-tab snapshot at all (see "Supplementary curated resources" below) -
 treat `curated` as roughly `top5`-equivalent in authority, since these were
@@ -54,11 +69,8 @@ confirmed by the content owner as externally shareable and high-value:
 - [Building a holistic employee listening ecosystem](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/894/1/Holistic%20Listening%20Infographic_09292023%201.pdf)
 - [Redefining High Performance in the New Era of Work](https://www.microsoft.com/content/dam/microsoft/final/en-us/microsoft-brand/documents/Microsoft-HPO-Guide-Oct-2023.pdf)
 
-The SharePoint/OneDrive originals in `catalog.json`'s `internal_record` field
-for these entries (and for the two workbook-sourced `top5` entries below) are
-the internal record of ownership/approval, not for retrieval. An automated
-retrieval agent generally cannot authenticate into SharePoint/OneDrive, so
-**cite and retrieve the public link, not the internal record.**
+**Cite and retrieve the public link, not private ownership records.** The
+context library exports public catalog fields only.
 
 Two further resources appear in the workbook as `top5` rows whose `URL`
 column only holds an internal `.pptx` filename (no public link); their public
@@ -69,7 +81,7 @@ PDF substitutes are already catalogued:
 
 ## Secondary, supplementary check: live Microsoft sources
 
-These live sources are useful **in addition to** the snapshot, mainly to catch
+These live sources are useful **in addition to** the combined reviewed index, mainly to catch
 material published after `retrieved_at`, or when the snapshot plainly lacks
 coverage of the question:
 
@@ -106,31 +118,30 @@ this:
 | Microsoft Learn (Pulse) Set-up, Deployment | Tactical how-to for Pulse roles, privacy, or access |
 | AI and trust / High performance / Employee listening (supplementary) | Agentic AI trust-building, organizational AI readiness, holistic listening ecosystem design, high-performance org design |
 
-Before searching, use this table (and the complex-question judgment call in
-`SKILL.md`'s retrieval process) to decide which themes are in scope, then
-filter `catalog.json` entries by theme and sort by `priority_tier`.
+Use this table as a browsing aid, not an exclusive category filter. Search the
+shared topics and source-specific themes across both collections first: a source
+can answer a question outside its single catalog category. Then apply collection
+precedence and the original-vault tier order. The shared `privacy-confidentiality`
+topic covers ordinary data/access protections; `ai-governance` is AI-specific.
+General career development belongs under `growth-development`, not automatically
+under `ai-skills`. Resource theme kinds distinguish findings, guidance, methods,
+documentation, and navigation signposts.
 
 ## Explicit exclusions
 
-Never retrieve secondary knowledge from these observed worksheets:
-
-- `All Items`
-- `Asset List`
-- `EVE Delivery Prioritization`
-- `Sheet1`
-- `Internal PSEs & POVs`
-- `Survey Programs`
-
-The workbook may change over time. The rule is based on the worksheet name
-`External`, not its current worksheet ID, range, row count, or column order.
+Private workbooks, unpublished drafts, internal-only records, and private
+extraction caches are not eligible runtime evidence. Only the publisher's
+`External` worksheet informs the saved original-vault catalog; maintenance
+must not import other worksheets.
 
 ## Precedence and deduplication
 
 1. Canonicalize URLs by removing tracking parameters and normalizing host/path.
-2. Deduplicate identical articles across the snapshot, catalog, and any live
+2. Deduplicate identical articles across the catalog, reviewed index, and any live
    checks.
-3. Rank by `priority_tier` first (`top5` > `high` > `medium` > `low`, with
-   `curated` treated as `top5`-equivalent), then by relevance to the theme(s)
-   in scope.
-4. When sources disagree, prefer the higher `priority_tier` resource and
-   describe meaningful differences rather than silently blending them.
+3. Filter relevance and applicability, prefer registered new-catalog Research
+   Drops, then retain `top5` / `curated`-equivalent > `high` > `medium` > `low`
+   within the original vault. Use relevance within equal priority.
+4. When sources disagree, describe methodological and contextual differences
+   rather than silently blending them or treating collection rank as proof.
+   Apply the preference only among sources applicable to the claim.

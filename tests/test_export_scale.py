@@ -147,6 +147,36 @@ def test_non_score_exports_keep_their_units(tmp_path, name, values):
     pd.testing.assert_frame_equal(pd.read_csv(tmp_path / f"{name}.csv"), frame)
 
 
+@pytest.mark.parametrize("minimum", [5, 10])
+def test_attrition_csv_suppresses_both_categories_before_export(tmp_path, minimum):
+    metrics = [
+        "favorable_n", "favorable_attrition",
+        "unfavorable_n", "unfavorable_attrition", "attrition_ratio",
+    ]
+    frame = pd.DataFrame({
+        "question": ["small_favorable", "small_unfavorable", "missing", "eligible"],
+        "days": [365] * 4,
+        "favorable_n": [minimum - 1, minimum, math.nan, minimum],
+        "unfavorable_n": [minimum, minimum - 1, minimum, minimum],
+        "favorable_attrition": [0.1] * 4,
+        "unfavorable_attrition": [0.3] * 4,
+        "attrition_ratio": [3.0] * 4,
+    })
+    original = frame.copy(deep=True)
+
+    runner.write_csv(tmp_path, "attrition", frame, 5, minimum)
+    exported = pd.read_csv(tmp_path / "attrition.csv")
+
+    assert exported.loc[:2, metrics].isna().all().all()
+    pd.testing.assert_frame_equal(
+        exported.loc[[3]], original.loc[[3]], check_dtype=False
+    )
+    pd.testing.assert_frame_equal(
+        exported.drop(columns=metrics), original.drop(columns=metrics)
+    )
+    pd.testing.assert_frame_equal(frame, original)
+
+
 @pytest.mark.parametrize("attribute_view_mode", ["combined", "separate"])
 def test_runner_exports_scores_and_declares_units(tmp_path, monkeypatch, attribute_view_mode):
     survey = pd.DataFrame({

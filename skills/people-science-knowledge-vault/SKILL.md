@@ -9,12 +9,58 @@ allowed-tools: Read, Glob, Grep, WebFetch
 Find relevant published knowledge, synthesize it with appropriate caution, and cite
 the source articles directly. For complex or ambiguous research questions, act as a
 researcher/consultant and work the scope out with the user before answering (see
-Step 0 below). The skill defines the source hierarchy and answer contract, and
-ships a generated catalog of already-known resources
-(`references/catalog.json`, rendered for humans in
-`references/prioritized-resources.md`), a saved copy of the live workbook's
-`External` worksheet (`references/external-tab-snapshot.json`), and the
-retrieval rules in `references/source-priority.md`.
+Step 0 below). The public context library lives beside this skill in
+`skills/people-science-knowledge-vault/references/`; no local copy is required.
+
+## Start from the link: no installation
+
+The user can paste this skill's GitHub URL and ask a question. Read the full
+linked instructions, then follow these public context links as needed:
+
+1. Read the [context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md),
+   [source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md),
+   and [corpus guide](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/corpus-guide.md).
+2. Follow relevant small topic pages from the entry, then their individual
+   source-profile links. Each profile includes reviewed themes, scope,
+   limitations, and study-family context.
+3. Retrieve the original public publications before using their claims.
+   The context summaries are navigation, not full source evidence.
+
+Use the raw links above when GitHub's rendered page returns navigation or
+truncation instead of the file body. If the supplied skill URL specifies a
+branch, tag, or commit other than `main`, resolve all repository context
+links against that same ref; do not silently mix versions. Read linked files
+on demand rather than loading the entire library into one prompt. Check for
+truncation and follow the smaller topic/source pages instead of treating a
+partial response as the complete library.
+
+Do not ask users to download a ZIP, clone the repository, install a plugin,
+copy local files, run scripts, or obtain Microsoft-internal access. Reading
+the link is a conversation-scoped workflow, not native skill registration
+or a persistent connection. An existing native installation is optional;
+when given an explicit link, follow that linked revision rather than a stale
+installed copy.
+
+## Public-use capability check
+
+The host must be able to retrieve public GitHub/raw files and complete web
+article bodies, and extract PDF text when relevant. Tool names above are
+host-specific; equivalent tools are acceptable. A link preview is not
+full-source retrieval. If the host cannot read external links, state that
+the library has not been loaded; do not claim a link alone connects it.
+
+For recording-backed claims, check whether the host can retrieve audio or
+captions, or whether the context library's `media-alternatives.json` registers
+an approved hosted text alternative with the required coverage. A player page is not the
+recording. If this capability is missing, use accessible article evidence only
+and disclose that recording-only claims were not reviewed. Do not silently
+replace them with recap text or theme summaries.
+
+If the host cannot retrieve full sources, offer topic/source discovery with
+links, explicitly not an evidence-backed answer, or ask for a public source
+body the user can supply. This link-only workflow requires internet access.
+Never ask an external user to open or refresh the
+publisher's protected workbook.
 
 ## Use when
 
@@ -32,16 +78,18 @@ that skill is available; do not imply it has been connected when it has not.
 
 ## Required source priority
 
-Inspect `references/` first, especially `source-priority.md`. Use
-`references/prioritized-resources.md` for a quick, human-readable view of
-already-known resources, and `references/catalog.json` if you need the same
-list in a structured form with `priority_tier` and `research_questions`
-fields. `references/external-tab-snapshot.json` is the saved, raw copy of the
-workbook's `External` worksheet that `catalog.json` is derived from.
+Read the linked context entry and `source-priority.md` first. The adjacent
+`references/prioritized-resources.md` and `catalog.json` list ranked resources
+with `priority_tier` and `research_questions`. Published priorities need no
+workbook or refresh tools at runtime.
 
-Resources are ranked by a single scale, taken from the workbook's
-`Priority to add to context library` column (column J) and carried in
-`catalog.json` as `priority_tier`:
+First filter relevance and applicability, then prefer the new catalog's reviewed
+Research Drops over original-vault resources. Collection priority is a retrieval
+preference, not proof of evidence quality or current product validity. Do not
+force an irrelevant Drop into an answer.
+
+Within the original vault, preserve workbook column J's saved `catalog.json`
+`priority_tier` order:
 
 1. **`top5`** - the small set of resources judged most essential.
 2. **`high`**
@@ -51,14 +99,57 @@ Resources are ranked by a single scale, taken from the workbook's
    high-value that are not present in the workbook snapshot at all; treat
    these as roughly `top5`-equivalent in authority.
 
-Prefer the higher `priority_tier` resource whenever more than one could answer
-the question. See `source-priority.md` for the full routing table of which
-`theme` to reach for given a research question, the supplementary curated
-resources, and the secondary live-retrieval checks (Microsoft Viva Blog
-category page, Microsoft Learn, Adoption Center) that are useful for material
-published after the snapshot was taken, but are not re-ranked by column J.
+Among relevant original-vault resources, prefer higher tiers after collection
+precedence. `source-priority.md` covers research-question routing, curated
+resources, and live checks for newer material; live discoveries are not
+re-ranked by column J.
 
-Do not use workbook rows from any worksheet other than `External`.
+Do not retrieve private provenance or source workbooks during normal use.
+
+## Quick theme lookup
+
+Start with the linked context entry and its small topic pages to find sources
+by shared concept. They are hosted in this skill's `references` folder and require
+no local files, private SharePoint access, or extraction cache.
+
+Use individual source pages to read ten reviewed themes per accessible resource.
+For bulk inspection, `references` also has `theme-lookup.md`,
+`topic-lookup.md`, and `theme-index.json`; check retrieval limits before using
+these larger files. No script execution is required. The index includes the catalog plus 17 published Research
+Drop counterparts. An unavailable webinar-series directory is recorded as a gap
+with zero themes, not populated from its unrelated redirect.
+
+Read each profile's theme kinds, source context, reviewed asset scope, and shared
+study-family descriptions, not just labels. Ten editorial themes are not ten
+independent findings; repeated publications or shared topic tags do not establish
+independent corroboration or claim-level duplication. Preserve distinct analyses,
+caveats, and contradictory evidence when consolidating repeated ideas.
+
+Evidence anchors help locate passages after retrieving the public source:
+`L` means nonblank extraction line (not browser source line), `p` means PDF page,
+and `s` means reviewed machine-transcript segment with a recording URL and start
+time. Retrieve recording evidence for audio-only claims; a recap cannot support
+them. Machine transcription does not certify visual-only content or exact numbers.
+
+The corpus guide explains grouping, inventory counts, media coverage, and gaps.
+Keep relevant Research Drops first, then the original vault's unchanged priorities.
+A Drop's null workbook priority is not lower collection priority. Disclose which
+collections were reviewed. Themes and hashes never replace full-source retrieval
+or freshness checks.
+
+## Adaptive answering
+
+Choose the approach, sources, structure, and detail that best serve the user.
+Retrieval steps define evidence obligations, not an answer outline. Seek enough
+relevant evidence, not the most sources; avoid needless clarification.
+
+Judge success by useful, supported answers, preserved uncertainty and scope,
+and separation of findings, recommendations, and speculation. Avoid unsupported
+precision and complexity. Source priority, full-source verification, boundaries,
+and guardrails remain mandatory.
+
+Examples illustrate judgment, not required methods or formats. Alternatives
+meeting these criteria are valid.
 
 ## Retrieval process
 
@@ -75,26 +166,26 @@ retrieving anything, check whether the question:
 - Could reasonably be answered several different, mutually exclusive ways
   depending on unstated context (audience, timeframe, desired outcome).
 
-If missing context would materially change the answer, explain the uncertainty
-in plain language and ask the focused questions needed to choose a useful path.
-Help the user get started: offer concrete options or a safe first check when
-possible, rather than making them design the whole approach. If they say they do
-not know where to start, help them decide what to look at; do not repeatedly ask
-for the same missing context before offering guidance.
+If missing context would materially change the answer, explain why and ask
+focused questions. Offer concrete options or a safe first check instead of
+repeating clarification.
 
-Once the purpose is clear enough to give useful published guidance, retrieve it
-and explain what still depends on missing information. Give practical suggestions
-without assuming a cause or selecting an intervention that requires an unverified
-explanation. Narrow factual questions can proceed directly to retrieval.
+Once scope is sufficient, retrieve published guidance and state remaining gaps.
+Do not assume causes or recommend interventions requiring unverified explanations.
+Narrow factual questions can proceed directly to retrieval.
 
 ### Steps 1+: retrieve and synthesize
 
 1. Translate the (now-scoped) question into a small set of specific concepts
    and close variants.
-2. Use `source-priority.md`'s routing table to identify which `theme`(s) in
-   `catalog.json` are in scope, then filter and sort candidate entries by
-   `priority_tier` (`top5` > `high` > `medium` > `low`, `curated` treated as
-   `top5`-equivalent).
+2. Follow relevant small topic/source pages, or search the larger
+   `theme-index.json` / `theme-lookup.md` when full retrieval is supported,
+   across both collections for
+   relevant topics and source-specific themes. Catalog categories and research
+   questions are navigation aids, not exclusive filters. Prefer relevant new
+   Research Drops, then original-vault resources in their unchanged
+   `top5` / `curated`-equivalent > `high` > `medium` > `low` order. Read the
+   theme kind, context, asset scope, and shared-study links before selecting.
 3. Retrieve the full published article body for each relevant candidate
    URL. Confirm that body text was actually returned before citing it or counting
    it as reviewed. Empty/error pages, titles, and search snippets are discovery
@@ -102,14 +193,25 @@ explanation. Narrow factual questions can proceed directly to retrieval.
    source counts; disclose the gap rather than supplying the article's claims
    from general knowledge. Catalog/snapshot metadata helps route retrieval but
    is not a substitute for article evidence.
-4. If the snapshot plainly lacks coverage, or the question needs material
-   newer than the snapshot's `retrieved_at` date, run the secondary live
-   checks described in `source-priority.md` (Viva Blog category page,
+   For PDF- or recording-backed themes, also retrieve the declared public
+   companion source; a recap alone cannot substantiate recording-only claims.
+   An approved hosted alternative may support only its explicitly declared
+   source and coverage. Cite the original public source and identify the text
+   alternative and its review date; it is not a live-source freshness check.
+4. If the combined reviewed index lacks coverage, or the question needs material
+   newer than its review date, run the secondary live
+   checks described in `source-priority.md` (Microsoft Viva Blog category page,
    Microsoft Learn, Adoption Center) and say explicitly that you did so.
-5. Deduplicate by canonical article URL. If a resource appears in more than
-   one place, treat it at its highest `priority_tier`.
-6. Synthesize only claims supported by retrieved article bodies and attach
-   citations directly to those claims.
+5. Deduplicate by canonical article URL. Preserve registered collection
+   precedence and the highest applicable original-vault tier; do not count
+   duplicate appearances as separate evidence.
+6. Cite only claims supported by retrieved full sources. Before delivery, verify
+   substantive numbers (sample sizes, dates, effect sizes) against retrieved
+   evidence. Label calculations using verified inputs. Omit unverified numbers;
+   retain qualitative claims only if separately supported. Never substitute vague
+   quantifiers or remembered figures. Remove unsupported claims; unsupported does
+   not mean false. Disclose material missing numbers and seek evidence; explicitly
+   correct numbers already delivered. Do not narrate routine draft cleanup.
 7. Describe how many retrieved sources support the answer and distinguish
    research findings from published recommendations and author commentary. Lead
    with the best-supported pattern and state material disagreement or gaps.
@@ -157,10 +259,8 @@ coverage for exploratory reasoning, so it carries its own rules:
 
 ## Output format
 
-Use plain, conversational language for an HR partner, analyst, or manager. Match
-the format to the user's need rather than forcing every follow-up into a research
-report. A clarification can be a short explanation, useful starting options, and
-the question needed next; it does not need a "scope" heading.
+Use plain, conversational language for an HR partner, analyst, or manager.
+Clarifications can offer starting options and a question without a heading.
 
 Once there is enough context, lead with the direct answer. For practical requests,
 give usable steps, choices, or sample wording. Separate what retrieved sources
@@ -169,7 +269,8 @@ a tested intervention. Keep citations beside the claims they support. When draft
 scripts or summaries, keep hypothetical situations conditional and use placeholders
 for results that have not been supplied; do not present them as observed team facts.
 
-For a longer evidence summary, a compact format is:
+One optional format for a longer summary follows. Adapt it to the user; keep
+sources and material limitations clear without requiring dedicated headings.
 
 ```markdown
 <Direct answer, with the key limitation when it matters.>
@@ -194,7 +295,13 @@ clear.
 
 ## Guardrails
 
-- Use only externally published article bodies for substantive evidence.
+- Use only externally published article bodies, public PDFs, and explicitly
+  reviewed public companion recordings for substantive evidence. Keep recording
+  claims tied to recording citations; do not infer them from recap metadata.
+- An appendix is not automatically internal. Published appendices are eligible;
+  exclude explicitly internal-labeled unpublished sections, private notes,
+  reviewer comments, and ownership details. Never retrieve a private original
+  merely because it is listed as catalog provenance.
 - Never use rows from `All Items`, `Internal PSEs & POVs`, or any other workbook
   worksheet; the vault treats only article records from the `External` worksheet
   as eligible evidence.
@@ -225,20 +332,12 @@ clear.
   it; never blend unhedged speculation into the standard evidence-backed
   summary format.
 - Never cite a source for an extrapolated/speculative claim; citations are
-  reserved for claims directly supported by retrieved article bodies.
+  reserved for claims directly supported by retrieved full sources.
 
-## Future extension points
+## Publisher maintenance
 
-- [Done] Generated catalog of canonical URLs and article metadata
-  (`references/catalog.json`, `scripts/build_knowledge_vault_resources.py`).
-- [Done] Duplicate detection against `analyze-survey`'s source index
-  (`check_catalog_matches_source_index` in the build script and
-  `tests/test_knowledge_vault_catalog.py`).
-- [Done] Retrieval-quality tests covering catalog integrity, workbook-schema
-  consistency, and generated-file freshness (`tests/test_knowledge_vault_catalog.py`).
-- Add a true automated refresh and dead-link check that fetches each catalog URL
-  over the network on a schedule (the current staleness check only compares dates,
-  it does not re-fetch pages).
-- Add topic aliases for common synonyms (e.g., "manager effectiveness" vs.
-  "people leader effectiveness") to improve retrieval-query translation.
-- Add a reviewed cache of article bodies if repository policy permits it.
+Public context and evidence-link checks are automated in the repository.
+Protected-workbook refresh and permission review belong to authorized
+publishers, not users. The maintenance guide is separate from runtime context:
+`references/maintenance/knowledge-vault/README.md`. Do not execute maintenance
+scripts during ordinary link-based chat.
