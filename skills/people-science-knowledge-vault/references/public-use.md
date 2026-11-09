@@ -78,6 +78,10 @@ responses, or player shells. Check truncation; the small topic and source pages
 avoid requiring the entire index in one model context.
 Follow [research workflow](research-workflow.md) and, for results,
 [results exploration](results-exploration.md); load these only for the task at hand.
+Before named Glint report/view recommendations, click paths, or browser navigation,
+also load [Glint navigation](glint-navigation.md) under the same gate. Research-only
+answers do not require it. If it is unavailable, withhold navigation directions
+without blocking otherwise-supported research or interpretation.
 
 ## Optional controlled-host enforcement
 

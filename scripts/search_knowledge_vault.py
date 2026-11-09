@@ -532,6 +532,10 @@ def render_web_context(index: dict) -> dict[str, str]:
         "Substantive interpretation and the next verification require applicable "
         "full-source research, not just a description of the screen. User evidence "
         "stays separate from this public library.", "",
+        "Before named Glint report/view recommendations, click paths, or browser "
+        f"navigation, also load [Glint navigation]({RAW_BASE}/glint-navigation.md). "
+        "It is not required for research-only answers; missing navigation guidance "
+        "blocks directions, not otherwise-supported research or interpretation.", "",
         "These are discovery summaries, not full source bodies. Follow a topic "
         "to its source profiles, then retrieve the original public publications "
         "before supporting claims. Prioritize relevant Research Drops, then the "

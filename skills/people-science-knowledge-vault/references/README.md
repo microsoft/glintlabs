@@ -8,6 +8,8 @@ Read [source priority](https://raw.githubusercontent.com/microsoft/glintlabs/mai
 
 Use the same skill for published guidance and user-authorized Glint results. Follow the [research workflow](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/research-workflow.md); for screenshots/results also read [results exploration](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/results-exploration.md). Substantive interpretation and the next verification require applicable full-source research, not just a description of the screen. User evidence stays separate from this public library.
 
+Before named Glint report/view recommendations, click paths, or browser navigation, also load [Glint navigation](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/glint-navigation.md). It is not required for research-only answers; missing navigation guidance blocks directions, not otherwise-supported research or interpretation.
+
 These are discovery summaries, not full source bodies. Follow a topic to its source profiles, then retrieve the original public publications before supporting claims. Prioritize relevant Research Drops, then the original-vault tiers. Shared studies are not independent replications.
 
 If a host cannot retrieve these files, disclose the limitation; do not claim this library has been loaded. A link does not register a native skill or create a persistent connection. Stay on the same repository branch/tag/commit as the supplied skill link; main is the default.

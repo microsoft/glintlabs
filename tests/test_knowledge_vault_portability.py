@@ -300,6 +300,49 @@ def test_results_contract_requires_research_and_conditional_brief_followups():
     assert "end your response with 1-3" not in skill + research + results
 
 
+def test_navigation_loading_is_conditional_and_preserves_unaffected_work():
+    skill = " ".join(context_check.SKILL_PATH.read_text(encoding="utf-8").split())
+    navigation = " ".join(
+        (lookup.REFERENCES / "glint-navigation.md").read_text(encoding="utf-8").split()
+    )
+    public_use = " ".join(
+        (lookup.REFERENCES / "public-use.md").read_text(encoding="utf-8").split()
+    )
+    assert "not required for research-only answers" in skill
+    assert "block report/view directions and browser navigation" in skill
+    assert "not otherwise-supported research or interpretation" in skill
+    assert "same-ref loading and recovery after lost context" in navigation
+    assert "withhold navigation directions" in navigation
+    assert "without blocking otherwise-supported research or interpretation" in public_use
+    assert "product guidance, not People Science research evidence" in navigation
+
+
+def test_navigation_contract_prevents_ambiguous_routes_and_unrequested_actions():
+    navigation = " ".join(
+        (lookup.REFERENCES / "glint-navigation.md").read_text(encoding="utf-8").split()
+    )
+    results = " ".join(
+        (lookup.REFERENCES / "results-exploration.md").read_text(encoding="utf-8").split()
+    )
+    for requirement in (
+        "it is not a complete question list",
+        "use only controls actually verified in the current view",
+        "do not claim its comments are unavailable",
+        "A repeated title or month is not a cycle identifier",
+        "Comment Sentiment describes text, not the item's response Favorability",
+        "Hidden, loading, or unresponsive pages are not verified empty states",
+        "do not repeat unavailable requests or reconstruct suppressed cells",
+        "does not prove a control is read-only",
+        "permission to tour the platform is not that authorization",
+        "stop the triggering workflow, disclose it",
+    ):
+        assert requirement in navigation
+    assert "## Next step: <one concrete action>" in results
+    assert "directly instead of asking for a redundant screenshot" in results
+    assert "Omit the header when no user action is needed" in results
+    assert "do not click them merely to discover their behavior" in results
+
+
 def test_screenshot_routing_preserves_artifact_qa_without_manifest_intake():
     vault = context_check.SKILL_PATH.read_text(encoding="utf-8")
     analysis = (ROOT / "skills/analyze-survey/SKILL.md").read_text(encoding="utf-8")
