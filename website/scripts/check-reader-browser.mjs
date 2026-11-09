@@ -14,7 +14,8 @@ const origin = `http://127.0.0.1:${process.env.PORT ?? 3011}`;
 const prefix = readerBasePath();
 const staging = isStagingReader();
 const reports = getLaunchReports({ includePrivatePreview: false });
-const routes = [
+const toolsOnly = process.argv.includes("--tools-only");
+const routes = toolsOnly ? ["/", "/tools", "/tools/analyze-survey"] : [
   "/", "/reports", "/tools", "/about", "/annual-report-2026", "/tools/analyze-survey",
   ...reports.map((report) => `/reports/${report.slug}`), "/reports/glps-rd-feb-26",
 ];
@@ -32,6 +33,7 @@ const failures = [];
 const errors = [];
 const pending = new Map();
 const states = [];
+const toolModals = [];
 const navigation = [];
 const exposure = [];
 let preview;
@@ -109,6 +111,7 @@ async function stop(child) {
 
 try {
   let listening = false;
+  console.log(`Reader browser scope: ${toolsOnly ? "Tools interactions and shared catalog" : "all reader routes"}`);
   preview = start(process.execPath, ["scripts/serve-pages.mjs"]);
   preview.stdout.on("data", (chunk) => {
     if (chunk.toString().includes("Pages preview:")) listening = true;
@@ -232,6 +235,9 @@ try {
           {runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21aa"]}})).violations)()`), []);
       } else {
         assert.equal(await evaluate('document.querySelector("[data-glintlabs-environment]")'), null);
+      }
+      if (route === "/" || route === "/tools") {
+        await checkToolsModals();
       }
       if (route === "/" || route === "/reports") {
         await evaluate(`(async () => {
@@ -435,6 +441,15 @@ try {
       console.log(`Verified ${width}px ${route}`);
     }
   }
+  for (const viewport of [{ width: 320, height: 568 }, { width: 1440, height: 480 }]) {
+    await send("Emulation.setDeviceMetricsOverride", { ...viewport, deviceScaleFactor: 1, mobile: false });
+    await evaluate("window.__readerPending = true");
+    await send("Page.navigate", { url: `${origin}${prefix}/tools/` });
+    await waitFor(() => evaluate('window.__readerPending !== true && document.readyState === "complete"'), "Short viewport navigation");
+    await evaluate(`${axe}\ntrue`);
+    await checkToolsModals();
+    console.log(`Verified Tools modals at ${viewport.width}x${viewport.height}`);
+  }
   if (staging) {
     await evaluate("window.__readerPending = true");
     const otherOrigin = origin.replace("127.0.0.1", "glintlabs-production.test");
@@ -449,13 +464,114 @@ try {
   }
   assert.deepEqual(errors, [], "Browser runtime, console, network, or HTTP errors.");
   if (failures.length) throw failures[0];
-  const result = { states, navigation, exposure, sourceImages, privateRoutesAbsent: true, release, errors };
+  const result = { states, toolModals, navigation, exposure, sourceImages, privateRoutesAbsent: true, release, errors };
   await mkdir(path.join(root, "test-results"), { recursive: true });
   await writeFile(path.join(root, "test-results/reader-browser.json"), JSON.stringify(result, null, 2));
-  console.log(`Reader browser checks passed: ${states.length} responsive states, ${navigation.length} navigation states, ${exposure.length * 3} exposure grids, ${sourceImages} original images.`);
+  console.log(`Reader browser checks passed: ${states.length} responsive states, ${toolModals.length} tool-modal checks, ${navigation.length} navigation states, ${exposure.length * 3} exposure grids, ${sourceImages} original images.`);
 } finally {
   stopping = true;
   socket?.close();
   await Promise.all([stop(browser), stop(preview)]);
   await rm(profile, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+}
+
+async function checkToolsModals() {
+  const tools = [
+    {
+      title: "Analyze Survey",
+      skillUrl: "https://github.com/microsoft/glintlabs/blob/main/skills/analyze-survey/SKILL.md",
+      prompt: "I want to analyze employee survey data.",
+    },
+    {
+      title: "People Science Knowledge Vault",
+      skillUrl: "https://github.com/microsoft/glintlabs/blob/main/skills/people-science-knowledge-vault/SKILL.md",
+      prompt: "Use People Science Knowledge Vault to explore what research says about manager effectiveness. Include sources and questions to consider next.",
+    },
+  ];
+  for (const tool of tools) {
+    await evaluate(`(() => {
+      const title = ${JSON.stringify(tool.title)};
+      const card = [...document.querySelectorAll("article")].find(card => card.querySelector("h3")?.textContent === title);
+      if (!card) throw Error("Missing tool card: " + title);
+      const trigger = [...card.querySelectorAll("button")].find(button => button.textContent === "Start using");
+      if (!trigger) throw Error("Missing tool action: " + title);
+      if (title === "People Science Knowledge Vault" && card.querySelectorAll("button").length !== 1) throw Error("Unimplemented feedback controls");
+      window.__toolsTrigger = trigger;
+      trigger.scrollIntoView({block:"center"});
+      trigger.focus();
+    })()`);
+    await key("Enter", "Enter", 13, "\r");
+    const dialog = `document.querySelector('dialog[open]')`;
+    await waitFor(() => evaluate(`${dialog}?.getAttribute("aria-label") === ${JSON.stringify(`${tool.title} details`)}`),
+      `Missing tool dialog: ${tool.title}`);
+    await evaluate(`(() => {
+      const dialog = ${dialog};
+      const close = dialog.querySelector("button");
+      if (document.activeElement !== close || close.getAttribute("aria-label") !== ${JSON.stringify(`Close ${tool.title} details`)}) throw Error("Dialog initial focus or close label");
+      if (dialog.querySelector("h1")?.textContent !== ${JSON.stringify(tool.title)}) throw Error("Wrong tool content");
+      const bounds = dialog.getBoundingClientRect();
+      if (bounds.left < 0 || bounds.top < 0 || bounds.right > innerWidth + 1 || bounds.bottom > innerHeight + 1 || dialog.scrollWidth > dialog.clientWidth + 1) throw Error("Dialog overflow");
+      if (document.documentElement.style.overflow !== "hidden") throw Error("Background not locked");
+      const github = [...dialog.querySelectorAll("a")].find(link => link.textContent === "Visit GitHub");
+      if (github?.href !== ${JSON.stringify(tool.skillUrl)} || github.target !== "_blank" || !github.rel.includes("noreferrer")) throw Error("Incorrect public skill destination");
+      const controls = [...dialog.querySelectorAll("a[href],button,[tabindex]")].filter(control => control.tabIndex >= 0 && control.getClientRects().length);
+      window.__toolsFirstControl = controls[0];
+      window.__toolsLastControl = controls.at(-1);
+      Object.defineProperty(navigator.clipboard, "writeText", {configurable:true, value:async text => {window.__toolsCopied = text;}});
+    })()`);
+    const summaryScrollable = await evaluate(`(() => {
+      const summary = ${dialog}.querySelector('[role="region"]');
+      if (summary?.getAttribute("aria-label") !== ${JSON.stringify(`${tool.title} summary`)}) throw Error("Missing accessible tool summary");
+      window.__toolsSummary = summary;
+      return summary.scrollHeight > summary.clientHeight + 1;
+    })()`);
+    if (summaryScrollable) {
+      assert.equal(await evaluate("window.__toolsSummary.tabIndex"), 0, "Overflowing summary is keyboard accessible");
+      await evaluate("window.__toolsSummary.scrollTop = 0; window.__toolsSummary.focus()");
+      await key("ArrowDown", "ArrowDown", 40);
+      await waitFor(() => evaluate("window.__toolsSummary.scrollTop > 0"), "Summary scrolls with the keyboard");
+      await evaluate("window.__toolsSummary.scrollTop = 0");
+    }
+    await evaluate("window.__toolsFirstControl.focus()");
+    await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, modifiers: 8 });
+    await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 });
+    assert.equal(await evaluate("document.activeElement === window.__toolsLastControl"), true, "Focus wraps backward");
+    await key("Tab", "Tab", 9);
+    assert.equal(await evaluate("document.activeElement === window.__toolsFirstControl"), true, "Focus wraps forward");
+    await evaluate(`[...${dialog}.querySelectorAll('button')].find(button => button.textContent === "Copy skill link").click()`);
+    await waitFor(() => evaluate(`window.__toolsCopied === ${JSON.stringify(tool.skillUrl)} && ${dialog}.querySelector('[aria-live="polite"]').textContent === "Skill link copied"`), "Skill clipboard payload or feedback");
+    await evaluate(`[...${dialog}.querySelectorAll('button')].find(button => button.textContent === "Copy starter prompt").click()`);
+    await waitFor(() => evaluate(`window.__toolsCopied === ${JSON.stringify(tool.prompt)} && ${dialog}.querySelector('[aria-live="polite"]').textContent === "Starter prompt copied"`), "Prompt clipboard payload or feedback");
+    await evaluate(`(() => {
+      Object.defineProperty(navigator.clipboard, "writeText", {configurable:true, value:async () => {throw new DOMException("Denied", "NotAllowedError");}});
+      [...${dialog}.querySelectorAll("button")].find(button => button.textContent === "Copy skill link").click();
+    })()`);
+    await waitFor(() => evaluate(`${dialog}.querySelector('[role="alert"]')?.textContent.includes("Select and copy the text above manually.")`), "Clipboard denial recovery");
+    await evaluate(`(() => {
+      const dialog = ${dialog};
+      const alert = dialog.querySelector('[role="alert"]');
+      if (alert.closest('[class*="copyBlock"]').querySelector("code").textContent !== ${JSON.stringify(tool.skillUrl)}) throw Error("Manual copy text missing");
+      Object.defineProperty(navigator.clipboard, "writeText", {configurable:true, value:async text => {window.__toolsCopied = text;}});
+      [...dialog.querySelectorAll("button")].find(button => button.textContent === "Copy skill link").click();
+    })()`);
+    await waitFor(() => evaluate(`${dialog}.querySelector('[role="alert"]') === null && ${dialog}.querySelector('[aria-live="polite"]').textContent === "Skill link copied"`), "Clipboard retry recovery");
+    for (const section of ["overview", "results", "start-using"]) {
+      await evaluate(`${dialog}.querySelector('nav a[href="#${section}"]').focus()`);
+      await key("Enter", "Enter", 13, "\r");
+      await waitFor(() => evaluate(`${dialog}.querySelector('nav a[href="#${section}"]').getAttribute("aria-current") === "location"`), `Tool section tracking: ${section}`);
+      assert.equal(await evaluate(`document.activeElement === ${dialog}.querySelector('#${section} h2')`), true, "Section navigation moves focus");
+    }
+    assert.deepEqual(await evaluate(`(async () => (await axe.run(${dialog}, {runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21aa"]}})).violations)()`), []);
+    await send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value: "active" }] });
+    assert.equal(await evaluate(`getComputedStyle(${dialog}.querySelector('nav a[aria-current]')).borderTopWidth`), "1px", "Current section remains outlined in high contrast");
+    await send("Emulation.setEmulatedMedia", { features: [] });
+    await key("Escape", "Escape", 27);
+    await waitFor(() => evaluate(`${dialog} === null && document.activeElement === window.__toolsTrigger`), "Escape closes and restores focus");
+    assert.equal(await evaluate('document.documentElement.style.overflow === "hidden"'), false, "Background scroll restored");
+    await key("Enter", "Enter", 13, "\r");
+    await waitFor(() => evaluate(`!!${dialog}`), "Tool reopens");
+    await evaluate(`${dialog}.querySelector("button").click()`);
+    await waitFor(() => evaluate(`${dialog} === null && document.activeElement === window.__toolsTrigger`), "Close button restores focus");
+    toolModals.push({ title: tool.title, ...await evaluate("({width: innerWidth, height: innerHeight})") });
+  }
 }

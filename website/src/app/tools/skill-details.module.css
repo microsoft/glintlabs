@@ -7,7 +7,7 @@
 .modalDetails .sectionNav { flex-shrink: 0; }
 .modalDetails .closeAction { z-index: 1; top: 42px; right: -6px; border-radius: 8px; background: var(--site-paper); }
 .modalDetails .content { position: relative; min-height: 0; flex: 1; padding: 0 48px 48px; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: #666 transparent; scrollbar-width: thin; }
-.modalDetails .content:focus-visible { outline: 3px solid var(--site-focus); outline-offset: -4px; }
+.modalDetails .content:focus-visible, .modalDetails .headerContent:focus-visible { outline: 3px solid var(--site-focus); outline-offset: -4px; }
 .topRow { margin-bottom: 24px; }
 .backAction, .closeAction { display: inline-flex; min-height: 32px; align-items: center; justify-content: center; gap: 6px; padding: 4px 0; color: #242424; font: inherit; font-size: 14px; text-decoration: none; background: transparent; border: 0; cursor: pointer; }
 .backAction svg { width: 20px; height: 20px; }

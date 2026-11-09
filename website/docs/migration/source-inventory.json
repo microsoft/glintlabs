@@ -4100,31 +4100,31 @@
     },
     {
       "source": "src/app/tools/analyze-survey/analyze-survey-details.module.css",
-      "destination": "website/src/app/tools/analyze-survey/analyze-survey-details.module.css",
+      "destination": "website/src/app/tools/skill-details.module.css",
       "sourceSha256": "c8c606c052dc5425465afe28d04ea9f435e307d335cff20641bb6fe12ac09ef3",
-      "destinationSha256": "d30c73a58370442d91a6c5b7b197f2f58a75b54f773c6897a18e5a5ec07c25cd",
-      "intentionalDifference": "Use compact setup code, outlined copy actions and the site accent for the three safeguard icons; preserve wrapping, control targets, focus states, forced-color borders and icon dimensions."
+      "destinationSha256": "fc659d9c88fc9d05fd4a8cd4828776e4d696c14a0c4a0780dddf6729a8de8f8f",
+      "intentionalDifference": "Use compact setup code, outlined copy actions and the site accent for the three safeguard icons; preserve wrapping, control targets, focus states, forced-color borders and icon dimensions. Relocate the stylesheet to the shared skill-details surface for Analyze Survey and Knowledge Vault, extending its existing focus-visible style to the keyboard-scrollable modal summary."
     },
     {
       "source": "src/app/tools/analyze-survey/analyze-survey-details.test.ts",
       "destination": "website/src/app/tools/analyze-survey/analyze-survey-details.test.ts",
       "sourceSha256": "62e5f466b96c070b75a48cc29ba94bb641d074b26f3698787d435dc39712f8bc",
-      "destinationSha256": "6cdcc6dda6250436ed37c0fe39bd8dad07721743d878f180fd12d4d56ed772c2",
-      "intentionalDifference": "Update and extend regressions for canonical terminal instructions, outlined actions, compact text, approved wording, modal-only header-action omission, accent safeguard icons and preserving/restoring an existing scrollbar gutter. Verify the shared Home and Tools card uses the approved existing clipboard illustration while retaining its size and decorative semantics."
+      "destinationSha256": "68d578526de78c22c88c51813267cee000a9180cc271275f897365d075375990",
+      "intentionalDifference": "Retain regressions for canonical terminal instructions, outlined actions, compact text, approved wording, modal-only header-action omission, accent safeguard icons, scrollbar gutter restoration and the approved clipboard illustration. Read the shared details and modal implementation after extraction for Knowledge Vault."
     },
     {
       "source": "src/app/tools/analyze-survey/analyze-survey-details.tsx",
       "destination": "website/src/app/tools/analyze-survey/analyze-survey-details.tsx",
       "sourceSha256": "9ddb1b87bbb5f63dbc7357a5e245f8694ad1078a63921c2f3e709cf91933a6e7",
-      "destinationSha256": "bdca92002972ca22174b99830db5d9b04bf08773437f9e5b999b1cffb3f0e4fa",
-      "intentionalDifference": "Apply the approved Overview and prompt wording, use outlined setup actions and omit the GitHub header action only in the modal; retain terminal instructions, original URLs and exact clipboard values."
+      "destinationSha256": "6a50cf9d1bfc22da4ac46820a8c5abec25f6fce5a9dc33a6b96e8c28374c248d",
+      "intentionalDifference": "Retain the approved copy, terminal instructions, original URLs and exact clipboard values as Analyze Survey content; share the unchanged interaction and rendering behavior with the requested Knowledge Vault modal through SkillDetails."
     },
     {
       "source": "src/app/tools/analyze-survey/analyze-survey-modal-trigger.tsx",
       "destination": "website/src/app/tools/analyze-survey/analyze-survey-modal-trigger.tsx",
       "sourceSha256": "f9d483205ea5c812c77bb011a117fb4583a126cd6114ef59cb007693f84d6145",
-      "destinationSha256": "8ef114d02a25e58b1be8575103173d53d9d10e5405a37e5a88cd5dc156e5c108",
-      "intentionalDifference": "Preserve an existing classic-scrollbar gutter while the Analyze Survey modal locks scrolling, then restore its original inline style; do not introduce a gutter on pages without one or override an existing stable gutter. Subsequent maintainer-approved telemetry adds only a semantic event marker to the existing dialog trigger; interaction, content and dialog behavior are preserved."
+      "destinationSha256": "eba22a475b26beb105d8d257362d9014f2575cc3c5b0afe944abd8e3d635a5b8",
+      "intentionalDifference": "Delegate to the shared SkillModalTrigger for Analyze Survey and Knowledge Vault. Preserve Analyze Survey's semantic telemetry marker, native modal behavior, keyboard focus handling, scroll locking and scrollbar gutter restoration."
     },
     {
       "source": "src/app/tools/analyze-survey/page.module.css",
@@ -4151,15 +4151,15 @@
       "source": "src/app/tools/tools-catalog.module.css",
       "destination": "website/src/app/tools/tools-catalog.module.css",
       "sourceSha256": "d3a77322ca2a0836dcdf4b12719a3c1791935a14c4218a805fab0ace8b074fa4",
-      "destinationSha256": "d3a77322ca2a0836dcdf4b12719a3c1791935a14c4218a805fab0ace8b074fa4",
-      "intentionalDifference": ""
+      "destinationSha256": "6f724b29ead0c4ed66883c3ff27ce2cd2ac01c96b7677fe056cf054be351e5fa",
+      "intentionalDifference": "Add the Glint spacingL gap between the Analyze Survey and Knowledge Vault cards; preserve existing card, modal and responsive styles."
     },
     {
       "source": "src/app/tools/tools-catalog.tsx",
       "destination": "website/src/app/tools/tools-catalog.tsx",
       "sourceSha256": "0b92989dd11d9f401c796cb3f1880608041c25658783d9219acf455fef925214",
-      "destinationSha256": "2b75c1b84fa41789fe4e20d486827582dff51e96f0b67785c51d4fefc101cf16",
-      "intentionalDifference": "Use the owner-selected existing Blue report clipboard illustration for the shared Analyze Survey card on Home and Tools; preserve the 170px image box, decorative semantics, layout, copy, modal trigger and all styles."
+      "destinationSha256": "7cd30a9b120d36ab9f4d4a6a20dcc7d38c644b4b7fbcf259c4fdbedf75e73ba0",
+      "intentionalDifference": "Retain Analyze Survey first with its approved Blue report illustration and unchanged copy. Add the requested People Science Knowledge Vault card and modal action on Home and Tools, using shared content and the existing decorative 170px Blue briefcase illustration; omit nonfunctional feedback controls."
     },
     {
       "source": "src/app/tools/tools-page.module.css",
