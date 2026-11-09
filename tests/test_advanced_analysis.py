@@ -124,6 +124,9 @@ def test_code_only_does_not_read_or_fit_data(study, monkeypatch):
     manifest = json.loads((Path(opt.output_dir) / "advanced-analysis-manifest.json").read_text())
     assert manifest["status"] == "not_run"
     assert manifest["qa"]["verdict"] == "Not ready"
+    html = (Path(opt.output_dir) / "advanced-report.html").read_text(encoding="utf-8")
+    assert '<div id="svd-visuals" hidden>' in html
+    assert html.count("<h3>How to action these results</h3>") == 6
 
 
 @pytest.mark.parametrize("task", ["regression", "svd"])
@@ -147,6 +150,14 @@ def test_report_leads_with_svd_and_explains_each_section(study, task):
     assert "Singular value decomposition" in intros["svd"]
     assert "variance" in intros["svd"]
     assert "not a validated measurement model" in intros["svd"]
+    actions = re.findall(
+        r'<div class="section-action"><h3>How to action these results</h3><p>(.*?)</p></div>',
+        html, re.DOTALL,
+    )
+    assert len(actions) == len(expected)
+    assert "not a causal priority for intervention" in actions[0]
+    assert "untouched-holdout evaluation" in actions[1]
+    assert "obtain explicit instruction" in actions[2]
 
 
 def test_final_holdout_requires_frozen_plan_and_cannot_be_reused(study):
@@ -247,9 +258,19 @@ def test_svd_runs_without_a_predictive_leaderboard(study):
     config["experiment"].update(task="svd", models=[], components=2, metric="reconstruction_rmse")
     opt = options(study, config)
     runner.run(opt)
-    summary = json.loads((Path(opt.output_dir) / "advanced-analysis-manifest.json").read_text())["summary"]
+    output = Path(opt.output_dir)
+    summary = json.loads((output / "advanced-analysis-manifest.json").read_text())["summary"]
     assert summary["models"] == []
     assert len(summary["svd"]["components"]) == 2
+    assert any(value < 0 for row in summary["svd"]["components"] for value in row)
+    html = (output / "advanced-report.html").read_text(encoding="utf-8")
+    payload = json.loads(re.search(
+        r'<script id="aggregate-data" type="application/json">(.*?)</script>', html, re.DOTALL,
+    ).group(1))
+    assert payload["summary"]["svd"] == summary["svd"]
+    assert 'id="svd-chart"' in html and 'id="svd-components"' in html
+    assert 'data-table="svd-weights-table"' in html
+    assert "not factor loadings" in html
 
 
 def test_skill_has_proactive_collaboration_not_autonomous_tuning():

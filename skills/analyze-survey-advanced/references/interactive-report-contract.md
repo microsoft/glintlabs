@@ -15,6 +15,31 @@ the section does not authorize or imply a decomposition has been run.
 Controls select already-computed views; no client-side training or unapproved
 subgroup searching. CSV and full-table PNG exports include current context.
 
+Every purpose blurb includes a **How to action these results** block.
+Give conditional, practical guidance about interpreting patterns, choosing
+bounded next experiments, resolving QA issues, or safely sharing outputs.
+These are instructions, not findings about the current dataset or permission
+to tune. Do not prescribe causal interventions or employee-level actions from
+component weights or predictive importance.
+
+## SVD visual presentation
+
+Follow the basic report's factor-analysis layout: aligned horizontal item bars
+across components, then component cards with explained variance and the five
+highest-magnitude items. Use one shared item order based on Component 1.
+Bars show absolute **SVD unit weights** on a common 0-1 scale; labels and full
+exports preserve signs and precision. Do not call them factor loadings or
+reuse factor-loading strength thresholds. Signs are orientation, not good/bad.
+Use formatted feature IDs when full question wording is unavailable, retaining
+original IDs in the full signed-weight table.
+
+Show component variance as a percentage of response variation, not employees,
+practical importance, or a confirmed construct. Keep full variance/weight tables
+and raw diagnostics in an expandable numeric-details section. Chart PNG and
+complete weight-table CSV/PNG exports include the run/config context and all
+computed items, not just the five-item card summaries. A not-run decomposition
+shows an explicit message, not empty or fabricated charts.
+
 Survey-score targets with a verified 1-K scale use the 0-100 transformation
 for results and error units. Native targets, AUC, probabilities, explained
 variance, component weights and other non-score metrics retain their units.
