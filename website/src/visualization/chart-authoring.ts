@@ -1,24 +1,34 @@
 import { canonicalJson, sha256Text } from "../integrity/approved-content.ts";
-import { compatibleVerifiedVisuals, parseChartValue, type ChartValueType, type DataVisualSourceBlock, type VerifiedDataVisualType } from "./verified-data-visual.ts";
+import { compatibleVerifiedVisuals, parseChartValue, parseHeatmapValue, type ChartValueType, type DataVisualSourceBlock, type VerifiedDataVisualType } from "./verified-data-visual.ts";
+import { quadrantTableErrors } from "./quadrant-data.ts";
 
 export type ChartTable = Pick<DataVisualSourceBlock["data"], "columns" | "rows">;
 export type ChartTableError = { row: number; column: number; message: string };
 
 export function validateChartTable(table: ChartTable, unit: ChartValueType = "percentage", visualType: VerifiedDataVisualType = "horizontal-bar-chart"): ChartTableError[] {
+  if (visualType === "quadrant-scatter-plot") return quadrantTableErrors(table);
   const errors: ChartTableError[] = [];
-  const columns = visualType === "grouped-column-comparison" ? 3 : 2;
+  const heatmap = visualType === "coefficient-heatmap";
+  const columns = heatmap ? table.columns.length : visualType === "grouped-column-comparison" ? 3 : 2;
+  if (heatmap && (columns < 2 || columns > 13 || unit !== "number" ||
+    new Set(table.columns.map(value => value.trim().toLocaleLowerCase("en-US"))).size !== columns)) {
+    errors.push({ row: -1, column: -1, message: "Use a factor column and 1–12 uniquely named periods, with number values." });
+  }
   if (table.columns.length !== columns || table.columns.some(value => !value.trim() || value.length > 100)) {
     errors.push({ row: -1, column: -1, message: `Use ${columns === 3 ? "three" : "two"} column headings, each between 1 and 100 characters.` });
   }
-  const fixedRows = visualType === "percentage-ring-group" ? 3 : visualType === "grouped-column-comparison" || visualType === "percentage-comparison-grid" ? 4 : visualType === "paired-percentage-comparison" ? 2 : undefined;
-  if (fixedRows && table.rows.length !== fixedRows) {
+  const fixedRows = visualType === "grouped-column-comparison" || visualType === "percentage-comparison-grid" ? 4 : visualType === "paired-percentage-comparison" ? 2 : undefined;
+  if ((visualType === "percentage-ring-group" || visualType === "illustrated-statistics") &&
+      (table.rows.length < 2 || table.rows.length > 3)) {
+    errors.push({ row: -1, column: -1, message: "Use two or three percentage findings." });
+  } else if (fixedRows && table.rows.length !== fixedRows) {
     errors.push({ row: -1, column: -1, message: visualType === "grouped-column-comparison"
       ? "Use exactly four categories and two percentage series."
-      : `Use exactly ${fixedRows === 4 ? "four" : fixedRows === 3 ? "three" : "two"} percentage findings.` });
+      : `Use exactly ${fixedRows === 4 ? "four" : "two"} percentage findings.` });
   } else if (table.rows.length < 2 || table.rows.length > 12) {
     errors.push({ row: -1, column: -1, message: "Use between 2 and 12 categories." });
   }
-  if (visualType !== "horizontal-bar-chart" && unit !== "percentage") {
+  if (!heatmap && visualType !== "horizontal-bar-chart" && unit !== "percentage") {
     errors.push({ row: -1, column: -1, message: "Use percentage values for this chart." });
   }
   const seen = new Set<string>();
@@ -46,13 +56,16 @@ export function validateChartTable(table: ChartTable, unit: ChartValueType = "pe
     }
     for (let column = 1; column < columns; column++) {
       const raw = row.cells[column]?.trim() ?? "";
-      if (row.cells.length !== columns || raw.length > 24 || parseChartValue(raw, unit) === undefined) {
-        errors.push({ row: index, column, message: unit === "percentage"
+      if (row.cells.length !== columns || raw.length > 24 || (heatmap ? parseHeatmapValue(raw) : parseChartValue(raw, unit)) === undefined) {
+        errors.push({ row: index, column, message: heatmap ? "Enter a coefficient such as .147, or N/A. Do not use percentages." : unit === "percentage"
           ? "Enter a percentage from 0 to 100. Use a decimal point; do not leave missing values."
           : "Enter a number without % signs or commas." });
       }
     }
   });
+  if (heatmap && !table.rows.some(row => row.cells.slice(1).some(value => typeof parseHeatmapValue(value) === "number"))) {
+    errors.push({ row: -1, column: -1, message: "Add at least one coefficient. Missing cells are shown as N/A, not zero." });
+  }
   return errors;
 }
 
@@ -94,11 +107,14 @@ export function parseChartTable(input: string, header = true, visualType: Verifi
   }
   if (quoted) throw new Error("A quoted cell is unfinished. Close its quotation mark.");
   if (cell || cells.length) finishRow();
-  const columnCount = visualType === "grouped-column-comparison" ? 3 : 2;
+  const heatmap = visualType === "coefficient-heatmap";
+  const columnCount = heatmap ? records[0]?.length ?? 0 : visualType === "grouped-column-comparison" ? 3 : 2;
+  if (heatmap && (columnCount < 2 || columnCount > 13)) throw new Error("Use a factor column and 1–12 period columns.");
   if (!records.length || records.some(row => row.length !== columnCount)) throw new Error(columnCount === 3
     ? "Use exactly three columns: category labels and two percentage series."
     : "Use exactly two columns: category labels and percentage values.");
-  const columns = header ? records.shift()! : columnCount === 3 ? ["Category", "Series 1", "Series 2"] : ["Category", "Percentage (%)"];
+  const columns = header ? records.shift()! : heatmap ? ["Factor", ...Array.from({ length: columnCount - 1 }, (_, index) => `Period ${index + 1}`)]
+    : columnCount === 3 ? ["Category", "Series 1", "Series 2"] : ["Category", "Percentage (%)"];
   if (records.length > 12 || columns.some(value => !value || value.length > 100) ||
       records.some(row => row[0].length > 160 || row.slice(1).some(value => value.length > 24))) {
     throw new Error("Use up to 12 rows, headings up to 100 characters, labels up to 160, and values up to 24.");

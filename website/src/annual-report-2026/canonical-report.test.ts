@@ -432,7 +432,8 @@ test("Research Drops show author names without aliases on desktop and mobile", (
   const sideNavStyles = readFileSync(new URL("../report-system/report-side-nav.module.css", import.meta.url), "utf8");
   assert.doesNotMatch(renderer, /authorHandle=|author\.handle|@megan_benzing/);
   assert.match(renderer, /authorName=\{author\.name\}/);
-  assert.match(renderer, /<span>\{author\.name\}<\/span>/);
+  const sideNav = readFileSync(new URL("../report-system/report-side-nav.tsx", import.meta.url), "utf8");
+  assert.match(sideNav, /<span>\{authorName\}<\/span>/);
   assert.match(sideNavStyles, /\.author span:last-child:not\(:first-child\) \{/);
   assert.doesNotMatch(sideNavStyles, /\.author span:last-child \{/);
 });
@@ -446,7 +447,7 @@ test("Studio research reports share a white canvas without restyling the Annual 
 
 test("Drop references reuse the Annual Report bookmark and quieter type without a dark panel", () => {
   const css = readFileSync(new URL("../report-system/report-renderer.module.css", import.meta.url), "utf8");
-  assert.match(css, /\.report \.referencesHeading \{[^}]*gap: 10px;[^}]*font-family: var\(--site-content-font\);[^}]*font-size: 16px;[^}]*font-weight: 420;[^}]*line-height: 22px;/);
+  assert.match(css, /\.report \.referencesHeading \{[^}]*gap: 12px;[^}]*font-family: var\(--site-content-font\);[^}]*font-size: 16px;[^}]*font-weight: 420;[^}]*line-height: 22px;/);
   assert.match(css, /\.referencesHeading::before \{[^}]*width: 20px;[^}]*height: 20px;[^}]*interaction-bookmark\.svg/);
   assert.match(css, /\.referencesBlock \.paragraph,\s*\.referencesList \{[^}]*margin-bottom: 16px;[^}]*font-size: 12px;[^}]*font-weight: 420;[^}]*line-height: 18px;/);
   assert.match(css, /\.referencesBlock \.paragraph a,\s*\.referencesList a \{\s*font-weight: inherit;/);
@@ -457,11 +458,11 @@ test("Drop references reuse the Annual Report bookmark and quieter type without 
 test("Studio leave dialog has one hairline divider and a subtle destructive action", () => {
   const studioStyles = readFileSync(new URL("../app/_components/publishing-studio.module.css", import.meta.url), "utf8");
   const studio = readFileSync(new URL("../app/_components/publishing-studio.tsx", import.meta.url), "utf8");
-  assert.match(studioStyles, /\.leaveDialog \.publishDialogHeader \{\s*border-bottom: 0;/);
+  assert.match(studioStyles, /\.leaveDialog \.publishDialogHeader \{[^}]*border-bottom: 0;/);
   assert.match(studioStyles, /\.publishDialogFooter \{[^}]*border-top: 1px solid var\(--border\);/);
-  assert.match(studioStyles, /\.leaveWithoutSaving \{[^}]*color: var\(--danger\);[^}]*background: var\(--danger-background\);/);
-  assert.match(studioStyles, /\.leaveWithoutSaving:hover:not\(:disabled\) \{[^}]*color: var\(--danger\);[^}]*background: color-mix\(in srgb, var\(--danger\) 10%, var\(--studio-surface\)\);/);
-  assert.match(studio, /className=\{`\$\{styles\.secondaryAction\} \$\{styles\.leaveWithoutSaving\}`\}[\s\S]*?onClick=\{returnToStart\}/);
+  assert.match(studioStyles, /\.leaveWithoutSaving \{[^}]*border-color: var\(--colorPaletteRedForeground1\);[^}]*color: var\(--studio-action-background\);[^}]*background: var\(--studio-surface\);/);
+  assert.match(studioStyles, /\.leaveWithoutSaving:hover:not\(:disabled\) \{[^}]*background: var\(--danger-background\);/);
+  assert.match(studio, /className=\{`\$\{styles\.secondaryAction\} \$\{styles\.leaveWithoutSaving\}`\}[\s\S]*?onClick=\{finishLeaving\}/);
 });
 
 test("report side navigation keeps passed sections highlighted alongside the current section using colors only", () => {

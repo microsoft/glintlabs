@@ -29,6 +29,82 @@ const source: DataVisualSourceBlock = {
   source: { part: "word/document.xml", index: 10 },
 };
 
+test("coefficient heatmaps preserve decimals, zero and unavailable cells through verification and restore", async () => {
+  const table = {
+    columns: ["Factor", "April '24", "July '25", "Nov '25"],
+    rows: [
+      { id: "safety", cells: ["Psychological Safety", "N/A", ".147", ".231"] },
+      { id: "clarity", cells: ["Role Clarity", "", ".222", ".250"] },
+      { id: "zero", cells: ["Other factor", "0", "-.125", ".350"] },
+    ],
+  };
+  const before = structuredClone(table);
+  const edited = await createStudioChartSource({
+    id: source.id, table, sourceName: "Author-provided coefficient table", synthetic: false,
+    unit: "number", visualType: "coefficient-heatmap",
+  });
+  const visual = createVerifiedDataVisual(edited, "coefficient-heatmap", "2026-11-07T04:45:00.000Z");
+  assert.equal(visual.type, "coefficient-heatmap");
+  assert.deepEqual(visual.rows.map(row => row.values), [[null, .147, .231], [null, .222, .250], [0, -.125, .350]]);
+  assert.deepEqual(visual.columns, table.columns.slice(1));
+  assert.deepEqual(reportBlockSchema.parse(visual), visual);
+  assert.equal(verifiedVisualMatchesSource(visual), true);
+  assert.equal(verifiedVisualMatchesSource({ ...visual, rows: visual.rows.map((row, index) =>
+    index ? row : { ...row, values: [0, .147, .231] }) }), false);
+  assert.deepEqual(table, before);
+  assert.deepEqual(parseChartTable("Factor\tApril\tJuly\nSafety\tN/A\t.147\nClarity\t0\t.222", true, "coefficient-heatmap").rows.map(row => row.cells),
+    [["Safety", "N/A", ".147"], ["Clarity", "0", ".222"]]);
+});
+
+test("coefficient heatmaps reject malformed matrices and percentages without interpreting missing data as zero", () => {
+  const table = { columns: ["Factor", "April", "July"], rows: [
+    { id: "safety", cells: ["Safety", "N/A", ".147"] },
+    { id: "clarity", cells: ["Clarity", "0", ".222"] },
+  ] };
+  assert.deepEqual(validateChartTable(table, "number", "coefficient-heatmap"), []);
+  for (const cell of ["14.7%", "unknown", "NaN", "Infinity"]) {
+    const invalid = { ...table, rows: table.rows.map((row, index) => index ? row : { ...row, cells: ["Safety", cell, ".147"] }) };
+    assert.ok(validateChartTable(invalid, "number", "coefficient-heatmap").length);
+  }
+  assert.ok(validateChartTable(table, "percentage", "coefficient-heatmap").length);
+  assert.ok(validateChartTable({ ...table, rows: [{ id: "short", cells: ["Safety", ".147"] }, table.rows[1]] },
+    "number", "coefficient-heatmap").length);
+});
+
+test("heatmap support does not change the default treatment of existing numeric bar sources", () => {
+  const numeric = { ...source, data: { ...source.data, unit: "number" as const } };
+  numeric.data.rows = [{ id: "one", cells: ["First", ".147"] }, { id: "two", cells: ["Second", ".231"] }];
+  assert.deepEqual(compatibleVerifiedVisuals(numeric), ["horizontal-bar-chart"]);
+  assert.ok(compatibleVerifiedVisuals(numeric, { ignoreRecommendation: true }).includes("coefficient-heatmap"));
+  const missing = { ...numeric, data: { ...numeric.data, rows: [
+    { id: "one", cells: ["First", "N/A"] }, { id: "two", cells: ["Second", ".231"] },
+  ] } };
+  assert.deepEqual(compatibleVerifiedVisuals(missing, { ignoreRecommendation: true }), ["coefficient-heatmap"]);
+});
+
+test("heatmap scale settings survive restore while invalid ranges and precision cannot be saved", async () => {
+  const data = await createStudioChartSource({
+    id: "heatmap-settings", sourceName: "Coefficients", synthetic: false, unit: "number", visualType: "coefficient-heatmap",
+    table: { columns: ["Factor", "Period"], rows: [
+      { id: "negative", cells: ["Negative", "-.125"] }, { id: "missing", cells: ["Missing", "N/A"] },
+    ] },
+  });
+  const visual = createVerifiedDataVisual(data, "coefficient-heatmap", "2026-11-07T04:45:00.000Z");
+  const presentation = { title: "Configured heatmap", scaleMin: -.2, scaleMax: .4, decimals: 2,
+    missingLabel: "Unavailable", legendLabel: "Coefficient", subtitle: "", note: "" };
+  const restored = reportBlockSchema.parse(JSON.parse(JSON.stringify({ ...visual, presentation })));
+  assert.equal(restored.type, "coefficient-heatmap");
+  assert.deepEqual(restored.presentation, presentation);
+  assert.deepEqual(restored.rows.map(row => row.values), [[-.125], [null]]);
+  assert.equal(verifiedVisualMatchesSource(restored), true);
+  for (const invalid of [
+    { scaleMin: .4 }, { scaleMin: .5 }, { scaleMax: Infinity },
+    { scaleMin: -Number.MAX_VALUE, scaleMax: Number.MAX_VALUE }, { decimals: 1.5 }, { decimals: 7 },
+  ]) {
+    assert.equal(reportBlockSchema.safeParse({ ...visual, presentation: { ...presentation, ...invalid } }).success, false);
+  }
+});
+
 test("bar supporting text survives source creation, verification and restore without changing chart values", async () => {
   const supportingText = "Identify themes\n\nShare findings with the team\nRead <strong>the source</strong>.";
   const table = {
@@ -235,19 +311,91 @@ test("saves chart appearance separately without rewriting verified research data
   assert.deepEqual(restored.type === "horizontal-bar-chart" && restored.verifiedSource?.rows, source.data.rows);
 });
 
-test("Studio rings require three findings and preserve independent percentages and appearance", async () => {
+test("Studio rings support two or three findings and preserve independent percentages and appearance", async () => {
   const table = parseChartTable("Finding,Percentage\nFirst,83.00%\nSecond,43\nThird,0", true, "percentage-ring-group");
-  const edited = await createStudioChartSource({
-    id: "rings", table, sourceName: "Ring findings", synthetic: false, visualType: "percentage-ring-group",
+  for (const count of [2, 3]) {
+    const findings = { ...table, rows: table.rows.slice(0, count) };
+    assert.deepEqual(validateChartTable(findings, "percentage", "percentage-ring-group"), []);
+    const edited = await createStudioChartSource({
+      id: "rings", table: findings, sourceName: "Ring findings", synthetic: false, visualType: "percentage-ring-group",
+    });
+    const visual = createVerifiedDataVisual(edited, "percentage-ring-group", "2026-11-04T20:00:00.000Z");
+    const presentation = { title: "Independent findings", note: "Independent percentages.", palette: "brand", density: "comfortable", sort: "source", subtitle: "" };
+    const restored = reportBlockSchema.parse({ ...visual, presentation });
+    assert.ok(restored.type === "percentage-ring-group");
+    assert.equal(restored.metrics.length, count);
+    assert.deepEqual(restored.presentation, presentation);
+    assert.equal(restored.verifiedSource?.rows[0].cells[1], "83.00%");
+    assert.equal(verifiedVisualMatchesSource(restored), true);
+    for (const metrics of [restored.metrics.slice(0, 1),
+      Array.from({ length: 4 }, (_, index) => ({ ...restored.metrics[0], id: `too-many-${index}` }))]) {
+      assert.equal(reportBlockSchema.safeParse({ ...restored, metrics }).success, false);
+    }
+  }
+  for (const rows of [table.rows.slice(0, 1), [...table.rows, { id: "four", cells: ["Fourth", "100"] }]]) {
+    assert.ok(validateChartTable({ ...table, rows }, "percentage", "percentage-ring-group").length);
+  }
+});
+
+test("quadrant charts preserve stable point IDs, signed coordinates and numerical breakdowns", async () => {
+  const table = { columns: ["Point ID", "Label", "X value", "Y value", "Description", "Maintaining", "Expanding"],
+    rows: [
+      { id: "alpha", cells: ["alpha", "First approach", "-5.25", "90.00", "First explanation", "70%", "30%"] },
+      { id: "beta", cells: ["beta", "Second approach", "20", "80", "Second explanation", "60%", "40%"] },
+    ] };
+  const source = await createStudioChartSource({
+    id: "quadrant", table, sourceName: "Quadrant evidence", synthetic: false,
+    unit: "number", visualType: "quadrant-scatter-plot",
   });
-  const visual = createVerifiedDataVisual(edited, "percentage-ring-group", "2026-11-04T20:00:00.000Z");
-  const presentation = { title: "Three findings", note: "Independent percentages.", palette: "brand", density: "comfortable", sort: "source", subtitle: "" };
-  const restored = reportBlockSchema.parse({ ...visual, presentation });
-  assert.ok(restored.type === "percentage-ring-group");
-  assert.deepEqual(restored.presentation, presentation);
-  assert.equal(restored.verifiedSource?.rows[0].cells[1], "83.00%");
+  const visual = createVerifiedDataVisual(source, "quadrant-scatter-plot", "2026-11-05T19:00:00.000Z");
+  assert.equal(visual.type, "quadrant-scatter-plot");
+  assert.deepEqual(visual.points.map(point => [point.id, point.x, point.y]), [["alpha", -5.25, 90], ["beta", 20, 80]]);
+  assert.deepEqual(visual.points[0].breakdown.map(item => [item.label, item.value]), [["Maintaining", 70], ["Expanding", 30]]);
+  const restored = reportBlockSchema.parse({ ...visual, presentation: {
+    title: "Reusable quadrant", splitMode: "manual", xSplit: 0, ySplit: 85,
+    xLabel: "Growth", yLabel: "Use", xUnit: "number", yUnit: "percentage",
+  } });
+  assert.equal(restored.verifiedSource?.rows[0].cells[3], "90.00");
   assert.equal(verifiedVisualMatchesSource(restored), true);
-  assert.ok(validateChartTable({ ...table, rows: table.rows.slice(0, 2) }, "percentage", "percentage-ring-group").length);
+  assert.equal(verifiedVisualMatchesSource({ ...restored, points: [
+    { ...restored.points[0], breakdown: [{ ...restored.points[0].breakdown[0], value: 71 }] }, restored.points[1],
+  ] }), false);
+  assert.ok(validateChartTable({ ...table, rows: [table.rows[0], { ...table.rows[1], cells: ["alpha", ...table.rows[1].cells.slice(1)] }] },
+    "number", "quadrant-scatter-plot").length, "Duplicate point IDs are rejected");
+});
+
+test("illustrated statistics support two or three findings with independent presentation choices", async () => {
+  for (const count of [2, 3]) {
+    const table = parseChartTable("Finding,Percentage\nFirst,60.00%\nSecond,0\nThird,100");
+    table.rows = table.rows.slice(0, count);
+    const source = await createStudioChartSource({
+      id: "illustrated", table, sourceName: "Illustrated findings", synthetic: false,
+      visualType: "illustrated-statistics",
+    });
+    assert.ok(compatibleVerifiedVisuals(source).includes("illustrated-statistics"));
+    const visual = createVerifiedDataVisual(source, "illustrated-statistics", "2026-11-05T18:00:00.000Z");
+    const restored = reportBlockSchema.parse({ ...visual, presentation: {
+      title: "A heading long enough to match the supplied multi-line Figma design. ".repeat(3),
+      valueLabel: "selected", illustrations: { [table.rows[0].id]: "celebration", [table.rows[1].id]: "people" },
+      note: "Independent findings; values do not need to total 100%.",
+    } });
+    assert.equal(restored.type, "illustrated-statistics");
+    assert.equal(restored.metrics.length, count);
+    assert.equal(restored.verifiedSource?.rows[0].cells[1], "60.00%");
+    assert.equal(restored.presentation?.illustrations[table.rows[1].id], "people");
+    assert.equal(verifiedVisualMatchesSource(restored), true, "Artwork is presentation, not edited evidence");
+    assert.equal(verifiedVisualMatchesSource({ ...restored, metrics: [
+      { ...restored.metrics[0], value: 61 }, ...restored.metrics.slice(1),
+    ] }), false, "Numerical changes still require matching evidence");
+    assert.equal(reportBlockSchema.safeParse({ ...restored, presentation: {
+      ...restored.presentation, illustrations: { [table.rows[0].id]: "../unapproved.svg" },
+    } }).success, false);
+  }
+  const table = parseChartTable("Finding,Percentage\nFirst,10\nSecond,20\nThird,30\nFourth,40");
+  for (const count of [1, 4]) {
+    assert.ok(validateChartTable({ ...table, rows: table.rows.slice(0, count) },
+      "percentage", "illustrated-statistics").length);
+  }
 });
 
 test("Studio comparison grids accept two percentage series without relaxing bar imports", async () => {
@@ -374,6 +522,7 @@ test("offers only visual treatments compatible with approved data shape", () => 
   assert.deepEqual(compatibleVerifiedVisuals(source), [
     "horizontal-bar-chart",
     "percentage-ring-group",
+    "illustrated-statistics",
   ]);
 });
 

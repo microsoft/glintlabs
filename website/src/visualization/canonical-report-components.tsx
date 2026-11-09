@@ -2,6 +2,9 @@ import { ArrowRight20Regular, ChevronDown16Regular } from "@fluentui/react-icons
 
 import type { CanonicalVisualBlock } from "./canonical-report-blocks";
 import { PercentageRingGroup } from "./percentage-ring-group";
+import { IllustratedStatistics } from "./illustrated-statistics";
+import { QuadrantScatterPlot } from "./quadrant-scatter-plot";
+import { CoefficientHeatmap } from "./coefficient-heatmap";
 import { sortChartItems } from "./chart-order";
 import styles from "./canonical-report-components.module.css";
 
@@ -222,7 +225,7 @@ export function PercentageComparisonGrid({
 }: {
   title: string;
   leadIns?: [string, string];
-  findings: { id: string; value: string; description: string }[];
+  findings: { id: string; value: string; description: string; valueMissing?: boolean; descriptionMissing?: boolean }[];
   note?: string;
   sourceNote?: string;
   palette?: string;
@@ -240,8 +243,8 @@ export function PercentageComparisonGrid({
       <div className={styles.comparisonGridFindings}>
         {findings.slice(row * 2, row * 2 + 2).map(finding =>
           <div className={styles.pairedFinding} data-percentage-finding key={finding.id}>
-            <strong>{finding.value}</strong>
-            <p>{finding.description}</p>
+            <strong data-chart-placeholder={draft && finding.valueMissing || undefined}>{finding.value}</strong>
+            <p data-chart-placeholder={draft && finding.descriptionMissing || undefined}>{finding.description}</p>
           </div>)}
       </div>
     </section>)}
@@ -541,6 +544,18 @@ export function CanonicalReportComponent({
       return <PullQuote block={block} />;
     case "percentage-ring-group":
       return <PercentageRingGroup block={block} />;
+    case "illustrated-statistics":
+      return <IllustratedStatistics id={block.id} title={block.presentation?.title ?? block.title}
+        illustrations={block.presentation?.illustrations} valueLabel={block.presentation?.valueLabel}
+        note={block.presentation?.note} synthetic={block.verifiedSource?.synthetic}
+        sourceNote={block.source.part !== "studio" ? block.footnote : undefined}
+        findings={block.metrics.map(metric => {
+          const raw = block.verifiedSource?.rows.find(row => row.id === metric.id)?.cells[1]?.replace(/%\s*$/, "").trim();
+          return { id: metric.id, description: metric.description,
+            value: `${raw && Number(raw) === metric.value ? raw : metric.value}%` };
+        })} />;
+    case "quadrant-scatter-plot":
+      return <QuadrantScatterPlot block={block} />;
     case "paired-percentage-comparison":
       return <PairedPercentageComparison block={block} />;
     case "percentage-comparison-grid":
@@ -559,6 +574,8 @@ export function CanonicalReportComponent({
       return <HorizontalBarChart block={block} expandSupportingBullets={expandSupportingBullets} editingOrder={editingOrder} />;
     case "grouped-column-comparison":
       return <GroupedColumnComparison block={block} />;
+    case "coefficient-heatmap":
+      return <CoefficientHeatmap block={block} />;
     case "before-after-comparison":
       return <BeforeAfterComparison block={block} />;
     case "impact-metrics":

@@ -1087,6 +1087,13 @@
 .comparisonGridFindings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
 .comparisonGrid .pairedFinding { align-content: start; gap: 6px; min-width: 0; }
 .comparisonGridRow:nth-of-type(2) strong { color: var(--paired-secondary); }
+.comparisonGrid[data-chart-draft] .pairedFinding [data-chart-placeholder] {
+  color: var(--report-muted, var(--colorNeutralForeground3));
+  font-size: var(--fontSizeBase300, 14px);
+  font-weight: var(--fontWeightRegular, 400);
+  line-height: var(--lineHeightBase300, 20px);
+  letter-spacing: normal;
+}
 
 :global([data-report-style="new-fluent-colors"]) .card {
   border-color: var(--report-rule);

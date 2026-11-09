@@ -20,6 +20,7 @@ import {
 } from "./publication-preparation.ts";
 import { parseStudioProject, type StudioProject } from "./studio-project.ts";
 import { estimateReportReadingTime } from "./report-reading-time.ts";
+import { wordStyleView } from "./word-style-mapping.ts";
 import { needsImageDescription, publicationDetailsIssues } from "./publication-flow.ts";
 
 const assetPathSchema = z.string().regex(/^assets\/[a-f0-9]{64}\.(png|jpg|webp|gif)$/);
@@ -90,7 +91,7 @@ export function publicationReadiness(
   } else if (sourceEvidence.hyperlinkCount > 0 && (
     sourceEvidence.representedHyperlinkCount !== sourceEvidence.hyperlinkCount ||
     project.manifest.blocks.reduce((count, block) => count +
-      (block.type === "paragraph" || block.type === "list-item" ? block.links?.length ?? 0
+      (block.type === "paragraph" || block.type === "list-item" || block.type === "heading" ? block.links?.length ?? 0
         : block.type === "references" ? block.references.filter((reference) => reference.href).length : 0), 0) !== sourceEvidence.hyperlinkCount
   )) {
     issues.push({
@@ -223,7 +224,8 @@ export async function preparePublicationPackage({
   }
   const metadata = {
     ...publicationMetadataSchema.parse(inputMetadata),
-    readTimeMinutes: estimateReportReadingTime(project.manifest),
+    readTimeMinutes: estimateReportReadingTime(wordStyleView(project.manifest)),
+    employeeCount: project.manifest.metadata.employeeCount,
   };
   const approvedContent = project.approvedContent;
   if (!approvedContent || await sha256Text(canonicalJson(approvedContent.snapshot)) !== approvedContent.sha256) {
@@ -275,6 +277,7 @@ export async function preparePublicationPackage({
       author: metadata.author,
       publishedDate: metadata.displayDate,
       readTimeMinutes: metadata.readTimeMinutes,
+      ...(metadata.employeeCount !== undefined ? { employeeCount: metadata.employeeCount } : {}),
       topics: metadata.topics,
     },
   });

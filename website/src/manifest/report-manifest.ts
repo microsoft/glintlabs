@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { statisticIllustrations } from "../visualization/statistic-illustrations.ts";
 
 export const sourceLocatorSchema = z.object({
   part: z.string().min(1),
@@ -27,8 +28,11 @@ const verifiedVisualTypeSchema = z.enum([
   "paired-percentage-comparison",
   "percentage-comparison-grid",
   "percentage-ring-group",
+  "illustrated-statistics",
+  "quadrant-scatter-plot",
   "horizontal-bar-chart",
   "grouped-column-comparison",
+  "coefficient-heatmap",
 ]);
 
 export const reportLinkHrefSchema = z.string().refine(
@@ -42,6 +46,25 @@ export const reportTextLinkSchema = z.object({
   end: z.number().int().positive(),
   href: reportLinkHrefSchema,
 });
+
+export const wordStyleTargetSchema = z.enum([
+  "keep", "body", "report-title", "metadata", "section-heading", "subsection-heading", "brief", "references",
+]);
+export type WordStyleTarget = z.infer<typeof wordStyleTargetSchema>;
+
+const wordTextFields = {
+  wordStyle: z.string().min(1).optional(),
+  wordOutline: z.number().int().min(0).max(9).optional(),
+  marks: z.array(z.object({
+    start: z.number().int().nonnegative(),
+    end: z.number().int().positive(),
+    bold: z.literal(true).optional(),
+    italic: z.literal(true).optional(),
+    superscript: z.literal(true).optional(),
+    subscript: z.literal(true).optional(),
+  })).optional(),
+  links: z.array(reportTextLinkSchema).optional(),
+};
 
 const bitmapEvidenceSchema = z.object({
   fileName: z.string().min(1),
@@ -82,10 +105,15 @@ export const structuredDataSchema = z.object({
   subtitle: z.string().min(1).optional(),
   sourceNote: z.string().min(1).optional(),
   synthetic: z.boolean().optional(),
+  linkedWorkbookFileName: z.string().min(1).max(255).optional(),
   originalSource: z.object({
     sourceKind: z.string().min(1),
     title: z.string().min(1),
     sha256: sha256Schema,
+  }).optional(),
+  workbook: z.object({
+    fileName: z.string().min(1), tableName: z.string().min(1), sha256: sha256Schema,
+    connectionId: z.string().uuid().optional(),
   }).optional(),
 });
 
@@ -103,11 +131,46 @@ export const chartPresentationSchema = z.object({
 });
 export type ChartPresentation = z.infer<typeof chartPresentationSchema>;
 
+export const heatmapPresentationSchema = chartPresentationSchema.pick({ title: true, subtitle: true, note: true }).extend({
+  title: z.string().trim().min(1).max(240),
+  scaleMin: z.number().finite().default(.1),
+  scaleMax: z.number().finite().default(.35),
+  decimals: z.number().int().min(0).max(6).default(3),
+  missingLabel: z.string().trim().min(1).max(40).default("N/A"),
+  legendLabel: z.string().trim().min(1).max(100).default("Standardized regression coefficient"),
+}).refine(value => value.scaleMin < value.scaleMax && Number.isFinite(value.scaleMax - value.scaleMin), {
+  path: ["scaleMax"], message: "The scale maximum must be greater than its minimum.",
+});
+export type HeatmapPresentation = z.infer<typeof heatmapPresentationSchema>;
+
+export const illustratedStatisticsPresentationSchema = chartPresentationSchema.extend({
+  title: z.string().trim().min(1).max(240),
+  valueLabel: z.string().max(40).default("selected"),
+  illustrations: z.record(z.string().min(1), z.enum(statisticIllustrations.map(image => image.id))).default({}),
+});
+
 export const pairedComparisonPresentationSchema = chartPresentationSchema
   .pick({ title: true, note: true, palette: true })
   .extend({
     leadIns: z.tuple([z.string().max(80), z.string().max(80)]).default(["", ""]),
   });
+
+export const quadrantPresentationSchema = z.object({
+  title: z.string().trim().min(1).max(240),
+  subtitle: z.string().max(500).default("Select a numbered point or key entry to view its details."),
+  note: z.string().max(2000).default(""),
+  preset: z.enum(["general", "listening"]).default("general"),
+  xLabel: z.string().trim().min(1).max(80).default("X value"),
+  yLabel: z.string().trim().min(1).max(80).default("Y value"),
+  xUnit: z.enum(["number", "percentage", "percentage-points"]).default("number"),
+  yUnit: z.enum(["number", "percentage", "percentage-points"]).default("number"),
+  quadrants: z.tuple([z.string().max(100), z.string().max(100), z.string().max(100), z.string().max(100)])
+    .default(["Low X, high Y", "High X, high Y", "Low X, low Y", "High X, low Y"]),
+  splitMode: z.enum(["median", "manual"]).default("median"),
+  xSplit: z.number().finite().min(-1e32).max(1e32).optional(),
+  ySplit: z.number().finite().min(-1e32).max(1e32).optional(),
+}).refine(value => value.splitMode !== "manual" || value.xSplit !== undefined && value.ySplit !== undefined,
+  "Enter both manual quadrant thresholds.");
 
 const chartItemSchema = z.object({
   id: z.string().min(1),
@@ -127,11 +190,12 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
     type: z.literal("heading"),
     level: z.number().int().min(1).max(6),
     text: z.string().min(1),
+    ...wordTextFields,
   }),
   baseBlockSchema.extend({
     type: z.literal("paragraph"),
     text: z.string().min(1),
-    links: z.array(reportTextLinkSchema).optional(),
+    ...wordTextFields,
     callouts: z.array(z.object({
       start: z.number().int().nonnegative(),
       end: z.number().int().positive(),
@@ -149,7 +213,7 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
   baseBlockSchema.extend({
     type: z.literal("list-item"),
     text: z.string().min(1),
-    links: z.array(reportTextLinkSchema).optional(),
+    ...wordTextFields,
     level: z.number().int().nonnegative(),
   }),
   baseBlockSchema.extend({
@@ -193,8 +257,37 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
           description: z.string().min(1),
         }),
       )
-      .length(3),
+      .min(2)
+      .max(3),
     footnote: z.string().min(1),
+    verifiedSource: verifiedDataSourceSchema.optional(),
+  }),
+  baseBlockSchema.extend({
+    type: z.literal("quadrant-scatter-plot"),
+    title: z.string().min(1),
+    points: z.array(z.object({
+      id: z.string().min(1), label: z.string().min(1),
+      x: z.number().finite().min(-1e32).max(1e32),
+      y: z.number().finite().min(-1e32).max(1e32), description: z.string(),
+      breakdown: z.array(z.object({
+        label: z.string().min(1), value: z.number().finite().nonnegative(), displayValue: z.string().min(1),
+      })).min(1).max(20),
+    })).min(2).max(50),
+    footnote: z.string().min(1),
+    presentation: quadrantPresentationSchema.optional(),
+    verifiedSource: verifiedDataSourceSchema.optional(),
+    wordSource: structuredDataSchema.optional(),
+  }),
+  baseBlockSchema.extend({
+    type: z.literal("illustrated-statistics"),
+    title: z.string().min(1),
+    metrics: z.array(z.object({
+      id: z.string().min(1),
+      value: percentageSchema,
+      description: z.string().min(1),
+    })).min(2).max(3),
+    footnote: z.string().min(1),
+    presentation: illustratedStatisticsPresentationSchema.optional(),
     verifiedSource: verifiedDataSourceSchema.optional(),
   }),
   baseBlockSchema.extend({
@@ -320,6 +413,22 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
     }
   }),
   baseBlockSchema.extend({
+    type: z.literal("coefficient-heatmap"),
+    title: z.string().min(1),
+    columns: z.array(z.string().trim().min(1).max(100)).min(1).max(12),
+    rows: z.array(z.object({
+      id: z.string().min(1),
+      label: z.string().trim().min(1).max(160),
+      values: z.array(z.number().finite().nullable()).min(1).max(12),
+    })).min(2).max(12),
+    sourceNote: z.string().min(1),
+    presentation: heatmapPresentationSchema.optional(),
+    verifiedSource: verifiedDataSourceSchema.optional(),
+  }).refine(block => block.rows.every(row => row.values.length === block.columns.length) &&
+    (!block.verifiedSource || block.verifiedSource.unit === "number"), {
+    path: ["rows"], message: "Every heatmap row must have a value or N/A for each column.",
+  }),
+  baseBlockSchema.extend({
     type: z.literal("grouped-column-comparison"),
     presentation: chartPresentationSchema.optional(),
     title: z.string().min(1),
@@ -441,9 +550,23 @@ export const reportManifestSchema = z.object({
       .optional(),
     publishedDate: z.string().min(1).optional(),
     readTimeMinutes: z.number().int().positive().optional(),
+    employeeCount: z.number().int().positive().max(Number.MAX_SAFE_INTEGER).optional(),
     topics: z.array(z.string().trim().min(1)).max(3).optional(),
   }),
   blocks: z.array(reportBlockSchema).min(1),
+  readerPresentation: z.object({
+    showCoverDetails: z.boolean(),
+    figureDescriptions: z.record(z.string().min(1), z.string()),
+    orderedListBlockIds: z.array(z.string().min(1)),
+    referenceBlockIds: z.array(z.string().min(1)),
+    rowHeaderTableBlockIds: z.array(z.string().min(1)),
+  }).optional(),
+  wordStyles: z.array(z.object({
+    id: z.string().min(1),
+    name: z.string().min(1),
+    target: wordStyleTargetSchema,
+  })).optional(),
+  wordStyleMappings: z.record(z.string().min(1), wordStyleTargetSchema).optional(),
   reviewItems: z.array(reviewItemSchema),
   extraction: z.object({
     paragraphCount: z.number().int().nonnegative(),
@@ -452,7 +575,7 @@ export const reportManifestSchema = z.object({
   }),
 }).superRefine((manifest, context) => {
   for (const [blockIndex, block] of manifest.blocks.entries()) {
-    if (block.type === "paragraph" || block.type === "list-item") {
+    if (block.type === "paragraph" || block.type === "list-item" || block.type === "heading") {
       let previousEnd = 0;
       for (const [linkIndex, link] of (block.links ?? []).entries()) {
         if (
@@ -468,6 +591,18 @@ export const reportManifestSchema = z.object({
           });
         }
         previousEnd = link.end;
+      }
+      previousEnd = 0;
+      for (const [markIndex, mark] of (block.marks ?? []).entries()) {
+        if (mark.start < previousEnd || mark.start >= mark.end || mark.end > block.text.length ||
+          (mark.superscript && mark.subscript) ||
+          !(mark.bold || mark.italic || mark.superscript || mark.subscript)) {
+          context.addIssue({
+            code: "custom", message: "Text formatting must use ordered, non-overlapping ranges within the text.",
+            path: ["blocks", blockIndex, "marks", markIndex],
+          });
+        }
+        previousEnd = mark.end;
       }
     }
 

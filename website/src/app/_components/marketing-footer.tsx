@@ -4,7 +4,14 @@ import { clarityEnabled, telemetryEnabled } from "@/telemetry/config";
 
 import styles from "./marketing-footer.module.css";
 
-export function MarketingFooter() {
+export function MarketingFooter({ disableLinks = false }: { disableLinks?: boolean }) {
+  function footerLink(href: string, label: string, external = false) {
+    if (disableLinks) return <span aria-disabled="true" role="link">{label}</span>;
+    return external
+      ? <a href={href} rel="noreferrer" target="_blank">{label}</a>
+      : <Link href={href}>{label}</Link>;
+  }
+
   return (
     <footer className={styles.footer}>
       <div className={styles.footerLead}>
@@ -26,32 +33,14 @@ export function MarketingFooter() {
 
       <nav aria-label="Footer" className={styles.footerLinks}>
         <div>
-        <Link href="/reports">Reports</Link>
-        <Link href="/tools">Tools</Link>
-        <Link href="/about">About Glint Labs</Link>
-        <a
-          href="https://github.com/microsoft/glintlabs"
-          rel="noreferrer"
-          target="_blank"
-        >
-          GitHub repository
-        </a>
+        {footerLink("/reports", "Reports")}
+        {footerLink("/tools", "Tools")}
+        {footerLink("/about", "About Glint Labs")}
+        {footerLink("https://github.com/microsoft/glintlabs", "GitHub repository", true)}
         </div>
         <div>
-        <a
-          href="https://www.microsoft.com/en-us/legal/terms-of-use"
-          rel="noreferrer"
-          target="_blank"
-        >
-          Terms and Conditions
-        </a>
-        <a
-          href="https://privacy.microsoft.com/en-us/privacystatement"
-          rel="noreferrer"
-          target="_blank"
-        >
-          Privacy Statement
-        </a>
+        {footerLink("https://www.microsoft.com/en-us/legal/terms-of-use", "Terms and Conditions", true)}
+        {footerLink("https://privacy.microsoft.com/en-us/privacystatement", "Privacy Statement", true)}
         </div>
       </nav>
     </footer>

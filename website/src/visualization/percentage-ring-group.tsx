@@ -30,7 +30,7 @@ export function PercentageRingGroup({
       <h3 className={styles.title} id={`${block.id}-title`}>
         {block.presentation?.title ?? block.title}
       </h3>
-      <div className={styles.metrics}>
+      <div className={styles.metrics} data-metric-count={block.metrics.length}>
         {block.metrics.map((metric, index) => (
           <div className={styles.metricGroup} key={metric.id}>
             {index > 0 ? <span className={styles.divider} aria-hidden="true" /> : null}

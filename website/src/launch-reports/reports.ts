@@ -115,7 +115,7 @@ const reports = launchReportSources.map(source => {
     featured: source.featured,
     thumbnail: { src: illustration.src, alt: illustration.description, presentation: "illustration" },
   };
-  return { slug: source.slug, privatePreview: source.privatePreview, manifest, textRuns, descriptions, referenceBlockIds, orderedListBlockIds, rowHeaderTableBlockIds, coverDetails, catalog, isoDate };
+  return { slug: source.slug, privatePreview: source.privatePreview, sourceManifest: original, manifest, textRuns, descriptions, referenceBlockIds, orderedListBlockIds, rowHeaderTableBlockIds, coverDetails, catalog, isoDate };
 }).toSorted((left, right) => right.isoDate.localeCompare(left.isoDate));
 
 function canonicalSlug(slug: string) {

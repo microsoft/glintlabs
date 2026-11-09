@@ -113,11 +113,20 @@ function semanticBlock(block: ReportBlock) {
   }
 
   if (
+    block.type === "quadrant-scatter-plot" && block.verifiedSource
+  ) {
+    const data = Object.fromEntries(Object.entries(block.verifiedSource).filter(([key]) => key !== "verifiedAt"));
+    return { id: block.id, type: "data-visual", source: block.source, content: block.wordSource ?? data };
+  }
+
+  if (
     (block.type === "percentage-ring-group" ||
+      block.type === "illustrated-statistics" ||
       block.type === "percentage-comparison-grid" ||
       block.type === "paired-percentage-comparison" ||
       block.type === "listening-methods-comparison" ||
       block.type === "horizontal-bar-chart" ||
+      block.type === "coefficient-heatmap" ||
       block.type === "grouped-column-comparison") &&
     block.verifiedSource
   ) {
@@ -176,6 +185,8 @@ function semanticBlock(block: ReportBlock) {
   delete content.id;
   delete content.provenance;
   delete content.source;
+  delete content.wordStyle;
+  delete content.wordOutline;
   if (block.type === "paragraph") delete content.callouts;
   return {
     id: block.id,
@@ -248,6 +259,8 @@ export function evaluateApprovedContentIntegrity(
   const unsafeVisual = manifest.blocks.find(
     (block) =>
       (block.type === "percentage-ring-group" ||
+        block.type === "illustrated-statistics" ||
+        block.type === "quadrant-scatter-plot" ||
         block.type === "percentage-comparison-grid" ||
         block.type === "paired-percentage-comparison" ||
         block.type === "horizontal-bar-chart" ||

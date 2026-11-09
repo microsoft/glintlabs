@@ -8,10 +8,13 @@ export const canonicalVisualTypes = [
   "listening-methods-comparison",
   "pull-quote",
   "percentage-ring-group",
+  "illustrated-statistics",
+  "quadrant-scatter-plot",
   "paired-percentage-comparison",
   "percentage-comparison-grid",
   "horizontal-bar-chart",
   "grouped-column-comparison",
+  "coefficient-heatmap",
   "before-after-comparison",
   "impact-metrics",
   "two-column-insight",
@@ -24,7 +27,7 @@ export type CanonicalVisualBlock = Extract<
 >;
 
 export const canonicalVisualOptions: Array<{
-  kind: CanonicalVisualType;
+  kind: Exclude<CanonicalVisualType, "illustrated-statistics" | "quadrant-scatter-plot" | "coefficient-heatmap">;
   name: string;
   reason: string;
 }> = [
@@ -61,7 +64,7 @@ export const canonicalVisualOptions: Array<{
   {
     kind: "percentage-ring-group",
     name: "Percentage ring group",
-    reason: "Show three related percentages with explanations",
+    reason: "Show two or three related percentages with explanations",
   },
   {
     kind: "paired-percentage-comparison",
@@ -107,7 +110,7 @@ export function isCanonicalVisualBlock(
 }
 
 export function createCanonicalVisualBlock(
-  type: CanonicalVisualType,
+  type: Exclude<CanonicalVisualType, "illustrated-statistics" | "quadrant-scatter-plot" | "coefficient-heatmap">,
   id: string,
   source: ReportBlock["source"],
 ): CanonicalVisualBlock {

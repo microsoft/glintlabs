@@ -1,6 +1,12 @@
 "use client";
 
+import { compareLegacyPublication, ReportStatusBadge, StudioReportLibrary } from "./studio-report-library";
+import { publicationEditingFingerprint } from "../../project/studio-project.ts";
+import { publishedReportListSchema, reportLibrary, type PublishedReportSummary } from "../../project/report-library.ts";
+import { websiteResponse } from "../../project/website-publishing.ts";
+
 import { Button } from "@fluentui/react-button";
+import { Menu, MenuDivider, MenuItem, MenuList, MenuPopover, MenuTrigger } from "@fluentui/react-menu";
 import {
   Body1,
   Body1Strong,
@@ -8,20 +14,22 @@ import {
   Caption1Strong,
   Subtitle1,
 } from "@fluentui/react-text";
-import { ArrowBidirectionalLeftRight20Regular } from "@fluentui/react-icons/svg/arrow-bidirectional-left-right";
+import { ArrowBidirectionalLeftRight20Filled, ArrowBidirectionalLeftRight20Regular } from "@fluentui/react-icons/svg/arrow-bidirectional-left-right";
+import { ArrowClockwise20Regular } from "@fluentui/react-icons/svg/arrow-clockwise";
 import { ArrowUpload16Regular } from "@fluentui/react-icons/svg/arrow-upload";
 import { Checkmark16Regular } from "@fluentui/react-icons/svg/checkmark";
 import { CheckmarkCircle20Regular } from "@fluentui/react-icons/svg/checkmark-circle";
 import { ChevronDown16Regular } from "@fluentui/react-icons/svg/chevron-down";
-import { Desktop20Regular } from "@fluentui/react-icons/svg/desktop";
+import { Desktop20Filled, Desktop20Regular } from "@fluentui/react-icons/svg/desktop";
 import { DataBarHorizontal20Regular } from "@fluentui/react-icons/svg/data-bar-horizontal";
 import { DataPie20Regular } from "@fluentui/react-icons/svg/data-pie";
 import { Dismiss20Regular } from "@fluentui/react-icons/svg/dismiss";
-import { DocumentText24Regular } from "@fluentui/react-icons/svg/document-text";
+import { DocumentData16Regular, DocumentData20Regular } from "@fluentui/react-icons/svg/document-data";
 import { Home20Regular } from "@fluentui/react-icons/svg/home";
-import { Phone20Regular } from "@fluentui/react-icons/svg/phone";
-import { Send16Regular } from "@fluentui/react-icons/svg/send";
-import { Tablet20Regular } from "@fluentui/react-icons/svg/tablet";
+import { Globe20Regular } from "@fluentui/react-icons/svg/globe";
+import { Phone20Filled, Phone20Regular } from "@fluentui/react-icons/svg/phone";
+import { Save20Regular } from "@fluentui/react-icons/svg/save";
+import { Tablet20Filled, Tablet20Regular } from "@fluentui/react-icons/svg/tablet";
 import { TextPercent20Regular } from "@fluentui/react-icons/svg/text-percent";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -39,7 +47,10 @@ import {
 
 import type { ExtractionResult } from "../../extraction/extract-docx.ts";
 import {
+  canonicalJson,
+  createApprovedContentRecord,
   evaluateApprovedContentIntegrity,
+  sha256Text,
 } from "../../integrity/approved-content.ts";
 import type {
   ReportBlock,
@@ -51,11 +62,21 @@ import { setTextCallout, type ParagraphBlock, type TextCalloutSelection } from "
 import reportStyles from "../../report-system/report-renderer.module.css";
 import { BrowserProjectStorage } from "../../project/project-storage.ts";
 import {
+  chooseWordSource, readWordSource, rememberWordSource, savedWordSource,
+  wordSourcePicker, type WordSourceHandle,
+} from "../../project/word-source-file.ts";
+import { refreshWordSource, type WordRefreshResult } from "../../project/word-source-refresh.ts";
+import {
+  chooseSourceFolder, rememberSourceFolder, savedSourceFolder, sourceFolderFile,
+  sourceFolderPicker, sourceFolderPermission, allowSourceFolderAccess, sourceFolderProblem,
+  SourceFolderError, type SourceFolderHandle,
+} from "../../project/source-folder.ts";
+import {
   applyImageReview,
   type PublicationImageReview,
   type PublicationPreparation,
 } from "../../project/publication-preparation.ts";
-import { needsImageDescription, readableImageDescription } from "../../project/publication-flow.ts";
+import { initialPublicationMetadata, needsImageDescription, readableImageDescription, type PublicationMetadataDraft } from "../../project/publication-flow.ts";
 import type { BulkImportResult } from "../../project/bulk-report-import.ts";
 import {
   removeReportBlock,
@@ -71,7 +92,6 @@ import {
 } from "../../project/studio-project.ts";
 import {
   DEFAULT_STUDIO_REPORT_STYLE,
-  reportStyleLabel,
   selectableReportStyleOptions,
   type ReportStyle,
 } from "../../report-system/report-style";
@@ -88,14 +108,19 @@ import {
   type DataVisualSourceBlock,
   type VerifiedDataVisualType,
 } from "../../visualization/verified-data-visual.ts";
+import menuStyles from "./studio-menu.module.css";
 import styles from "./publishing-studio.module.css";
 import { StudioReportViewport } from "./studio-report-viewport";
-import { VerifiedChartEditor } from "./verified-chart-editor";
+import { VerifiedChartEditor, type VerifiedChartEditorProps } from "./verified-chart-editor";
 import { ChartDraftPreview, type ChartDraftPreviewData } from "../../report-system/chart-draft-preview";
 
 const StudioReportRenderer = dynamic(
   () => import("../../report-system/report-renderer").then((module) => memo(module.ReportRenderer)),
   { loading: () => <Body1 role="status">Loading report...</Body1> },
+);
+const PublicationCardEditor = dynamic(
+  () => import("../studio/_components/publication-card-editor").then(module => module.PublicationCardEditor),
+  { loading: () => <Body1 role="status">Loading listing card...</Body1> },
 );
 type PublicationDialogComponent = typeof import("../studio/_components/publication-package-dialog").PublicationPackageDialog;
 type PublicationDialogProps = Parameters<PublicationDialogComponent>[0];
@@ -178,6 +203,8 @@ type VisualBlock = Extract<
       | "visual-placeholder"
       | "branded-visual"
       | "percentage-ring-group"
+      | "illustrated-statistics"
+      | "quadrant-scatter-plot"
       | "paired-percentage-comparison"
       | "percentage-comparison-grid"
       | "listening-maturity-scorecard"
@@ -189,6 +216,7 @@ type VisualBlock = Extract<
       | "pull-quote"
       | "horizontal-bar-chart"
       | "grouped-column-comparison"
+      | "coefficient-heatmap"
       | "before-after-comparison"
       | "impact-metrics"
       | "two-column-insight"
@@ -207,14 +235,16 @@ type StudioState =
       result: ExtractionResult;
       manifest: ReportManifest;
       initialReportStyle: ReportStyle;
+      sourceManifest?: ReportManifest;
     };
 
 type StudioAction =
   | { type: "reset" }
   | { type: "extract"; fileName: string }
   | { type: "fail"; fileName: string; message: string }
-  | { type: "complete"; result: ExtractionResult; reportStyle: ReportStyle }
+  | { type: "complete"; result: ExtractionResult; reportStyle: ReportStyle; manifest?: ReportManifest }
   | { type: "load-project"; project: StudioProject }
+  | { type: "refresh-word"; result: ExtractionResult; manifest: ReportManifest }
   | { type: "change-block"; block: ReportBlock }
   | { type: "preview-block"; block: ReportBlock }
   | { type: "format-text"; blocks: ParagraphBlock[] }
@@ -262,17 +292,17 @@ const reportViewports: Array<{
   { id: "mobile", label: "Mobile", width: 390, height: 844 },
 ];
 
-function ReportViewportIcon({ viewport }: { viewport: ReportViewport }) {
+function ReportViewportIcon({ viewport, selected }: { viewport: ReportViewport; selected: boolean }) {
   if (viewport === "full-width") {
-    return <ArrowBidirectionalLeftRight20Regular aria-hidden="true" />;
+    return selected ? <ArrowBidirectionalLeftRight20Filled aria-hidden="true" /> : <ArrowBidirectionalLeftRight20Regular aria-hidden="true" />;
   }
   if (viewport === "desktop") {
-    return <Desktop20Regular aria-hidden="true" />;
+    return selected ? <Desktop20Filled aria-hidden="true" /> : <Desktop20Regular aria-hidden="true" />;
   }
   if (viewport === "tablet") {
-    return <Tablet20Regular aria-hidden="true" />;
+    return selected ? <Tablet20Filled aria-hidden="true" /> : <Tablet20Regular aria-hidden="true" />;
   }
-  return <Phone20Regular aria-hidden="true" />;
+  return selected ? <Phone20Filled aria-hidden="true" /> : <Phone20Regular aria-hidden="true" />;
 }
 
 const BRAND_CENTRAL_IMAGE_COLLECTIONS_URL =
@@ -306,8 +336,9 @@ function reducer(state: StudioState, action: StudioAction): StudioState {
       return {
         status: "ready",
         result: action.result,
-        manifest: action.result.manifest,
+        manifest: action.manifest ?? action.result.manifest,
         initialReportStyle: action.reportStyle,
+        sourceManifest: action.result.manifest,
       };
     case "load-project":
       return {
@@ -320,6 +351,13 @@ function reducer(state: StudioState, action: StudioAction): StudioState {
         },
         manifest: action.project.manifest,
         initialReportStyle: action.project.reportStyle,
+        sourceManifest: action.project.sourceManifest,
+      };
+    case "refresh-word":
+      if (state.status !== "ready") return state;
+      return {
+        ...state, result: action.result, manifest: action.manifest,
+        sourceManifest: action.result.manifest,
       };
     case "change-block":
       if (state.status !== "ready") {
@@ -448,8 +486,8 @@ function FilePicker({
     <label className={styles.filePicker}>
       <ArrowUpload16Regular aria-hidden="true" />
       <span>{label}</span>
+      {/* Validate after selection; macOS type filters can disable valid DOCX files. */}
       <input
-        accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         autoComplete="off"
         disabled={disabled}
         name="word-report"
@@ -670,6 +708,7 @@ function VisualEditor({
   onRemove,
   onPreview,
   onDraftPreview,
+  sourceFolder,
 }: {
   block: VisualBlock;
   onDone: (block: ReportBlock) => void;
@@ -678,6 +717,7 @@ function VisualEditor({
   onRemove: () => void;
   onPreview: (block: ReportBlock, editingOrder?: string[]) => void;
   onDraftPreview?: (draft: ChartDraftPreviewData | undefined) => void;
+  sourceFolder?: VerifiedChartEditorProps["sourceFolder"];
 }) {
   const originalBlock = useRef(block).current;
   const [imageError, setImageError] = useState<string>();
@@ -690,9 +730,12 @@ function VisualEditor({
     }
     if (
       (originalBlock.type === "percentage-ring-group" ||
+        originalBlock.type === "illustrated-statistics" ||
+        originalBlock.type === "quadrant-scatter-plot" ||
         originalBlock.type === "percentage-comparison-grid" ||
         originalBlock.type === "paired-percentage-comparison" ||
         originalBlock.type === "horizontal-bar-chart" ||
+        originalBlock.type === "coefficient-heatmap" ||
         originalBlock.type === "grouped-column-comparison") &&
       originalBlock.verifiedSource
     ) {
@@ -713,6 +756,7 @@ function VisualEditor({
           subtitle: originalBlock.verifiedSource.subtitle,
           synthetic: originalBlock.verifiedSource.synthetic,
           originalSource: originalBlock.verifiedSource.originalSource,
+          workbook: originalBlock.verifiedSource.workbook,
         },
         provenance: { kind: "imported" },
         source: originalBlock.source,
@@ -842,6 +886,7 @@ function VisualEditor({
   }
 
   return <VerifiedChartEditor block={originalBlock} source={sourceBlock}
+    sourceFolder={sourceFolder}
     initialType={newChartType}
     onPreview={onPreview} onDraftPreview={onDraftPreview} onDone={onDone} onCancel={() => onCancel(originalBlock)} onRemove={onRemove} />;
 }
@@ -849,6 +894,77 @@ function VisualEditor({
 export function PublishingStudio() {
   const [state, dispatch] = useReducer(reducer, { status: "empty" });
   const importVersionRef = useRef(0);
+  const wordSourceRef = useRef<{ version: number; handle: WordSourceHandle } | undefined>(undefined);
+  const sourceFolderRef = useRef<SourceFolderHandle | undefined>(undefined);
+  const [sourceFolderName, setSourceFolderName] = useState<string>();
+  const [sourceFolderAccess, setSourceFolderAccess] = useState<PermissionState | "unknown">("unknown");
+  const [sourceFolderIssue, setSourceFolderIssue] = useState<SourceFolderError>();
+  const [canConnectSourceFolder, setCanConnectSourceFolder] = useState(false);
+  const [isConnectingSourceFolder, setIsConnectingSourceFolder] = useState(false);
+  function setConnectedSourceFolder(folder?: SourceFolderHandle) {
+    sourceFolderRef.current = folder;
+    setSourceFolderName(folder?.name);
+    setSourceFolderAccess("unknown");
+    setSourceFolderIssue(undefined);
+    if (folder) void sourceFolderPermission(folder).then(permission => {
+      if (sourceFolderRef.current === folder) setSourceFolderAccess(permission);
+    });
+  }
+  useEffect(() => {
+    setCanConnectSourceFolder(Boolean(sourceFolderPicker()));
+    const version = importVersionRef.current;
+    void savedSourceFolder().then(folder => {
+      if (version === importVersionRef.current && !sourceFolderRef.current) setConnectedSourceFolder(folder);
+    }).catch(() => undefined);
+  }, []);
+  const wordRefreshInputRef = useRef<HTMLInputElement>(null);
+  const documentMenuRef = useRef<HTMLButtonElement>(null);
+  const wordRefreshDialogRef = useRef<HTMLDialogElement>(null);
+  const wordRefreshRunningRef = useRef(false);
+  const excelRefreshInputRef = useRef<HTMLInputElement>(null);
+  const excelRefreshChooseRef = useRef<HTMLButtonElement>(null);
+  const excelRefreshSelection = useRef<{ resolve?: (file?: File) => void }>({}).current;
+  const [excelRefreshRequest, setExcelRefreshRequest] = useState<{ title: string; fileName: string }>();
+  useEffect(() => {
+    if (excelRefreshRequest) excelRefreshChooseRef.current?.focus({ preventScroll: true });
+  }, [excelRefreshRequest]);
+  useEffect(() => () => excelRefreshSelection.resolve?.(), [excelRefreshSelection]);
+  const finishExcelRefreshSelection = useCallback((file?: File) => {
+    const resolve = excelRefreshSelection.resolve;
+    excelRefreshSelection.resolve = undefined;
+    setExcelRefreshRequest(undefined);
+    resolve?.(file);
+  }, [excelRefreshSelection]);
+  useEffect(() => {
+    const input = excelRefreshInputRef.current;
+    const cancel = () => finishExcelRefreshSelection();
+    input?.addEventListener("cancel", cancel);
+    return () => input?.removeEventListener("cancel", cancel);
+  }, [finishExcelRefreshSelection]);
+  const [isRefreshingWord, setIsRefreshingWord] = useState(false);
+  const headerOperationRef = useRef(false);
+  const [headerOperation, setHeaderOperation] = useState<"saving" | "opening-publish">();
+  const headerBusy = isRefreshingWord || headerOperation !== undefined;
+  type WordRefreshDraft = Parameters<typeof hasStudioProjectChanges>[0];
+  const latestWordDraftRef = useRef<WordRefreshDraft | undefined>(undefined);
+  type PendingWordRefresh = {
+    merge: WordRefreshResult;
+    extraction: ExtractionResult;
+    handle?: WordSourceHandle;
+    version: number;
+    draft: WordRefreshDraft;
+  };
+  const [pendingWordRefresh, setPendingWordRefresh] = useState<PendingWordRefresh>();
+  useEffect(() => {
+    if (!pendingWordRefresh) return;
+    const dialog = wordRefreshDialogRef.current;
+    const trigger = documentMenuRef.current;
+    dialog?.showModal();
+    return () => {
+      dialog?.close();
+      trigger?.focus({ preventScroll: true });
+    };
+  }, [pendingWordRefresh]);
   const [hasUnappliedImageChanges, setHasUnappliedImageChanges] = useState(false);
   const [activeTool, setActiveTool] = useState<Tool>();
   const [selectedBlockId, setSelectedBlockId] = useState<string>();
@@ -885,11 +1001,15 @@ export function PublishingStudio() {
   const [isSavingToLeave, setIsSavingToLeave] = useState(false);
   const [homeNavigationError, setHomeNavigationError] = useState<string>();
   const homeDialogRef = useRef<HTMLDialogElement>(null);
+  const pendingLeaveProjectRef = useRef<StudioProject | undefined>(undefined);
   const [pendingRemoval, setPendingRemoval] = useState<ReportBlock>();
   const removeDialogRef = useRef<HTMLDialogElement>(null);
   const removalName = pendingRemoval?.type === "image" ? "image" : pendingRemoval && [
     "data-visual-source", "horizontal-bar-chart", "paired-percentage-comparison",
     "percentage-ring-group", "percentage-comparison-grid", "grouped-column-comparison",
+    "coefficient-heatmap",
+    "illustrated-statistics",
+    "quadrant-scatter-plot",
   ].includes(pendingRemoval.type) ? "chart" : "component";
   useEffect(() => {
     if (pendingRemoval) removeDialogRef.current?.showModal();
@@ -899,18 +1019,65 @@ export function PublishingStudio() {
   const [removedBlocks, setRemovedBlocks] = useState<RemovedBlock[]>([]);
   const [isUndoVisible, setIsUndoVisible] = useState(false);
   const [currentProject, setCurrentProject] = useState<StudioProject>();
+  const [studioView, setStudioView] = useState<"report" | "card">("report");
+  const [publicationMetadataDraft, setPublicationMetadataDraft] = useState<PublicationMetadataDraft>();
+  const [validateCard, setValidateCard] = useState(false);
+  const [editorPublications, setEditorPublications] = useState<{
+    id: string; reports?: PublishedReportSummary[];
+  }>();
+  const [editorReportStatus, setEditorReportStatus] = useState<{ id: string; status: string }>();
+  const editorProjectId = currentProject?.id;
+  const editorPublicationRevision = currentProject?.websitePublication?.revision;
+  useEffect(() => {
+    setEditorPublications(undefined);
+    if (!editorProjectId) return;
+    const controller = new AbortController();
+    void fetch("/api/studio/reports", { cache: "no-store", signal: controller.signal })
+      .then(websiteResponse).then(value => publishedReportListSchema.parse(value))
+      .then(value => {
+        if (!controller.signal.aborted) setEditorPublications({ id: editorProjectId, reports: value.reports });
+      }).catch(() => {
+        if (!controller.signal.aborted) setEditorPublications({ id: editorProjectId });
+      });
+    return () => controller.abort();
+  }, [editorProjectId, editorPublicationRevision]);
+  const wordSourceProjectId = currentProject?.id;
+  const wordSourceVersion = importVersionRef.current;
+  useEffect(() => {
+    if (!wordSourceProjectId || wordSourceRef.current?.version === wordSourceVersion) return;
+    let active = true;
+    void savedWordSource(wordSourceProjectId).then(handle => {
+      if (active && handle && wordSourceVersion === importVersionRef.current &&
+          wordSourceRef.current?.version !== wordSourceVersion) {
+        wordSourceRef.current = { version: wordSourceVersion, handle };
+      }
+    }).catch(() => undefined);
+    return () => { active = false; };
+  }, [wordSourceProjectId, wordSourceVersion]);
+  useEffect(() => {
+    if (!wordSourceProjectId || sourceFolderRef.current) return;
+    let active = true;
+    void savedSourceFolder(wordSourceProjectId).then(folder => {
+      if (active && wordSourceVersion === importVersionRef.current && folder) setConnectedSourceFolder(folder);
+    }).catch(() => undefined);
+    return () => { active = false; };
+  }, [wordSourceProjectId, wordSourceVersion]);
   const [imageReviews, setImageReviews] = useState<PublicationImageReview[]>([]);
   const [imageAttention, setImageAttention] = useState<{ blockId: string; attempt: number; message: string }>();
   const [packageProject, setPackageProject] = useState<StudioProject>();
   const [savedProjects, setSavedProjects] = useState<StudioProject[]>([]);
-  const [storageMessage, setStorageMessage] = useState<string | { message: string; undo?: ParagraphBlock[] }>();
+  const [storageMessage, setStorageMessage] = useState<string | {
+    message: string; undo?: ParagraphBlock[]; undoAction?: () => Promise<string>; error?: boolean;
+  }>();
+  const [undoingNotification, setUndoingNotification] = useState(false);
+  const undoingNotificationRef = useRef(false);
   useEffect(() => {
-    if (!storageMessage || typeof storageMessage === "string") return;
+    if (!storageMessage || typeof storageMessage === "string" || undoingNotification) return;
     const timer = window.setTimeout(() => {
       setStorageMessage(current => current === storageMessage ? undefined : current);
     }, 10000);
     return () => window.clearTimeout(timer);
-  }, [storageMessage]);
+  }, [storageMessage, undoingNotification]);
   const [bulkResults, setBulkResults] = useState<BulkImportResult[]>([]);
   const [bulkProgress, setBulkProgress] = useState<{
     fileName: string;
@@ -929,9 +1096,13 @@ export function PublishingStudio() {
   const [acceptedReviewItemIds, setAcceptedReviewItemIds] = useState<string[]>(
     [],
   );
-  const documentMenuRef = useRef<HTMLDetailsElement>(null);
+  latestWordDraftRef.current = state.status === "ready" ? {
+    manifest: state.manifest, reportStyle, imageReviews, acceptedReviewItemIds, publicationMetadataDraft,
+  } : undefined;
+  const [isDocumentMenuOpen, setIsDocumentMenuOpen] = useState(false);
   const publishActionRef = useRef<HTMLButtonElement>(null);
   const canvasRef = useRef<HTMLElement>(null);
+  const newReportFileRef = useRef<HTMLInputElement>(null);
   const reportSurfaceRef = useRef<HTMLIFrameElement>(null);
   const reportCanvasWidth =
     reportViewports.find((viewport) => viewport.id === reportViewport)?.width ??
@@ -940,7 +1111,7 @@ export function PublishingStudio() {
     reportViewports.find((viewport) => viewport.id === reportViewport)?.height ??
     availableCanvasHeight;
   const closeDocumentMenuForPreview = useCallback(() => {
-    documentMenuRef.current?.removeAttribute("open");
+    setIsDocumentMenuOpen(false);
   }, []);
   const previewVisual = useCallback(
     (block: ReportBlock, rowIds?: string[]) => {
@@ -951,9 +1122,12 @@ export function PublishingStudio() {
   );
 
   const manifest = state.status === "ready" ? state.manifest : undefined;
+  const listingMetadata = manifest ? initialPublicationMetadata({
+    manifest, publicationPreparation: currentProject?.publicationPreparation, publicationMetadataDraft,
+  }) : undefined;
   const hasProjectChanges = useMemo(
     () => state.status === "ready" && hasStudioProjectChanges(
-      { manifest: state.manifest, reportStyle, acceptedReviewItemIds, imageReviews },
+      { manifest: state.manifest, reportStyle, acceptedReviewItemIds, imageReviews, publicationMetadataDraft },
       currentProject ?? {
         manifest: state.result.manifest,
         reportStyle: state.initialReportStyle,
@@ -961,10 +1135,29 @@ export function PublishingStudio() {
         imageReviews: [],
       },
     ),
-    [state, reportStyle, acceptedReviewItemIds, imageReviews, currentProject],
+    [state, reportStyle, acceptedReviewItemIds, imageReviews, publicationMetadataDraft, currentProject],
   );
   const hasUnsavedEdits = !!chartInsertion || hasUnappliedImageChanges || hasProjectChanges;
   const hasUnsavedChanges = hasUnsavedEdits || (!!manifest && !currentProject);
+  useEffect(() => {
+    if (!currentProject || !manifest || editorPublications?.id !== currentProject.id) return;
+    let active = true;
+    const id = currentProject.id;
+    if (!editorPublications.reports) {
+      setEditorReportStatus({ id, status: "Status unavailable" });
+      return;
+    }
+    void reportLibrary([{
+      ...currentProject, manifest, reportStyle, imageReviews, acceptedReviewItemIds, publicationMetadataDraft,
+    }], editorPublications.reports).then(([report]) => compareLegacyPublication(report)).then(report => {
+      if (active) setEditorReportStatus({
+        id, status: report.unpublishedChanges ? "Unpublished changes" : report.publication ? "Published" : "Draft",
+      });
+    }).catch(() => {
+      if (active) setEditorReportStatus({ id, status: "Status unavailable" });
+    });
+    return () => { active = false; };
+  }, [currentProject, manifest, reportStyle, imageReviews, acceptedReviewItemIds, publicationMetadataDraft, editorPublications]);
   const selectedBlock = manifest?.blocks.find(
     (block) => block.id === selectedBlockId,
   );
@@ -1014,9 +1207,12 @@ export function PublishingStudio() {
 
       if (
         block.type !== "percentage-ring-group" &&
+        block.type !== "illustrated-statistics" &&
+        block.type !== "quadrant-scatter-plot" &&
         block.type !== "percentage-comparison-grid" &&
         block.type !== "paired-percentage-comparison" &&
         block.type !== "horizontal-bar-chart" &&
+        block.type !== "coefficient-heatmap" &&
         block.type !== "grouped-column-comparison"
       ) {
         return [];
@@ -1146,29 +1342,6 @@ export function PublishingStudio() {
   }, []);
 
   useEffect(() => {
-    function closeDocumentMenu(event: PointerEvent) {
-      const menu = documentMenuRef.current;
-      if (menu?.open && !menu.contains(event.target as Node)) {
-        menu.removeAttribute("open");
-      }
-    }
-
-    function closeDocumentMenuWithEscape(event: KeyboardEvent) {
-      if (event.key === "Escape" && documentMenuRef.current?.open) {
-        documentMenuRef.current.removeAttribute("open");
-        documentMenuRef.current.querySelector("summary")?.focus();
-      }
-    }
-
-    document.addEventListener("pointerdown", closeDocumentMenu);
-    document.addEventListener("keydown", closeDocumentMenuWithEscape);
-    return () => {
-      document.removeEventListener("pointerdown", closeDocumentMenu);
-      document.removeEventListener("keydown", closeDocumentMenuWithEscape);
-    };
-  }, []);
-
-  useEffect(() => {
     if (!isUndoVisible) {
       return;
     }
@@ -1206,6 +1379,259 @@ export function PublishingStudio() {
     return () => observer.disconnect();
   }, [manifest, reportCanvasWidth, reportCanvasHeight, reportViewport]);
 
+  function wordRefreshIsCurrent(pending: PendingWordRefresh) {
+    return pending.version === importVersionRef.current && latestWordDraftRef.current &&
+      !hasStudioProjectChanges(latestWordDraftRef.current, pending.draft);
+  }
+
+  async function applyWordRefresh(pending: PendingWordRefresh) {
+    try {
+      if (!wordRefreshIsCurrent(pending)) {
+        setStorageMessage("Your draft changed while Word was refreshing. Refresh again to include your latest edits.");
+        return;
+      }
+      const { merge, extraction } = pending;
+      const [approvedContent, manifestSha256] = await Promise.all([
+        createApprovedContentRecord(merge.sourceManifest),
+        sha256Text(JSON.stringify(merge.sourceManifest)),
+      ]);
+      if (!wordRefreshIsCurrent(pending)) return;
+      const refreshedImageReviews = imageReviews.filter(review => {
+        const old = manifest?.blocks.find(block => block.id === review.blockId);
+        const fresh = merge.manifest.blocks.find(block => block.id === review.blockId);
+        return old?.type === "image" && fresh?.type === "image" && old.dataUrl === fresh.dataUrl;
+      });
+      const retainedAcceptedIds = acceptedReviewItemIds.filter(id => {
+        const old = manifest?.reviewItems.find(item => item.id === id);
+        const fresh = merge.manifest.reviewItems.find(item => item.id === id);
+        return old && fresh && canonicalJson({ ...old, source: undefined }) === canonicalJson({ ...fresh, source: undefined });
+      });
+      const changes = {
+        manifest: merge.manifest,
+        sourceManifest: merge.sourceManifest,
+        importedManifestSha256: manifestSha256,
+        approvedContent,
+        publicationSourceEvidence: extraction.publicationSourceEvidence,
+        reportStyle,
+        imageReviews: refreshedImageReviews,
+        publicationMetadataDraft,
+        acceptedReviewItemIds: retainedAcceptedIds,
+        status: "draft" as const,
+      };
+      const project = currentProject
+        ? updateStudioProject(currentProject, changes)
+        : createStudioProject(changes);
+      const storage = new BrowserProjectStorage(window.localStorage);
+      await storage.save(project);
+      if (!wordRefreshIsCurrent(pending)) {
+        setStorageMessage("Word changes were saved, but your open draft changed during the save. Open the saved draft to see the refreshed source.");
+        return;
+      }
+      dispatch({ type: "refresh-word", manifest: merge.manifest, result: {
+        ...extraction, manifest: merge.sourceManifest, manifestSha256, approvedContent,
+      } });
+      setCurrentProject(project);
+      setSavedProjects(projects => [project, ...projects.filter(item => item.id !== project.id)]
+        .toSorted((left, right) => right.updatedAt.localeCompare(left.updatedAt)));
+      setImageReviews(refreshedImageReviews);
+      setAcceptedReviewItemIds(retainedAcceptedIds);
+      setActiveTool(undefined);
+      setSelectedBlockId(undefined);
+      setRemovedBlocks([]);
+      setIsUndoVisible(false);
+      setStorageMessage(merge.unchanged
+        ? "Word is up to date. Draft saved on this device."
+        : "Refreshed from Word. Draft saved on this device.");
+      if (sourceFolderRef.current) {
+        try { await rememberSourceFolder(sourceFolderRef.current, project.id); }
+        catch {
+          if (pending.version === importVersionRef.current) setStorageMessage("Refreshed from Word and saved. This browser couldn't remember the source folder. Reconnect it when prompted next time.");
+        }
+      }
+      if (pending.handle) {
+        wordSourceRef.current = { version: pending.version, handle: pending.handle };
+        try {
+          await rememberWordSource(project.id, pending.handle);
+        } catch {
+          if (pending.version === importVersionRef.current) {
+            setStorageMessage("Refreshed from Word and saved. This browser couldn't remember the connection. Choose the Word file when prompted after reloading.");
+          }
+        }
+      }
+    } catch (error) {
+      if (pending.version === importVersionRef.current) {
+        setStorageMessage(error instanceof Error ? error.message : "Word changes couldn't be saved. Your open draft hasn't changed. Try refreshing again.");
+      }
+    }
+  }
+
+  async function connectSourceFolder(allowAccess = false) {
+    if (isConnectingSourceFolder || isRefreshingWord || !requireAppliedEdits()) return;
+    const picker = sourceFolderPicker();
+    if (!allowAccess && !picker) return;
+    const version = importVersionRef.current;
+    setIsConnectingSourceFolder(true);
+    try {
+      const folder = allowAccess ? sourceFolderRef.current : await chooseSourceFolder(picker!);
+      if (!folder) return;
+      if (allowAccess) await allowSourceFolderAccess(folder);
+      if (version !== importVersionRef.current) return;
+      await rememberSourceFolder(folder);
+      if (version !== importVersionRef.current) return;
+      setConnectedSourceFolder(folder);
+      if (currentProject) await rememberSourceFolder(folder, currentProject.id);
+      if (manifest && state.status === "ready") {
+        const handle = await sourceFolderFile(folder, manifest.source.fileName);
+        const { quadrantHash } = await import("../../extraction/quadrant-workbook.ts");
+        const wordHash = await quadrantHash(await (await handle.getFile()).arrayBuffer());
+        if (version !== importVersionRef.current) return;
+        setSourceFolderAccess("granted");
+        if (wordHash !== manifest.source.sha256) {
+          wordSourceRef.current = { version, handle };
+          if (currentProject) await rememberWordSource(currentProject.id, handle);
+          setStorageMessage("Source folder connected. Word has changed since import. Choose Refresh from Word to load the latest Word and Excel data.");
+          window.requestAnimationFrame(() => documentMenuRef.current?.focus({ preventScroll: true }));
+          return;
+        }
+        const { hydrateFolderQuadrants } = await import("../../project/quadrant-workbook-source.ts");
+        const hydrated = await hydrateFolderQuadrants(manifest, folder);
+        if (version !== importVersionRef.current) return;
+        if (latestWordDraftRef.current?.manifest !== manifest) {
+          setStorageMessage("Source folder connected. Your draft changed while Excel was loading. Refresh from Word to include your latest edits.");
+          return;
+        }
+        for (const block of hydrated.blocks) {
+          if (block !== manifest.blocks.find(original => original.id === block.id)) dispatch({ type: "change-block", block });
+        }
+        wordSourceRef.current = { version, handle };
+        if (currentProject) await rememberWordSource(currentProject.id, handle);
+      }
+      if (version === importVersionRef.current) {
+        setStorageMessage(`Source folder connected: ${folder.name}. Use Refresh from Word to load saved source changes.`);
+        window.requestAnimationFrame(() => documentMenuRef.current?.focus({ preventScroll: true }));
+      }
+    } catch (error) {
+      if (version === importVersionRef.current && !(error instanceof DOMException && error.name === "AbortError")) {
+        const issue = sourceFolderProblem(error);
+        setSourceFolderIssue(issue);
+        if (issue.kind === "permission") setSourceFolderAccess("prompt");
+      }
+    } finally { setIsConnectingSourceFolder(false); }
+  }
+
+  function sourceFolderControl() {
+    const needsAccess = !!sourceFolderName && (sourceFolderAccess === "prompt" ||
+      sourceFolderAccess === "denied" || sourceFolderIssue?.kind === "permission");
+    return <div className={styles.sourceFolderControl}>
+      <Caption1 block>{sourceFolderName
+        ? `${needsAccess ? "Access needed" : sourceFolderAccess === "granted" && !sourceFolderIssue ? "Connected" : "Remembered folder"}: ${sourceFolderName}`
+        : "No source folder connected."}</Caption1>
+      <Button appearance="outline" disabled={(!canConnectSourceFolder && !needsAccess) || isConnectingSourceFolder || isRefreshingWord}
+        onClick={() => void connectSourceFolder(needsAccess)}>
+        {isConnectingSourceFolder ? "Connecting source folder..." : needsAccess ? "Allow folder access" : sourceFolderName ? "Change folder" : "Connect source folder"}
+      </Button>
+      {!canConnectSourceFolder && !sourceFolderName ? <Caption1 block>
+        Folder access needs Edge or Chrome. You can still choose Word and connect Excel separately.
+      </Caption1> : null}
+      {needsAccess && canConnectSourceFolder ? <Button appearance="subtle" disabled={isConnectingSourceFolder || isRefreshingWord}
+        onClick={() => void connectSourceFolder()}>Change folder</Button> : null}
+    </div>;
+  }
+
+  async function refreshFromWord(file?: File) {
+    if (state.status !== "ready" || !manifest || wordRefreshRunningRef.current || !requireAppliedEdits()) return;
+    const connected = wordSourceRef.current?.version === importVersionRef.current
+      ? wordSourceRef.current.handle : undefined;
+    const folder = sourceFolderRef.current;
+    const picker = wordSourcePicker();
+    if (!file && !connected && !folder && !picker) {
+      wordRefreshInputRef.current?.click();
+      return;
+    }
+    const version = importVersionRef.current;
+    const draft = latestWordDraftRef.current!;
+    wordRefreshRunningRef.current = true;
+    setIsRefreshingWord(true);
+    setStorageMessage(undefined);
+    try {
+      const handle = file ? undefined : connected ??
+        (folder ? await sourceFolderFile(folder, manifest.source.fileName) : await chooseWordSource(picker!));
+      if (!file && !handle) return;
+      const sourceFile = file ?? await readWordSource(handle!);
+      if (version !== importVersionRef.current) return;
+      if (!/\.docx$/i.test(sourceFile.name)) throw new Error("Choose a Word (.docx) report to refresh this draft.");
+      if (sourceFile.name !== manifest.source.fileName && !window.confirm(
+        `Use "${sourceFile.name}" as this draft's Word source instead of "${manifest.source.fileName}"?`,
+      )) return;
+      const [{ extractDocx }, bytes] = await Promise.all([
+        import("../../extraction/extract-docx.ts"), sourceFile.arrayBuffer(),
+      ]);
+      const extraction = await extractDocx(sourceFile.name, bytes);
+      if (version !== importVersionRef.current) return;
+      const { connectedQuadrantSources } = await import("../../project/quadrant-workbook-source.ts");
+      const quadrantSources = folder ? {} : await connectedQuadrantSources({
+        ...manifest, blocks: manifest.blocks.filter(block => block.type === "quadrant-scatter-plot"),
+      }, (title, fileName) => new Promise(resolve => {
+        excelRefreshSelection.resolve = resolve;
+        setExcelRefreshRequest({ title, fileName });
+      }), folder);
+      const incomingQuadrantSources = folder
+        ? await connectedQuadrantSources(extraction.manifest, undefined, folder) : undefined;
+      const folderPermission = folder ? await sourceFolderPermission(folder) : undefined;
+      if (version !== importVersionRef.current) return;
+      if (folder) {
+        setSourceFolderAccess(folderPermission === "unknown" ? "granted" : folderPermission!);
+        setSourceFolderIssue(undefined);
+      }
+      const merge = refreshWordSource({
+        current: manifest, incoming: extraction.manifest,
+        sourceManifest: state.sourceManifest, approvedContent: state.result.approvedContent,
+        quadrantSources, incomingQuadrantSources,
+      });
+      const pending = { merge, extraction, handle, version, draft };
+      if (!wordRefreshIsCurrent(pending)) {
+        setStorageMessage("Your draft changed while Word was refreshing. Refresh again to include your latest edits.");
+        return;
+      }
+      if (merge.conflicts.length) {
+        setPendingWordRefresh(pending);
+      } else {
+        await applyWordRefresh(pending);
+      }
+    } catch (error) {
+      if (version !== importVersionRef.current || error instanceof DOMException && error.name === "AbortError") return;
+      const name = error instanceof Error ? error.name : "";
+      if (folder && (error instanceof SourceFolderError || ["NotFoundError", "NotAllowedError", "SecurityError"].includes(name))) {
+        const issue = sourceFolderProblem(error, manifest.source.fileName);
+        setSourceFolderIssue(issue);
+        if (issue.kind === "permission") setSourceFolderAccess("prompt");
+        return;
+      }
+      if (connected && ["NotFoundError", "NotAllowedError", "SecurityError"].includes(name)) wordSourceRef.current = undefined;
+      setStorageMessage(name === "NotFoundError"
+        ? "The Word file was moved or deleted. Refresh again to choose the Word file. Your draft hasn't changed."
+        : name === "NotAllowedError" || name === "SecurityError"
+          ? "Word file access wasn't allowed. Refresh again to choose the Word file. Your draft hasn't changed."
+          : error instanceof Error ? error.message : "Word couldn't be refreshed. Save the document, then try again. Your draft hasn't changed.");
+    } finally {
+      wordRefreshRunningRef.current = false;
+      setIsRefreshingWord(false);
+    }
+  }
+
+  async function confirmWordRefresh() {
+    if (!pendingWordRefresh || wordRefreshRunningRef.current) return;
+    wordRefreshRunningRef.current = true;
+    setIsRefreshingWord(true);
+    setPendingWordRefresh(undefined);
+    try {
+      await applyWordRefresh(pendingWordRefresh);
+    } finally {
+      wordRefreshRunningRef.current = false;
+      setIsRefreshingWord(false);
+    }
+  }
+
   async function handleFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) {
@@ -1223,7 +1649,7 @@ export function PublishingStudio() {
     }
 
     const version = ++importVersionRef.current;
-    documentMenuRef.current?.removeAttribute("open");
+    setIsDocumentMenuOpen(false);
     dispatch({ type: "extract", fileName: file.name });
     setActiveTool(undefined);
     setSelectedBlockId(undefined);
@@ -1232,9 +1658,13 @@ export function PublishingStudio() {
     setRemovedBlocks([]);
     setIsUndoVisible(false);
     setCurrentProject(undefined);
+    setPublicationMetadataDraft(undefined);
+    setStudioView("report");
+    setValidateCard(false);
     setImageReviews([]);
     setImageAttention(undefined);
     setStorageMessage(undefined);
+    setSourceFolderIssue(undefined);
     setAcceptedReviewItemIds([]);
     try {
       const [{ extractDocx }, bytes] = await Promise.all([
@@ -1243,7 +1673,37 @@ export function PublishingStudio() {
       if (version !== importVersionRef.current) return;
       const result = await extractDocx(file.name, bytes);
       if (version !== importVersionRef.current) return;
-      dispatch({ type: "complete", result, reportStyle });
+      let hydrated = result.manifest;
+      const needsLinkedExcel = result.manifest.blocks.some(block => block.type === "data-visual-source" &&
+        block.data.recommendedVisualType === "quadrant-scatter-plot" && !block.data.workbook);
+      const folder = sourceFolderRef.current ?? await savedSourceFolder().catch(() => undefined);
+      if (version !== importVersionRef.current) return;
+      if (folder) setConnectedSourceFolder(folder);
+      if (folder) {
+        let matchesWord = false;
+        try {
+          const { hydrateFolderQuadrants } = await import("../../project/quadrant-workbook-source.ts");
+          const { quadrantHash } = await import("../../extraction/quadrant-workbook.ts");
+          const wordHandle = await sourceFolderFile(folder, file.name);
+          if (await quadrantHash(await (await wordHandle.getFile()).arrayBuffer()) !== result.manifest.source.sha256) {
+            throw new Error(`This Word file doesn't match "${file.name}" in "${folder.name}". Connect the folder containing the uploaded Word report and its linked Excel workbook.`);
+          }
+          matchesWord = true;
+          wordSourceRef.current = { version, handle: wordHandle };
+          hydrated = await hydrateFolderQuadrants(result.manifest, folder);
+          if (version !== importVersionRef.current) return;
+          setSourceFolderAccess("granted");
+        } catch (error) {
+          if (version !== importVersionRef.current) return;
+          if (needsLinkedExcel) {
+            const issue = sourceFolderProblem(error);
+            setSourceFolderIssue(issue);
+            if (issue.kind === "permission") setSourceFolderAccess("prompt");
+          } else if (!matchesWord) setConnectedSourceFolder(undefined);
+        }
+      }
+      if (version !== importVersionRef.current) return;
+      dispatch({ type: "complete", result, manifest: hydrated, reportStyle });
     } catch (error) {
       if (version !== importVersionRef.current) return;
       dispatch({
@@ -1300,14 +1760,18 @@ export function PublishingStudio() {
 
   function returnToStart() {
     importVersionRef.current++;
+    pendingLeaveProjectRef.current = undefined;
     homeDialogRef.current?.close();
-    documentMenuRef.current?.removeAttribute("open");
+    setIsDocumentMenuOpen(false);
     dispatch({ type: "reset" });
     setActiveTool(undefined);
     setSelectedBlockId(undefined);
     setPendingImageBlockId(undefined);
     setHighlightedBlockId(undefined);
     setCurrentProject(undefined);
+    setPublicationMetadataDraft(undefined);
+    setStudioView("report");
+    setValidateCard(false);
     setImageReviews([]);
     setImageAttention(undefined);
     setPackageProject(undefined);
@@ -1321,12 +1785,13 @@ export function PublishingStudio() {
     setCanvasScale(1);
     window.requestAnimationFrame(() => {
       window.scrollTo(0, 0);
-      canvasRef.current?.querySelector<HTMLInputElement>('input[name="word-report"]')?.focus();
+      canvasRef.current?.querySelector<HTMLButtonElement>("[data-studio-new-report]")?.focus();
     });
   }
 
   function goHome() {
     if (!requireAppliedEdits()) return;
+    pendingLeaveProjectRef.current = undefined;
     if (!hasUnsavedChanges) {
       returnToStart();
       return;
@@ -1335,13 +1800,22 @@ export function PublishingStudio() {
     homeDialogRef.current?.showModal();
   }
 
-  async function saveAndGoHome() {
+  function finishLeaving() {
+    const project = pendingLeaveProjectRef.current;
+    if (project) openProject(project);
+    else returnToStart();
+  }
+
+  async function saveAndLeave() {
     setIsSavingToLeave(true);
     setHomeNavigationError(undefined);
     const project = await saveCurrentProject();
     setIsSavingToLeave(false);
     if (project) {
-      returnToStart();
+      if (pendingLeaveProjectRef.current?.id === project.id) {
+        pendingLeaveProjectRef.current = project;
+      }
+      finishLeaving();
     } else {
       setHomeNavigationError(
         "Your changes weren't saved. Try again, or choose Leave without saving.",
@@ -1351,10 +1825,12 @@ export function PublishingStudio() {
 
   async function saveCurrentProject() {
     if (!requireAppliedEdits()) return;
-    if (!manifest || state.status !== "ready") {
+    if (!manifest || state.status !== "ready" || headerOperationRef.current) {
       return;
     }
 
+    headerOperationRef.current = true;
+    setHeaderOperation("saving");
     try {
       const activeAcceptedIds = activeAcceptedReviewItemIds(
         manifest.reviewItems,
@@ -1368,7 +1844,10 @@ export function PublishingStudio() {
             acceptedReviewItemIds: activeAcceptedIds,
             approvedContent: state.result.approvedContent,
             publicationSourceEvidence: state.result.publicationSourceEvidence,
+            sourceManifest: state.sourceManifest,
+            importedManifestSha256: state.result.manifestSha256,
             imageReviews,
+            publicationMetadataDraft,
           })
         : createStudioProject({
             importedManifestSha256: state.result.manifestSha256,
@@ -1378,10 +1857,21 @@ export function PublishingStudio() {
             acceptedReviewItemIds: activeAcceptedIds,
             approvedContent: state.result.approvedContent,
             publicationSourceEvidence: state.result.publicationSourceEvidence,
+            sourceManifest: state.sourceManifest,
             imageReviews,
+            publicationMetadataDraft,
           });
       const storage = new BrowserProjectStorage(window.localStorage);
       await storage.save(project);
+      try {
+        if (sourceFolderRef.current) await rememberSourceFolder(sourceFolderRef.current, project.id);
+        if (wordSourceRef.current?.version === importVersionRef.current) await rememberWordSource(project.id, wordSourceRef.current.handle);
+      } catch {
+        setStorageMessage("Changes saved. This browser couldn't remember the source folder. Reconnect it when prompted next time.");
+        setCurrentProject(project);
+        setSavedProjects(await storage.list());
+        return project;
+      }
       setCurrentProject(project);
       setSavedProjects(await storage.list());
       setStorageMessage("Changes saved to this device.");
@@ -1392,6 +1882,9 @@ export function PublishingStudio() {
           ? error.message
           : "The Studio project could not be saved.",
       );
+    } finally {
+      headerOperationRef.current = false;
+      setHeaderOperation(undefined);
     }
   }
 
@@ -1400,9 +1893,11 @@ export function PublishingStudio() {
       return;
     }
     if (!requireAppliedEdits()) return;
+    if (headerOperationRef.current) return;
     const unfinishedImage = manifest.blocks.find((block) => block.type === "image" &&
       needsImageDescription(imageReviews.find((review) => review.blockId === block.id)?.description ?? block.alt));
     if (unfinishedImage) {
+      setStudioView("report");
       selectBlock(unfinishedImage.id);
       setImageAttention((current) => ({
         blockId: unfinishedImage.id, attempt: (current?.attempt ?? 0) + 1,
@@ -1411,6 +1906,8 @@ export function PublishingStudio() {
       reportSurfaceRef.current?.contentDocument?.getElementById(`report-block-${unfinishedImage.id}`)?.scrollIntoView({ block: "center" });
       return;
     }
+    headerOperationRef.current = true;
+    setHeaderOperation("opening-publish");
     try {
       const project = currentProject
         ? updateStudioProject(currentProject, {
@@ -1420,7 +1917,10 @@ export function PublishingStudio() {
             acceptedReviewItemIds,
             approvedContent: state.result.approvedContent,
             publicationSourceEvidence: state.result.publicationSourceEvidence,
+            sourceManifest: state.sourceManifest,
+            importedManifestSha256: state.result.manifestSha256,
             imageReviews,
+            publicationMetadataDraft,
           })
         : createStudioProject({
             importedManifestSha256: state.result.manifestSha256,
@@ -1430,15 +1930,21 @@ export function PublishingStudio() {
             acceptedReviewItemIds,
             approvedContent: state.result.approvedContent,
             publicationSourceEvidence: state.result.publicationSourceEvidence,
+            sourceManifest: state.sourceManifest,
             imageReviews,
+            publicationMetadataDraft,
           });
       const storage = new BrowserProjectStorage(window.localStorage);
       await storage.save(project);
       setCurrentProject(project);
       setSavedProjects(await storage.list());
+      setValidateCard(false);
       setPackageProject(project);
     } catch (error) {
       setStorageMessage(error instanceof Error ? error.message : "The package draft could not be opened. Try saving the report again.");
+    } finally {
+      headerOperationRef.current = false;
+      setHeaderOperation(undefined);
     }
   }
 
@@ -1452,29 +1958,58 @@ export function PublishingStudio() {
       status: packageProject.status,
       acceptedReviewItemIds: packageProject.acceptedReviewItemIds,
       publicationPreparation: preparation,
+      publicationMetadataDraft: preparation.metadata,
     });
     const storage = new BrowserProjectStorage(window.localStorage);
     await storage.save(project);
     setCurrentProject(project);
+    setPublicationMetadataDraft(preparation.metadata);
     setImageReviews(studioImageReviews(project));
     setPackageProject(project);
     setSavedProjects(await storage.list());
   }
 
+  async function recordWebsitePublication(project: StudioProject, revision: number, packageFingerprint: string) {
+    const storage = new BrowserProjectStorage(window.localStorage);
+    const saved = await storage.load(project.id);
+    const updated = {
+      ...saved,
+      websitePublication: {
+        revision, packageFingerprint,
+        editingFingerprint: await publicationEditingFingerprint(project),
+      },
+    };
+    await storage.save(updated);
+    setCurrentProject(updated);
+    setPackageProject(updated);
+    setSavedProjects(await storage.list());
+  }
+
   function loadProject(project: StudioProject) {
     if (!requireAppliedEdits()) return false;
-    if (
-      hasUnsavedChanges &&
-      !window.confirm(
-        "Open this saved project? Any unsaved changes to the current report will be lost.",
-      )
-    ) {
+    if (hasUnsavedChanges) {
+      pendingLeaveProjectRef.current = project;
+      setHomeNavigationError(undefined);
+      homeDialogRef.current?.showModal();
       return false;
     }
+    openProject(project);
+    return true;
+  }
+
+  function openProject(project: StudioProject) {
+    if (storageMessage && typeof storageMessage !== "string" && storageMessage.undoAction) setStorageMessage(undefined);
+    pendingLeaveProjectRef.current = undefined;
+    homeDialogRef.current?.close();
+    bulkDialogRef.current?.close();
     importVersionRef.current++;
-    documentMenuRef.current?.removeAttribute("open");
+    setConnectedSourceFolder(undefined);
+    setIsDocumentMenuOpen(false);
     dispatch({ type: "load-project", project });
     setCurrentProject(project);
+    setPublicationMetadataDraft(project.publicationMetadataDraft);
+    setStudioView("report");
+    setValidateCard(false);
     setImageReviews(studioImageReviews(project));
     setImageAttention(undefined);
     setReportStyle(project.reportStyle);
@@ -1485,11 +2020,10 @@ export function PublishingStudio() {
     setRemovedBlocks([]);
     setIsUndoVisible(false);
     setAcceptedReviewItemIds(project.acceptedReviewItemIds);
-    setStorageMessage(`Opened ${project.manifest.metadata.title}.`);
+    setStorageMessage(undefined);
     window.requestAnimationFrame(() =>
-      documentMenuRef.current?.querySelector("summary")?.focus(),
+      documentMenuRef.current?.focus(),
     );
-    return true;
   }
 
   function toggleIssueAcceptance(issueId: string) {
@@ -1503,32 +2037,22 @@ export function PublishingStudio() {
     );
   }
 
-  function savedProjectList() {
-    return (
-      <ul aria-label="Saved drafts" className={styles.documentMenuList}>
-        {savedProjects.map((project) => (
-          <li key={project.id}>
-            <button
-              aria-current={currentProject?.id === project.id ? "true" : undefined}
-              onClick={() => loadProject(project)}
-              type="button"
-            >
-              <DocumentText24Regular aria-hidden="true" />
-              <span>
-                <Body1Strong block>{project.manifest.metadata.title}</Body1Strong>
-                <Caption1 block>
-                  {new Intl.DateTimeFormat("en-US", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  }).format(new Date(project.updatedAt))}
-                </Caption1>
-              </span>
-              {currentProject?.id === project.id ? <Checkmark16Regular aria-hidden="true" /> : null}
-            </button>
-          </li>
-        ))}
-      </ul>
-    );
+  function savedDraftMenuItems() {
+    return savedProjects.map(project => (
+      <MenuItem
+        aria-current={currentProject?.id === project.id ? "true" : undefined}
+        className={styles.savedDraftItem}
+        icon={<DocumentData16Regular aria-hidden="true" />}
+        key={project.id}
+        onClick={() => loadProject(project)}
+        secondaryContent={currentProject?.id === project.id ? <Checkmark16Regular aria-hidden="true" /> : undefined}
+        title={`${project.manifest.metadata.title}\nSaved ${new Intl.DateTimeFormat("en-US", {
+          dateStyle: "medium", timeStyle: "short",
+        }).format(new Date(project.updatedAt))}`}
+      >
+        <span className={styles.savedDraftName}>{project.manifest.metadata.title}</span>
+      </MenuItem>
+    ));
   }
 
   const selectBlock = useCallback((blockId: string) => {
@@ -1611,6 +2135,24 @@ export function PublishingStudio() {
       ?.querySelector<HTMLElement>("[data-report-text-block]")?.focus({ preventScroll: true }));
   }
 
+  async function undoNotification() {
+    if (!storageMessage || typeof storageMessage === "string" || !storageMessage.undoAction || undoingNotificationRef.current) return;
+    const notification = storageMessage;
+    undoingNotificationRef.current = true;
+    setUndoingNotification(true);
+    try {
+      const message = await storageMessage.undoAction();
+      setStorageMessage(current => current === notification ? { message } : current);
+    } catch {
+      setStorageMessage(current => current === notification
+        ? { ...notification, message: "Undo couldn't be completed. Select Undo to try again.", error: true }
+        : current);
+    } finally {
+      undoingNotificationRef.current = false;
+      setUndoingNotification(false);
+    }
+  }
+
   function startChartInsertion(beforeBlockId?: string) {
     if (!manifest || !requireAppliedEdits()) return;
     const index = beforeBlockId ? manifest.blocks.findIndex(block => block.id === beforeBlockId) : manifest.blocks.length;
@@ -1657,7 +2199,7 @@ export function PublishingStudio() {
 
   function requireAppliedEdits() {
     if (!selectedBlockId) return true;
-    setStorageMessage("Apply or cancel your current edits before saving, leaving Studio, or publishing.");
+    setStorageMessage("Apply or cancel your current edits before continuing.");
     if (selectedBlock?.type === "image") {
       setImageAttention((current) => ({
         blockId: selectedBlock.id, attempt: (current?.attempt ?? 0) + 1,
@@ -1718,8 +2260,11 @@ export function PublishingStudio() {
               {([
                 ["horizontal-bar-chart", "Bar chart", "Compare values", DataBarHorizontal20Regular],
                 ["paired-percentage-comparison", "Paired comparison", "Show two percentage findings", TextPercent20Regular],
-                ["percentage-ring-group", "Percentage rings", "Show three percentage findings", DataPie20Regular],
+                ["percentage-ring-group", "Percentage rings", "Show two or three percentage findings", DataPie20Regular],
+                ["illustrated-statistics", "Illustrated statistics", "Pair two or three findings with illustrations", DataPie20Regular],
+                ["quadrant-scatter-plot", "2×2 quadrant", "Plot numerical X/Y values with interactive point details", DataPie20Regular],
                 ["percentage-comparison-grid", "Percentage comparison grid", "Show four percentage findings in two rows", TextPercent20Regular],
+                ["coefficient-heatmap", "Coefficient heatmap", "Compare numeric coefficients across factors and periods", DataBarHorizontal20Regular],
               ] as const).map(([type, title, description, Icon]) => <Button key={type} type="button"
                 className={styles.chartTypeCard}
                 onClick={() => setChartInsertion(current => current ? { ...current, type } : current)}>
@@ -1858,6 +2403,11 @@ export function PublishingStudio() {
           <section aria-label="Chart editor" className={styles.chartEditorSurface}>
             <VisualEditor
               block={selectedBlock}
+              sourceFolder={sourceFolderName ? {
+                name: sourceFolderName,
+                status: sourceFolderAccess === "prompt" || sourceFolderAccess === "denied" || sourceFolderIssue?.kind === "permission"
+                  ? "access-needed" : sourceFolderAccess === "granted" && !sourceFolderIssue ? "connected" : "unavailable",
+              } : undefined}
               key={selectedBlock.id}
               onDone={(block) => {
                 setChartDraftPreview(undefined);
@@ -1902,8 +2452,7 @@ export function PublishingStudio() {
   }
 
   return (
-    <section
-      aria-label="Publishing Studio"
+    <div
       className={`${styles.shell} ${manifest ? styles.reportLoaded : ""}`}
     >
       <header
@@ -1913,6 +2462,7 @@ export function PublishingStudio() {
           <button
             aria-label="Back to home"
             className={styles.homeAction}
+            disabled={headerBusy}
             onClick={goHome}
             title="Back to home"
             type="button"
@@ -1920,58 +2470,56 @@ export function PublishingStudio() {
             <Home20Regular aria-hidden="true" />
           </button>
           {manifest ? (
-            <details className={styles.documentMenu} ref={documentMenuRef}>
-              <summary
-                className={styles.documentTrigger}
-                title={manifest.source.fileName}
-              >
-                <span>{manifest.source.fileName}</span>
-                <ChevronDown16Regular aria-hidden="true" />
-              </summary>
-              <div className={styles.documentMenuPopover}>
-                <div className={styles.documentMenuHeading}>
-                  <Body1Strong block>Recent documents</Body1Strong>
-                  <Caption1 block>Saved in this browser</Caption1>
-                </div>
-                {savedProjects.length > 0 ? (
-                  savedProjectList()
-                ) : (
-                  <Caption1 className={styles.documentMenuEmpty}>
-                    No saved documents yet
-                  </Caption1>
-                )}
-                <div className={styles.documentMenuUpload}>
-                  <label className={styles.publishingStyleField}>
-                    <Body1Strong>Publishing style</Body1Strong>
-                    <select
-                      onChange={(event) =>
-                        setReportStyle(event.target.value as ReportStyle)
-                      }
-                      value={reportStyle}
+            <>
+              <div className={styles.documentMenu}>
+                <Menu
+                  open={isDocumentMenuOpen}
+                  onOpenChange={(_, data) => {
+                    setIsDocumentMenuOpen(data.open);
+                  }}
+                  positioning={{ position: "below", align: "start", offset: 6 }}
+                >
+                  <MenuTrigger disableButtonEnhancement>
+                    <Button
+                      appearance="outline"
+                      className={styles.documentTrigger}
+                      disabled={headerBusy}
+                      icon={<ChevronDown16Regular aria-hidden="true" />}
+                      iconPosition="after"
+                      ref={documentMenuRef}
+                      title={manifest.metadata.title}
                     >
-                      {reportStyle !== DEFAULT_STUDIO_REPORT_STYLE ? (
-                        <option hidden disabled value={reportStyle}>
-                          {reportStyleLabel(reportStyle)}
-                        </option>
-                      ) : null}
-                      {selectableReportStyleOptions.map((option) => (
-                        <option key={option.id} value={option.id}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <FilePicker
-                    disabled={state.status === "extracting"}
-                    label="Upload new document"
-                    onChange={handleFile}
-                  />
-                </div>
+                      <span className={styles.documentTriggerContent}>
+                        <DocumentData20Regular aria-hidden="true" />
+                        <span className={styles.documentTriggerTitle}>{manifest.metadata.title}</span>
+                      </span>
+                    </Button>
+                  </MenuTrigger>
+                  <MenuPopover className={`${menuStyles.popover} ${styles.documentMenuPopover}`}>
+                    <MenuList aria-label="Documents" aria-labelledby={undefined}>
+                      {savedProjects.length > 0 ? (
+                        <div className={styles.documentMenuList} role="none">{savedDraftMenuItems()}</div>
+                      ) : (
+                        <Caption1 className={styles.documentMenuEmpty}>No saved documents yet</Caption1>
+                      )}
+                      <MenuDivider />
+                      <MenuItem icon={<ArrowClockwise20Regular aria-hidden="true" />} disabled={headerBusy}
+                        onClick={() => { setIsDocumentMenuOpen(false); void refreshFromWord(); }}>
+                        {isRefreshingWord ? "Refreshing from Word..." : "Refresh from Word"}
+                      </MenuItem>
+                    </MenuList>
+                  </MenuPopover>
+                </Menu>
               </div>
-            </details>
+              <span className={styles.identityStatus} role="status" aria-label="Report publication status">
+                <ReportStatusBadge status={!currentProject ? "Draft"
+                  : editorReportStatus?.id === currentProject.id ? editorReportStatus.status : "Checking status…"} />
+              </span>
+            </>
           ) : null}
         </div>
         {manifest ? (
+          <div className={styles.viewControls}>
           <div
             aria-label="Report viewport"
             className={styles.viewportSwitcher}
@@ -1980,63 +2528,72 @@ export function PublishingStudio() {
             {reportViewports.map((viewport) => (
               <button
                 aria-label={viewport.label}
-                aria-pressed={reportViewport === viewport.id}
+                aria-pressed={studioView === "report" && reportViewport === viewport.id}
                 key={viewport.id}
-                onClick={() => setReportViewport(viewport.id)}
+                onClick={() => { setStudioView("report"); setReportViewport(viewport.id); }}
                 title={viewport.width ? `${viewport.label} (${viewport.width} × ${viewport.height})` : viewport.label}
                 type="button"
               >
-                <ReportViewportIcon viewport={viewport.id} />
+                <ReportViewportIcon viewport={viewport.id} selected={studioView === "report" && reportViewport === viewport.id} />
               </button>
             ))}
+          </div>
+          <button className={styles.cardViewAction} aria-label="Listing card" title="Listing card"
+            aria-pressed={studioView === "card"} type="button" disabled={headerBusy}
+            onClick={() => {
+              if (!requireAppliedEdits()) return;
+              setIsDocumentMenuOpen(false);
+              setActiveTool(undefined);
+              setSelectedBlockId(undefined);
+              setStudioView("card");
+            }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"
+              stroke={studioView === "card" ? "var(--colorNeutralForegroundInverted)" : "currentColor"}>
+              <rect x="3" y="3" width="18" height="18" rx="3.5" stroke="currentColor" strokeWidth="1.2"
+                fill={studioView === "card" ? "currentColor" : "none"} />
+              <rect x="7" y="7" width="5.5" height="4" rx=".75" strokeWidth="1.2" />
+              <path d="M7 14h9.5M7 17h8" strokeWidth="1.2" strokeLinecap="round" />
+            </svg>
+          </button>
           </div>
         ) : null}
         <div className={styles.reportStatus}>
           {manifest ? (
             <>
-              {openIssues.length > 0 ? (
+              <input
+                hidden
+                name="word-refresh"
+                onChange={event => {
+                  const file = event.target.files?.[0];
+                  event.target.value = "";
+                  if (file) void refreshFromWord(file);
+                }}
+                ref={wordRefreshInputRef}
+                type="file"
+              />
+              <div className={styles.documentActions}>
                 <button
-                  aria-pressed={activeTool === "issues"}
-                  className={`${styles.contextualAction} ${styles.issueAction}`}
-                  onClick={() =>
-                    changeTool(activeTool === "issues" ? undefined : "issues")
-                  }
+                  className={styles.secondaryTopAction}
+                  disabled={headerBusy || !hasUnsavedChanges}
+                  aria-busy={headerOperation === "saving" || undefined}
+                  onClick={() => void saveCurrentProject()}
                   type="button"
                 >
-                  <span>
-                    {openIssues.length}{" "}
-                    {openIssues.length === 1 ? "issue" : "issues"}
-                  </span>
+                  <Save20Regular aria-hidden="true" />
+                  {headerOperation === "saving" ? "Saving..." : "Save"}
                 </button>
-              ) : null}
-              {hasUnsavedEdits ? (
-                <Caption1 className={styles.dirtyStatus} role="status">Unsaved changes</Caption1>
-              ) : null}
-              <button
-                className={styles.secondaryTopAction}
-                onClick={() => void saveCurrentProject()}
-                type="button"
-              >
-                Save
-              </button>
-              <button
-                className={styles.publishAction}
-                onClick={showPackageDialog}
-                ref={publishActionRef}
-                type="button"
-              >
-                <Send16Regular aria-hidden="true" />
-                Publish to Glint Labs
-              </button>
-              {integrity?.status === "unverified" ? (
-                <span className={styles.integrityStatus}>
-                  Unverified source
-                </span>
-              ) : blockingIssues.length > 0 ? (
-                <span className={styles.integrityStatus}>
-                  Resolve blockers
-                </span>
-              ) : null}
+                <button
+                  className={styles.publishAction}
+                  disabled={headerBusy}
+                  aria-busy={headerOperation === "opening-publish" || undefined}
+                  onClick={showPackageDialog}
+                  ref={publishActionRef}
+                  type="button"
+                >
+                  <Globe20Regular aria-hidden="true" />
+                  {headerOperation === "opening-publish" ? "Opening..." : "Publish to Glint Labs"}
+                </button>
+              </div>
             </>
           ) : (
             <Caption1>FHL prototype</Caption1>
@@ -2047,10 +2604,50 @@ export function PublishingStudio() {
       {packageProject ? (
         <PublicationPackageLoader
           onClose={() => setPackageProject(undefined)}
+          onEditDetails={() => {
+            setPackageProject(undefined);
+            setActiveTool(undefined);
+            setSelectedBlockId(undefined);
+            setValidateCard(true);
+            setStudioView("card");
+          }}
           onSave={savePackagePreparation}
+          onPublished={recordWebsitePublication}
           project={packageProject}
         />
       ) : null}
+
+      <dialog
+        aria-describedby="word-refresh-description"
+        aria-labelledby="word-refresh-title"
+        className={styles.publishDialog}
+        onCancel={event => { event.preventDefault(); setPendingWordRefresh(undefined); }}
+        ref={wordRefreshDialogRef}
+      >
+        <div className={styles.publishDialogContent}>
+          <div className={styles.publishDialogHeader}>
+            <div className={styles.publishDialogHeaderCopy}>
+              <h2 id="word-refresh-title">Replace conflicting Studio edits?</h2>
+              <Body1 id="word-refresh-description">
+                Some Word updates conflict with Studio edits or couldn&apos;t be matched to the draft.
+                Word updates will replace conflicting sections. Matched chart styling and Studio-only content stay.
+                Nothing will be published.
+              </Body1>
+              <ul>
+                {pendingWordRefresh?.merge.conflicts.map((conflict, index) =>
+                  <li key={index}>{conflict.label}</li>)}
+              </ul>
+            </div>
+          </div>
+          <div className={styles.publishDialogFooter}>
+            <button autoFocus className={styles.secondaryAction} type="button"
+              onClick={() => setPendingWordRefresh(undefined)}>Keep current draft</button>
+            <button className={styles.primaryAction} type="button"
+              disabled={!pendingWordRefresh || isRefreshingWord}
+              onClick={() => void confirmWordRefresh()}>Use Word changes</button>
+          </div>
+        </div>
+      </dialog>
 
       <dialog
         aria-describedby="remove-component-description"
@@ -2090,6 +2687,7 @@ export function PublishingStudio() {
         className={`${styles.publishDialog} ${styles.leaveDialog}`}
         onCancel={(event) => {
           if (isSavingToLeave) event.preventDefault();
+          else pendingLeaveProjectRef.current = undefined;
         }}
         ref={homeDialogRef}
       >
@@ -2112,27 +2710,32 @@ export function PublishingStudio() {
               autoFocus
               className={styles.secondaryAction}
               disabled={isSavingToLeave}
-              onClick={() => homeDialogRef.current?.close()}
+              onClick={() => {
+                pendingLeaveProjectRef.current = undefined;
+                homeDialogRef.current?.close();
+              }}
               type="button"
             >
               Cancel
             </button>
-            <button
-              className={`${styles.secondaryAction} ${styles.leaveWithoutSaving}`}
-              disabled={isSavingToLeave}
-              onClick={returnToStart}
-              type="button"
-            >
-              Leave without saving
-            </button>
-            <button
-              className={styles.primaryAction}
-              disabled={isSavingToLeave}
-              onClick={() => void saveAndGoHome()}
-              type="button"
-            >
-              {isSavingToLeave ? "Saving..." : "Save and leave"}
-            </button>
+            <div>
+              <button
+                className={`${styles.secondaryAction} ${styles.leaveWithoutSaving}`}
+                disabled={isSavingToLeave}
+                onClick={finishLeaving}
+                type="button"
+              >
+                Leave without saving
+              </button>
+              <button
+                className={styles.primaryAction}
+                disabled={isSavingToLeave}
+                onClick={() => void saveAndLeave()}
+                type="button"
+              >
+                {isSavingToLeave ? "Saving..." : "Save and leave"}
+              </button>
+            </div>
           </div>
         </div>
       </dialog>
@@ -2188,7 +2791,6 @@ export function PublishingStudio() {
               <label className={styles.filePicker}>
                 <span>Choose Word files</span>
                 <input
-                  accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                   disabled={!!bulkProgress}
                   multiple
                   onChange={handleBulkFiles}
@@ -2269,63 +2871,66 @@ export function PublishingStudio() {
       >
         {panelContent()}
 
-        <main className={styles.canvas} id="main-content" ref={canvasRef}>
+        <main className={`${styles.canvas} ${studioView === "card" ? styles.cardCanvas : ""}`} id="main-content" ref={canvasRef}>
+          {manifest && studioView === "report" && (openIssues.length > 0 || integrity?.status === "unverified" || blockingIssues.length > 0) ? (
+            <div className={styles.canvasChecks}>
+              {openIssues.length > 0 ? <button aria-pressed={activeTool === "issues"}
+                className={`${styles.contextualAction} ${styles.issueAction}`}
+                onClick={() => changeTool(activeTool === "issues" ? undefined : "issues")} type="button">
+                {openIssues.length} {openIssues.length === 1 ? "issue" : "issues"}
+              </button> : null}
+              {integrity?.status === "unverified" ? <span className={styles.integrityStatus}>Unverified source</span>
+                : blockingIssues.length > 0 ? <span className={styles.integrityStatus}>Resolve blockers</span> : null}
+            </div>
+          ) : null}
+          {manifest && (sourceFolderIssue || manifest.blocks.some(block => block.type === "data-visual-source" &&
+            block.data.recommendedVisualType === "quadrant-scatter-plot" && !block.data.workbook)) ? (
+            <section className={styles.sourceFolderNotice} aria-label="Linked chart source">
+              <Body1 role="status">{sourceFolderIssue?.message ?? (sourceFolderName && sourceFolderAccess === "granted"
+                ? "Refresh from Word to load the linked Excel data from your connected folder."
+                : "Choose the folder containing this Word file and its linked Excel workbook to load interactive point details.")}</Body1>
+              {sourceFolderName && sourceFolderAccess === "granted" && !sourceFolderIssue ? <Button appearance="primary"
+                disabled={isRefreshingWord || isConnectingSourceFolder} onClick={() => void refreshFromWord()}>Refresh from Word</Button> : null}
+              {sourceFolderControl()}
+            </section>
+          ) : null}
+          {excelRefreshRequest ? <div className={styles.storageMessage} role="status">
+            <Body1Strong>Reconnect Excel to finish refreshing {excelRefreshRequest.title}</Body1Strong>
+            <Body1>Choose {excelRefreshRequest.fileName}. This browser cannot read its previous connection. Nothing changes until both sources match.</Body1>
+            <button ref={excelRefreshChooseRef} type="button" className={styles.secondaryAction} onClick={() => excelRefreshInputRef.current?.click()}>Choose Excel workbook</button>
+            <button type="button" className={styles.secondaryAction} onClick={() => finishExcelRefreshSelection()}>Cancel refresh</button>
+          </div> : null}
+          <input ref={excelRefreshInputRef} hidden type="file" name="quadrant-refresh"
+            onChange={event => {
+              const file = event.target.files?.[0]; event.target.value = ""; finishExcelRefreshSelection(file);
+            }} />
           {storageMessage ? (
-            <div className={`${styles.storageMessage} ${typeof storageMessage === "string" ? "" : styles.calloutToast}`} role="status">
+            <div className={`${styles.storageMessage} ${typeof storageMessage === "string" ? "" : styles.calloutToast}`}
+              role={typeof storageMessage !== "string" && storageMessage.error ? "alert" : "status"}>
               {typeof storageMessage === "string" ? <Body1>{storageMessage}</Body1> : (
                 <div className={styles.calloutToastMessage}>
-                  <CheckmarkCircle20Regular aria-hidden="true" className={styles.calloutToastIcon} />
+                  {!storageMessage.error ? <CheckmarkCircle20Regular aria-hidden="true" className={styles.calloutToastIcon} /> : null}
                   <Body1Strong>{storageMessage.message}</Body1Strong>
                 </div>
               )}
-              {typeof storageMessage === "string" || !storageMessage.undo ? <button
-                aria-label={typeof storageMessage === "string" ? "Dismiss save message" : "Dismiss formatting message"}
+              {typeof storageMessage === "string" || (!storageMessage.undo && !storageMessage.undoAction) ? <button
+                aria-label={typeof storageMessage === "string" ? "Dismiss save message" : "Dismiss notification"}
                 onClick={() => setStorageMessage(undefined)}
                 type="button"
               >
                 <Dismiss20Regular aria-hidden="true" />
-              </button> : <Button appearance="outline" size="small" className={styles.toastUndo} onClick={undoTextCallout}>Undo</Button>}
+              </button> : <Button appearance="outline" size="small" className={styles.toastUndo}
+                disabled={undoingNotification} onClick={storageMessage.undoAction ? () => { void undoNotification(); } : undoTextCallout}>Undo</Button>}
             </div>
           ) : null}
-          {state.status === "empty" ? (
-            <div className={styles.startScreen}>
-              <div className={styles.startCard}>
-                <Image
-                  alt=""
-                  className={styles.startIllustration}
-                  height={128}
-                  priority
-                  src="/figma/illustrations/blue/create.png"
-                  width={128}
-                />
-                <div className={styles.startCardContent}>
-                  <div className={styles.startCardCopy}>
-                    <Subtitle1 as="h1" block>
-                      Publish a report to Glint Labs
-                    </Subtitle1>
-                    <Body1 className={styles.startCardDescription} block>
-                      {savedProjects.length > 0
-                        ? "Start with a Word document or continue a saved draft."
-                        : "Start with a Word document."}
-                    </Body1>
-                  </div>
-                  <div className={styles.startCardActions}>
-                    <FilePicker label="Choose Word file" onChange={handleFile} />
-                    {savedProjects.length > 0 ? (
-                      <details className={styles.savedDrafts} ref={documentMenuRef}>
-                        <summary className={styles.documentTrigger}>
-                          <span>Open saved draft</span>
-                          <ChevronDown16Regular aria-hidden="true" />
-                        </summary>
-                        <Caption1 block>Saved only in this browser on this device.</Caption1>
-                        {savedProjectList()}
-                      </details>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : null}
+          <input ref={newReportFileRef} hidden autoComplete="off" name="word-report" type="file" onChange={handleFile} />
+          {state.status === "empty" ? <StudioReportLibrary
+            projects={savedProjects}
+            onNewReport={() => newReportFileRef.current?.click()}
+            onOpen={loadProject}
+            onProjectsChange={setSavedProjects}
+            onNotify={(message, undoAction) => setStorageMessage({ message, undoAction })}
+          /> : null}
 
           {state.status === "extracting" ? (
             <div className={styles.startCard} role="status">
@@ -2348,7 +2953,23 @@ export function PublishingStudio() {
             </div>
           ) : null}
 
-          {manifest ? (
+          {manifest && studioView === "card" && listingMetadata ? (
+            <PublicationCardEditor key={currentProject?.id ?? manifest.source.sha256}
+              project={{ id: currentProject?.id ?? "draft", manifest, reportStyle,
+                publicationPreparation: currentProject?.publicationPreparation, publicationMetadataDraft }}
+              metadata={listingMetadata} validate={validateCard}
+              onChange={metadata => {
+                const savedMetadata = initialPublicationMetadata({
+                  manifest, publicationPreparation: currentProject?.publicationPreparation,
+                  publicationMetadataDraft: currentProject?.publicationMetadataDraft,
+                });
+                setPublicationMetadataDraft(canonicalJson(metadata) === canonicalJson(savedMetadata)
+                  ? currentProject?.publicationMetadataDraft : metadata);
+                setStorageMessage(undefined);
+              }} />
+          ) : null}
+
+          {manifest && studioView === "report" ? (
             <div className={`${styles.canvasContent} ${reportViewport === "full-width" ? styles.fullWidthCanvas : ""}`}>
               {removedBlocks.length > 0 && isUndoVisible ? (
                 <div
@@ -2410,8 +3031,9 @@ export function PublishingStudio() {
                     manifest={displayManifest ?? manifest}
                     blockOverrides={chartInsertion && !chartInsertion.preview ? {
                       [chartInsertion.block.id]: chartInsertion.type ? <ChartDraftPreview draft={chartInsertion.draftPreview ?? {
-                        blockId: chartInsertion.block.id, type: chartInsertion.type, title: "Comparison",
-                        table: { columns: [], rows: [] }, unit: "percentage",
+                        blockId: chartInsertion.block.id, type: chartInsertion.type,
+                        title: chartInsertion.type === "coefficient-heatmap" ? "Coefficient heatmap" : "Comparison",
+                        table: { columns: [], rows: [] }, unit: chartInsertion.type === "coefficient-heatmap" ? "number" : "percentage",
                       }} /> : <div className={reportStyles.chartInsertionPlaceholder} role="status">Choose a chart to preview it here.</div>,
                     } : activeTool === "visuals" && selectedBlockId === chartDraftPreview?.blockId && chartDraftPreview ? {
                       [chartDraftPreview.blockId]: <ChartDraftPreview draft={chartDraftPreview} />,
@@ -2433,6 +3055,6 @@ export function PublishingStudio() {
           ) : null}
         </main>
       </div>
-    </section>
+    </div>
   );
 }
