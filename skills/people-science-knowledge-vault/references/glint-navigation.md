@@ -39,6 +39,7 @@ scope. These are conditional routes, not a checklist to run in order.
 
 | What the check should resolve | Public-document-supported route | Verify before using the result |
 | --- | --- | --- |
+| Where should open-ended results exploration start? | **Executive summary report -> Strengths and Opportunities** ([guide][executive]) | Cycle, population, key outcome, selected comparison, and item coverage. Review both strengths and opportunities; the ranking reflects comparison and impact, not just raw scores. Honor a different user-requested starting point. |
 | Which item and comparison are we discussing? | **Executive summary report -> Scores** ([guide][executive]) | Full item wording, score metric, comparison, and comment count; do not assume an item label has universal wording. |
 | Does the mean hide divided responses? | The selected item's **Favorability** breakdown in **Scores** ([executive][executive], [definitions][features]) | Favorable/neutral/unfavorable response distribution and item response count when available; do not infer missing buckets. |
 | Is a pattern persistent? | **Overall Results** and its cycle/filter controls ([report][overall], [past cycles][cycles]) | Same program, exact cycles/dates, wording, units, and population. A repeated title or month is not a cycle identifier. |

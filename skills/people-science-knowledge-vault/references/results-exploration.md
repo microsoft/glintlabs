@@ -94,7 +94,7 @@ Fix unclear context before investigating explanations.
 | Are two results comparable? | Their headers, filters, counts, and definitions | Scope/wording/metric differences before interpreting gaps |
 | Recent change or persistent experience? | The same item's trend | Comparable wording and populations across identified cycles |
 | Does an average hide different experiences? | Item response distribution and count | Spread or polarization; do not infer an unseen distribution |
-| Broad issue or localized pattern? | One relevant, privacy-safe breakdown | Whether the pattern holds in the groups needed for the decision |
+| Broad issue or localized pattern? | Heat Map Report across related items and one relevant, permitted demographic; prefer an existing broader grouping when detailed roles provide sparse cells or unwieldy coverage | Whether the pattern holds in the groups needed for the decision |
 | What experiences might be involved? | Related items and available aggregate comment themes | Convergence, counterevidence, alternative explanations |
 | Is participation affecting interpretation? | Eligible/responding counts and participation context | Coverage limits; do not infer nonrespondents' views |
 
@@ -103,6 +103,62 @@ is not research support. Avoid aimless subgroup searching, selecting only the
 lowest cells, or assuming the lowest score is automatically the best action.
 Consider strengths and counterexamples when they could change the conclusion.
 Account for the user's authority and feasible next steps before suggesting action.
+
+### Start with strengths and opportunities
+
+Unless the user requests a different starting point, first recommend inspecting
+**Strengths and Opportunities** on the **Executive Summary** dashboard/report.
+Confirm the cycle, population, key outcome, and selected comparison. Review both
+strengths and opportunities before selecting a focus; do not equate the lowest
+raw score with the highest-priority opportunity.
+
+Use the displayed ranking as a starting signal, not proof of cause or a
+prescription. The official report considers benchmark comparisons and impact on
+the key outcome; verify the current view and item coverage. Follow the navigation
+gate above. If this section is unavailable, state that limit and use an available
+alternative without repeatedly requesting it. Do not restart orientation when
+the user has already selected a specific item, supplied a focused view, or
+requested a particular investigation.
+
+### Heat Map-first comparative deep dives
+
+When comparing groups and related survey items, prefer the **Heat Map Report**,
+if available and authorized, over a single-item demographic view. Use item
+detail instead when wording, response distribution, comparable trend, or
+comments would better resolve the uncertainty. Follow the navigation gate above.
+
+Choose the demographic from the question and retrieved research, not a fixed
+checklist. Use one dimension at a time initially, preserving cycle, comparison,
+and scope. Before adding a filter, identify the distinction it would help test;
+explain it briefly when needed for the user to carry out the check. Confirm
+attribute availability; do not invent options or combine cuts to recover
+suppressed results.
+
+For each new view, explain briefly what it adds and which interpretation it
+supports, weakens, or leaves unresolved. Compare the focal item and related
+items with their respective comparators. Distinguish a focal-item concern
+from a broader unfavorable profile, without averaging unrelated items or
+inferring individual-level correlations from group averages.
+
+Check counts and visible coverage before interpreting extremes. If detailed
+categories are sparse or the display is partial, prefer an available broader
+grouping when it resolves the same question. Do not invent a universal minimum
+count, treat visibility as proof of reliability, or recommend export as a
+routine workaround.
+
+Use counterexamples as well as low-scoring groups. If a breakdown offers little
+differentiation, say so and choose a different informative dimension or evidence
+type rather than repeatedly subdividing it. When localization is sufficient,
+move to item wording, permitted aggregate comment themes, or another observation
+that could distinguish explanations.
+
+A missing or malformed reply is not evidence that a view is unavailable. Offer
+one useful recovery or alternative when appropriate, without repeating a declined
+or unavailable request. Maintain unresolved limits without abandoning unaffected
+interpretation. Ask for one next useful view at a time and stop when further
+evidence would not materially change the answer.
+
+### Request the next useful view
 
 When approved browser access is available, inspect the selected read-only view
 directly instead of asking for a redundant screenshot. When direct inspection
