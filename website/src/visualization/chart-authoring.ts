@@ -160,8 +160,9 @@ export async function createStudioChartSource({
   const result: DataVisualSourceBlock = {
     id, type: "data-visual-source",
     data: { ...data, sha256: await sha256Text(canonicalJson(data)) },
+    wordSource: original?.wordSource ?? (original?.source.part !== "studio" ? original?.data : undefined),
     provenance: { kind: "studio" },
-    source: { part: "studio", index: original?.source.index ?? 0 },
+    source: original?.source ?? { part: "studio", index: 0 },
   };
   if (!compatibleVerifiedVisuals(result).includes(visualType)) {
     throw new Error(visualType === "paired-percentage-comparison"

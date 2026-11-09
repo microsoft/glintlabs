@@ -121,6 +121,10 @@ const verifiedDataSourceSchema = structuredDataSchema.extend({
   verifiedAt: z.string().datetime(),
 });
 
+const sourcedVisualBlockSchema = baseBlockSchema.extend({
+  wordSource: structuredDataSchema.optional(),
+});
+
 export const chartPresentationSchema = z.object({
   title: z.string().trim().min(1).max(120),
   subtitle: z.string().max(240).default(""),
@@ -231,7 +235,7 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
     contentKind: z.enum(["non-data", "data-bearing"]).optional(),
     accessibleData: structuredDataSchema.optional(),
   }),
-  baseBlockSchema.extend({
+  sourcedVisualBlockSchema.extend({
     type: z.literal("data-visual-source"),
     data: structuredDataSchema,
   }),
@@ -245,7 +249,7 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
     title: z.string().min(1),
     values: z.array(z.string().min(1)),
   }),
-  baseBlockSchema.extend({
+  sourcedVisualBlockSchema.extend({
     type: z.literal("percentage-ring-group"),
     presentation: chartPresentationSchema.optional(),
     title: z.string().min(1),
@@ -262,7 +266,7 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
     footnote: z.string().min(1),
     verifiedSource: verifiedDataSourceSchema.optional(),
   }),
-  baseBlockSchema.extend({
+  sourcedVisualBlockSchema.extend({
     type: z.literal("quadrant-scatter-plot"),
     title: z.string().min(1),
     points: z.array(z.object({
@@ -276,9 +280,8 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
     footnote: z.string().min(1),
     presentation: quadrantPresentationSchema.optional(),
     verifiedSource: verifiedDataSourceSchema.optional(),
-    wordSource: structuredDataSchema.optional(),
   }),
-  baseBlockSchema.extend({
+  sourcedVisualBlockSchema.extend({
     type: z.literal("illustrated-statistics"),
     title: z.string().min(1),
     metrics: z.array(z.object({
@@ -290,7 +293,7 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
     presentation: illustratedStatisticsPresentationSchema.optional(),
     verifiedSource: verifiedDataSourceSchema.optional(),
   }),
-  baseBlockSchema.extend({
+  sourcedVisualBlockSchema.extend({
     type: z.literal("percentage-comparison-grid"),
     title: z.string().min(1),
     metrics: z.array(z.object({
@@ -302,7 +305,7 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
     presentation: pairedComparisonPresentationSchema.optional(),
     verifiedSource: verifiedDataSourceSchema.optional(),
   }),
-  baseBlockSchema.extend({
+  sourcedVisualBlockSchema.extend({
     type: z.literal("paired-percentage-comparison"),
     title: z.string().min(1),
     metrics: z.array(z.object({
@@ -363,7 +366,7 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
       .min(2)
       .max(4),
   }),
-  baseBlockSchema.extend({
+  sourcedVisualBlockSchema.extend({
     type: z.literal("listening-methods-comparison"),
     eyebrow: z.string().min(1),
     methods: z
@@ -387,7 +390,7 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
     type: z.literal("pull-quote"),
     quote: z.string().min(1),
   }),
-  baseBlockSchema.extend({
+  sourcedVisualBlockSchema.extend({
     type: z.literal("horizontal-bar-chart"),
     presentation: chartPresentationSchema.optional(),
     title: z.string().min(1),
@@ -412,7 +415,7 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
       });
     }
   }),
-  baseBlockSchema.extend({
+  sourcedVisualBlockSchema.extend({
     type: z.literal("coefficient-heatmap"),
     title: z.string().min(1),
     columns: z.array(z.string().trim().min(1).max(100)).min(1).max(12),
@@ -428,7 +431,7 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
     (!block.verifiedSource || block.verifiedSource.unit === "number"), {
     path: ["rows"], message: "Every heatmap row must have a value or N/A for each column.",
   }),
-  baseBlockSchema.extend({
+  sourcedVisualBlockSchema.extend({
     type: z.literal("grouped-column-comparison"),
     presentation: chartPresentationSchema.optional(),
     title: z.string().min(1),

@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { canonicalJson } from "../integrity/approved-content.ts";
 import { reportManifestSchema } from "../manifest/report-manifest.ts";
+import { isLaunchReportSlug } from "../launch-reports/reports.ts";
 import { draftPublicationSchema, validateDraftPublicationPackage } from "../project/publication-package.ts";
 import { OwnerRequestError } from "./owner-access.ts";
 import {
@@ -47,6 +48,9 @@ export async function removeApprovedPublication(input: unknown, options: Options
     if (report.publication.revision !== request.revision ||
         report.publication.approval.packageFingerprint !== request.packageFingerprint) {
       throw new OwnerRequestError("The published report changed. Refresh your reports before removing it.", 409);
+    }
+    if (isLaunchReportSlug(report.publication.slug)) {
+      throw new OwnerRequestError("This bundled launch report cannot be removed from Studio. Its website page must be removed in a site update.", 409);
     }
     const token = randomUUID();
     const content = path.join(root, "content", "reports", request.reportId);

@@ -168,6 +168,7 @@ export function createVerifiedDataVisual(
       sourceBlockId: source.id,
     },
     source: source.source,
+    ...(source.wordSource ? { wordSource: source.wordSource } : {}),
     verifiedSource,
   };
 

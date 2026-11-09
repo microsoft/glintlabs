@@ -25,7 +25,12 @@ export type WordRefreshResult = {
 type SourceEntry = ApprovedContentSnapshot["blocks"][number];
 
 function entries(manifest: ReportManifest): SourceEntry[] {
-  const snapshots = new Map(snapshotApprovedContent(manifest).blocks.map(block => [block.id, block]));
+  // Refresh compares working chart data, not the retained Word approval evidence.
+  const snapshots = new Map(snapshotApprovedContent({
+    ...manifest,
+    blocks: manifest.blocks.map(block => "wordSource" in block && block.type !== "quadrant-scatter-plot"
+      ? { ...block, wordSource: undefined } : block),
+  }).blocks.map(block => [block.id, block]));
   return manifest.blocks.map(block => {
     const snapshot = snapshots.get(block.id);
     if (snapshot) return snapshot;

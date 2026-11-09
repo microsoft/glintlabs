@@ -742,6 +742,7 @@ function VisualEditor({
       return {
         id: originalBlock.provenance?.sourceBlockId ?? originalBlock.id,
         type: "data-visual-source",
+        wordSource: originalBlock.wordSource,
         data: {
           sourceKind: originalBlock.verifiedSource.sourceKind,
           title: originalBlock.verifiedSource.title,

@@ -90,6 +90,12 @@ function semanticBlock(block: ReportBlock) {
     return undefined;
   }
 
+  if ("wordSource" in block && block.wordSource) {
+    return semanticBlock({
+      id: block.id, source: block.source, type: "data-visual-source", data: block.wordSource,
+    });
+  }
+
   if (block.type === "data-visual-source") {
     if (block.data.evidenceImage) {
       return {

@@ -484,7 +484,9 @@ test("edited Studio data retains original-source identity without claiming uncha
   };
   const edited = await createStudioChartSource(input);
   assert.equal(edited.data.sourceKind, "verified-upload");
-  assert.equal(edited.source.part, "studio");
+  assert.deepEqual(edited.source, source.source);
+  assert.equal(edited.provenance?.kind, "studio");
+  assert.deepEqual(edited.wordSource, source.data);
   assert.equal(edited.data.rows[0].cells[1], "24.00%");
   assert.equal(edited.data.originalSource?.sha256, source.data.sha256);
   assert.equal(edited.data.synthetic, true);
@@ -494,6 +496,7 @@ test("edited Studio data retains original-source identity without claiming uncha
   assert.deepEqual(source, before);
   const restored = reportBlockSchema.parse(edited);
   assert.ok(restored.type === "data-visual-source" && restored.data.synthetic);
+  assert.deepEqual(restored.wordSource, source.data);
   await assert.rejects(() => createStudioChartSource({ ...input, table: parseChartTable("Team,Percent\nA,24\nA,30") }), /unique/i);
 });
 

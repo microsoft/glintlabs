@@ -68,6 +68,22 @@ test("removing an exact website revision preserves staged reports and unrelated 
   } finally { await rm(rootDirectory, { recursive: true, force: true }); }
 });
 
+test("seeded launch reports cannot claim removal while their bundled reader stays live", async () => {
+  const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-remove-launch-"));
+  try {
+    const slug = "empowering-managers-for-an-ai-first-future";
+    assert.ok(getLaunchReport(slug, { includePrivatePreview: true }));
+    const { preview } = await ingestUnsignedPublicationPreview(
+      await syntheticZip(undefined, undefined, { slug }), { rootDirectory },
+    );
+    const request = { reportId, revision: 1, packageFingerprint: preview.packageFingerprint };
+    await approvePublicationForLocalWebsite({ ...request, approveForWebsite: true }, { rootDirectory });
+    await assert.rejects(approvedPublications.removeApprovedPublication(request, { rootDirectory }), /bundled.*cannot be removed/i);
+    assert.ok(await loadApprovedPublication(reportId, { rootDirectory }));
+    assert.ok(await readFile(path.join(rootDirectory, "public", "reports-assets", reportId, `${imageHash}.png`)));
+  } finally { await rm(rootDirectory, { recursive: true, force: true }); }
+});
+
 test("a published report can open as one editable local copy without inventing Word-source attestation", async () => {
   const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-restore-publication-"));
   try {
