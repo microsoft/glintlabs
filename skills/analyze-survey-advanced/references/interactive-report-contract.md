@@ -40,6 +40,19 @@ complete weight-table CSV/PNG exports include the run/config context and all
 computed items, not just the five-item card summaries. A not-run decomposition
 shows an explicit message, not empty or fabricated charts.
 
+After the component cards, show **Question-removal recommendations**. Distinguish
+an incomplete assessment, a reviewed no-removal outcome, evidence gaps, and
+named removal recommendations. Never derive removal from SVD weight thresholds.
+Show the question, decision, reason, and retained alternative; make the reviewed
+redundancy, coverage, stability evidence and protected-item list inspectable.
+These are analyst-reviewed assessments, not independently verified tests.
+With no attached review, explicitly recommend no removals because the evidence
+is insufficient, not because all items are proven necessary. Reviewed results
+have CSV/PNG and JSON downloads; the allowlisted ZIP includes
+`question-removal-review.json` only when a validated review exists. A stale
+review, protected-item removal, or removal of its retained representative
+blocks serialization. Rendering this section must not fit or change a model.
+
 Survey-score targets with a verified 1-K scale use the 0-100 transformation
 for results and error units. Native targets, AUC, probabilities, explained
 variance, component weights and other non-score metrics retain their units.

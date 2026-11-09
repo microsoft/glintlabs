@@ -83,6 +83,16 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 <p id="svd-chart-note" class="muted">Bars show absolute SVD unit weights on a common 0-1 scale, not factor loadings. Labels retain the signs: positive and negative do not mean good and bad, and a component's orientation can flip. Rows are ordered by Component 1 magnitude; item labels are formatted IDs.</p>
 <div id="svd-chart" class="svd-chart" role="region" aria-label="SVD item-weight chart" aria-describedby="svd-chart-note" tabindex="0"></div>
 <div id="svd-components" class="svd-grid" role="group" aria-label="Component summaries"></div>
+<div id="item-removal-review">
+<h3>Question-removal recommendations</h3>
+<p>These are analyst-reviewed recommendations, not automatic deletion or statistical checks performed by this report. A low SVD weight alone is not a reason to remove a question.</p>
+<p id="item-review-status" class="badge" role="status"></p>
+<p id="item-review-explanation"></p>
+<div id="item-review-results" hidden>
+<div class="section-head"><h3>Question-by-question assessment</h3><div class="toolbar" data-table="item-review-table"><button id="download-item-review" type="button">Download review JSON</button></div></div>
+<div class="scroll"><table id="item-review-table"></table></div>
+<details><summary>Supporting evidence and protected questions</summary><pre id="item-review-evidence"></pre></details>
+</div></div>
 </div>
 <details id="svd-numeric-details"><summary>Full component variance, signed weights and numeric details</summary>
 <div class="section-head"><h3>Component variance</h3><div class="toolbar" data-table="svd-table"></div></div>
@@ -217,7 +227,24 @@ function renderSVD(){
  });
  document.getElementById("svd-chart").append(chart);
 }
-renderSVD();
+function renderItemReview(){
+ if(!S.svd)return;
+ const review=M.item_review;
+ if(!review){
+  text("item-review-status","No removals recommended - assessment incomplete.");
+  text("item-review-explanation","The current SVD output does not establish question redundancy, protected topic/benchmark coverage, or stability after removal. Supporting checks and an analyst-reviewed assessment are needed. This is insufficient evidence, not proof that every question must stay.");
+  return;
+ }
+ const removed=review.items.filter(item=>item.decision==="remove"),gaps=review.items.filter(item=>item.decision==="insufficient_evidence");
+ text("item-review-status",removed.length?`${removed.length} question${removed.length===1?"":"s"} recommended for removal.`:gaps.length?"No removals recommended - evidence gaps remain.":"No removals recommended - review completed.");
+ text("item-review-explanation",`All ${review.items.length} fitted questions were assessed. ${removed.length} recommended for removal; ${review.items.filter(item=>item.decision==="retain").length} retained; ${gaps.length} have insufficient evidence. Review protected content and the supporting checks before changing a survey; no questions have been deleted.`);
+ const labels={remove:"Recommend removal",retain:"Retain",insufficient_evidence:"Insufficient evidence"};
+ table("item-review-table",["Question ID","Recommendation","Why","Retained alternative"],review.items.map(item=>[item.question,labels[item.decision],item.reason,item.retained_alternative||"Not applicable"]));
+ text("item-review-evidence",JSON.stringify(review,null,2));
+ document.getElementById("item-review-results").hidden=false;
+ document.getElementById("download-item-review").onclick=()=>download("question-removal-review.json",JSON.stringify(review,null,2),"application/json");
+}
+renderSVD();renderItemReview();
 const narrative=document.getElementById("narrative");
 if(M.interpretation.status!=="reviewed"){narrative.textContent="Research-backed interpretation unavailable: "+M.interpretation.reason}
 else{for(const claim of M.interpretation.claims){const article=document.createElement("article");

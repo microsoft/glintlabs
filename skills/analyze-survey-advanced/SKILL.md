@@ -84,6 +84,12 @@ Open an authorized local preview automatically. Explain what ran, model QA,
 baseline comparisons, caveats, and what did not run. Embed research interpretation
 only after the required evidence review; otherwise mark it unavailable.
 
+For SVD question-removal recommendations, follow the evidence-gated item review
+in `references/modeling-workflow.md`. Ask about protected questions, benchmarks,
+and topic coverage; do not infer removability from a small component weight.
+Recommend no removals when evidence is insufficient, without claiming every
+item is essential. New diagnostic fits still require explicit instruction.
+
 End an experiment discussion with concrete next choices and an invitation for
 the scientist's ideas or relevant data when that could change the next step.
 Do not repeatedly ask for unavailable inputs or execute the proposed experiment

@@ -122,6 +122,49 @@ Amendments require a new config hash and approval, a new run directory, and
 affected QA. Do not overwrite experiment history. No private source labels,
 paths, identities, or user context should enter public retrieval queries.
 
+## SVD question-removal review
+
+The report supports removal recommendations, retaining all questions, or an
+explicit insufficient-evidence outcome. It never deletes questions or changes
+the fitted model. Without a completed assessment, display **No removals
+recommended - assessment incomplete**, not an empty shortlist implying all
+questions were tested.
+
+Use the question wording, approved exact-population diagnostics, and scientist's
+constraints to assess redundancy and content coverage. Ask which items, topics,
+or longitudinal benchmarks must be retained. Do not invent correlation cutoffs,
+guess protected topics, call low SVD weights redundant, or use a five-item card
+as an item-selection rule. Correlated items can still cover distinct content;
+an item poorly represented by the chosen rank can contain important unique
+information. Removing several individually redundant items can also remove
+every representative of a topic.
+
+A removal needs a retained representative plus concrete aggregate redundancy,
+content-coverage, and stability-after-removal evidence. These checks are
+reviewed evidence, not tests performed by the HTML renderer. Do not manufacture
+checks from the SVD vectors. If required diagnostics or wording are unavailable,
+keep the decision **insufficient_evidence** and explain the gap. Propose a
+bounded diagnostic experiment and obtain instruction before any new fitting
+or data amendment. Retaining every question after review is valid.
+
+Record a privacy-reviewed assessment using
+`schemas/advanced-item-review.schema.json`. Bind it to the original config and
+`digest(manifest["summary"])`, assess each fitted item exactly once, and attest
+to protected-item/content review only when those reviews actually happened.
+Reasons and evidence must be aggregate-only, without employee data, private
+paths, or unapproved company context. The serializer checks structure and
+source binding, not whether an analyst's scientific assertions are true.
+
+With explicit `interpret` and `share` approval for the original experiment,
+use the existing runner with `--mode review-items --item-review reviewed.json`.
+This attaches the assessment to the completed run and rebuilds HTML/ZIP without
+reading input rows or refitting. Protected items cannot be removed, and every
+removal's alternative must explicitly remain retained in the final set.
+Include `proposed_set_evidence` whenever any removal is recommended: individually
+redundant items do not establish that the combined reduction preserves coverage
+and stability. Inspect the final proposed set as a whole; any actual reduced-question fit or
+survey revision remains a separate approved action.
+
 ## Selection, final evaluation, and readiness
 
 Compare on consistent CV folds and the approved primary metric. Keep baseline
