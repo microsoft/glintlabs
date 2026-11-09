@@ -45,6 +45,22 @@ th{background:var(--colorNeutralBackground2)}
 pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
 label{display:block;margin-top:var(--spacingHorizontalL)}
 select{max-width:100%}
+.section-action{padding:var(--spacingHorizontalM) var(--spacingHorizontalL);margin-bottom:var(--spacingHorizontalL);background:var(--colorNeutralBackground2);border-radius:var(--borderRadiusMedium)}
+.section-action h3{margin:0;font-size:16px}
+.section-action p{margin:var(--spacingHorizontalS) 0}
+.svd-chart{max-width:100%;overflow:auto;margin-block:var(--spacingHorizontalM) var(--spacingHorizontalL);border:1px solid var(--colorNeutralStroke1);border-radius:var(--borderRadiusMedium)}
+.svd-chart svg{display:block}
+.svd-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--spacingHorizontalM);margin-bottom:var(--spacingHorizontalL)}
+.svd-card{padding:var(--spacingHorizontalL);background:var(--colorNeutralBackground2);border-radius:var(--borderRadiusLarge);overflow-wrap:anywhere}
+.svd-card h3{margin:0}
+.svd-card p{margin:var(--spacingHorizontalS) 0}
+.svd-card ol{padding-left:var(--spacingHorizontalL)}
+.svd-card li{margin-block:var(--spacingHorizontalS)}
+.svd-weight{margin-left:var(--spacingHorizontalS);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--colorBrandForeground1);font-weight:600}
+details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
+[hidden]{display:none!important}
+@media(max-width:1023px){.svd-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:767px){.svd-grid{grid-template-columns:1fr}}
 @media(max-width:767px){main{padding:var(--spacingHorizontalM)}header,section{padding:var(--spacingHorizontalL)}h1{font-size:28px}.toolbar{flex-wrap:wrap}}
 @media print{nav,.toolbar{display:none}section{break-inside:avoid}main{max-width:none}}
 </style>
@@ -55,25 +71,59 @@ select{max-width:100%}
 <p>Collaborative modeling, reproducible diagnostics, and bounded People Science interpretation.</p>
 <p id="status" class="badge"></p><p id="scope" class="muted"></p></header>
 <nav aria-label="Report sections">
-<a href="#comparison">Model comparison</a><a href="#diagnostics">Diagnostics</a><a href="#svd">SVD</a>
+<a href="#svd">SVD</a><a href="#comparison">Model comparison</a><a href="#diagnostics">Diagnostics</a>
 <a href="#interpretation">Interpretation</a><a href="#methodology">Methodology</a><a href="#downloads">Downloads</a>
 </nav>
+<section id="svd"><h2>Centered SVD exploration</h2>
+<p class="section-intro muted">Singular value decomposition (SVD) summarizes variation across numeric survey items as a smaller set of components. Use explained variance and item weights to explore shared response patterns; this is not a validated measurement model or a predictive leaderboard.</p>
+<div class="section-action"><h3>How to action these results</h3><p>Read the highest-weighted items together to form a working hypothesis about each component. Check content coverage and stability before naming a dimension or shortening a survey; a high weight is not a causal priority for intervention.</p></div>
+<p id="svd-summary" class="muted"></p><p id="svd-status" role="status"></p>
+<div id="svd-visuals" hidden>
+<div class="section-head"><h3>Item weights by component</h3><div class="toolbar" data-table="svd-weights-table"><button id="svd-chart-png" type="button">Save chart PNG</button></div></div>
+<p id="svd-chart-note" class="muted">Bars show absolute SVD unit weights on a common 0-1 scale, not factor loadings. Labels retain the signs: positive and negative do not mean good and bad, and a component's orientation can flip. Rows are ordered by Component 1 magnitude; item labels are formatted IDs.</p>
+<div id="svd-chart" class="svd-chart" role="region" aria-label="SVD item-weight chart" aria-describedby="svd-chart-note" tabindex="0"></div>
+<div id="svd-components" class="svd-grid" role="group" aria-label="Component summaries"></div>
+<div id="item-removal-review">
+<h3>Question-removal recommendations</h3>
+<p>These are analyst-reviewed recommendations, not automatic deletion or statistical checks performed by this report. A low SVD weight alone is not a reason to remove a question.</p>
+<p id="item-review-status" class="badge" role="status"></p>
+<p id="item-review-explanation"></p>
+<div id="item-review-results" hidden>
+<div class="section-head"><h3>Question-by-question assessment</h3><div class="toolbar" data-table="item-review-table"><button id="download-item-review" type="button">Download review JSON</button></div></div>
+<div class="scroll"><table id="item-review-table"></table></div>
+<details><summary>Supporting evidence and protected questions</summary><pre id="item-review-evidence"></pre></details>
+</div></div>
+</div>
+<details id="svd-numeric-details"><summary>Full component variance, signed weights and numeric details</summary>
+<div class="section-head"><h3>Component variance</h3><div class="toolbar" data-table="svd-table"></div></div>
+<div class="scroll"><table id="svd-table"></table></div>
+<h3>All signed item weights</h3><div class="scroll"><table id="svd-weights-table"></table></div>
+<h3>Raw diagnostics</h3><pre id="svd-details"></pre></details></section>
 <section id="comparison"><div class="section-head"><h2>Model comparison</h2><div class="toolbar" data-table="comparison-table"></div></div>
+<p class="section-intro muted">Compares predictive models on the same development folds. Use the agreed metric and baseline to judge whether a more complex model adds useful predictive accuracy.</p>
+<div class="section-action"><h3>How to action these results</h3><p>Prefer the simplest candidate that meets your agreed improvement criterion over the baseline. Freeze selection and request untouched-holdout evaluation before making a final performance claim; development scores alone do not establish practical usefulness.</p></div>
 <p>Development validation selects candidates. Fold variation is not a confidence interval. Blank holdout values mean not evaluated, not zero.</p>
 <div class="scroll"><table id="comparison-table"></table></div></section>
 <section id="diagnostics"><h2>Selected diagnostics</h2>
+<p class="section-intro muted">Shows performance measures for the model you select, with residuals, calibration, or feature importance when those diagnostics are available. Use training-versus-validation differences to spot possible overfitting.</p>
+<div class="section-action"><h3>How to action these results</h3><p>Use gaps, residual patterns, or calibration issues to propose one bounded next experiment. Review feature meaning and timing, then obtain explicit instruction before changing inputs, settings, or thresholds; predictive importance does not identify causes.</p></div>
 <p>Choosing a view does not retrain a model. Permutation importance is not causal influence; correlated predictors may share importance.</p>
 <label for="model-select">Approved fitted candidate</label><select id="model-select"></select>
 <pre id="diagnostic-details"></pre></section>
-<section id="svd"><h2>Centered SVD exploration</h2><p>Numeric-item PCA-style decomposition. Components are exploratory, sign-indeterminate, and not confirmed psychological constructs.</p>
-<div class="section-head"><h3>Component variance</h3><div class="toolbar" data-table="svd-table"></div></div>
-<div class="scroll"><table id="svd-table"></table></div><pre id="svd-details"></pre></section>
-<section id="interpretation"><h2>People Science interpretation</h2><div id="narrative"></div></section>
-<section id="methodology"><h2>Methodology and limitations</h2><p id="qa"></p><ul id="limitations"></ul>
+<section id="interpretation"><h2>People Science interpretation</h2>
+<p class="section-intro muted">Relates reviewed model evidence to published People Science research, keeping observations, hypotheses and suggested checks distinct. Interpretations appear only after the required sources have been reviewed.</p>
+<div class="section-action"><h3>How to action these results</h3><p>Use supported hypotheses to ask a focused question about relevant company context or an eligible additional dataset. Verify the explanation locally before choosing an intervention; research relevance and model associations do not establish a local cause.</p></div>
+<div id="narrative"></div></section>
+<section id="methodology"><h2>Methodology and limitations</h2>
+<p class="section-intro muted">Documents the approved modeling design, repeatability checks, and limitations. Use this section to judge what the results do and do not support.</p>
+<div class="section-action"><h3>How to action these results</h3><p>Resolve leakage, privacy, measurement, or validation problems before relying on findings. Carry remaining caveats into decisions and shared outputs; deterministic repeatability alone is not evidence of scientific validity.</p></div>
+<p id="qa"></p><ul id="limitations"></ul>
 <p>This report cannot establish causes, representative sampling, individual risk, or a deployable prediction service. Native score units and 100-point survey-score units are distinct.</p>
 <h3>Approved modeling design</h3><pre id="design"></pre>
 <h3>Reproducibility and provenance</h3><pre id="provenance"></pre></section>
-<section id="downloads"><h2>Downloads</h2><p>These in-report downloads work offline. The separate share ZIP also includes clean notebook/code and a placeholder configuration. Private inputs and fresh approval are required to reproduce.</p>
+<section id="downloads"><h2>Downloads</h2>
+<p class="section-intro muted">Download aggregate diagnostics and the sharing manifest for offline review. The separate share ZIP also includes clean notebook/code and a placeholder configuration; private inputs and fresh approval are required to reproduce.</p>
+<div class="section-action"><h3>How to action these results</h3><p>Review organizational permission before sharing the allowlisted aggregate package. Keep employee inputs, split membership, fitted estimators and private context local, and obtain fresh approval before reproducing or changing an experiment.</p></div>
 <button id="download-json" type="button">Download aggregate diagnostics JSON</button>
 <button id="download-manifest" type="button">Download sharing manifest</button></section>
 <p id="export-status" role="status" aria-live="polite"></p>
@@ -103,6 +153,98 @@ function diagnostics(){text("diagnostic-details",models.length?JSON.stringify(mo
 select.disabled=!models.length;select.addEventListener("change",diagnostics);diagnostics();
 table("svd-table",["Component","Explained variance ratio"],(S.svd?.explained_variance_ratio||[]).map((value,index)=>[index+1,value]));
 text("svd-details",S.svd?JSON.stringify({features:S.svd.features,weights:S.svd.components,reconstruction_rmse:S.svd.reconstruction_rmse},null,2):"SVD not run.");
+function svgNode(tag,attributes={},value){
+ const node=document.createElementNS("http://www.w3.org/2000/svg",tag);
+ for(const [name,attribute] of Object.entries(attributes))node.setAttribute(name,String(attribute));
+ if(value!==undefined)node.textContent=value;
+ return node;
+}
+function itemLabel(feature){const label=feature.replace(/^Q_/,"").replaceAll("_"," ").toLowerCase();return label.charAt(0).toUpperCase()+label.slice(1)}
+function signedWeight(value){return `${value>=0?"+":""}${value.toFixed(3)}`}
+function renderSVD(){
+ const svd=S.svd,visuals=document.getElementById("svd-visuals"),details=document.getElementById("svd-numeric-details");
+ details.hidden=!svd;
+ if(!svd){text("svd-status","SVD not run.");return}
+ const {features,components,explained_variance_ratio:variance}=svd;
+ if(!Array.isArray(features)||!features.length||!features.every(feature=>typeof feature==="string")||
+    !Array.isArray(components)||!components.length||!Array.isArray(variance)||variance.length!==components.length||
+    !variance.every(value=>Number.isFinite(value)&&value>=0&&value<=1)||
+    variance.reduce((sum,value)=>sum+value,0)>1+1e-10||
+    !components.every(row=>Array.isArray(row)&&row.length===features.length&&row.every(value=>Number.isFinite(value)&&Math.abs(value)<=1+1e-10))){
+  text("svd-status","SVD diagnostics are inconsistent; the chart could not be rendered.");
+  throw new Error("Invalid SVD component diagnostics.");
+ }
+ visuals.hidden=false;
+ text("svd-summary",`${components.length} components | ${features.length} survey items | ${(variance.reduce((sum,value)=>sum+value,0)*100).toFixed(2)}% of response variance represented`);
+ const rows=[];
+ components.forEach((weights,index)=>weights.forEach((weight,item)=>rows.push([index+1,features[item],weight,Math.abs(weight)])));
+ table("svd-weights-table",["Component","Item ID","Signed unit weight","Magnitude"],rows);
+ const cards=document.getElementById("svd-components");
+ components.forEach((weights,index)=>{
+  const card=document.createElement("article");card.className="svd-card";
+  const heading=document.createElement("h3");heading.textContent=`Component ${index+1}`;
+  const description=document.createElement("p");description.className="muted";description.textContent=`${(variance[index]*100).toFixed(2)}% of response variance`;
+  const list=document.createElement("ol");list.setAttribute("aria-label",`Component ${index+1} highest-magnitude items`);
+  const ranked=features.map((feature,item)=>({feature,weight:weights[item]})).sort((a,b)=>Math.abs(b.weight)-Math.abs(a.weight)||a.feature.localeCompare(b.feature));
+  for(const row of ranked.slice(0,5)){
+   const li=document.createElement("li"),label=document.createElement("span"),value=document.createElement("span");
+   label.textContent=itemLabel(row.feature);label.title=row.feature;
+   value.className="svd-weight";value.textContent=signedWeight(row.weight);
+   li.append(label,value);list.append(li);
+  }
+  card.append(heading,description,list);cards.append(card);
+ });
+ const labelWidth=250,panelWidth=240,gap=24,right=24,top=56,bottom=56,rowHeight=32;
+ const ordered=features.map((feature,index)=>({feature,index})).sort((a,b)=>Math.abs(components[0][b.index])-Math.abs(components[0][a.index])||a.feature.localeCompare(b.feature));
+ const width=labelWidth+components.length*panelWidth+(components.length-1)*gap+right,height=top+ordered.length*rowHeight+bottom;
+ const style=getComputedStyle(document.documentElement),color=token=>style.getPropertyValue(token).trim();
+ const foreground=color("--colorNeutralForeground1"),muted=color("--colorNeutralForeground3"),border=color("--colorNeutralStroke1");
+ const surface=color("--colorNeutralBackground1"),soft=color("--colorNeutralBackground2"),brand=color("--colorBrandForeground1");
+ const chart=svgNode("svg",{width,height,viewBox:`0 0 ${width} ${height}`,role:"img","aria-label":`SVD unit-weight magnitude bars for ${features.length} survey items and ${components.length} components`,"font-family":getComputedStyle(document.body).fontFamily});
+ chart.append(svgNode("title",{},`SVD components: common 0-1 magnitude scale with signed weight labels. Full numeric values are available in the table below.`));
+ ordered.forEach((row,index)=>{
+  const y=top+index*rowHeight+rowHeight/2;
+  if(index%2===0)chart.append(svgNode("rect",{x:0,y:top+index*rowHeight,width:width-right,height:rowHeight,fill:soft}));
+  const full=itemLabel(row.feature),label=full.length>32?full.slice(0,29)+"...":full;
+  const textNode=svgNode("text",{x:labelWidth-12,y:y+4,"text-anchor":"end",fill:foreground,"font-size":12},label);
+  textNode.append(svgNode("title",{},row.feature));chart.append(textNode);
+ });
+ components.forEach((weights,index)=>{
+  const x0=labelWidth+index*(panelWidth+gap),scale=value=>x0+18+value*(panelWidth-80);
+  chart.append(svgNode("text",{x:x0+panelWidth/2,y:24,"text-anchor":"middle",fill:foreground,"font-size":14,"font-weight":600},`Component ${index+1} (${(variance[index]*100).toFixed(2)}%)`));
+  for(const tick of [0,.25,.5,.75,1]){
+   chart.append(svgNode("line",{x1:scale(tick),y1:top-8,x2:scale(tick),y2:height-bottom,stroke:tick===0?muted:border}));
+   chart.append(svgNode("text",{x:scale(tick),y:height-bottom+24,"text-anchor":"middle",fill:muted,"font-size":11},tick.toFixed(2)));
+  }
+  ordered.forEach((row,item)=>{
+   const value=weights[row.index],y=top+item*rowHeight+rowHeight/2;
+   const bar=svgNode("rect",{class:"svd-weight-bar","data-component":index+1,"data-feature":row.feature,"data-weight":value,x:scale(0),y:y-8,width:Math.abs(value)*(panelWidth-80),height:16,rx:3,fill:brand,stroke:muted,"stroke-width":1});
+   bar.append(svgNode("title",{},`Component ${index+1} | ${row.feature}: ${signedWeight(value)}`));
+   chart.append(bar);
+   chart.append(svgNode("text",{class:"svd-weight-label",x:scale(Math.abs(value))+6,y:y+4,fill:foreground,"font-size":11,"font-weight":600,"paint-order":"stroke",stroke:surface,"stroke-width":3,"stroke-linejoin":"round"},signedWeight(value)));
+  });
+  chart.append(svgNode("text",{x:x0+panelWidth/2,y:height-8,"text-anchor":"middle",fill:muted,"font-size":12},"Unit-weight magnitude"));
+ });
+ document.getElementById("svd-chart").append(chart);
+}
+function renderItemReview(){
+ if(!S.svd)return;
+ const review=M.item_review;
+ if(!review){
+  text("item-review-status","No removals recommended - assessment incomplete.");
+  text("item-review-explanation","The current SVD output does not establish question redundancy, protected topic/benchmark coverage, or stability after removal. Supporting checks and an analyst-reviewed assessment are needed. This is insufficient evidence, not proof that every question must stay.");
+  return;
+ }
+ const removed=review.items.filter(item=>item.decision==="remove"),gaps=review.items.filter(item=>item.decision==="insufficient_evidence");
+ text("item-review-status",removed.length?`${removed.length} question${removed.length===1?"":"s"} recommended for removal.`:gaps.length?"No removals recommended - evidence gaps remain.":"No removals recommended - review completed.");
+ text("item-review-explanation",`All ${review.items.length} fitted questions were assessed. ${removed.length} recommended for removal; ${review.items.filter(item=>item.decision==="retain").length} retained; ${gaps.length} have insufficient evidence. Review protected content and the supporting checks before changing a survey; no questions have been deleted.`);
+ const labels={remove:"Recommend removal",retain:"Retain",insufficient_evidence:"Insufficient evidence"};
+ table("item-review-table",["Question ID","Recommendation","Why","Retained alternative"],review.items.map(item=>[item.question,labels[item.decision],item.reason,item.retained_alternative||"Not applicable"]));
+ text("item-review-evidence",JSON.stringify(review,null,2));
+ document.getElementById("item-review-results").hidden=false;
+ document.getElementById("download-item-review").onclick=()=>download("question-removal-review.json",JSON.stringify(review,null,2),"application/json");
+}
+renderSVD();renderItemReview();
 const narrative=document.getElementById("narrative");
 if(M.interpretation.status!=="reviewed"){narrative.textContent="Research-backed interpretation unavailable: "+M.interpretation.reason}
 else{for(const claim of M.interpretation.claims){const article=document.createElement("article");
@@ -112,12 +254,12 @@ function download(name,content,type){const url=URL.createObjectURL(new Blob([con
 document.getElementById("download-json").onclick=()=>download("model-diagnostics.json",JSON.stringify(S,null,2),"application/json");
 document.getElementById("download-manifest").onclick=()=>download("advanced-analysis-manifest.json",JSON.stringify(M,null,2),"application/json");
 function context(){return `task=${S.task||"not run"}; candidate=${models[Number(select.value)]?.candidate.id||"none"}; config=${M.config_sha256}`}
-for(const bar of document.querySelectorAll(".toolbar")){
+for(const bar of document.querySelectorAll(".toolbar[data-table]")){
  const id=bar.dataset.table,csv=document.createElement("button"),png=document.createElement("button");
  csv.type=png.type="button";csv.textContent="Export CSV";png.textContent="Save PNG";
  csv.setAttribute("aria-label",`Export ${id} aggregated data as CSV`);png.setAttribute("aria-label",`Save ${id} complete table as PNG`);
  csv.onclick=()=>{const rows=Array.from(document.getElementById(id).rows,r=>Array.from(r.cells,c=>c.textContent));
-  const quote=value=>'"'+(/^[=+\-@\t\r]/.test(value)?"'":"")+value.replaceAll('"','""')+'"';
+  const quote=value=>'"'+(/^[=+\-@\t\r]/.test(value)&&!Number.isFinite(Number(value))?"'":"")+value.replaceAll('"','""')+'"';
   download(id+".csv",[["Context",context()],...rows].map(row=>row.map(quote).join(",")).join("\r\n"),"text/csv")};
  png.onclick=()=>{try{const rows=Array.from(document.getElementById(id).rows,r=>Array.from(r.cells,c=>c.textContent).join(" | "));
   const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d");canvas.width=1600;canvas.height=100+rows.length*32;const style=getComputedStyle(document.documentElement);
@@ -127,6 +269,26 @@ for(const bar of document.querySelectorAll(".toolbar")){
  }catch(error){text("export-status","PNG export failed: "+error.message)}};
  bar.append(csv,png);
 }
+document.getElementById("svd-chart-png").onclick=async()=>{
+ try{
+  const chart=document.querySelector("#svd-chart svg");
+  if(!chart)throw new Error("No computed SVD chart is available.");
+  const url=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(chart)],{type:"image/svg+xml;charset=utf-8"}));
+  const image=new Image();
+  try{await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(new Error("Could not render the chart image."));image.src=url})}
+  finally{URL.revokeObjectURL(url)}
+  const width=chart.viewBox.baseVal.width,height=chart.viewBox.baseVal.height;
+  const canvas=document.createElement("canvas");canvas.width=width*2;canvas.height=(height+56)*2;
+  const ctx=canvas.getContext("2d");ctx.scale(2,2);
+  const style=getComputedStyle(document.documentElement);ctx.fillStyle=style.getPropertyValue("--colorNeutralBackground1");
+  ctx.fillRect(0,0,width,height+56);ctx.drawImage(image,0,0,width,height);
+  ctx.fillStyle=style.getPropertyValue("--colorNeutralForeground1");ctx.font='14px "Segoe UI"';
+  ctx.fillText(context(),24,height+32);
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png"));
+  if(!blob)throw new Error("No PNG image was created.");
+  download("svd-item-weights.png",blob,"image/png");text("export-status","SVD chart saved.");
+ }catch(error){text("export-status","SVD chart export failed: "+error.message)}
+};
 </script>
 </body>
 </html>

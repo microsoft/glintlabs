@@ -1,5 +1,6 @@
 import argparse
 import json
+import re
 import sys
 import zipfile
 from pathlib import Path
@@ -7,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+from jsonschema.exceptions import ValidationError
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -123,6 +125,40 @@ def test_code_only_does_not_read_or_fit_data(study, monkeypatch):
     manifest = json.loads((Path(opt.output_dir) / "advanced-analysis-manifest.json").read_text())
     assert manifest["status"] == "not_run"
     assert manifest["qa"]["verdict"] == "Not ready"
+    html = (Path(opt.output_dir) / "advanced-report.html").read_text(encoding="utf-8")
+    assert '<div id="svd-visuals" hidden>' in html
+    assert html.count("<h3>How to action these results</h3>") == 6
+
+
+@pytest.mark.parametrize("task", ["regression", "svd"])
+def test_report_leads_with_svd_and_explains_each_section(study, task):
+    config = study[2]
+    if task == "svd":
+        config["experiment"].update(task="svd", models=[], components=2, metric="reconstruction_rmse")
+    opt = options(study, config)
+    runner.run(opt)
+    html = (Path(opt.output_dir) / "advanced-report.html").read_text(encoding="utf-8")
+    expected = ["svd", "comparison", "diagnostics", "interpretation", "methodology", "downloads"]
+    assert re.findall(r'<section id="([^"]+)"', html) == expected
+    nav = re.search(r'<nav aria-label="Report sections">(.*?)</nav>', html, re.DOTALL).group(1)
+    assert re.findall(r'href="#([^"]+)"', nav) == expected
+    intros = dict(re.findall(
+        r'<section id="([^"]+)"[^>]*>.*?<p class="section-intro muted">(.*?)</p>',
+        html, re.DOTALL,
+    ))
+    assert set(intros) == set(expected)
+    assert all(intro.strip() for intro in intros.values())
+    assert "Singular value decomposition" in intros["svd"]
+    assert "variance" in intros["svd"]
+    assert "not a validated measurement model" in intros["svd"]
+    actions = re.findall(
+        r'<div class="section-action"><h3>How to action these results</h3><p>(.*?)</p></div>',
+        html, re.DOTALL,
+    )
+    assert len(actions) == len(expected)
+    assert "not a causal priority for intervention" in actions[0]
+    assert "untouched-holdout evaluation" in actions[1]
+    assert "obtain explicit instruction" in actions[2]
 
 
 def test_final_holdout_requires_frozen_plan_and_cannot_be_reused(study):
@@ -223,9 +259,134 @@ def test_svd_runs_without_a_predictive_leaderboard(study):
     config["experiment"].update(task="svd", models=[], components=2, metric="reconstruction_rmse")
     opt = options(study, config)
     runner.run(opt)
-    summary = json.loads((Path(opt.output_dir) / "advanced-analysis-manifest.json").read_text())["summary"]
+    output = Path(opt.output_dir)
+    summary = json.loads((output / "advanced-analysis-manifest.json").read_text())["summary"]
     assert summary["models"] == []
     assert len(summary["svd"]["components"]) == 2
+    assert any(value < 0 for row in summary["svd"]["components"] for value in row)
+    html = (output / "advanced-report.html").read_text(encoding="utf-8")
+    payload = json.loads(re.search(
+        r'<script id="aggregate-data" type="application/json">(.*?)</script>', html, re.DOTALL,
+    ).group(1))
+    assert payload["summary"]["svd"] == summary["svd"]
+    assert 'id="svd-chart"' in html and 'id="svd-components"' in html
+    assert 'data-table="svd-weights-table"' in html
+    assert "not factor loadings" in html
+    assert 'id="item-removal-review"' in html
+    assert "No removals recommended - assessment incomplete." in html
+    assert "not proof that every question must stay" in html
+
+
+def item_review_for(manifest, decision="remove"):
+    return {
+        "config_sha256": manifest["config_sha256"],
+        "summary_sha256": runner.digest(manifest["summary"]),
+        "approved_for_sharing": True,
+        "protected_items_reviewed": True,
+        "content_coverage_reviewed": True,
+        "proposed_set_evidence": "The final retained synthetic representative preserves content and the response span.",
+        "protected_items": ["Q_work"],
+        "items": [
+            {"question": "Q_work", "decision": "retain", "reason": "Retain the protected representative."},
+            {
+                "question": "Q_support", "decision": decision,
+                "reason": "Synthetic duplicate reviewed; the protected representative remains.",
+                "retained_alternative": "Q_work",
+                "redundancy_evidence": "Exact duplicated responses in the synthetic fixture.",
+                "coverage_evidence": "The synthetic duplicate adds no distinct content.",
+                "stability_evidence": "Keeping one exact copy preserves the one-dimensional response span.",
+            },
+        ],
+    }
+
+
+@pytest.mark.parametrize("decision", ["remove", "retain", "insufficient_evidence"])
+def test_review_items_attaches_reasons_without_refitting(study, monkeypatch, decision):
+    root, frame, config = study
+    frame["Q_support"] = frame["Q_work"]
+    frame.to_csv(root / "confidential.csv", index=False)
+    config["source"]["sha256"] = runner.file_hash(root / "confidential.csv")
+    config["experiment"].update(task="svd", models=[], components=1, metric="reconstruction_rmse")
+    fitted = options(study, config)
+    runner.run(fitted)
+    output = Path(fitted.output_dir)
+    original = json.loads((output / "advanced-analysis-manifest.json").read_text())
+    protected = {path.name: path.read_bytes() for path in (output / "_private").iterdir() if path.is_file()}
+    review = item_review_for(original, decision)
+    if decision != "remove":
+        review["items"][1]["reason"] = "No removal justified: retain pending further content and stability evidence."
+    path = root / "item-review.json"
+    runner.write_json(path, review)
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("Question review tried to read respondent data or refit.")
+
+    monkeypatch.setattr(runner, "load_data", forbidden)
+    import vivaglint.modeling
+    monkeypatch.setattr(vivaglint.modeling, "run_model_experiment", forbidden)
+    denied = options(study, config, mode="review-items", actions=["fit", "replay"])
+    denied.item_review = str(path)
+    with pytest.raises(PermissionError):
+        runner.run(denied)
+    if decision == "remove":
+        monkeypatch.setattr(sys, "argv", [
+            str(ROOT / "scripts" / "run_advanced_survey_analysis.py"),
+            "--config", denied.config, "--project-dir", denied.project_dir,
+            "--output-dir", denied.output_dir, "--mode", "review-items",
+            "--approval", denied.approval, "--item-review", str(path),
+        ])
+        assert runner.main() == 1
+        assert (output / "_private" / "item-review-failure.json").is_file()
+        assert json.loads((output / "advanced-analysis-manifest.json").read_text()) == original
+    opt = options(study, config, mode="review-items", actions=["interpret", "share"])
+    opt.item_review = str(path)
+    runner.run(opt)
+    updated = json.loads((output / "advanced-analysis-manifest.json").read_text())
+    assert updated["item_review"] == review
+    for key in ("summary", "provenance", "qa"):
+        assert updated[key] == original[key]
+    assert all((output / "_private" / name).read_bytes() == value for name, value in protected.items())
+    with zipfile.ZipFile(output / "advanced-share.zip") as archive:
+        assert json.loads(archive.read("question-removal-review.json")) == review
+    assert json.loads((output / "question-removal-review.json").read_text()) == review
+
+
+@pytest.mark.parametrize("invalid", [
+    "stale_config", "stale_summary", "duplicate_item", "unknown_item",
+    "protected_removal", "missing_stability", "missing_set_review", "remove_both_representatives",
+])
+def test_item_review_rejects_unsupported_removals(invalid):
+    from build_advanced_analysis_report import validate_item_review
+
+    manifest = {
+        "config_sha256": "a" * 64, "status": "completed",
+        "qa": {"repeatability": "passed", "verdict": "Use with caveats"},
+        "summary": {"task": "svd", "svd": {"features": ["Q_work", "Q_support"]}},
+    }
+    review = item_review_for(manifest)
+    if invalid == "stale_config":
+        review["config_sha256"] = "b" * 64
+    elif invalid == "stale_summary":
+        review["summary_sha256"] = "b" * 64
+    elif invalid == "duplicate_item":
+        review["items"].append(review["items"][0])
+    elif invalid == "unknown_item":
+        review["items"][1]["question"] = "Q_unfitted"
+    elif invalid == "protected_removal":
+        review["protected_items"].append("Q_support")
+    elif invalid == "missing_stability":
+        review["items"][1]["stability_evidence"] = " "
+    elif invalid == "missing_set_review":
+        review.pop("proposed_set_evidence")
+    else:
+        review["protected_items"] = []
+        review["items"][0].update(
+            decision="remove", retained_alternative="Q_support",
+            redundancy_evidence="Synthetic duplicate.", coverage_evidence="Same synthetic topic.",
+            stability_evidence="Same response span.",
+        )
+    with pytest.raises((ValueError, ValidationError)):
+        validate_item_review(manifest, review)
 
 
 def test_skill_has_proactive_collaboration_not_autonomous_tuning():

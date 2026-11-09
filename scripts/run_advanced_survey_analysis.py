@@ -243,6 +243,18 @@ def run(options: argparse.Namespace) -> None:
     private.mkdir(exist_ok=True)
     approval = Path(options.approval).resolve() if options.approval else None
     mode = options.mode
+    if mode == "review-items":
+        authorize(approval, config, {"interpret", "share"})
+        manifest = json.loads((output / "advanced-analysis-manifest.json").read_text(encoding="utf-8"))
+        if manifest["config_sha256"] != digest(config) or not options.item_review:
+            raise ValueError("Question review needs the original experiment and an explicit reviewed assessment.")
+        from build_advanced_analysis_report import build_report, validate_item_review
+        review = json.loads(Path(options.item_review).read_text(encoding="utf-8"))
+        validate_item_review(manifest, review)
+        manifest["item_review"] = review
+        build_report(output, manifest)
+        print("Question review attached; no models were fitted and no questions were deleted.")
+        return
     if mode == "interpret":
         authorize(approval, config, {"interpret", "share"})
         manifest = json.loads((output / "advanced-analysis-manifest.json").read_text(encoding="utf-8"))
@@ -375,9 +387,10 @@ def main() -> int:
     parser.add_argument("--config", required=True)
     parser.add_argument("--project-dir", required=True)
     parser.add_argument("--output-dir", required=True)
-    parser.add_argument("--mode", required=True, choices=["inspect", "code", "fit", "tune", "evaluate", "interpret"])
+    parser.add_argument("--mode", required=True, choices=["inspect", "code", "fit", "tune", "evaluate", "interpret", "review-items"])
     parser.add_argument("--approval")
     parser.add_argument("--narrative")
+    parser.add_argument("--item-review")
     parser.add_argument("--frozen-from")
     options = parser.parse_args()
     try:
@@ -386,9 +399,12 @@ def main() -> int:
         private = Path(options.output_dir).resolve() / "_private"
         private.mkdir(parents=True, exist_ok=True)
         state = "cancelled" if isinstance(exc, KeyboardInterrupt) else "failed"
-        write_json(private / "status.json", {"status": state, "error_type": type(exc).__name__})
-        (private / "error.txt").write_text(traceback.format_exc(), encoding="utf-8")
-        print(f"Advanced experiment {state}: {type(exc).__name__}. Details saved under _private/error.txt; no success is claimed.", file=sys.stderr)
+        review_only = options.mode == "review-items"
+        status_name = "item-review-failure.json" if review_only else "status.json"
+        error_name = "item-review-error.txt" if review_only else "error.txt"
+        write_json(private / status_name, {"status": state, "error_type": type(exc).__name__})
+        (private / error_name).write_text(traceback.format_exc(), encoding="utf-8")
+        print(f"Advanced {'question review' if review_only else 'experiment'} {state}: {type(exc).__name__}. Details saved under _private/{error_name}; no success is claimed.", file=sys.stderr)
         return 1
     return 0
 
