@@ -29,7 +29,9 @@ This plugin provides a set of focused skills that share a common analysis contra
    and Methodology are always included.
 2. `analyze-survey-ai-preview` adds staged, evidence-grounded People Science
    summaries to the same shared report pipeline.
-3. `people-science-knowledge-vault` finds and synthesizes externally published People Science knowledge using a strict two-tier source hierarchy.
+3. `people-science-knowledge-vault` finds and synthesizes externally published
+   People Science knowledge using a reviewed topic/source index and explicit
+   collection priorities.
 
 The plugin deliberately does not duplicate the `vivaglint` analysis package. It calls a pinned package version and treats the output manifest as the stable interface between execution and interpretation.
 
@@ -40,8 +42,14 @@ The plugin deliberately does not duplicate the `vivaglint` analysis package. It 
 - Access to the relevant Viva Glint survey exports or analysis outputs for the
   workflow being used.
 
-Install the complete plugin, not just its skill Markdown. A command-capable
-host with local file/process permissions is required to run analysis; a
+For knowledge-only use, paste the [Knowledge Vault skill link](https://github.com/microsoft/glintlabs/blob/main/skills/people-science-knowledge-vault/SKILL.md)
+into an assistant that can read public web links and ask a question.
+Its context library is hosted in the skill's [references folder](skills/people-science-knowledge-vault/references/README.md).
+No download, installation, Python, survey export, or Microsoft-internal access
+is required. See [link-only use](skills/people-science-knowledge-vault/references/public-use.md).
+
+For survey analysis, install the complete plugin, not just its skill Markdown.
+A command-capable host with local file/process permissions is required to run analysis; a
 browser-chat GitHub connection alone is not sufficient.
 
 ## Install
@@ -105,10 +113,12 @@ references/general/
 When a skill runs, inspect its colocated `references/` folder first, then
 inspect `references/general/`. Skill-specific references take precedence for
 that skill unless they violate privacy, safety, or the manifest contract.
+The Knowledge Vault links directly to its public, colocated `references`
+library; it can be used from a link without installing the plugin.
 
 ## Shared contract
 
-All downstream skills should start with:
+All downstream survey-analysis workflows should start with:
 
 ```text
 analysis-manifest.json
@@ -135,11 +145,27 @@ Schema: `schemas/analysis-manifest.schema.json`
 
 ### Knowledge vault status
 
-`people-science-knowledge-vault` is an initial scaffold. It gives first priority to
-all articles discoverable from the Microsoft Viva Blog category and second priority
-only to records in the source workbook's `External` worksheet. Future work can add a
-generated article catalog, automated refresh, topic aliases, and retrieval-quality
-tests without changing this source hierarchy.
+Start with the [context entry](skills/people-science-knowledge-vault/references/README.md)
+and [corpus guide](skills/people-science-knowledge-vault/references/corpus-guide.md).
+The repository includes reviewed summaries and public links for 38 accessible
+original-vault resources and 17 Research Drops: 550 source-level entries under 33
+shared topics, with one original directory recorded as unavailable. Discovery
+does not require private SharePoint, local downloads, or script execution.
+
+Relevant new Research Drops take precedence; the original vault's priority
+ordering is preserved within its collection. Shared topics and study families
+are not independent findings or a claim-level deduplication result. Full published
+sources are still required for substantive evidence and freshness checks. See
+the [skill](skills/people-science-knowledge-vault/SKILL.md) and authoritative
+[source-priority contract](skills/people-science-knowledge-vault/references/source-priority.md).
+
+The public library uses small linked topic and source pages, with public-only
+catalog fields and explicit evidence limits. It omits protected-workbook
+metadata and private ownership records. See [link-only use](skills/people-science-knowledge-vault/references/public-use.md)
+for host capabilities and updates, and
+[publisher maintenance](references/maintenance/knowledge-vault/README.md)
+for regeneration and content-check procedures. Recordings remain linked unless
+transcript redistribution permission is independently verified.
 
 ## Linked survey dataset
 

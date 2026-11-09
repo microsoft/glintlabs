@@ -3,14 +3,16 @@
 
 # Prioritized resources (human-readable)
 
-This is a quick-scan, human-friendly view of the knowledge vault's known
-resources, ranked by `priority_tier` (sourced from the workbook's column J,
+This is a quick-scan view of the **original vault collection only**.
+Relevant new-catalog Research Drops take precedence over this entire
+collection; see `theme-lookup.md` for discovery across both collections.
+The original vault order below is unchanged: `priority_tier` (column J,
 'Priority to add to context library'): Top5 > High > Medium > Low, with
 Curated entries (not present in the External worksheet snapshot) treated as
 Top5-equivalent. It is **not** the retrieval contract: agents must still
 follow `source-priority.md`, which also covers the supplementary live checks
 (Microsoft Viva Blog category page, Microsoft Learn, Adoption Center) useful
-for material newer than the saved `external-tab-snapshot.json`.
+for material newer than the publisher-maintained catalog.
 
 ## Top5 - highest priority
 
