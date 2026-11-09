@@ -55,8 +55,17 @@ Use the vault's complete retrieval process, source priorities, clarification
 rules, and evidence contract rather than duplicating them here. For a purely
 conceptual question, go directly to that workflow without requiring a
 manifest, survey data, QA, or a new analysis. For questions about the user's
-actual results, retain the QA gate above and use the vault to supplement,
+actual analysis artifacts, retain the QA gate above and use the vault to supplement,
 not replace, the inspected aggregate evidence.
+
+For an ordinary dashboard screenshot or supplied aggregate values without a
+computation/QA request, use the vault's results-exploration workflow directly.
+Do not require a manifest merely to discuss a screen or claim its underlying
+analysis passed QA. This document's artifact QA, output template, and
+post-analysis prompt apply to analysis outputs, not every screenshot follow-up.
+When adding research to inspected artifacts, carry existing QA and caveats
+forward for unchanged inputs and intended use; do not restart intake, rerun
+unchanged analyses, or bounce between skills.
 
 Keep observed survey findings, cited published guidance, and hypotheses
 clearly separate. Cite retrieved article bodies beside the claims they

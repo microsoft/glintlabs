@@ -18,6 +18,7 @@ PRIVATE_LOCATION = re.compile(
     re.IGNORECASE,
 )
 MAX_PAGE_BYTES = 20_000
+RUNTIME_GUIDES = ("research-workflow.md", "results-exploration.md")
 SKILL_PATH = ROOT / "skills/people-science-knowledge-vault/SKILL.md"
 
 
@@ -114,19 +115,22 @@ def validate_context(context: Path = REFERENCES, root: Path = ROOT) -> None:
         if len(rendered.encode("utf-8")) > MAX_PAGE_BYTES:
             raise ValueError(f"{name}: exceeds small-page retrieval budget")
     approved = validate_media(context, index, load_json(context / "media-alternatives.json"))
+    runtime_guides = {context / name for name in RUNTIME_GUIDES}
     expected = {
         context / name for name in (
             "catalog.json", "theme-index.json", "theme-lookup.md", "topic-lookup.md",
             "source-priority.md", "corpus-guide.md", "public-use.md",
             "media-alternatives.json", "prioritized-resources.md", *pages,
         )
-    } | approved
+    } | approved | runtime_guides
     actual = {path for path in context.rglob("*") if path.is_file()}
     if actual != expected:
         raise ValueError("context contains missing/unregistered files; review its public inventory")
     for path in sorted(actual):
         if path.is_symlink():
             raise ValueError(f"{path.name}: context cannot contain symlinks")
+        if path in runtime_guides and len(path.read_bytes()) > MAX_PAGE_BYTES:
+            raise ValueError(f"{path.name}: exceeds small-page retrieval budget")
         if PRIVATE_LOCATION.search(path.read_text(encoding="utf-8")):
             raise ValueError(f"{path.name}: private ownership/location data cannot enter public context")
         if path.suffix == ".md":

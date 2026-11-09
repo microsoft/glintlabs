@@ -29,9 +29,10 @@ This plugin provides a set of focused skills that share a common analysis contra
    and Methodology are always included.
 2. `analyze-survey-ai-preview` adds staged, evidence-grounded People Science
    summaries to the same shared report pipeline.
-3. `people-science-knowledge-vault` finds and synthesizes externally published
-   People Science knowledge using a reviewed topic/source index and explicit
-   collection priorities.
+3. `people-science-knowledge-vault` synthesizes published People Science knowledge
+   and interprets authorized Glint screenshots/results using relevant research.
+   It asks briefly for the next useful view when needed to verify an interpretation,
+   using a reviewed topic/source index and explicit collection priorities.
 
 The plugin deliberately does not duplicate the `vivaglint` analysis package. It calls a pinned package version and treats the output manifest as the stable interface between execution and interpretation.
 
@@ -47,6 +48,11 @@ into an assistant that can read public web links and ask a question.
 Its context library is hosted in the skill's [references folder](skills/people-science-knowledge-vault/references/README.md).
 No download, installation, Python, survey export, or Microsoft-internal access
 is required. See [link-only use](skills/people-science-knowledge-vault/references/public-use.md).
+
+The same skill can interpret authorized, redacted Glint screenshots or aggregate
+values in an approved host, with research-backed checks. Browser navigation is
+optional and requires separately available approved tools and a signed-in session;
+the link does not grant platform access. Screenshots do not establish Analysis QA.
 
 For survey analysis, install the complete plugin, not just its skill Markdown.
 A command-capable host with local file/process permissions is required to run analysis; a
@@ -141,7 +147,7 @@ Schema: `schemas/analysis-manifest.schema.json`
 |---|---|
 | `analyze-survey` | The user wants the standard survey analysis package, QA of output validity/privacy/readiness, or People Science interpretation of existing outputs. |
 | `analyze-survey-ai-preview` | The user explicitly wants the staged AI-summary report experience. |
-| `people-science-knowledge-vault` | The user wants externally shareable People Science articles or an evidence-backed synthesis of published guidance. |
+| `people-science-knowledge-vault` | The user wants published People Science guidance, research-backed Glint screenshot/results interpretation, or the next useful view to verify an explanation. |
 
 ### Knowledge vault status
 

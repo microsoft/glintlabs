@@ -17,6 +17,10 @@ skill's scope.
 ## Start here
 
 First distinguish a new analysis from QA or interpretation of existing outputs.
+For dashboard screenshots or supplied aggregate values without a computation/QA
+request, follow `../people-science-knowledge-vault/SKILL.md` instead of requesting
+a manifest or starting intake. It combines bounded results interpretation with
+research-backed verification; a screenshot does not establish Analysis QA.
 If the user provides only this skill or its link without another task, use the
 new-analysis intake below. Never recommend modifying the skill or offer
 "Modify the skill" as a user-facing option.
@@ -42,6 +46,8 @@ interpretation-only or QA-only request.
 For detailed People Science questions or research-backed follow-ups, use the
 knowledge-vault handoff in `references/interpretation.md`. Purely conceptual
 questions do not require a manifest or survey data.
+Carry inspected artifacts, established QA, caveats, and the user's question into
+that research follow-up; do not restart intake or bounce between skills.
 
 ### New survey analysis
 
