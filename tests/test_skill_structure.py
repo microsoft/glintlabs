@@ -3251,8 +3251,12 @@ def test_knowledge_vault_source_priority():
     sources = (
         ROOT / "skills/people-science-knowledge-vault/references/source-priority.md"
     ).read_text(encoding="utf-8")
+    workflow = (
+        ROOT / "skills/people-science-knowledge-vault/references/research-workflow.md"
+    ).read_text(encoding="utf-8")
 
-    assert "Microsoft Viva Blog" in skill
+    assert "[research workflow](references/research-workflow.md)" in skill
+    assert "Microsoft Viva Blog" in workflow
     assert "only article records from the `External` worksheet" in skill
     assert "microsoftvivablog" in sources
     assert "`External`" in sources
