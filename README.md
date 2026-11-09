@@ -33,6 +33,18 @@ This plugin provides a set of focused skills that share a common analysis contra
    and interprets authorized Glint screenshots/results using relevant research.
    It asks briefly for the next useful view when needed to verify an interpretation,
    using a reviewed topic/source index and explicit collection priorities.
+4. `analyze-survey-advanced` collaborates with expert data scientists on Random
+   Forest, gradient boosting, centered SVD, approved baselines/challengers, and
+   explicitly authorized tuning. It proactively suggests experiments and asks
+   about useful company context/external data, but never tunes without instruction.
+   It produces an advanced report, aggregate diagnostics and clean notebook/code
+   using a separate runtime and manifest; the basic workflow is unchanged.
+
+Advanced execution requires Python 3.11+ and the separate
+`requirements-advanced-runtime.txt` environment. The engine extension is
+[under review](https://github.com/microsoft/vivaglint_py/pull/5); the advanced
+runtime pins that review commit, not a released engine version. See the
+[advanced workflow](skills/analyze-survey-advanced/references/modeling-workflow.md).
 
 The plugin deliberately does not duplicate the `vivaglint` analysis package. It calls a pinned package version and treats the output manifest as the stable interface between execution and interpretation.
 
@@ -146,6 +158,7 @@ Schema: `schemas/analysis-manifest.schema.json`
 | Skill | Use when |
 |---|---|
 | `analyze-survey` | The user wants the standard survey analysis package, QA of output validity/privacy/readiness, or People Science interpretation of existing outputs. |
+| `analyze-survey-advanced` | An expert wants collaborative modeling, explicit tuning, model comparison, centered SVD, reproducible notebooks and research-grounded model interpretation. |
 | `analyze-survey-ai-preview` | The user explicitly wants the staged AI-summary report experience. |
 | `people-science-knowledge-vault` | The user wants published People Science guidance, research-backed Glint screenshot/results interpretation, or the next useful view to verify an explanation. |
 

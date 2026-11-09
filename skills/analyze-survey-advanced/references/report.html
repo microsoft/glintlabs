@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advanced survey analysis</title>
+<style>
+:root {
+  color-scheme: light;
+  --colorNeutralBackground1:#FFFFFF; --colorNeutralBackground2:#FAFAFA;
+  --colorNeutralForeground1:#242424; --colorNeutralForeground3:#616161;
+  --colorBrandForeground1:#335CCC; --colorNeutralStroke1:#D1D1D1;
+  --colorVivaBrandBackground2:#E5EEFF; --colorStatusWarningBackground:#FEFFBF;
+  --shadow2:0 0 2px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.14);
+  --borderRadiusMedium:8px; --borderRadiusLarge:16px; --borderRadiusXLarge:20px;
+  --spacingHorizontalS:8px; --spacingHorizontalM:12px; --spacingHorizontalL:24px;
+  --spacingHorizontalXL:32px; --spacingVerticalXXL:56px;
+  --fontFamilyBase:"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--colorNeutralBackground2);color:var(--colorNeutralForeground1);font:16px/1.5 var(--fontFamilyBase)}
+main{max-width:1200px;margin:auto;padding:var(--spacingHorizontalXL)}
+header{background:var(--colorVivaBrandBackground2);padding:var(--spacingHorizontalXL);border-radius:var(--borderRadiusXLarge)}
+h1{font-size:32px;line-height:1.2}
+h2{font-size:24px;margin:0}
+h3{font-size:20px}
+p{max-width:85ch}
+nav{display:flex;flex-wrap:wrap;gap:var(--spacingHorizontalS);padding-block:var(--spacingHorizontalL)}
+a{color:var(--colorBrandForeground1)}
+nav a,button,select{font:inherit;border:1px solid var(--colorNeutralStroke1);border-radius:var(--borderRadiusMedium);padding:var(--spacingHorizontalS) var(--spacingHorizontalM);background:var(--colorNeutralBackground1);color:var(--colorBrandForeground1)}
+nav a{text-decoration:none}
+button{cursor:pointer}
+button:hover,nav a:hover{background:var(--colorVivaBrandBackground2)}
+button:active{box-shadow:inset var(--shadow2)}
+:focus-visible{outline:2px solid var(--colorBrandForeground1);outline-offset:3px}
+section{padding:var(--spacingHorizontalL);margin-bottom:var(--spacingHorizontalL);background:var(--colorNeutralBackground1);border-radius:var(--borderRadiusLarge);box-shadow:var(--shadow2);scroll-margin-top:var(--spacingHorizontalL)}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:var(--spacingHorizontalM);flex-wrap:wrap}
+.toolbar{display:flex;gap:var(--spacingHorizontalS)}
+.muted{color:var(--colorNeutralForeground3)}
+.badge{display:inline-block;background:var(--colorStatusWarningBackground);padding:var(--spacingHorizontalS) var(--spacingHorizontalM);border-radius:var(--borderRadiusMedium)}
+.scroll{overflow:auto}
+table{width:100%;border-collapse:collapse;margin-top:var(--spacingHorizontalL);font-size:14px}
+th,td{text-align:left;padding:var(--spacingHorizontalM);border-bottom:1px solid var(--colorNeutralStroke1);vertical-align:top}
+th{background:var(--colorNeutralBackground2)}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
+label{display:block;margin-top:var(--spacingHorizontalL)}
+select{max-width:100%}
+@media(max-width:767px){main{padding:var(--spacingHorizontalM)}header,section{padding:var(--spacingHorizontalL)}h1{font-size:28px}.toolbar{flex-wrap:wrap}}
+@media print{nav,.toolbar{display:none}section{break-inside:avoid}main{max-width:none}}
+</style>
+</head>
+<body>
+<main>
+<header><p>Glint Labs / Expert exploration</p><h1>Advanced survey analysis</h1>
+<p>Collaborative modeling, reproducible diagnostics, and bounded People Science interpretation.</p>
+<p id="status" class="badge"></p><p id="scope" class="muted"></p></header>
+<nav aria-label="Report sections">
+<a href="#comparison">Model comparison</a><a href="#diagnostics">Diagnostics</a><a href="#svd">SVD</a>
+<a href="#interpretation">Interpretation</a><a href="#methodology">Methodology</a><a href="#downloads">Downloads</a>
+</nav>
+<section id="comparison"><div class="section-head"><h2>Model comparison</h2><div class="toolbar" data-table="comparison-table"></div></div>
+<p>Development validation selects candidates. Fold variation is not a confidence interval. Blank holdout values mean not evaluated, not zero.</p>
+<div class="scroll"><table id="comparison-table"></table></div></section>
+<section id="diagnostics"><h2>Selected diagnostics</h2>
+<p>Choosing a view does not retrain a model. Permutation importance is not causal influence; correlated predictors may share importance.</p>
+<label for="model-select">Approved fitted candidate</label><select id="model-select"></select>
+<pre id="diagnostic-details"></pre></section>
+<section id="svd"><h2>Centered SVD exploration</h2><p>Numeric-item PCA-style decomposition. Components are exploratory, sign-indeterminate, and not confirmed psychological constructs.</p>
+<div class="section-head"><h3>Component variance</h3><div class="toolbar" data-table="svd-table"></div></div>
+<div class="scroll"><table id="svd-table"></table></div><pre id="svd-details"></pre></section>
+<section id="interpretation"><h2>People Science interpretation</h2><div id="narrative"></div></section>
+<section id="methodology"><h2>Methodology and limitations</h2><p id="qa"></p><ul id="limitations"></ul>
+<p>This report cannot establish causes, representative sampling, individual risk, or a deployable prediction service. Native score units and 100-point survey-score units are distinct.</p>
+<h3>Approved modeling design</h3><pre id="design"></pre>
+<h3>Reproducibility and provenance</h3><pre id="provenance"></pre></section>
+<section id="downloads"><h2>Downloads</h2><p>These in-report downloads work offline. The separate share ZIP also includes clean notebook/code and a placeholder configuration. Private inputs and fresh approval are required to reproduce.</p>
+<button id="download-json" type="button">Download aggregate diagnostics JSON</button>
+<button id="download-manifest" type="button">Download sharing manifest</button></section>
+<p id="export-status" role="status" aria-live="polite"></p>
+</main>
+<script id="aggregate-data" type="application/json">__AGGREGATE_PAYLOAD__</script>
+<script>
+"use strict";
+const M=JSON.parse(document.getElementById("aggregate-data").textContent), S=M.summary;
+const text=(id,value)=>{document.getElementById(id).textContent=value};
+text("status",`${M.status} / ${M.qa.verdict}`);
+text("scope",`${S.task||"Code-only design"} | score units: ${S.score_units||"not applicable"} | ${S.holdout_evaluated?"Final holdout evaluated":"No final holdout result"}`);
+text("qa",`Frozen-fit repeatability: ${M.qa.repeatability}`);
+text("provenance",JSON.stringify(M.provenance,null,2));
+text("design",JSON.stringify(S.design||{},null,2));
+for(const limitation of M.qa.limitations){const li=document.createElement("li");li.textContent=limitation;document.getElementById("limitations").append(li)}
+function table(id,headers,rows){
+ const t=document.getElementById(id);t.replaceChildren();const head=t.createTHead().insertRow();
+ for(const name of headers){const th=document.createElement("th");th.scope="col";th.textContent=name;head.append(th)}
+ const body=t.createTBody();for(const values of rows){const row=body.insertRow();for(const value of values){row.insertCell().textContent=value===null||value===undefined?"Not available":String(value)}}
+ if(!rows.length){const cell=body.insertRow().insertCell();cell.colSpan=headers.length;cell.textContent="Not run / no eligible result."}
+}
+const comparison=[];for(const row of S.models||[]){for(const [metric,value] of Object.entries(row.validation)){comparison.push([row.candidate.id,row.candidate.method,metric,value,row.fold_std[metric],row.holdout?.[metric]??null])}}
+table("comparison-table",["Candidate","Method","Metric","Development mean","Fold SD","Holdout"],comparison);
+const models=S.models||[], select=document.getElementById("model-select");
+models.forEach((row,index)=>{const option=document.createElement("option");option.value=index;option.textContent=`${row.candidate.id}: ${JSON.stringify(row.candidate.parameters||{})}`;select.append(option)});
+function diagnostics(){text("diagnostic-details",models.length?JSON.stringify(models[Number(select.value)],null,2):"No supervised model was executed.")}
+select.disabled=!models.length;select.addEventListener("change",diagnostics);diagnostics();
+table("svd-table",["Component","Explained variance ratio"],(S.svd?.explained_variance_ratio||[]).map((value,index)=>[index+1,value]));
+text("svd-details",S.svd?JSON.stringify({features:S.svd.features,weights:S.svd.components,reconstruction_rmse:S.svd.reconstruction_rmse},null,2):"SVD not run.");
+const narrative=document.getElementById("narrative");
+if(M.interpretation.status!=="reviewed"){narrative.textContent="Research-backed interpretation unavailable: "+M.interpretation.reason}
+else{for(const claim of M.interpretation.claims){const article=document.createElement("article");
+ for(const key of ["observation","interpretation","hypothesis","next_check","caveat"]){const p=document.createElement("p");const label=document.createElement("strong");label.textContent=key.replaceAll("_"," ")+": ";p.append(label,document.createTextNode(claim[key]));article.append(p)}
+ for(const source of claim.sources){const p=document.createElement("p"),a=document.createElement("a");a.href=source.url;a.rel="noopener noreferrer";a.textContent=source.title;p.append(a);article.append(p)}narrative.append(article)}}
+function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type})),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+document.getElementById("download-json").onclick=()=>download("model-diagnostics.json",JSON.stringify(S,null,2),"application/json");
+document.getElementById("download-manifest").onclick=()=>download("advanced-analysis-manifest.json",JSON.stringify(M,null,2),"application/json");
+function context(){return `task=${S.task||"not run"}; candidate=${models[Number(select.value)]?.candidate.id||"none"}; config=${M.config_sha256}`}
+for(const bar of document.querySelectorAll(".toolbar")){
+ const id=bar.dataset.table,csv=document.createElement("button"),png=document.createElement("button");
+ csv.type=png.type="button";csv.textContent="Export CSV";png.textContent="Save PNG";
+ csv.setAttribute("aria-label",`Export ${id} aggregated data as CSV`);png.setAttribute("aria-label",`Save ${id} complete table as PNG`);
+ csv.onclick=()=>{const rows=Array.from(document.getElementById(id).rows,r=>Array.from(r.cells,c=>c.textContent));
+  const quote=value=>'"'+(/^[=+\-@\t\r]/.test(value)?"'":"")+value.replaceAll('"','""')+'"';
+  download(id+".csv",[["Context",context()],...rows].map(row=>row.map(quote).join(",")).join("\r\n"),"text/csv")};
+ png.onclick=()=>{try{const rows=Array.from(document.getElementById(id).rows,r=>Array.from(r.cells,c=>c.textContent).join(" | "));
+  const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d");canvas.width=1600;canvas.height=100+rows.length*32;const style=getComputedStyle(document.documentElement);
+  ctx.fillStyle=style.getPropertyValue("--colorNeutralBackground1");ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle=style.getPropertyValue("--colorNeutralForeground1");ctx.font='16px "Segoe UI"';
+  rows.forEach((row,i)=>ctx.fillText(row,24,32+i*32));ctx.fillText(context(),24,canvas.height-24);
+  canvas.toBlob(blob=>{if(!blob){text("export-status","PNG export failed.");return}const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=id+".png";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)},"image/png");
+ }catch(error){text("export-status","PNG export failed: "+error.message)}};
+ bar.append(csv,png);
+}
+</script>
+</body>
+</html>
