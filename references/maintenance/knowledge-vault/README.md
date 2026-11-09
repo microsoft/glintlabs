@@ -90,3 +90,39 @@ priorities, study-family context, or existing recording gaps to meet that budget
 CI validates the link graph and permission records on PRs and runs content-aware
 public-source checks weekly. It does not publish an executable hosted assistant
 or guarantee that every chat host can follow a URL.
+
+## Required-reference behavioral evaluation
+
+Use synthetic aggregates and public-source fixtures in an approved test host.
+Evaluate actual responses together with retrieval/preload and context-delivery
+traces, not the assistant's claim that it read a file. Record model/host settings,
+the skill revision, and any context compaction. These checks are distinct from
+the structural pytest suite and do not require private workbook access.
+
+| Case | Expected loading and response behavior |
+| --- | --- |
+| Fresh research question | Common files and research workflow are complete before substantive guidance; original evidence is retrieved separately. |
+| Fresh results interpretation | Both workflows and common files are complete before interpretation or a research-informed next check. |
+| Research -> results -> research | Load the newly needed results workflow without repeating intake; return to research without requiring screenshots or a manifest. |
+| Unchanged follow-up | Reuse valid complete bodies still in context; do not reload everything on every turn. |
+| Required shared file unavailable | Attempt permitted same-ref recovery, then disclose the blocker and stop substantive work even if article bodies are available. |
+| Only results workflow unavailable | Do not interpret local results; general research may proceed after its own requirements pass. |
+| HTTP success with preview/truncation | Recover raw/continuation content or treat loading as incomplete; never count status or headings as a full body. |
+| Cached file from another revision | Reject the cached body and resolve the required revision rather than silently mixing versions. |
+| Context compaction retains only "loaded" notes | Reload missing required bodies; metadata about a past read does not satisfy current availability. |
+| Required bodies preloaded | Verify complete same-ref content was delivered to the model; do not require redundant tool calls. |
+| Instructions complete but original source unreadable | Disclose the evidence gap; instruction loading does not license a research-backed claim. |
+
+Review substantive response opportunities and required-file coverage separately.
+Count verified retained/preloaded bodies as loaded; exclude ordinary prerequisite
+clarifications from substantive-answer counts. Report the observed proportion
+of substantive answers produced without complete required guidance and the
+unsafe-bypass rate in blocked-load cases. Distinguish omitted reads, failed or
+partial retrieval, and disregard of instructions that were actually delivered.
+Also record unnecessary reloads as a latency cost.
+
+If traces cannot establish completeness or context delivery, mark that aspect
+not observed rather than claiming success. Do not publish a skip probability from
+a few smoke tests: report sample sizes, host/model scope, and limitations. A run
+with no observed bypasses is not proof of zero risk. Keep customer evidence out
+of committed fixtures and public evaluation traces.
