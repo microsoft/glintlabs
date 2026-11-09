@@ -192,6 +192,130 @@ def test_shared_skill_link_requires_no_local_installation_and_preserves_ref():
     assert not (context_check.SKILL_PATH.parent / "bundle.json").exists()
 
 
+def test_required_workflows_are_reachable_from_skill_and_public_context():
+    skill = context_check.SKILL_PATH.read_text(encoding="utf-8")
+    entry = lookup.render_web_context(lookup.load_json(lookup.INDEX_PATH))["README.md"]
+    for name in context_check.RUNTIME_GUIDES:
+        assert f"(references/{name})" in skill
+        assert f"({lookup.RAW_BASE}/{name})" in entry
+        context_check.validate_links(lookup.REFERENCES / name)
+
+
+def test_reference_gate_requires_complete_guidance_before_substantive_work():
+    skill = context_check.SKILL_PATH.read_text(encoding="utf-8")
+    gate = " ".join(
+        skill.split("## Required-reference gate", 1)[1].split("\n## ", 1)[0].split()
+    )
+    for name in ("README.md", "source-priority.md", "public-use.md"):
+        assert f"`references/{name}`" in gate
+    assert "task's required workflows from the routing table" in gate
+    assert "complete readable bodies" in gate
+    assert "stop the affected substantive workflow" in gate
+    assert "Do not bypass the gate with model memory" in gate
+    assert "verified visible facts" in gate
+    for name in context_check.RUNTIME_GUIDES:
+        body = (lookup.REFERENCES / name).read_text(encoding="utf-8")
+        assert "(../SKILL.md#required-reference-gate)" in body
+
+
+def test_reference_reuse_requires_retained_content_not_a_loaded_summary():
+    skill = " ".join(context_check.SKILL_PATH.read_text(encoding="utf-8").split())
+    assert "Reuse complete same-ref bodies while they remain available in context" in skill
+    assert "On task changes, load newly required files" in skill
+    assert "after lost context, compaction, or revision changes" in skill
+    assert 'A summary saying "loaded" is not the body' in skill
+    assert "Do not repeatedly fetch unchanged, available files" in skill
+
+
+def test_controlled_host_guidance_does_not_promise_portable_enforcement():
+    public_use = " ".join(
+        (lookup.REFERENCES / "public-use.md").read_text(encoding="utf-8").split()
+    )
+    assert "guidance for integrators, not an implemented runtime" in public_use
+    assert "Preload their full validated bodies into the model context" in public_use
+    assert "block the affected workflow when required content is unavailable" in public_use
+    assert "does not guarantee correct model behavior" in public_use
+
+
+@pytest.mark.parametrize("name", context_check.RUNTIME_GUIDES)
+@pytest.mark.parametrize("failure", ["missing", "oversized"])
+def test_runtime_workflows_cannot_be_omitted_or_outgrow_retrieval_budget(
+    tmp_path, name, failure
+):
+    root = tmp_path / "repository"
+    context = root / "skills/people-science-knowledge-vault/references"
+    shutil.copytree(lookup.REFERENCES, context)
+    shutil.copyfile(context_check.SKILL_PATH, context.parent / "SKILL.md")
+    path = context / name
+    if failure == "missing":
+        path.unlink()
+        message = "missing/unregistered files"
+    else:
+        path.write_text("x" * (context_check.MAX_PAGE_BYTES + 1), encoding="utf-8")
+        message = f"{name}: exceeds small-page retrieval budget"
+    with pytest.raises(ValueError, match=message):
+        context_check.validate_context(context, root)
+
+
+def test_registering_workflows_does_not_allow_arbitrary_public_context(tmp_path):
+    root = tmp_path / "repository"
+    context = root / "skills/people-science-knowledge-vault/references"
+    shutil.copytree(lookup.REFERENCES, context)
+    shutil.copyfile(context_check.SKILL_PATH, context.parent / "SKILL.md")
+    (context / "unreviewed.md").write_text("Unregistered content", encoding="utf-8")
+    with pytest.raises(ValueError, match="missing/unregistered files"):
+        context_check.validate_context(context, root)
+
+
+def test_runtime_workflow_symlink_is_rejected_before_reading_its_body(monkeypatch):
+    guide = lookup.REFERENCES / context_check.RUNTIME_GUIDES[0]
+    original_is_symlink = Path.is_symlink
+    original_read_bytes = Path.read_bytes
+
+    def guarded_read(path):
+        assert path != guide, "runtime workflow body read before checking symlinks"
+        return original_read_bytes(path)
+
+    monkeypatch.setattr(
+        Path, "is_symlink", lambda path: path == guide or original_is_symlink(path)
+    )
+    monkeypatch.setattr(Path, "read_bytes", guarded_read)
+    with pytest.raises(ValueError, match="context cannot contain symlinks"):
+        context_check.validate_context()
+
+
+def test_results_contract_requires_research_and_conditional_brief_followups():
+    skill = " ".join(context_check.SKILL_PATH.read_text(encoding="utf-8").split())
+    results = " ".join(
+        (lookup.REFERENCES / "results-exploration.md").read_text(encoding="utf-8").split()
+    )
+    research = " ".join(
+        (lookup.REFERENCES / "research-workflow.md").read_text(encoding="utf-8").split()
+    )
+    assert "Substantive results interpretation requires research retrieval." in skill
+    assert "Research must influence which uncertainty to investigate" in results
+    assert "full original public body before supporting a claim" in research
+    assert "Ask one brief, specific request at a time" in results
+    assert "Stop when another screenshot would not materially change" in results
+    assert "end your response with 1-3" not in skill + research + results
+
+
+def test_screenshot_routing_preserves_artifact_qa_without_manifest_intake():
+    vault = context_check.SKILL_PATH.read_text(encoding="utf-8")
+    analysis = (ROOT / "skills/analyze-survey/SKILL.md").read_text(encoding="utf-8")
+    handoff = " ".join(
+        (ROOT / "skills/analyze-survey/references/interpretation.md")
+        .read_text(encoding="utf-8").split()
+    )
+    assert "screenshots" in vault and "analyze-survey" in vault
+    assert "../people-science-knowledge-vault/SKILL.md" in analysis
+    assert "Do not require a manifest merely to discuss a screen" in handoff
+    assert "reuse established QA" in (
+        lookup.REFERENCES / "results-exploration.md"
+    ).read_text(encoding="utf-8")
+    assert "Apply the **Analysis QA** gate" in handoff
+
+
 def test_context_is_colocated_with_the_skill_not_a_root_level_library():
     assert lookup.REFERENCES == context_check.SKILL_PATH.parent / "references"
     assert lookup.RAW_BASE.endswith("/skills/people-science-knowledge-vault/references")

@@ -5,6 +5,18 @@ See `catalog.json` for the machine-readable list of resources and
 This file is the authoritative retrieval contract; the other two files are
 generated or curated views that must never override it.
 
+## What this hierarchy governs
+
+This contract ranks published research and guidance, including the research
+required to interpret user-authorized Glint screenshots or aggregate results.
+User evidence establishes only what is observed in its displayed scope; it is
+not another research collection and never proves a local cause.
+
+For product mechanics, verify current official documentation for the specific
+product, program, metric, and role. Research collection rank cannot override
+current product definitions or privacy controls. Glint, Pulse, and 360 guidance
+is not interchangeable. Distinguish product documentation from research findings.
+
 ## Collection precedence: new catalog before the original vault
 
 Filter for relevance and applicability before ranking. Among sources that answer
@@ -23,8 +35,9 @@ Within the new collection, use relevance; do not invent workbook priorities.
 A Drop's null `priority_tier` means no workbook rank, not lower global priority.
 Unreviewed live discoveries do not automatically join the new catalog.
 
-Start with `corpus-guide.md` and the generated `topic-lookup.md`; use
-`theme-lookup.md` or `theme-index.json` for individual source profiles.
+Start with the small linked topics/source pages in `README.md`; consult
+`corpus-guide.md` for scope. The generated `topic-lookup.md`, `theme-lookup.md`,
+and `theme-index.json` are optional bulk views when full retrieval is supported.
 These repository files and their public source links do not depend on private
 SharePoint or a local extraction cache. Ownership records are provenance only.
 `prioritized-resources.md` lists only the original vault and preserves its order.
@@ -129,10 +142,14 @@ documentation, and navigation signposts.
 
 ## Explicit exclusions
 
-Private workbooks, unpublished drafts, internal-only records, and private
-extraction caches are not eligible runtime evidence. Only the publisher's
+Private publisher workbooks, unpublished drafts, internal-only records, and private
+extraction caches are not eligible research-library evidence. Only the publisher's
 `External` worksheet informs the saved original-vault catalog; maintenance
 must not import other worksheets.
+
+Authorized user screenshots, aggregate results, and analysis artifacts remain
+separate case evidence, handled under the skill's privacy and analysis boundaries.
+They must not be added to the public library or sent to public research queries.
 
 ## Precedence and deduplication
 
