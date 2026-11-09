@@ -81,6 +81,10 @@ context and do not restart intake.
 
 ## Choose the next useful view
 
+Before recommending a named Glint report/view or giving click paths, fully load
+[Glint navigation](glint-navigation.md) under the entry's gate. Use it to turn
+the selected check into a verified route, not to choose a hypothesis by itself.
+
 Use this routing guide conditionally, not as a fixed sequence or checklist.
 Fix unclear context before investigating explanations.
 
@@ -100,17 +104,28 @@ lowest cells, or assuming the lowest score is automatically the best action.
 Consider strengths and counterexamples when they could change the conclusion.
 Account for the user's authority and feasible next steps before suggesting action.
 
+When approved browser access is available, inspect the selected read-only view
+directly instead of asking for a redundant screenshot. When direct inspection
+is unavailable, follow the request contract below.
+
 Ask one brief, specific request at a time, normally for one screenshot. Request
 paired views together only when needed for the same comparison. Include essential
-scope in the request, not a list of speculative rationales. For example:
+scope in the request, not a list of speculative rationales.
 
-> Can you show this item's trend with the same filters?
+For user action, use **`## Next step: <one concrete action>`**, followed by a
+direct request naming the report, section, and verified control needed. State
+the intended observation briefly, not just "tell me more." Use placeholders or
+the user's actual item; do not invent its availability or wording. For example,
+when the selected report exposes this breakdown:
 
-> Can you include the comparison and response count?
+```markdown
+## Next step: Check the response distribution
+In Executive summary report > Scores, show the selected item's Favorability
+breakdown with the current filters visible. Crop names and identifiers.
+```
 
-> Do you have aggregated comment themes for this result?
-
-These are request examples, not evidence-backed conclusions. Keep the
+This is a request example, not an evidence-backed conclusion. Omit the header
+when no user action is needed; do not append a request to every answer. Keep the
 evidence-gathering rationale internal; expand when asked or when needed to
 prevent a material misunderstanding or privacy risk. Do not append a full
 evidence recap to every short follow-up.
@@ -160,6 +175,9 @@ after each filter/navigation change. Read-only navigation may inspect tabs,
 filters, and results. Editing surveys/settings, saving/publishing actions,
 sending messages, downloading/exporting data, and changing sharing require
 explicit authorization for that action. Do not treat unknown controls as safe.
+Report and usage links can initiate downloads immediately; do not click them
+merely to discover their behavior. Follow the navigation guide's recovery if an
+unexpected download occurs.
 Without browser control, guide the user briefly and interpret supplied views.
 
 If research retrieval fails, try another relevant eligible source. If none is

@@ -18,7 +18,7 @@ PRIVATE_LOCATION = re.compile(
     re.IGNORECASE,
 )
 MAX_PAGE_BYTES = 20_000
-RUNTIME_GUIDES = ("research-workflow.md", "results-exploration.md")
+RUNTIME_GUIDES = ("research-workflow.md", "results-exploration.md", "glint-navigation.md")
 SKILL_PATH = ROOT / "skills/people-science-knowledge-vault/SKILL.md"
 
 

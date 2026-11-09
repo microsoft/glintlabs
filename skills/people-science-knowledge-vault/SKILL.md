@@ -42,6 +42,7 @@ Users do not need to choose a mode or another skill.
 | --- | --- |
 | Research, published guidance, shareable sources, or questionnaire review | Read and follow [research workflow](references/research-workflow.md). |
 | Interpret screenshots, dashboard results, or supplied aggregate values; explain a pattern; decide where to look next | Read and follow [results exploration](references/results-exploration.md) and the research workflow. |
+| Recommend a named Glint report/view, give click paths, or navigate an authorized Glint session | Also read [Glint navigation](references/glint-navigation.md). This guide is not required for research-only answers. |
 | New computations, artifact QA, or an uninspected manifest/codebook | Use `analyze-survey` when available, preserving its Analysis QA gate and inspected aggregate evidence. Do not claim a handoff ran when it did not. |
 
 Substantive results interpretation requires research retrieval. Research must
@@ -64,6 +65,10 @@ check, fully load `references/README.md`, `references/source-priority.md`,
 `references/public-use.md`, and the task's required workflows from the routing
 table. For a supplied local skill, use its colocated files; for a link, keep the
 same ref. Reading instructions does not replace original-source retrieval.
+
+The conditional navigation guide follows the same loading, reuse, and recovery
+rules. If it cannot be loaded, block report/view directions and browser navigation,
+not otherwise-supported research or interpretation whose own requirements pass.
 
 Confirm file identity, revision, and complete readable bodies, not just titles,
 headings, previews, successful HTTP responses, or a list of filenames. Recover
