@@ -11,6 +11,7 @@ import sys
 import time
 import zipfile
 from decimal import ROUND_HALF_UP, Decimal
+from html import escape
 from pathlib import Path
 from typing import Any
 
@@ -1169,12 +1170,17 @@ def attrition_payload(
                 continue
             attr_i = attribute_index[attribute]
             value_i = value_index[attribute][value]
-        favorable_n = int(record["favorable_n"])
-        unfavorable_n = int(record["unfavorable_n"])
+        favorable_n = record["favorable_n"]
+        unfavorable_n = record["unfavorable_n"]
         suppressed = (
-            favorable_n < minimum_category_n
+            pd.isna(favorable_n)
+            or pd.isna(unfavorable_n)
+            or favorable_n < minimum_category_n
             or unfavorable_n < minimum_category_n
         )
+        if not suppressed:
+            favorable_n = int(favorable_n)
+            unfavorable_n = int(unfavorable_n)
         multiplier = record["attrition_ratio"]
         favorable_rate = record["favorable_attrition"]
         unfavorable_rate = record["unfavorable_attrition"]
@@ -1591,11 +1597,34 @@ function renderDistribution(){
     return html
 
 
+def attrition_baseline_survey(
+    frame: pd.DataFrame,
+    settings: dict[str, Any],
+) -> str | None:
+    predictor = settings.get("predictor_cycle")
+    if predictor is not None:
+        cycle_column = settings.get("cycle_column")
+        if cycle_column not in frame.columns:
+            raise ValueError("The attrition baseline cycle column is missing.")
+        frame = frame.loc[frame[cycle_column].astype(str).eq(str(predictor))]
+        if frame.empty:
+            raise ValueError("The configured attrition baseline cycle has no survey rows.")
+    if "survey_cycle_title" in frame.columns:
+        titles = frame["survey_cycle_title"].dropna().astype(str).str.strip()
+        titles = titles[titles.ne("")].unique()
+        if len(titles) == 1:
+            return str(titles[0])
+        if len(titles) > 1 and predictor is not None:
+            raise ValueError("The attrition baseline cycle has conflicting survey titles.")
+    return f"Cycle {predictor}" if predictor is not None else None
+
+
 def inject_attrition_report(
     html: str,
     payload: dict[str, Any],
     alerts_payload: dict[str, Any],
     completion_date: str | None,
+    baseline_survey: str | None = None,
 ) -> str:
     section_match = re.search(
         r"<section class=panel id=attrition role=tabpanel hidden>.*?</section>",
@@ -1616,10 +1645,11 @@ def inject_attrition_report(
             "fewer than five favorable or unfavorable respondents",
             f'fewer than {payload["minimumCategoryN"]} favorable or unfavorable respondents',
         )
-    completion_text = (
-        f" Predictor-cycle completion is registered as {completion_date}."
-        if completion_date
-        else ""
+    baseline_text = (
+        '<p class=muted><strong>Baseline survey:</strong> '
+        + escape(baseline_survey or "Not recorded")
+        + (f" (completed {escape(completion_date)})" if completion_date else "")
+        + "</p>"
     )
     attrition_section = (
         '<section class=panel id=attrition role=tabpanel hidden>'
@@ -1627,6 +1657,7 @@ def inject_attrition_report(
         '<p class=muted>Survey item multipliers linked to subsequent Exit outcomes.</p>'
         '</div></div>'
         + attrition_intro
+        + baseline_text
         + '<div class=ai-summary data-summary=attrition></div>'
         '<div class=tools><label>Outcome window<select id=attritionDays>'
         + "".join(
@@ -1658,7 +1689,7 @@ def inject_attrition_report(
         '÷ favorable attrition rate. The table responds to the shared report filter. '
         f'Cells with fewer than {payload["minimumCategoryN"]} favorable or unfavorable '
         'respondents are suppressed. These are screening associations, not causal '
-        f'estimates.{completion_text}</p></section>'
+        'estimates.</p></section>'
     )
     alerts_section = (
         '<section class=panel id=alerts role=tabpanel hidden>'
@@ -1670,7 +1701,8 @@ def inject_attrition_report(
         'with the largest score gaps, confirm the local context, and use the result '
         'to plan a focused listening conversation—not to rank managers or predict '
         'departures.</p>'
-        '<div class=ai-summary data-summary=alerts></div>'
+        + baseline_text
+        + '<div class=ai-summary data-summary=alerts></div>'
         '<div class=tools><label>Outcome window'
         '<select id=alertDays>'
         + "".join(
@@ -2196,6 +2228,11 @@ def main() -> int:
         if column in frame.columns and not identifier_column(column)
     ]
     cycle_col = "survey_cycle_title" if "survey_cycle_title" in frame.columns else None
+    attrition_settings = config.get("embedded_attrition") or {}
+    baseline_survey = (
+        attrition_baseline_survey(frame, attrition_settings)
+        if "attrition" in enabled else None
+    )
     bucket_numeric(frame, {emp_id, "__employee_id", *questions})
 
     overall = metrics(frame, questions, scale)
@@ -2266,7 +2303,6 @@ def main() -> int:
     if not attrition_completed:
         manifest.pop("attrition_report", None)
         manifest.pop("attrition_alerts_report", None)
-    attrition_settings = config.get("embedded_attrition") or {}
     attrition_data: dict[str, Any] | None = None
     alert_data: dict[str, Any] = {
         "questions": questions,
@@ -2421,6 +2457,7 @@ def main() -> int:
             attrition_data,
             alert_data,
             attrition_settings.get("predictor_completion_date"),
+            baseline_survey,
         )
         manifest["attrition_report"] = {
             "format": "live_multiplier_table",
