@@ -10,8 +10,9 @@ import { copyApprovedReports } from "../src/publishing/pages-export.ts";
 import { listApprovedPublications } from "../src/publishing/approved-publication.ts";
 import { publicPath } from "../src/telemetry/contract.ts";
 import { verifyPages } from "./verify-pages.mjs";
+import { readerBasePath } from "./pages-config.mjs";
 
-export const pagesBasePath = "/glintlabs";
+export const pagesBasePath = readerBasePath();
 export function readerTelemetryConfig(value, clarity) {
   assert(value === undefined || value === "" || value === "false" || value === "true",
     "GLINTLABS_PAGES_TELEMETRY must be true or false.");
@@ -34,10 +35,10 @@ export function readerFile(relative) {
   return !privateRoute || !/^(page|route|layout)\.[jt]sx?$/.test(parts.at(-1));
 }
 
-export function readerSource(text, filename) {
+export function readerSource(text, filename, basePath = pagesBasePath) {
   if (filename.endsWith(".css")) {
     return text.replace(/url\((["']?)(\/(?!\/)[^)"']+)\1\)/g,
-      (_match, quote, url) => `url(${quote}${pagesBasePath}${url}${quote})`);
+      (_match, quote, url) => `url(${quote}${basePath}${url}${quote})`);
   }
   if (!filename.endsWith(".tsx")) return text;
   const source = ts.createSourceFile(filename, text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);

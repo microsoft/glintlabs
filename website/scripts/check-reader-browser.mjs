@@ -7,10 +7,11 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getLaunchReports } from "../src/launch-reports/reports.ts";
+import { readerBasePath } from "./pages-config.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
-const origin = "http://127.0.0.1:3011";
-const prefix = "/glintlabs";
+const origin = `http://127.0.0.1:${process.env.PORT ?? 3011}`;
+const prefix = readerBasePath();
 const reports = getLaunchReports({ includePrivatePreview: false });
 const routes = [
   "/", "/reports", "/tools", "/about", "/annual-report-2026", "/tools/analyze-survey",
@@ -111,7 +112,7 @@ try {
   preview.stdout.on("data", (chunk) => {
     if (chunk.toString().includes("Pages preview:")) listening = true;
   });
-  await waitFor(() => listening, "Cannot start the reader preview; port 3011 must be free.");
+  await waitFor(() => listening, `Cannot start the reader preview; ${origin} must be free.`);
   browser = start(chromePath, [
     "--headless=new", "--disable-gpu", "--disable-dev-shm-usage",
     "--no-first-run", "--no-default-browser-check", "--remote-debugging-port=0",
@@ -217,6 +218,7 @@ try {
       })()`);
       if (route === "/" || route === "/reports") {
         await evaluate(`(async () => {
+          const base = ${JSON.stringify(prefix)};
           const scope = ${route === "/" ? 'document.querySelector(\'section[aria-labelledby="featured-studies-title"]\')' : "document"};
           if (!scope) throw Error("Missing catalog");
           for (const report of ${JSON.stringify(reports.map((report) => report.catalog))}) {
@@ -229,11 +231,11 @@ try {
             const card = headings[0].closest("article");
             const badge = card.querySelector('[class*="cardBadges"] [class*="badge"]');
             if (report.category === "research-drop" && (!badge?.querySelector('svg[aria-hidden="true"]') || badge.querySelector("img"))) throw Error("Research Drop retained a calendar icon");
-            const image = card.querySelector('img[src^="/glintlabs/figma/illustrations/blue/"]');
-            if (!image || image.getAttribute("src") !== "/glintlabs" + report.thumbnail.src || image.alt !== report.thumbnail.alt) throw Error("Wrong card illustration");
+            const image = card.querySelector('img[src^="' + base + '/figma/illustrations/blue/"]');
+            if (!image || image.getAttribute("src") !== base + report.thumbnail.src || image.alt !== report.thumbnail.alt) throw Error("Wrong card illustration");
             const rect = image.getBoundingClientRect();
             if (rect.width !== 128 || rect.height !== 128 || getComputedStyle(image).objectFit !== "contain") throw Error("Illustration crop changed");
-            if (new URL(card.querySelector("a").href).pathname.replace(/\\/$/, "") !== "/glintlabs" + report.href) throw Error("Card link escaped Pages prefix");
+            if (new URL(card.querySelector("a").href).pathname.replace(/\\/$/, "") !== base + report.href) throw Error("Card link escaped Pages prefix");
             const audit = await axe.run(card, {runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21aa"]}});
             if (audit.violations.length) throw Error(JSON.stringify(audit.violations));
           }
@@ -242,6 +244,7 @@ try {
       const report = reports.find((report) => route === `/reports/${report.slug}`);
       if (report) {
         await evaluate(`(() => {
+          const base = ${JSON.stringify(prefix)};
           const report = ${JSON.stringify({
             title: report.catalog.title,
             tables: report.manifest.blocks.filter(block => block.type === "data-visual-source" && report.rowHeaderTableBlockIds.has(block.id)).map(block => ({
@@ -262,7 +265,7 @@ try {
             const rows = [...target.querySelectorAll("tbody tr")].map(row => [...row.cells].map(cell => cell.textContent));
             if (JSON.stringify(rows) !== JSON.stringify(table.rows) || target.querySelectorAll('th[scope="row"]').length !== table.rows.length) throw Error("Lost source table rows or row-header semantics");
           }
-          if (!document.querySelector('header img[src="/glintlabs' + report.hero + '"]')) throw Error("Original hero was replaced");
+          if (!document.querySelector('header img[src="' + base + report.hero + '"]')) throw Error("Original hero was replaced");
           const normalize = text => text.replace(/\\s+/g, " ").trim();
           for (const block of report.textBlocks) {
             const target = document.getElementById("report-block-" + block.id);

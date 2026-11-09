@@ -1,10 +1,36 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 import ts from "typescript";
 import vm from "node:vm";
 import { readerFile, readerSource, readerTelemetryConfig } from "./build-pages.mjs";
+
+test("private staging emits root asset URLs while production retains its project prefix", () => {
+  for (const [repository, expectedBase] of [
+    ["microsoft/glintlabs_staging", ""],
+    ["microsoft/glintlabs", "/glintlabs"],
+    ["example/fork", "/glintlabs"],
+  ]) {
+    const result = spawnSync(process.execPath, ["--experimental-strip-types", "--input-type=module", "-e", `
+      const { pagesBasePath, readerSource } = await import("./scripts/build-pages.mjs");
+      console.log(JSON.stringify({
+        base: pagesBasePath,
+        css: readerSource('a{background:url("/figma/example.svg")}', "example.css"),
+      }));
+    `], {
+      cwd: new URL("../", import.meta.url),
+      env: { ...process.env, GITHUB_REPOSITORY: repository },
+      encoding: "utf8",
+    });
+    assert.equal(result.status, 0, result.stderr);
+    assert.deepEqual(JSON.parse(result.stdout), {
+      base: expectedBase,
+      css: `a{background:url("${expectedBase}/figma/example.svg")}`,
+    }, repository);
+  }
+});
 
 test("analytics requires an explicit public-reader build flag and rejects ambiguous configuration", () => {
   for (const value of [undefined, "", "false"]) {
@@ -68,11 +94,12 @@ test("reader image adaptation preserves client directives, copy, links and dynam
 
 test("reader prefixes only local CSS URLs and preserves encoded/external assets", () => {
   const source = 'a{background:url("/figma/a.svg")}b{background:url(/annual-report-2026/b.webp)}c{background:url(https://example.com/c.svg)}d{background:url(data:image/png;base64,AA==)}';
-  const output = readerSource(source, "example.css");
+  const output = readerSource(source, "example.css", "/glintlabs");
   assert.match(output, /url\("\/glintlabs\/figma\/a\.svg"\)/);
   assert.match(output, /url\(\/glintlabs\/annual-report-2026\/b\.webp\)/);
   assert.match(output, /url\(https:\/\/example.com\/c\.svg\)/);
   assert.match(output, /url\(data:image\/png;base64,AA==\)/);
+  assert.equal(readerSource(source, "example.css", ""), source);
 });
 
 test("reader normalizes the hero transition pathname under the Pages prefix", () => {
