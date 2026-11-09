@@ -6,8 +6,12 @@ does not modify the basic golden template, tabs, or narrative defaults.
 
 Use the canonical Glint UI reference and its tokens, Segoe UI, light mode,
 accessible labels/focus, non-color status text, responsive dense tables and
-offline behavior. The advanced sections are model comparison, selected
-diagnostics, SVD, interpretation, methodology/limitations and downloads.
+offline behavior. Both navigation and content lead with SVD, followed by model
+comparison, selected diagnostics, interpretation, methodology/limitations and
+downloads. Each section starts with a short, plain-language purpose blurb that
+explains what the view shows and how to use it, as in the basic report.
+Keep SVD's exploratory limits and any not-run state explicit; leading with
+the section does not authorize or imply a decomposition has been run.
 Controls select already-computed views; no client-side training or unapproved
 subgroup searching. CSV and full-table PNG exports include current context.
 

@@ -55,25 +55,33 @@ select{max-width:100%}
 <p>Collaborative modeling, reproducible diagnostics, and bounded People Science interpretation.</p>
 <p id="status" class="badge"></p><p id="scope" class="muted"></p></header>
 <nav aria-label="Report sections">
-<a href="#comparison">Model comparison</a><a href="#diagnostics">Diagnostics</a><a href="#svd">SVD</a>
+<a href="#svd">SVD</a><a href="#comparison">Model comparison</a><a href="#diagnostics">Diagnostics</a>
 <a href="#interpretation">Interpretation</a><a href="#methodology">Methodology</a><a href="#downloads">Downloads</a>
 </nav>
+<section id="svd"><h2>Centered SVD exploration</h2>
+<p class="section-intro muted">Singular value decomposition (SVD) summarizes variation across numeric survey items as a smaller set of components. Use explained variance and item weights to explore shared response patterns; this is not a validated measurement model or a predictive leaderboard.</p>
+<div class="section-head"><h3>Component variance</h3><div class="toolbar" data-table="svd-table"></div></div>
+<div class="scroll"><table id="svd-table"></table></div><pre id="svd-details"></pre></section>
 <section id="comparison"><div class="section-head"><h2>Model comparison</h2><div class="toolbar" data-table="comparison-table"></div></div>
+<p class="section-intro muted">Compares predictive models on the same development folds. Use the agreed metric and baseline to judge whether a more complex model adds useful predictive accuracy.</p>
 <p>Development validation selects candidates. Fold variation is not a confidence interval. Blank holdout values mean not evaluated, not zero.</p>
 <div class="scroll"><table id="comparison-table"></table></div></section>
 <section id="diagnostics"><h2>Selected diagnostics</h2>
+<p class="section-intro muted">Shows performance measures for the model you select, with residuals, calibration, or feature importance when those diagnostics are available. Use training-versus-validation differences to spot possible overfitting.</p>
 <p>Choosing a view does not retrain a model. Permutation importance is not causal influence; correlated predictors may share importance.</p>
 <label for="model-select">Approved fitted candidate</label><select id="model-select"></select>
 <pre id="diagnostic-details"></pre></section>
-<section id="svd"><h2>Centered SVD exploration</h2><p>Numeric-item PCA-style decomposition. Components are exploratory, sign-indeterminate, and not confirmed psychological constructs.</p>
-<div class="section-head"><h3>Component variance</h3><div class="toolbar" data-table="svd-table"></div></div>
-<div class="scroll"><table id="svd-table"></table></div><pre id="svd-details"></pre></section>
-<section id="interpretation"><h2>People Science interpretation</h2><div id="narrative"></div></section>
-<section id="methodology"><h2>Methodology and limitations</h2><p id="qa"></p><ul id="limitations"></ul>
+<section id="interpretation"><h2>People Science interpretation</h2>
+<p class="section-intro muted">Relates reviewed model evidence to published People Science research, keeping observations, hypotheses and suggested checks distinct. Interpretations appear only after the required sources have been reviewed.</p>
+<div id="narrative"></div></section>
+<section id="methodology"><h2>Methodology and limitations</h2>
+<p class="section-intro muted">Documents the approved modeling design, repeatability checks, and limitations. Use this section to judge what the results do and do not support.</p>
+<p id="qa"></p><ul id="limitations"></ul>
 <p>This report cannot establish causes, representative sampling, individual risk, or a deployable prediction service. Native score units and 100-point survey-score units are distinct.</p>
 <h3>Approved modeling design</h3><pre id="design"></pre>
 <h3>Reproducibility and provenance</h3><pre id="provenance"></pre></section>
-<section id="downloads"><h2>Downloads</h2><p>These in-report downloads work offline. The separate share ZIP also includes clean notebook/code and a placeholder configuration. Private inputs and fresh approval are required to reproduce.</p>
+<section id="downloads"><h2>Downloads</h2>
+<p class="section-intro muted">Download aggregate diagnostics and the sharing manifest for offline review. The separate share ZIP also includes clean notebook/code and a placeholder configuration; private inputs and fresh approval are required to reproduce.</p>
 <button id="download-json" type="button">Download aggregate diagnostics JSON</button>
 <button id="download-manifest" type="button">Download sharing manifest</button></section>
 <p id="export-status" role="status" aria-live="polite"></p>

@@ -1,5 +1,6 @@
 import argparse
 import json
+import re
 import sys
 import zipfile
 from pathlib import Path
@@ -123,6 +124,29 @@ def test_code_only_does_not_read_or_fit_data(study, monkeypatch):
     manifest = json.loads((Path(opt.output_dir) / "advanced-analysis-manifest.json").read_text())
     assert manifest["status"] == "not_run"
     assert manifest["qa"]["verdict"] == "Not ready"
+
+
+@pytest.mark.parametrize("task", ["regression", "svd"])
+def test_report_leads_with_svd_and_explains_each_section(study, task):
+    config = study[2]
+    if task == "svd":
+        config["experiment"].update(task="svd", models=[], components=2, metric="reconstruction_rmse")
+    opt = options(study, config)
+    runner.run(opt)
+    html = (Path(opt.output_dir) / "advanced-report.html").read_text(encoding="utf-8")
+    expected = ["svd", "comparison", "diagnostics", "interpretation", "methodology", "downloads"]
+    assert re.findall(r'<section id="([^"]+)"', html) == expected
+    nav = re.search(r'<nav aria-label="Report sections">(.*?)</nav>', html, re.DOTALL).group(1)
+    assert re.findall(r'href="#([^"]+)"', nav) == expected
+    intros = dict(re.findall(
+        r'<section id="([^"]+)"[^>]*>.*?<p class="section-intro muted">(.*?)</p>',
+        html, re.DOTALL,
+    ))
+    assert set(intros) == set(expected)
+    assert all(intro.strip() for intro in intros.values())
+    assert "Singular value decomposition" in intros["svd"]
+    assert "variance" in intros["svd"]
+    assert "not a validated measurement model" in intros["svd"]
 
 
 def test_final_holdout_requires_frozen_plan_and_cannot_be_reused(study):
