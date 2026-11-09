@@ -10,7 +10,7 @@ import { copyApprovedReports } from "../src/publishing/pages-export.ts";
 import { listApprovedPublications } from "../src/publishing/approved-publication.ts";
 import { publicPath } from "../src/telemetry/contract.ts";
 import { verifyPages } from "./verify-pages.mjs";
-import { readerBasePath } from "./pages-config.mjs";
+import { isStagingReader, readerBasePath } from "./pages-config.mjs";
 
 export const pagesBasePath = readerBasePath();
 export function readerTelemetryConfig(value, clarity) {
@@ -28,6 +28,7 @@ const excludedRoutes = new Set([
 
 export function readerFile(relative) {
   const parts = relative.split(path.sep);
+  if (!isStagingReader() && /^src\/app\/_components\/staging-badge\.(tsx|module\.css)$/.test(parts.join("/"))) return false;
   if (parts[0] !== "src") return true;
   if (parts[1] === "middleware.ts") return false;
   if (parts[1] !== "app") return true;
@@ -36,6 +37,10 @@ export function readerFile(relative) {
 }
 
 export function readerSource(text, filename, basePath = pagesBasePath) {
+  if (isStagingReader() && filename.split(path.sep).join("/").endsWith("src/app/layout.tsx")) {
+    assert(text.includes("<Providers>"), "Review staging badge placement: missing root Providers.");
+    text = `import { StagingBadge } from "./_components/staging-badge";\n${text.replace("<Providers>", "<Providers><StagingBadge />")}`;
+  }
   if (filename.endsWith(".css")) {
     return text.replace(/url\((["']?)(\/(?!\/)[^)"']+)\1\)/g,
       (_match, quote, url) => `url(${quote}${basePath}${url}${quote})`);

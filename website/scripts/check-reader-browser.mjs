@@ -7,11 +7,12 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getLaunchReports } from "../src/launch-reports/reports.ts";
-import { readerBasePath } from "./pages-config.mjs";
+import { isStagingReader, readerBasePath } from "./pages-config.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const origin = `http://127.0.0.1:${process.env.PORT ?? 3011}`;
 const prefix = readerBasePath();
+const staging = isStagingReader();
 const reports = getLaunchReports({ includePrivatePreview: false });
 const routes = [
   "/", "/reports", "/tools", "/about", "/annual-report-2026", "/tools/analyze-survey",
@@ -115,6 +116,7 @@ try {
   await waitFor(() => listening, `Cannot start the reader preview; ${origin} must be free.`);
   browser = start(chromePath, [
     "--headless=new", "--disable-gpu", "--disable-dev-shm-usage",
+    "--no-proxy-server", "--host-resolver-rules=MAP glintlabs-production.test 127.0.0.1",
     "--no-first-run", "--no-default-browser-check", "--remote-debugging-port=0",
     ...(process.env.CI ? ["--no-sandbox"] : []),
     `--user-data-dir=${profile}`, "about:blank",
@@ -216,6 +218,21 @@ try {
         if (innerWidth !== ${width}) throw Error("Incorrect emulated viewport width");
         if (document.documentElement.scrollWidth > innerWidth + 1) throw Error("Horizontal overflow");
       })()`);
+      if (staging) {
+        await waitFor(() => evaluate('document.querySelector("[data-glintlabs-environment]")?.textContent === "Staging"'),
+          `Missing staging badge: ${width}px ${route}`);
+        await evaluate(`(() => {
+          const badge = document.querySelector("[data-glintlabs-environment]");
+          const style = getComputedStyle(badge);
+          const rect = badge.getBoundingClientRect();
+          if (style.position !== "fixed" || style.pointerEvents !== "none" || rect.left < 0 ||
+              rect.bottom > innerHeight || rect.width > innerWidth) throw Error("Staging badge obstructs the reader");
+        })()`);
+        assert.deepEqual(await evaluate(`(async () => (await axe.run(document.querySelector("[data-glintlabs-environment]"),
+          {runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21aa"]}})).violations)()`), []);
+      } else {
+        assert.equal(await evaluate('document.querySelector("[data-glintlabs-environment]")'), null);
+      }
       if (route === "/" || route === "/reports") {
         await evaluate(`(async () => {
           const base = ${JSON.stringify(prefix)};
@@ -417,6 +434,18 @@ try {
       states.push({ route, width });
       console.log(`Verified ${width}px ${route}`);
     }
+  }
+  if (staging) {
+    await evaluate("window.__readerPending = true");
+    const otherOrigin = origin.replace("127.0.0.1", "glintlabs-production.test");
+    await send("Page.navigate", { url: `${otherOrigin}/tools/` });
+    await waitFor(() => evaluate('window.__readerPending !== true && location.hostname === "glintlabs-production.test" && document.readyState === "complete"'),
+      "Cannot test the staging badge hostname guard.");
+    await evaluate(`(async () => {
+      await document.fonts.ready;
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      if (document.querySelector("[data-glintlabs-environment]")) throw Error("Staging badge appeared on a non-staging hostname");
+    })()`);
   }
   assert.deepEqual(errors, [], "Browser runtime, console, network, or HTTP errors.");
   if (failures.length) throw failures[0];

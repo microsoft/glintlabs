@@ -4,10 +4,20 @@ import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getLaunchReports } from "../src/launch-reports/reports.ts";
-import { readerBasePath } from "./pages-config.mjs";
+import { isStagingReader, readerBasePath } from "./pages-config.mjs";
 
 const output = fileURLToPath(new URL("../out/", import.meta.url));
+export async function verifyEnvironmentBadge(directory, repository = process.env.GITHUB_REPOSITORY) {
+  if (isStagingReader(repository)) return;
+  for (const relative of await readdir(directory, { recursive: true })) {
+    if (!/\.(html|js|css|txt|json)$/.test(relative)) continue;
+    const text = await readFile(path.join(directory, relative), "utf8");
+    assert(!text.includes("data-glintlabs-environment"), `Staging badge leaked into production output: ${relative}`);
+  }
+}
+
 export async function verifyPages(basePath = readerBasePath()) {
+  await verifyEnvironmentBadge(output);
   const reports = getLaunchReports({ includePrivatePreview: false });
   const routes = ["", "reports", "tools", "about", "annual-report-2026", "tools/analyze-survey",
     ...reports.map(report => `reports/${report.slug}`), "reports/glps-rd-feb-26"];

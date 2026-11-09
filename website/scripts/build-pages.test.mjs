@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import ts from "typescript";
 import vm from "node:vm";
 import { readerFile, readerSource, readerTelemetryConfig } from "./build-pages.mjs";
+import * as pagesVerifier from "./verify-pages.mjs";
 
 test("private staging emits root asset URLs while production retains its project prefix", () => {
   for (const [repository, expectedBase] of [
@@ -29,6 +31,48 @@ test("private staging emits root asset URLs while production retains its project
       base: expectedBase,
       css: `a{background:url("${expectedBase}/figma/example.svg")}`,
     }, repository);
+  }
+});
+
+test("only the exact staging repository adds an environment badge to the exported layout", () => {
+  const layout = "<html><body><Providers>{children}</Providers></body></html>";
+  for (const repository of [
+    "microsoft/glintlabs_staging", "microsoft/glintlabs", "example/fork",
+    "microsoft/glintlabs_staging-copy", "",
+  ]) {
+    const result = spawnSync(process.execPath, ["--experimental-strip-types", "--input-type=module", "-e", `
+      const { readerSource } = await import("./scripts/build-pages.mjs");
+      console.log(JSON.stringify(readerSource(${JSON.stringify(layout)}, "src/app/layout.tsx")));
+    `], {
+      cwd: new URL("../", import.meta.url),
+      env: { ...process.env, GITHUB_REPOSITORY: repository },
+      encoding: "utf8",
+    });
+    assert.equal(result.status, 0, result.stderr);
+    const output = JSON.parse(result.stdout);
+    if (repository === "microsoft/glintlabs_staging") {
+      assert.match(output, /import \{ StagingBadge \} from/);
+      assert.match(output, /<StagingBadge\s*\/>/);
+    } else {
+      assert.equal(output, layout, repository);
+    }
+  }
+});
+
+test("production verification rejects staging badge code anywhere in the exported reader", async () => {
+  const directory = await mkdtemp(path.join(tmpdir(), "glintlabs-environment-test-"));
+  try {
+    await mkdir(path.join(directory, "_next", "static"), { recursive: true });
+    const file = path.join(directory, "_next", "static", "example.js");
+    await writeFile(file, 'createElement("span", {"data-glintlabs-environment": "staging"})');
+    await pagesVerifier.verifyEnvironmentBadge(directory, "microsoft/glintlabs_staging");
+    for (const repository of ["microsoft/glintlabs", "example/fork", ""]) {
+      await assert.rejects(pagesVerifier.verifyEnvironmentBadge(directory, repository), /Staging badge leaked/);
+    }
+    await writeFile(file, 'createElement("span", {}, "Glint Labs")');
+    await pagesVerifier.verifyEnvironmentBadge(directory, "microsoft/glintlabs");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
   }
 });
 
