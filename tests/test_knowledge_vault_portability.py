@@ -317,6 +317,54 @@ def test_navigation_loading_is_conditional_and_preserves_unaffected_work():
     assert "product guidance, not People Science research evidence" in navigation
 
 
+def test_results_orientation_starts_with_strengths_without_overriding_user_focus():
+    results = " ".join(
+        (lookup.REFERENCES / "results-exploration.md").read_text(encoding="utf-8").split()
+    )
+    navigation = " ".join(
+        (lookup.REFERENCES / "glint-navigation.md").read_text(encoding="utf-8").split()
+    )
+    orientation = results.split("### Start with strengths and opportunities", 1)[1].split(
+        "### Heat Map-first comparative deep dives", 1
+    )[0]
+    for requirement in (
+        "Unless the user requests a different starting point",
+        "Review both strengths and opportunities before selecting a focus",
+        "do not equate the lowest raw score with the highest-priority opportunity",
+        "verify the current view and item coverage",
+        "If this section is unavailable",
+        "Do not restart orientation",
+    ):
+        assert requirement in orientation
+    assert "**Executive summary report -> Strengths and Opportunities**" in navigation
+    assert "Honor a different user-requested starting point" in navigation
+
+
+def test_comparative_deep_dives_require_heatmap_context_and_evidence_updates():
+    results = " ".join(
+        (lookup.REFERENCES / "results-exploration.md").read_text(encoding="utf-8").split()
+    )
+    deep_dive = results.split("### Heat Map-first comparative deep dives", 1)[1].split(
+        "### Request the next useful view", 1
+    )[0]
+    for requirement in (
+        "prefer the **Heat Map Report**",
+        "Use item detail instead when",
+        "Choose the demographic from the question and retrieved research",
+        "preserving cycle, comparison, and scope",
+        "Confirm attribute availability",
+        "supports, weakens, or leaves unresolved",
+        "without averaging unrelated items",
+        "inferring individual-level correlations from group averages",
+        "Do not invent a universal minimum count",
+        "Use counterexamples",
+        "When localization is sufficient",
+        "A missing or malformed reply is not evidence that a view is unavailable",
+        "without repeating a declined or unavailable request",
+    ):
+        assert requirement in deep_dive
+
+
 def test_navigation_contract_prevents_ambiguous_routes_and_unrequested_actions():
     navigation = " ".join(
         (lookup.REFERENCES / "glint-navigation.md").read_text(encoding="utf-8").split()
