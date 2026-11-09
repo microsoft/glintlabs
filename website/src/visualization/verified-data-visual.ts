@@ -1,4 +1,5 @@
 import type { ReportBlock } from "../manifest/report-manifest.ts";
+import { listeningPortfolioError, quadrantCacheMatches, quadrantPoints, quadrantTableErrors } from "./quadrant-data.ts";
 
 export type DataVisualSourceBlock = Extract<
   ReportBlock,
@@ -9,53 +10,94 @@ export type VerifiedDataVisualBlock = Extract<
   {
     type:
       | "percentage-ring-group"
+      | "illustrated-statistics"
+      | "quadrant-scatter-plot"
+      | "paired-percentage-comparison"
+      | "percentage-comparison-grid"
       | "horizontal-bar-chart"
+      | "coefficient-heatmap"
       | "grouped-column-comparison";
   }
 >;
 export type VerifiedDataVisualType = VerifiedDataVisualBlock["type"];
+export type ChartValueType = "percentage" | "number";
 
 const verifiedVisualNames: Record<VerifiedDataVisualType, string> = {
+  "paired-percentage-comparison": "Paired percentage comparison",
+  "percentage-comparison-grid": "Percentage comparison grid",
   "percentage-ring-group": "Percentage ring group",
+  "illustrated-statistics": "Illustrated statistics",
+  "quadrant-scatter-plot": "2×2 quadrant",
   "horizontal-bar-chart": "Horizontal bar chart",
   "grouped-column-comparison": "Grouped column comparison",
+  "coefficient-heatmap": "Coefficient heatmap",
 };
 
 export function verifiedDataVisualName(type: VerifiedDataVisualType) {
   return verifiedVisualNames[type];
 }
 
-function percentage(value: string) {
-  const normalized = value.replaceAll(",", "").replace("%", "").trim();
-  if (!/^-?\d+(?:\.\d+)?$/.test(normalized)) {
+export function parseChartValue(value: string, unit: DataVisualSourceBlock["data"]["unit"] = "percentage") {
+  if (unit === "unknown") return undefined;
+  const normalized = (unit === "percentage" ? value.replace(/%\s*$/, "") : value).trim();
+  const pattern = unit === "number" ? /^-?(?:\d+(?:\.\d+)?|\.\d+)$/ : /^(?:\d+(?:\.\d+)?|\.\d+)$/;
+  if (!pattern.test(normalized)) {
     return undefined;
   }
   const parsed = Number(normalized);
-  return Number.isFinite(parsed) && parsed >= 0 && parsed <= 100
+  return Number.isFinite(parsed) && (unit === "number" || (parsed >= 0 && parsed <= 100))
     ? parsed
     : undefined;
+}
+
+export function parseHeatmapValue(value: string) {
+  return /^(?:n\/?a|[–—])?$/i.test(value.trim()) ? null : parseChartValue(value, "number");
 }
 
 function numericRows(block: DataVisualSourceBlock) {
   return block.data.rows.map((row) => ({
     id: row.id,
     label: row.cells[0]?.trim() || "",
-    values: row.cells.slice(1).map(percentage),
+    values: row.cells.slice(1).map(value => parseChartValue(value, block.data.unit)),
+    supportingText: row.supportingText?.trim(),
+    breakdown: row.breakdown?.map(detail => ({
+      id: detail.id, label: detail.label.trim(), value: parseChartValue(detail.value, block.data.unit),
+    })),
   }));
 }
 
 export function compatibleVerifiedVisuals(
   block: DataVisualSourceBlock,
+  { ignoreRecommendation = false }: { ignoreRecommendation?: boolean } = {},
 ): VerifiedDataVisualType[] {
-  if (block.data.unit !== "percentage") {
+  if (block.data.recommendedVisualType === "quadrant-scatter-plot" ||
+      block.data.columns[0]?.trim().toLowerCase() === "point id") {
+    return quadrantTableErrors(block.data).length ? [] : ["quadrant-scatter-plot"];
+  }
+  if (block.data.unit !== "percentage" && block.data.unit !== "number") {
     return [];
+  }
+  let heatmapCompatible = false;
+  if (block.data.recommendedVisualType === "coefficient-heatmap" || ignoreRecommendation) {
+    const data = block.data;
+    const labels = data.rows.map(row => row.cells[0]?.trim().toLocaleLowerCase("en-US"));
+    const columns = data.columns.map(column => column.trim().toLocaleLowerCase("en-US"));
+    const values = data.rows.flatMap(row => row.cells.slice(1).map(parseHeatmapValue));
+    heatmapCompatible = data.unit === "number" && data.columns.length >= 2 && data.columns.length <= 13 &&
+      columns.every(Boolean) && new Set(columns).size === columns.length &&
+      data.rows.length >= 2 && data.rows.length <= 12 && labels.every(Boolean) && new Set(labels).size === labels.length &&
+      data.rows.every(row => row.cells.length === data.columns.length) && values.every(value => value !== undefined) &&
+      values.some(value => typeof value === "number");
+    if (data.recommendedVisualType === "coefficient-heatmap" && !ignoreRecommendation) return heatmapCompatible ? ["coefficient-heatmap"] : [];
+    if (heatmapCompatible && values.some(value => value === null)) return ["coefficient-heatmap"];
   }
   const rows = numericRows(block);
   const hasCompleteLabels = rows.every((row) => row.label);
   const hasCompleteValues = rows.every((row) =>
     row.values.every((value) => value !== undefined),
   );
-  if (!hasCompleteLabels || !hasCompleteValues) {
+  if (!hasCompleteLabels || !hasCompleteValues ||
+      block.data.rows.some(row => row.cells.length !== block.data.columns.length)) {
     return [];
   }
 
@@ -63,17 +105,26 @@ export function compatibleVerifiedVisuals(
   if (
     block.data.columns.length === 2 &&
     rows.length >= 2 &&
-    rows.length <= 12
+    rows.length <= 12 &&
+    rows.every(row => row.breakdown?.every(detail => detail.id && detail.label && detail.value !== undefined) ?? true)
   ) {
     compatible.push("horizontal-bar-chart");
   }
-  if (block.data.columns.length === 2 && rows.length === 3) {
-    compatible.push("percentage-ring-group");
+  if (block.data.unit === "percentage" && block.data.columns.length === 2 && rows.length === 2) {
+    compatible.push("paired-percentage-comparison");
   }
-  if (block.data.columns.length === 3 && rows.length === 4) {
+  if (block.data.unit === "percentage" && block.data.columns.length === 2 && rows.length >= 2 && rows.length <= 3) {
+    compatible.push("percentage-ring-group");
+    compatible.push("illustrated-statistics");
+  }
+  if (block.data.unit === "percentage" && block.data.columns.length === 2 && rows.length === 4) {
+    compatible.push("percentage-comparison-grid");
+  }
+  if (block.data.unit === "percentage" && block.data.columns.length === 3 && rows.length === 4) {
     compatible.push("grouped-column-comparison");
   }
-  return block.data.recommendedVisualType
+  if (heatmapCompatible) compatible.push("coefficient-heatmap");
+  return block.data.recommendedVisualType && !ignoreRecommendation
     ? compatible.filter((type) => type === block.data.recommendedVisualType)
     : compatible;
 }
@@ -101,7 +152,7 @@ export function createVerifiedDataVisual(
   type: VerifiedDataVisualType,
   verifiedAt: string,
 ): VerifiedDataVisualBlock {
-  if (!compatibleVerifiedVisuals(source).includes(type)) {
+  if (!compatibleVerifiedVisuals(source, { ignoreRecommendation: true }).includes(type)) {
     throw new Error("This approved data shape is not compatible with that visual.");
   }
 
@@ -117,10 +168,22 @@ export function createVerifiedDataVisual(
       sourceBlockId: source.id,
     },
     source: source.source,
+    ...(source.wordSource ? { wordSource: source.wordSource } : {}),
     verifiedSource,
   };
 
   switch (type) {
+    case "coefficient-heatmap":
+      return {
+        ...shared, type, title: source.data.title, columns: source.data.columns.slice(1),
+        rows: source.data.rows.map(row => ({
+          id: row.id, label: row.cells[0].trim(), values: row.cells.slice(1).map(value => parseHeatmapValue(value) ?? null),
+        })),
+        sourceNote: source.data.sourceNote ?? "Source: author-provided coefficient table.",
+      };
+    case "quadrant-scatter-plot":
+      return { ...shared, type, title: source.data.title, points: quadrantPoints(source.data),
+        footnote: source.data.sourceNote ?? "Source: verified Excel chart-data table." };
     case "horizontal-bar-chart":
       return {
         ...shared,
@@ -130,13 +193,20 @@ export function createVerifiedDataVisual(
           id: row.id,
           label: row.label,
           value: row.values[0] as number,
+          ...(row.supportingText ? { supportingText: row.supportingText } : {}),
+          ...(row.breakdown?.length ? { breakdown: row.breakdown.map(detail => ({
+            ...detail, value: detail.value as number,
+          })) } : {}),
         })),
         legend: source.data.columns[1],
         sourceNote:
           source.data.sourceNote ??
           "Source: approved structured data from the reviewed Word report.",
       };
+    case "paired-percentage-comparison":
+    case "percentage-comparison-grid":
     case "percentage-ring-group":
+    case "illustrated-statistics":
       return {
         ...shared,
         type,
@@ -145,11 +215,7 @@ export function createVerifiedDataVisual(
           id: row.id,
           value: row.values[0] as number,
           description: row.label,
-        })) as [
-          { id: string; value: number; description: string },
-          { id: string; value: number; description: string },
-          { id: string; value: number; description: string },
-        ],
+        })),
         footnote:
           source.data.sourceNote ??
           "Source: approved structured data from the reviewed Word report.",
@@ -181,7 +247,12 @@ export function createVerifiedDataVisual(
 export function verifiedVisualMatchesSource(block: ReportBlock) {
   if (
     block.type !== "percentage-ring-group" &&
+    block.type !== "illustrated-statistics" &&
+    block.type !== "quadrant-scatter-plot" &&
+    block.type !== "paired-percentage-comparison" &&
+    block.type !== "percentage-comparison-grid" &&
     block.type !== "horizontal-bar-chart" &&
+    block.type !== "coefficient-heatmap" &&
     block.type !== "grouped-column-comparison"
   ) {
     return true;
@@ -204,6 +275,9 @@ export function verifiedVisualMatchesSource(block: ReportBlock) {
       recommendedVisualType: block.verifiedSource.recommendedVisualType,
       subtitle: block.verifiedSource.subtitle,
       sourceNote: block.verifiedSource.sourceNote,
+      synthetic: block.verifiedSource.synthetic,
+      originalSource: block.verifiedSource.originalSource,
+      workbook: block.verifiedSource.workbook,
     },
     provenance: { kind: "imported" },
     source: block.source,
@@ -215,6 +289,15 @@ export function verifiedVisualMatchesSource(block: ReportBlock) {
   );
 
   switch (block.type) {
+    case "coefficient-heatmap":
+      return expected.type === block.type && block.title === expected.title && block.sourceNote === expected.sourceNote &&
+        JSON.stringify(block.columns) === JSON.stringify(expected.columns) && JSON.stringify(block.rows) === JSON.stringify(expected.rows);
+    case "quadrant-scatter-plot":
+      return expected.type === block.type && block.title === expected.title && block.footnote === expected.footnote &&
+        (!block.wordSource || quadrantCacheMatches(block.verifiedSource, block.wordSource)) &&
+        (block.presentation?.preset !== "listening" || !listeningPortfolioError(block.verifiedSource) &&
+          block.presentation.xUnit === "percentage-points" && block.presentation.yUnit === "percentage") &&
+        JSON.stringify(block.points) === JSON.stringify(expected.points);
     case "horizontal-bar-chart":
       return (
         expected.type === "horizontal-bar-chart" &&
@@ -223,9 +306,12 @@ export function verifiedVisualMatchesSource(block: ReportBlock) {
         block.sourceNote === expected.sourceNote &&
         JSON.stringify(block.items) === JSON.stringify(expected.items)
       );
+    case "paired-percentage-comparison":
+    case "percentage-comparison-grid":
     case "percentage-ring-group":
+    case "illustrated-statistics":
       return (
-        expected.type === "percentage-ring-group" &&
+        expected.type === block.type &&
         block.title === expected.title &&
         block.footnote === expected.footnote &&
         JSON.stringify(block.metrics) === JSON.stringify(expected.metrics)

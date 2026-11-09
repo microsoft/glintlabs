@@ -4,6 +4,54 @@ import test from "node:test";
 import JSZip from "jszip";
 
 import { extractDocx } from "./extract-docx.ts";
+import { snapshotApprovedContent } from "../integrity/approved-content.ts";
+import { wordReferenceTextIds, wordStyleView } from "../project/word-style-mapping.ts";
+import { automaticallyVerifiedVisualType } from "../visualization/verified-data-visual.ts";
+
+test("Word styles supply real title and metadata while preserving source paragraphs and inline formatting", async () => {
+  const zip = await JSZip.loadAsync(await createFixture());
+  zip.file("word/styles.xml", `<w:styles xmlns:w="w">
+    <w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/></w:style>
+    <w:style w:type="paragraph" w:styleId="NoSpacing"><w:name w:val="No Spacing"/></w:style>
+    <w:style w:type="paragraph" w:styleId="Normal"><w:name w:val="Normal"/></w:style>
+    <w:style w:type="paragraph" w:styleId="CustomSection"><w:name w:val="Section title"/><w:basedOn w:val="Heading1"/></w:style>
+    <w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/></w:style>
+    <w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/></w:style>
+    <w:style w:type="character" w:styleId="BookTitle"><w:name w:val="Book Title"/><w:rPr><w:i/></w:rPr></w:style>
+  </w:styles>`);
+  zip.file("word/document.xml", `<w:document xmlns:w="w" xmlns:r="r"><w:body>
+    <w:p><w:pPr><w:pStyle w:val="Title"/></w:pPr><w:r><w:t>Research Drop: A source title</w:t></w:r></w:p>
+    <w:p><w:pPr><w:pStyle w:val="NoSpacing"/></w:pPr><w:r><w:t>Author: Test author</w:t><w:br/><w:t>Publish date: May 12, 2026</w:t></w:r></w:p>
+    <w:p><w:r><w:t>Research Drop in Brief:</w:t></w:r></w:p>
+    <w:p><w:pPr><w:numPr><w:ilvl w:val="0"/></w:numPr></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t>Important result.</w:t></w:r></w:p>
+    <w:p><w:pPr><w:pStyle w:val="CustomSection"/></w:pPr><w:r><w:t>Source section</w:t></w:r></w:p>
+    <w:p><w:pPr><w:pStyle w:val="Heading2"/></w:pPr><w:r><w:t>Source subsection</w:t></w:r></w:p>
+    <w:p><w:r><w:t>A </w:t></w:r><w:r><w:rPr><w:b/><w:i/></w:rPr><w:t>strong idea</w:t></w:r><w:r><w:rPr><w:vertAlign w:val="superscript"/></w:rPr><w:t>1</w:t></w:r><w:hyperlink r:id="r1"><w:r><w:t> link</w:t></w:r></w:hyperlink></w:p>
+    <w:p><w:r><w:rPr><w:rStyle w:val="BookTitle"/></w:rPr><w:t>References</w:t></w:r></w:p>
+    <w:p><w:r><w:rPr><w:vertAlign w:val="superscript"/></w:rPr><w:t>1</w:t></w:r><w:r><w:t>Source citation.</w:t></w:r></w:p>
+    <w:p><w:r><w:t>Methodology and copyright remain intact.</w:t></w:r></w:p>
+  </w:body></w:document>`);
+  zip.file("word/_rels/document.xml.rels", '<Relationships><Relationship Id="r1" Target="https://example.com/source" Type="hyperlink"/></Relationships>');
+  const result = await extractDocx("not-the-report-title.docx", await zip.generateAsync({ type: "uint8array" }));
+  assert.equal(result.manifest.metadata.title, "Research Drop: A source title");
+  assert.deepEqual(result.manifest.metadata.author, { name: "Test author" });
+  assert.equal(result.manifest.metadata.publishedDate, "2026-05-12");
+  assert.equal(result.manifest.blocks.length, 10, "All source text stays in the evidence manifest.");
+  assert.equal(result.manifest.blocks[3].type, "list-item", "Real Word numbering is recognized without ListParagraph.");
+  const paragraph = result.manifest.blocks[6];
+  assert.equal(paragraph.type, "paragraph");
+  if (paragraph.type === "paragraph") {
+    assert.equal(paragraph.text, "A strong idea1 link");
+    assert.deepEqual(paragraph.marks, [
+      { start: 2, end: 13, bold: true, italic: true },
+      { start: 13, end: 14, superscript: true },
+    ]);
+    assert.deepEqual(paragraph.links, [{ start: 14, end: 19, href: "https://example.com/source" }]);
+  }
+  assert.ok(result.manifest.wordStyles?.some(style => style.id === "CustomSection" && style.target === "section-heading"));
+  assert.ok(result.manifest.wordStyles?.some(style => style.id === "BookTitle" && style.target === "references"));
+  assert.equal(result.publicationSourceEvidence?.representedHyperlinkCount, 1);
+});
 
 async function createFixture(
   headingProperties = '<w:pStyle w:val="Heading1" />',
@@ -52,6 +100,71 @@ async function createFixture(
   return zip.generateAsync({ type: "uint8array" });
 }
 
+test("Date style owns the report date and legacy-cover author metadata stays out of the body", async () => {
+  for (const [value, expected] of [["11/11/25", "2025-11-11"], ["May 12, 2026", "2026-05-12"], ["2024-02-29", "2024-02-29"]]) {
+    const zip = await JSZip.loadAsync(await createFixture());
+    zip.file("word/styles.xml", `<w:styles xmlns:w="w">
+      <w:style w:type="paragraph" w:styleId="CustomDate"><w:name w:val="Date"/><w:basedOn w:val="Normal"/></w:style>
+    </w:styles>`);
+    zip.file("word/document.xml", `<w:document xmlns:w="w"><w:body>
+      <w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>Source report</w:t></w:r></w:p>
+      <w:p><w:pPr><w:pStyle w:val="Normal"/></w:pPr><w:r><w:t>Author: Test author</w:t></w:r></w:p>
+      <w:p><w:pPr><w:pStyle w:val="CustomDate"/></w:pPr><w:r><w:t>${value}</w:t></w:r></w:p>
+      <w:p><w:pPr><w:pStyle w:val="NoSpacing"/></w:pPr><w:r><w:t>Publish date: July 1, 2026</w:t></w:r></w:p>
+      <w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t>Actual section</w:t></w:r></w:p>
+      <w:p><w:r><w:t>Actual report content.</w:t></w:r></w:p>
+    </w:body></w:document>`);
+    const result = await extractDocx("date-style.docx", await zip.generateAsync({ type: "uint8array" }));
+    assert.equal(result.manifest.metadata.publishedDate, expected);
+    assert.deepEqual(result.manifest.metadata.author, { name: "Test author" });
+    assert.equal(result.manifest.wordStyles?.find(style => style.id === "CustomDate")?.target, "metadata");
+    assert.equal(result.manifest.blocks.length, 6, "Metadata remains in the original source evidence.");
+    const view = wordStyleView(result.manifest);
+    assert.deepEqual(view.blocks.map(block => "text" in block ? block.text : ""), [
+      "Source report", "Actual section", "Actual report content.",
+    ]);
+  }
+});
+
+test("Footnote Text is always a References style without rewriting citation text or formatting", async () => {
+  const zip = await JSZip.loadAsync(await createFixture());
+  zip.file("word/styles.xml", `<w:styles xmlns:w="w">
+    <w:style w:type="paragraph" w:styleId="FootnoteText"><w:name w:val="Footnote Text"/></w:style>
+    <w:style w:type="paragraph" w:styleId="LocalizedFootnote"><w:name w:val="Footnote Text"/></w:style>
+  </w:styles>`);
+  const xml = await zip.file("word/document.xml")!.async("string");
+  zip.file("word/document.xml", xml.replace("<w:p><w:r><w:t>Visible source paragraph.</w:t></w:r></w:p>",
+    `<w:p><w:pPr><w:pStyle w:val="FootnoteText"/></w:pPr>
+      <w:r><w:rPr><w:vertAlign w:val="superscript"/></w:rPr><w:t>1</w:t></w:r>
+      <w:r><w:rPr><w:i/></w:rPr><w:t>Source citation.</w:t></w:r></w:p>
+    <w:p><w:pPr><w:pStyle w:val="LocalizedFootnote"/></w:pPr><w:r><w:t>Source methodology.</w:t></w:r></w:p>`));
+  const { manifest } = await extractDocx("footnotes.docx", await zip.generateAsync({ type: "uint8array" }));
+  assert.ok(manifest.wordStyles?.some(style => style.id === "FootnoteText" && style.target === "references"));
+  assert.ok(manifest.wordStyles?.some(style => style.id === "LocalizedFootnote" && style.target === "references"));
+  assert.deepEqual([...wordReferenceTextIds(manifest)], [manifest.blocks[1].id, manifest.blocks[2].id]);
+  const citation = manifest.blocks[1];
+  assert.ok(citation.type === "paragraph");
+  assert.equal(citation.text, "1Source citation.");
+  assert.deepEqual(citation.marks, [{ start: 0, end: 1, superscript: true }, { start: 1, end: 17, italic: true }]);
+  assert.deepEqual(wordStyleView({ ...manifest, wordStyleMappings: { FootnoteText: "body" } }).blocks[1], citation);
+});
+
+test("Word character formatting inherits bold from the paragraph style", async () => {
+  const zip = await JSZip.loadAsync(await createFixture());
+  zip.file("word/styles.xml", `<w:styles xmlns:w="w">
+    <w:style w:type="paragraph" w:styleId="Normal"><w:name w:val="Normal"/><w:rPr><w:b/></w:rPr></w:style>
+    <w:style w:type="character" w:styleId="BookTitle"><w:name w:val="Book Title"/><w:rPr><w:i/></w:rPr></w:style>
+  </w:styles>`);
+  const document = await zip.file("word/document.xml")!.async("string");
+  zip.file("word/document.xml", document.replace("<w:r><w:t>Visible source paragraph.</w:t></w:r>",
+    '<w:r><w:rPr><w:rStyle w:val="BookTitle"/></w:rPr><w:t>Visible source paragraph.</w:t></w:r>'));
+  const { manifest } = await extractDocx("styles.docx", await zip.generateAsync({ type: "uint8array" }));
+  const paragraph = manifest.blocks[1];
+  assert.ok(paragraph.type === "paragraph");
+  assert.deepEqual(paragraph.marks, [{ start: 0, end: paragraph.text.length, bold: true, italic: true }]);
+  assert.equal(paragraph.wordStyle, "Normal", "Inline Book Title does not turn body text into References.");
+});
+
 async function createChartFixture() {
   const zip = new JSZip();
   zip.file(
@@ -81,7 +194,9 @@ async function createChartFixture() {
     "word/charts/chart1.xml",
     `<?xml version="1.0"?>
       <c:chartSpace xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart">
-        <c:chart><c:plotArea><c:barChart><c:ser>
+        <c:chart><c:plotArea><c:barChart>
+          <c:barDir val="bar" /><c:grouping val="clustered" /><c:ser>
+          <c:idx val="0" /><c:order val="0" />
           <c:tx><c:strRef><c:strCache><c:pt idx="0"><c:v>Percent favorable</c:v></c:pt></c:strCache></c:strRef></c:tx>
           <c:cat><c:strRef><c:strCache>
             <c:pt idx="0"><c:v>Trust</c:v></c:pt>
@@ -99,6 +214,7 @@ async function createChartFixture() {
 
 async function createGuidedTemplateFixture(
   headingProperties = '<w:pStyle w:val="Heading1" />',
+  employeeCount?: string,
 ) {
   const zip = new JSZip();
   zip.file(
@@ -120,6 +236,7 @@ async function createGuidedTemplateFixture(
           <w:p><w:r><w:t>Author handle: @ada</w:t></w:r></w:p>
           <w:p><w:r><w:t>Published date: September 17, 2026</w:t></w:r></w:p>
           <w:p><w:r><w:t>Read time minutes: 12</w:t></w:r></w:p>
+          ${employeeCount === undefined ? "" : `<w:p><w:r><w:t>Employee count: ${employeeCount}</w:t></w:r></w:p>`}
           <w:p><w:r><w:t>Topic pages: AI transformation; Leadership, Employee listening</w:t></w:r></w:p>
           <w:p><w:r><w:t>[GLPS END REPORT METADATA]</w:t></w:r></w:p>
           <w:p><w:r><w:t>[GLPS COMPONENT: REPORT HERO]</w:t></w:r></w:p>
@@ -408,7 +525,7 @@ test("preserves the guided title, hero image, and body when Word uses an outline
   );
 
   assert.equal(outlined.manifest.metadata.title, "Guided report");
-  assert.deepEqual(outlined.manifest.blocks, styled.manifest.blocks);
+  assert.deepEqual(snapshotApprovedContent(outlined.manifest).blocks, snapshotApprovedContent(styled.manifest).blocks);
   assert.deepEqual(outlined.manifest.metadata, styled.manifest.metadata);
   assert.deepEqual(outlined.manifest.reviewItems, styled.manifest.reviewItems);
   const hero = outlined.manifest.blocks[1];
@@ -417,6 +534,32 @@ test("preserves the guided title, hero image, and body when Word uses an outline
     assert.equal(hero.placement, "hero");
     assert.equal(hero.alt, "Colleagues discussing research.");
   }
+});
+
+test("default Word style mappings respect an explicit body outline override", async () => {
+  const result = await extractDocx("body.docx", await createFixture('<w:pStyle w:val="Heading1"/><w:outlineLvl w:val="9"/>'));
+  assert.equal(wordStyleView(result.manifest).blocks[0].type, "paragraph");
+  const override = { ...result.manifest, wordStyleMappings: { Heading1: "section-heading" as const } };
+  assert.equal(wordStyleView(override).blocks[0].type, "paragraph");
+});
+
+test("the image directly below a Word Title is designated as the report hero", async () => {
+  const zip = await JSZip.loadAsync(await createFixture('<w:pStyle w:val="Title"/>'));
+  const xml = await zip.file("word/document.xml")!.async("string");
+  zip.file("word/document.xml", xml.replace("</w:p>", `</w:p>
+    <w:p><w:r><w:drawing><wp:inline xmlns:wp="wp">
+      <wp:extent cx="914400" cy="609600"/><wp:docPr descr="Source hero image"/>
+      <a:graphic xmlns:a="a"><a:blip xmlns:r="r" r:embed="hero"/></a:graphic>
+    </wp:inline></w:drawing></w:r></w:p>`));
+  zip.file("word/_rels/document.xml.rels", '<Relationships><Relationship Id="hero" Target="media/source-hero.png" Type="image"/></Relationships>');
+  const image = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j6fcAAAAASUVORK5CYII=", "base64");
+  zip.file("word/media/source-hero.png", image);
+  const { manifest } = await extractDocx("source-hero.docx", await zip.generateAsync({ type: "uint8array" }));
+  const hero = manifest.blocks[1];
+  assert.ok(hero.type === "image");
+  assert.equal(hero.placement, "hero");
+  assert.equal(hero.dataUrl, `data:image/png;base64,${image.toString("base64")}`);
+  assert.equal(wordStyleView(manifest).blocks[0].id, hero.id);
 });
 
 test("imports the author name when Word does not include an author handle", async () => {
@@ -430,7 +573,7 @@ test("imports the author name when Word does not include an author handle", asyn
   assert.deepEqual(result.manifest.metadata.author, { name: "Ada Lovelace" });
 });
 
-test("extracts cached Office chart values as structured source data", async () => {
+test("extracts cached Office chart values despite val attributes in series metadata", async () => {
   const result = await extractDocx(
     "chart.docx",
     await createChartFixture(),
@@ -442,10 +585,51 @@ test("extracts cached Office chart values as structured source data", async () =
     assert.equal(block.data.sourceKind, "word-chart");
     assert.equal(block.data.unit, "percentage");
     assert.deepEqual(block.data.columns, ["Category", "Percent favorable"]);
-    assert.deepEqual(block.data.rows[1].cells, ["Readiness", "62%"]);
+    assert.deepEqual(block.data.rows.map(row => row.cells), [
+      ["Trust", "73%"],
+      ["Readiness", "62%"],
+    ]);
+    assert.equal(automaticallyVerifiedVisualType(block), "horizontal-bar-chart");
   }
   assert.equal(result.manifest.reviewItems.length, 0);
 });
+
+for (const [label, before, after] of [
+  ["invalid percentage", "<c:v>0.73</c:v>", "<c:v>1.01</c:v>"],
+  ["unsupported chart grouping", 'c:grouping val="clustered"', 'c:grouping val="percentStacked"'],
+]) {
+  test(`keeps Word chart review required for ${label}`, async () => {
+    const zip = await JSZip.loadAsync(await createChartFixture());
+    const chart = zip.file("word/charts/chart1.xml");
+    assert.ok(chart);
+    zip.file("word/charts/chart1.xml", (await chart.async("string")).replace(before, after));
+    const result = await extractDocx("needs-review.docx", await zip.generateAsync({ type: "uint8array" }));
+    const block = result.manifest.blocks[0];
+    assert.equal(block.type, "data-visual-source");
+    if (block.type === "data-visual-source") {
+      assert.equal(automaticallyVerifiedVisualType(block), undefined);
+    }
+  });
+}
+
+for (const formatCode of ['0.00&quot;%&quot;', "0.00\\%"]) {
+  test(`preserves literal percentage values for Office format ${formatCode}`, async () => {
+    const zip = await JSZip.loadAsync(await createChartFixture());
+    const chart = zip.file("word/charts/chart1.xml");
+    assert.ok(chart);
+    zip.file("word/charts/chart1.xml", (await chart.async("string"))
+      .replace("<c:formatCode>0%</c:formatCode>", `<c:formatCode>${formatCode}</c:formatCode>`)
+      .replace("<c:v>0.73</c:v>", "<c:v>81.23</c:v>")
+      .replace("<c:v>0.62</c:v>", "<c:v>48.11</c:v>"));
+    const result = await extractDocx("literal-percent.docx", await zip.generateAsync({ type: "uint8array" }));
+    const block = result.manifest.blocks[0];
+    assert.equal(block.type, "data-visual-source");
+    if (block.type === "data-visual-source") {
+      assert.deepEqual(block.data.rows.map(row => row.cells[1]), ["81.23%", "48.11%"]);
+      assert.equal(automaticallyVerifiedVisualType(block), "horizontal-bar-chart");
+    }
+  });
+}
 
 test("extracts guided template components and blocks missing assets", async () => {
   const result = await extractDocx(
@@ -530,6 +714,34 @@ test("extracts guided template components and blocks missing assets", async () =
     result.manifest.reviewItems[0].code,
     "invalid-component-block",
   );
+});
+
+test("imports optional employee counts from Word metadata without exposing metadata as report text", async () => {
+  for (const [value, expected] of [
+    ["464", 464], ["12,500", 12500], ["", undefined],
+    ["[Optional positive whole number; leave blank to hide]", undefined],
+  ] as const) {
+    const result = await extractDocx("employee-count.docx", await createGuidedTemplateFixture(undefined, value));
+    assert.equal(result.manifest.metadata.employeeCount, expected, value);
+    assert.equal(result.manifest.blocks.some(block => "text" in block && block.text.includes("Employee count:")), false);
+  }
+});
+
+test("invalid employee counts in Word metadata fail import with an actionable message", async () => {
+  for (const value of ["0", "-1", "1.5", "12,34", "9007199254740992", "many employees"]) {
+    await assert.rejects(
+      extractDocx("employee-count.docx", await createGuidedTemplateFixture(undefined, value)),
+      /Employee count in Word metadata must be a positive whole number, or leave it blank/,
+      value,
+    );
+  }
+});
+
+test("rejects non-DOCX filenames even when the selected file contains a valid Word package", async () => {
+  const bytes = await createFixture();
+  for (const fileName of ["report.xlsx", "report.doc", "report.txt"]) {
+    await assert.rejects(() => extractDocx(fileName, bytes), /Choose a \.docx Word document/);
+  }
 });
 
 test("rejects a protected or non-ZIP Word container", async () => {

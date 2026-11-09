@@ -2,6 +2,7 @@ import {
   parseStudioProject,
   type StudioProject,
 } from "./studio-project.ts";
+import { canonicalJson } from "../integrity/approved-content.ts";
 
 const PROJECT_KEY_PREFIX = "glint-publishing-studio:project:";
 const PROJECT_INDEX_KEY = "glint-publishing-studio:projects";
@@ -20,12 +21,16 @@ export interface ProjectStorage {
   list(): Promise<StudioProject[]>;
   load(id: string): Promise<StudioProject>;
   save(project: StudioProject): Promise<void>;
+  remove(id: string): Promise<void>;
 }
 
 export interface ProjectRecordStore {
   list(): Promise<unknown[]>;
   load(id: string): Promise<unknown | undefined>;
   save(project: StudioProject): Promise<void>;
+  remove(id: string): Promise<void>;
+  saveIfAbsent(project: StudioProject): Promise<unknown>;
+  replaceIfUnchanged(project: StudioProject, expected: StudioProject): Promise<boolean>;
 }
 
 let projectDatabasePromise: Promise<IDBDatabase> | undefined;
@@ -70,6 +75,45 @@ function requestResult<T>(request: IDBRequest<T>) {
 }
 
 class IndexedDbProjectRecordStore implements ProjectRecordStore {
+  async replaceIfUnchanged(project: StudioProject, expected: StudioProject) {
+    const database = await openProjectDatabase();
+    const transaction = database.transaction(PROJECT_STORE_NAME, "readwrite");
+    const store = transaction.objectStore(PROJECT_STORE_NAME);
+    return new Promise<boolean>((resolve, reject) => {
+      let replaced = false;
+      transaction.addEventListener("complete", () => resolve(replaced));
+      transaction.addEventListener("abort", () => reject(transaction.error ?? new Error("The draft couldn't be restored.")));
+      transaction.addEventListener("error", () => reject(transaction.error ?? new Error("The draft couldn't be restored.")));
+      const request = store.get(project.id);
+      request.addEventListener("success", () => {
+        try {
+          if (request.result !== undefined &&
+            canonicalJson(parseStoredProject(request.result)) === canonicalJson(expected)) {
+            store.put(project);
+            replaced = true;
+          }
+        } catch { transaction.abort(); }
+      });
+    });
+  }
+
+  async saveIfAbsent(project: StudioProject) {
+    const database = await openProjectDatabase();
+    const transaction = database.transaction(PROJECT_STORE_NAME, "readwrite");
+    const store = transaction.objectStore(PROJECT_STORE_NAME);
+    return new Promise<unknown>((resolve, reject) => {
+      let value: unknown;
+      transaction.addEventListener("complete", () => resolve(value));
+      transaction.addEventListener("abort", () => reject(transaction.error ?? new Error("The report could not be restored.")));
+      transaction.addEventListener("error", () => reject(transaction.error ?? new Error("The report could not be restored.")));
+      const request = store.get(project.id);
+      request.addEventListener("success", () => {
+        value = request.result ?? project;
+        if (request.result === undefined) store.put(project);
+      });
+    });
+  }
+
   async list() {
     const database = await openProjectDatabase();
     const transaction = database.transaction(PROJECT_STORE_NAME, "readonly");
@@ -100,6 +144,17 @@ class IndexedDbProjectRecordStore implements ProjectRecordStore {
         ),
       );
       transaction.objectStore(PROJECT_STORE_NAME).put(project);
+    });
+  }
+
+  async remove(id: string) {
+    const database = await openProjectDatabase();
+    const transaction = database.transaction(PROJECT_STORE_NAME, "readwrite");
+    await new Promise<void>((resolve, reject) => {
+      transaction.addEventListener("complete", () => resolve());
+      transaction.addEventListener("abort", () => reject(transaction.error ?? new Error("The draft could not be deleted.")));
+      transaction.addEventListener("error", () => reject(transaction.error ?? new Error("The draft could not be deleted.")));
+      transaction.objectStore(PROJECT_STORE_NAME).delete(id);
     });
   }
 }
@@ -209,6 +264,19 @@ export class BrowserProjectStorage implements ProjectStorage {
     }
   }
 
+  async restore(project: StudioProject) {
+    await this.migrateLegacyProjects();
+    return parseStoredProject(await this.records.saveIfAbsent(parseStudioProject(project)));
+  }
+
+  async replaceIfUnchanged(project: StudioProject, expected: StudioProject) {
+    const parsed = parseStudioProject(project);
+    const previous = parseStudioProject(expected);
+    if (parsed.id !== previous.id) throw new Error("Choose the same report before restoring a version.");
+    await this.migrateLegacyProjects();
+    return this.records.replaceIfUnchanged(parsed, previous);
+  }
+
   private async migrateLegacyProjects() {
     for (const id of readLegacyIndex(this.legacyStorage)) {
       if ((await this.records.load(id)) === undefined) {
@@ -218,14 +286,23 @@ export class BrowserProjectStorage implements ProjectStorage {
         if (value) {
           await this.save(parseStoredProject(value));
         }
+
       }
       this.legacyStorage.removeItem(`${PROJECT_KEY_PREFIX}${id}`);
     }
     this.legacyStorage.removeItem(PROJECT_INDEX_KEY);
   }
 
+  async remove(id: string) {
+    const legacy = this.legacyStorage.getItem(`${PROJECT_KEY_PREFIX}${id}`);
+    if (legacy && await this.records.load(id) === undefined) {
+      await this.records.save(parseStoredProject(legacy));
+    }
+    this.removeLegacyProject(id);
+    await this.records.remove(id);
+  }
+
   private removeLegacyProject(id: string) {
-    this.legacyStorage.removeItem(`${PROJECT_KEY_PREFIX}${id}`);
     const remainingIds = readLegacyIndex(this.legacyStorage).filter(
       (projectId) => projectId !== id,
     );
@@ -237,6 +314,7 @@ export class BrowserProjectStorage implements ProjectStorage {
     } else {
       this.legacyStorage.removeItem(PROJECT_INDEX_KEY);
     }
+    this.legacyStorage.removeItem(`${PROJECT_KEY_PREFIX}${id}`);
   }
 }
 
@@ -274,6 +352,12 @@ export class LocalProjectStorage {
       PROJECT_INDEX_KEY,
       JSON.stringify([parsed.id, ...ids]),
     );
+  }
+
+  remove(id: string): void {
+    const remaining = readLegacyIndex(this.storage).filter(projectId => projectId !== id);
+    this.storage.setItem(PROJECT_INDEX_KEY, JSON.stringify(remaining));
+    this.storage.removeItem(`${PROJECT_KEY_PREFIX}${id}`);
   }
 }
 

@@ -1,4 +1,5 @@
 import { reportLinkHrefSchema, type ReportBlock } from "../manifest/report-manifest.ts";
+import { orderedWordProperties, wordFormatting, type WordFormatting } from "./word-styles.ts";
 
 type Node = Record<string, unknown>;
 type Link = NonNullable<Extract<ReportBlock, { type: "paragraph" }>["links"]>[number];
@@ -16,11 +17,14 @@ function instructionHref(instruction: string) {
   return destination ? `${destination}${bookmark ? `#${bookmark}` : ""}` : bookmark ? `#${bookmark}` : undefined;
 }
 
-export function extractWordTextLinks(paragraph: Node, relationships: ReadonlyMap<string, string>) {
+export function extractWordTextLinks(paragraph: Node, relationships: ReadonlyMap<string, string>,
+  formatRun?: (properties: Node) => WordFormatting) {
   let raw = "";
   let hyperlinkCount = 0;
   const links: Link[] = [];
   const fields: Field[] = [];
+  const marks: NonNullable<Extract<ReportBlock, { type: "paragraph" }>["marks"]> = [];
+  let currentFormatting: WordFormatting = {};
   function appendLink(start: number, href: string | undefined) {
     if (start === raw.length || !href || !reportLinkHrefSchema.safeParse(href).success ||
         links.some((link) => start < link.end)) return;
@@ -30,6 +34,32 @@ export function extractWordTextLinks(paragraph: Node, relationships: ReadonlyMap
     if (Array.isArray(value)) { value.forEach(walk); return; }
     if (!isNode(value)) return;
     if ("pPr" in value || "rPr" in value || "drawing" in value) return;
+    if ("r" in value) {
+      const previous = currentFormatting;
+      const properties = orderedWordProperties(
+        Array.isArray(value.r) ? value.r.find(child => isNode(child) && "rPr" in child)?.rPr : undefined,
+      );
+      currentFormatting = formatRun ? formatRun(properties) : wordFormatting(properties);
+      const start = raw.length;
+      walk(value.r);
+      const formatting = Object.fromEntries(Object.entries(currentFormatting).filter(([, enabled]) => enabled));
+      if (raw.length > start && Object.keys(formatting).length) {
+        const last = marks.at(-1);
+        if (last?.end === start && JSON.stringify({ ...last, start: undefined, end: undefined }) === JSON.stringify(formatting)) last.end = raw.length;
+        else marks.push({ start, end: raw.length, ...formatting });
+      }
+      currentFormatting = previous;
+      return;
+    }
+    if ("footnoteReference" in value || "endnoteReference" in value) {
+      const id = Number(attributes(value).id);
+      if (Number.isInteger(id) && id > 0) {
+        raw += String(id);
+        currentFormatting.superscript = true;
+        currentFormatting.subscript = false;
+      }
+      return;
+    }
     if ("fldChar" in value) {
       const kind = attributes(value).fldCharType;
       if (kind === "begin") fields.push({ instruction: "" });
@@ -80,5 +110,8 @@ export function extractWordTextLinks(paragraph: Node, relationships: ReadonlyMap
   }))
     .filter((link) => link.start < link.end)
     .sort((a, b) => a.start - b.start);
-  return { text, links: retained, hyperlinkCount };
+  const retainedMarks = marks.map(mark => ({
+    ...mark, start: Math.max(0, mark.start - leading), end: Math.min(text.length, mark.end - leading),
+  })).filter(mark => mark.start < mark.end);
+  return { text, links: retained, marks: retainedMarks, hyperlinkCount };
 }

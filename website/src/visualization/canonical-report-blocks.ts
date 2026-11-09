@@ -8,8 +8,13 @@ export const canonicalVisualTypes = [
   "listening-methods-comparison",
   "pull-quote",
   "percentage-ring-group",
+  "illustrated-statistics",
+  "quadrant-scatter-plot",
+  "paired-percentage-comparison",
+  "percentage-comparison-grid",
   "horizontal-bar-chart",
   "grouped-column-comparison",
+  "coefficient-heatmap",
   "before-after-comparison",
   "impact-metrics",
   "two-column-insight",
@@ -22,7 +27,7 @@ export type CanonicalVisualBlock = Extract<
 >;
 
 export const canonicalVisualOptions: Array<{
-  kind: CanonicalVisualType;
+  kind: Exclude<CanonicalVisualType, "illustrated-statistics" | "quadrant-scatter-plot" | "coefficient-heatmap">;
   name: string;
   reason: string;
 }> = [
@@ -59,7 +64,17 @@ export const canonicalVisualOptions: Array<{
   {
     kind: "percentage-ring-group",
     name: "Percentage ring group",
-    reason: "Show three related percentages with explanations",
+    reason: "Show two or three related percentages with explanations",
+  },
+  {
+    kind: "paired-percentage-comparison",
+    name: "Paired percentage comparison",
+    reason: "Contrast two independent percentage findings",
+  },
+  {
+    kind: "percentage-comparison-grid",
+    name: "Percentage comparison grid",
+    reason: "Show four independent percentage findings in two rows",
   },
   {
     kind: "horizontal-bar-chart",
@@ -95,7 +110,7 @@ export function isCanonicalVisualBlock(
 }
 
 export function createCanonicalVisualBlock(
-  type: CanonicalVisualType,
+  type: Exclude<CanonicalVisualType, "illustrated-statistics" | "quadrant-scatter-plot" | "coefficient-heatmap">,
   id: string,
   source: ReportBlock["source"],
 ): CanonicalVisualBlock {
@@ -258,6 +273,28 @@ export function createCanonicalVisualBlock(
         ],
         footnote:
           "Source: Microsoft People Science Agentic Teaming & Trust Survey, n = 520 global, full-time, English-speaking managers. July 2025.",
+      };
+    case "paired-percentage-comparison":
+      return {
+        id, source, type,
+        title: "Two findings side by side",
+        metrics: [
+          { id: `${id}-metric-1`, value: 83, description: "See an opportunity" },
+          { id: `${id}-metric-2`, value: 43, description: "Have a clear plan" },
+        ],
+        footnote: "Synthetic example. Not research findings.",
+      };
+    case "percentage-comparison-grid":
+      return {
+        id, source, type,
+        title: "Four findings in two rows",
+        metrics: [
+          { id: `${id}-metric-1`, value: 38, description: "First illustrative finding" },
+          { id: `${id}-metric-2`, value: 29, description: "Second illustrative finding" },
+          { id: `${id}-metric-3`, value: 80, description: "Third illustrative finding" },
+          { id: `${id}-metric-4`, value: 75, description: "Fourth illustrative finding" },
+        ],
+        footnote: "Synthetic example. Not research findings.",
       };
     case "horizontal-bar-chart":
       return {

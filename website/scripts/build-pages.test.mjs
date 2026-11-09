@@ -2,9 +2,6 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
-import { Beaker20Regular } from "@fluentui/react-icons/svg/beaker";
-import { createElement } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
 import ts from "typescript";
 import vm from "node:vm";
 import { readerFile, readerSource, readerTelemetryConfig } from "./build-pages.mjs";
@@ -21,13 +18,12 @@ test("analytics requires an explicit public-reader build flag and rejects ambigu
   assert.throws(() => readerTelemetryConfig("true", "yes"), /GLINTLABS_PAGES_CLARITY must be true or false/);
 });
 
-test("browser icon uses the Fluent beaker and the requested gray-circle treatment", async () => {
+test("browser icon uses the approved transparent publishing mark", async () => {
   const icon = await readFile(new URL("../src/app/icon.svg", import.meta.url), "utf8");
-  const beaker = renderToStaticMarkup(createElement(Beaker20Regular));
-  assert.equal(icon.match(/\bd="([^"]+)"/)?.[1], beaker.match(/\bd="([^"]+)"/)?.[1]);
-  assert.match(icon, /viewBox="0 0 26 26"/);
-  assert.match(icon, /<circle cx="13" cy="13" r="13" fill="#f3f3f3"\s*\/>/);
-  assert.match(icon, /transform="translate\(3 3\)" fill="#222"/);
+  assert.match(icon, /<title>Glint Labs<\/title>/);
+  assert.match(icon, /viewBox="-2\.002 -2\.002 20 20"/);
+  assert.match(icon, /<path d="[^"]+" fill="black"/);
+  assert.doesNotMatch(icon, /<circle/);
 });
 
 test("favicon fallback contains PNG frames at standard browser tab sizes", async () => {

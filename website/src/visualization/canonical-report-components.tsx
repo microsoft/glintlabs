@@ -1,7 +1,11 @@
-import { ArrowRight20Regular } from "@fluentui/react-icons";
+import { ArrowRight20Regular, ChevronDown16Regular } from "@fluentui/react-icons";
 
 import type { CanonicalVisualBlock } from "./canonical-report-blocks";
 import { PercentageRingGroup } from "./percentage-ring-group";
+import { IllustratedStatistics } from "./illustrated-statistics";
+import { QuadrantScatterPlot } from "./quadrant-scatter-plot";
+import { CoefficientHeatmap } from "./coefficient-heatmap";
+import { sortChartItems } from "./chart-order";
 import styles from "./canonical-report-components.module.css";
 
 function SourceNote({ children }: { children: string }) {
@@ -216,35 +220,162 @@ function PullQuote({
   );
 }
 
-function HorizontalBarChart({
+export function PercentageComparisonGrid({
+  title, leadIns, findings, note, sourceNote, palette, synthetic, draft,
+}: {
+  title: string;
+  leadIns?: [string, string];
+  findings: { id: string; value: string; description: string; valueMissing?: boolean; descriptionMissing?: boolean }[];
+  note?: string;
+  sourceNote?: string;
+  palette?: string;
+  synthetic?: boolean;
+  draft?: boolean;
+}) {
+  return <figure className={`${styles.card} ${styles.pairedComparison} ${styles.comparisonGrid}`}
+    data-palette={palette} data-chart-draft={draft ? "percentage-comparison-grid" : undefined}
+    aria-label={draft ? "Draft chart preview with missing-value placeholders" : undefined}>
+    {synthetic ? <p className={styles.chartSynthetic}>Synthetic example · Not research findings</p> : null}
+    <h3>{title}</h3>
+    {[0, 1].map(row => <section key={row} className={styles.comparisonGridRow}
+      aria-label={leadIns?.[row] || (row === 0 ? "First row" : "Second row")}>
+      {leadIns?.[row]?.trim() ? <p className={styles.pairedLeadIn}>{leadIns[row]}</p> : null}
+      <div className={styles.comparisonGridFindings}>
+        {findings.slice(row * 2, row * 2 + 2).map(finding =>
+          <div className={styles.pairedFinding} data-percentage-finding key={finding.id}>
+            <strong data-chart-placeholder={draft && finding.valueMissing || undefined}>{finding.value}</strong>
+            <p data-chart-placeholder={draft && finding.descriptionMissing || undefined}>{finding.description}</p>
+          </div>)}
+      </div>
+    </section>)}
+    {note?.trim() || sourceNote ? <figcaption className={styles.pairedFootnote}>
+      {note?.trim() ? <p>{note}</p> : null}
+      {sourceNote ? <p>{sourceNote}</p> : null}
+    </figcaption> : null}
+  </figure>;
+}
+
+function PairedPercentageComparison({
   block,
 }: {
-  block: Extract<CanonicalVisualBlock, { type: "horizontal-bar-chart" }>;
+  block: Extract<CanonicalVisualBlock, { type: "paired-percentage-comparison" }>;
 }) {
-  const maximumValue = Math.max(...block.items.map((item) => item.value), 1);
+  const presentation = block.presentation;
+  return (
+    <figure className={`${styles.card} ${styles.pairedComparison}`} data-palette={presentation?.palette}>
+      {block.verifiedSource?.synthetic ? <p className={styles.chartSynthetic}>Synthetic example · Not research findings</p> : null}
+      <h3>{presentation?.title ?? block.title}</h3>
+      <div className={styles.pairedMetrics}>
+        {block.metrics.map((metric, index) => {
+          const raw = block.verifiedSource?.rows.find(row => row.id === metric.id)?.cells[1]?.replace(/%\s*$/, "").trim();
+          const leadIn = presentation?.leadIns[index];
+          return <div className={styles.pairedMetric} key={metric.id}>
+            {leadIn ? <p className={styles.pairedLeadIn}>{leadIn}</p> : null}
+            <div className={styles.pairedFinding}>
+              <strong>{raw && Number(raw) === metric.value ? raw : metric.value}%</strong>
+              <p>{metric.description}</p>
+            </div>
+          </div>;
+        })}
+      </div>
+      {block.source.part !== "studio" || presentation?.note?.trim() ? <>
+        <div className={styles.pairedRule} aria-hidden="true" />
+        <figcaption className={styles.pairedFootnote}>
+          {presentation?.note ? <p>{presentation.note}</p> : null}
+          {block.source.part !== "studio" ? <p>{block.footnote}</p> : null}
+        </figcaption>
+      </> : null}
+    </figure>
+  );
+}
+
+function HorizontalBarChart({
+  block,
+  expandSupportingBullets,
+  editingOrder,
+}: {
+  block: Extract<CanonicalVisualBlock, { type: "horizontal-bar-chart" }>;
+  expandSupportingBullets?: boolean;
+  editingOrder?: string[];
+}) {
+  const presentation = block.presentation;
+  const sortedItems = sortChartItems(block.items, presentation?.sort);
+  const items = editingOrder ? [
+    ...editingOrder.flatMap(id => sortedItems.filter(item => item.id === id)),
+    ...sortedItems.filter(item => !editingOrder.includes(item.id)),
+  ] : sortedItems;
+  const isNumber = block.verifiedSource?.unit === "number";
+  const minimum = isNumber ? Math.min(0, ...items.map(item => item.value)) : 0;
+  const maximum = isNumber ? Math.max(0, ...items.map(item => item.value)) || (minimum === 0 ? 1 : 0) : 100;
+  const magnitude = Math.max(Math.abs(minimum), maximum) || 1;
+  const span = (maximum / magnitude - minimum / magnitude) || 1;
+  const position = (value: number) => (value / magnitude - minimum / magnitude) / span * 100;
+  const colors = presentation?.palette === "teal" ? ["teal"] : presentation?.palette === "blue"
+    ? ["blue"] : ["blue", "teal", "lavender", "mauve"];
+  const displayValue = (id: string, value: number) => {
+    const raw = block.verifiedSource?.rows.find(row => row.id === id)?.cells[1]?.replace(/%\s*$/, "").trim();
+    return `${raw && Number(raw) === value ? raw : value}${isNumber ? "" : "%"}`;
+  };
+  const displayBreakdownValue = (rowId: string, id: string, value: number) => {
+    const raw = block.verifiedSource?.rows.find(row => row.id === rowId)?.breakdown
+      ?.find(detail => detail.id === id)?.value.replace(/%\s*$/, "").trim();
+    return `${raw && Number(raw) === value ? raw : value}${isNumber ? "" : "%"}`;
+  };
 
   return (
-    <figure className={`${styles.card} ${styles.horizontalChart}`}>
-      <h3>{block.title}</h3>
+    <figure className={`${styles.card} ${styles.horizontalChart}`} data-density={presentation?.density}>
+      {block.verifiedSource?.synthetic ? <p className={styles.chartSynthetic}>Synthetic example · Not research findings</p> : null}
+      <h3>{presentation?.title ?? block.title}</h3>
+      {presentation?.subtitle ? <p className={styles.chartSubtitle}>{presentation.subtitle}</p> : null}
       <div className={styles.rule} />
       <div className={styles.horizontalRows}>
-        {block.items.map((item) => (
-          <div className={styles.horizontalRow} key={item.id}>
-            <span>{item.label}</span>
-            <div className={styles.horizontalValue}>
-              <div className={styles.horizontalBarTrack}>
-                <i style={{ width: `${(item.value / maximumValue) * 100}%` }} />
-              </div>
-              <strong>{item.value}%</strong>
-            </div>
-          </div>
-        ))}
+        {items.map((item) => {
+          const bullets = item.supportingText?.split(/\r\n?|\n/).map(line => line.trim()).filter(Boolean)
+            ?? item.breakdown?.map(detail => `${detail.label}: ${displayBreakdownValue(item.id, detail.id, detail.value)}`) ?? [];
+          const expandable = bullets.length > 0;
+          const Row = expandable ? "summary" : "div";
+          const Value = expandable ? "span" : "div";
+          const row = <Row className={styles.horizontalRow} key={item.id}>
+            <span className={expandable ? styles.horizontalDisclosureLabel : undefined}>
+              {item.label}{expandable ? <ChevronDown16Regular aria-hidden="true" /> : null}
+            </span>
+            <Value className={styles.horizontalValue}>
+              <Value className={styles.horizontalBarTrack} aria-hidden="true">
+                <i style={{
+                  width: `${isNumber ? Math.abs(position(item.value) - position(0)) : item.value}%`,
+                  marginLeft: isNumber ? `${position(Math.min(0, item.value))}%` : undefined,
+                  background: `var(--chart-${colors[block.items.indexOf(item) % colors.length]})`,
+                }} />
+                {isNumber && minimum < 0 ? <b className={styles.chartZero} style={{ left: `${position(0)}%` }} /> : null}
+              </Value>
+              <strong>{displayValue(item.id, item.value)}</strong>
+            </Value>
+          </Row>;
+          return expandable ? <details className={styles.horizontalDisclosure} key={item.id}
+            open={expandSupportingBullets || undefined}>
+            {row}
+            <ul className={styles.horizontalSupportingText}>
+              {bullets.map((text, index) => <li key={index}>{text}</li>)}
+            </ul>
+          </details> : row;
+        })}
       </div>
-      <div className={styles.chartLegend}>
-        <i />
-        <span>{block.legend}</span>
+      {isNumber ? <p className={styles.chartScale}>Number scale: {minimum} to {maximum}</p> : null}
+      {block.source.part !== "studio" && presentation?.note ? <>
+        <div className={styles.rule} />
+        <p className={styles.chartNote}>{presentation.note}</p>
+      </> : null}
+      <div className={styles.chartDataTable}>
+        <table><caption>{presentation?.title ?? block.title} · Source order · {isNumber ? "Number" : "Percentage"} values</caption>
+          <thead><tr><th scope="col">Category</th><th scope="col">{isNumber ? block.legend.replace(/\s*\(%\)\s*$/, "") : block.legend}</th></tr></thead>
+          <tbody>{block.items.flatMap(item => [
+            <tr key={item.id}><th scope="row">{item.label}</th><td>{displayValue(item.id, item.value)}</td></tr>,
+            ...item.breakdown?.map(detail => <tr key={`${item.id}-${detail.id}`}>
+              <th scope="row">{item.label}: {detail.label}</th><td>{displayBreakdownValue(item.id, detail.id, detail.value)}</td>
+            </tr>) ?? [],
+          ])}</tbody>
+        </table>
       </div>
-      <SourceNote>{block.sourceNote}</SourceNote>
     </figure>
   );
 }
@@ -254,10 +385,14 @@ function GroupedColumnComparison({
 }: {
   block: Extract<CanonicalVisualBlock, { type: "grouped-column-comparison" }>;
 }) {
+  function displayValue(id: string, column: number, value: number) {
+    const raw = block.verifiedSource?.rows.find(row => row.id === id)?.cells[column]?.replace(/%\s*$/, "").trim();
+    return `${raw && Number(raw) === value ? raw : value}%`;
+  }
   return (
     <figure className={`${styles.card} ${styles.groupedColumns}`}>
-      <h3>{block.title}</h3>
-      <p>{block.subtitle}</p>
+      <h3>{block.presentation?.title ?? block.title}</h3>
+      {(block.presentation?.subtitle ?? block.subtitle) ? <p>{block.presentation?.subtitle ?? block.subtitle}</p> : null}
       <div className={styles.rule} />
       <div className={styles.columnGroups}>
         {block.groups.map((group) => (
@@ -265,7 +400,7 @@ function GroupedColumnComparison({
             <div className={styles.columns}>
               {group.values.map((value, index) => (
                 <div className={styles.column} key={`${group.id}-${index}`}>
-                  <strong>{value}%</strong>
+                  <strong>{displayValue(group.id, index + 1, value)}</strong>
                   <i
                     className={index === 0 ? styles.columnPrimary : styles.columnSecondary}
                     style={{ height: `${value * 2.15}px` }}
@@ -285,7 +420,10 @@ function GroupedColumnComparison({
           </span>
         ))}
       </div>
-      <SourceNote>{block.sourceNote}</SourceNote>
+      {block.source.part !== "studio" ? <>
+        {block.presentation?.note ? <p className={styles.chartNote}>{block.presentation.note}</p> : null}
+        <SourceNote>{block.sourceNote}</SourceNote>
+      </> : block.verifiedSource?.synthetic ? <p className={styles.chartSynthetic}>Synthetic example · Not research findings</p> : null}
     </figure>
   );
 }
@@ -384,8 +522,12 @@ function TwoColumnInsight({
 
 export function CanonicalReportComponent({
   block,
+  expandSupportingBullets,
+  editingOrder,
 }: {
   block: CanonicalVisualBlock;
+  expandSupportingBullets?: boolean;
+  editingOrder?: string[];
 }) {
   switch (block.type) {
     case "listening-approach-continuum":
@@ -402,10 +544,38 @@ export function CanonicalReportComponent({
       return <PullQuote block={block} />;
     case "percentage-ring-group":
       return <PercentageRingGroup block={block} />;
+    case "illustrated-statistics":
+      return <IllustratedStatistics id={block.id} title={block.presentation?.title ?? block.title}
+        illustrations={block.presentation?.illustrations} valueLabel={block.presentation?.valueLabel}
+        note={block.presentation?.note} synthetic={block.verifiedSource?.synthetic}
+        sourceNote={block.source.part !== "studio" ? block.footnote : undefined}
+        findings={block.metrics.map(metric => {
+          const raw = block.verifiedSource?.rows.find(row => row.id === metric.id)?.cells[1]?.replace(/%\s*$/, "").trim();
+          return { id: metric.id, description: metric.description,
+            value: `${raw && Number(raw) === metric.value ? raw : metric.value}%` };
+        })} />;
+    case "quadrant-scatter-plot":
+      return <QuadrantScatterPlot block={block} />;
+    case "paired-percentage-comparison":
+      return <PairedPercentageComparison block={block} />;
+    case "percentage-comparison-grid":
+      return <PercentageComparisonGrid title={block.presentation?.title ?? block.title}
+        leadIns={block.presentation?.leadIns} palette={block.presentation?.palette}
+        note={block.presentation?.note} synthetic={block.verifiedSource?.synthetic}
+        sourceNote={block.source.part !== "studio" ? block.footnote : undefined}
+        findings={block.metrics.map(metric => {
+          const raw = block.verifiedSource?.rows.find(row => row.id === metric.id)?.cells[1]?.replace(/%\s*$/, "").trim();
+          return {
+            id: metric.id, description: metric.description,
+            value: `${raw && Number(raw) === metric.value ? raw : metric.value}%`,
+          };
+        })} />;
     case "horizontal-bar-chart":
-      return <HorizontalBarChart block={block} />;
+      return <HorizontalBarChart block={block} expandSupportingBullets={expandSupportingBullets} editingOrder={editingOrder} />;
     case "grouped-column-comparison":
       return <GroupedColumnComparison block={block} />;
+    case "coefficient-heatmap":
+      return <CoefficientHeatmap block={block} />;
     case "before-after-comparison":
       return <BeforeAfterComparison block={block} />;
     case "impact-metrics":

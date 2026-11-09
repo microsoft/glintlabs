@@ -32,6 +32,10 @@ field. Publishing Studio uses these approved values as-is and does not ask the
 publisher to classify the report again. For example:
 `AI transformation, Leadership, Employee listening`.
 
+Set `Employee count` in the report metadata, for example `Employee count: 464`.
+Studio uses this value for the catalog card without asking for it again when
+publishing. Leave it blank to hide the count.
+
 The initial template includes:
 
 - an opening report hero;

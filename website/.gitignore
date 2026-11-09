@@ -22,8 +22,8 @@
 !/artifacts/README.md
 /content/
 /public/drafts/
-/public/report-preview-assets/
-/public/reports-assets/
+/public/report-preview-assets
+/public/reports-assets
 
 # next.js
 /.next/

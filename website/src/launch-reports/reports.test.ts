@@ -125,7 +125,7 @@ test("figure descriptions retain native disclosure semantics with a branded Flue
 test("brief headings and side-nav labels share colon-free presentation without rewriting Word evidence", async () => {
   const renderer = await readFile(new URL("../report-system/report-renderer.tsx", import.meta.url), "utf8");
   assert.match(renderer, /function headingLabel\(/);
-  assert.match(renderer, /isResearchBriefHeading\(block\) \? headingLabel\(block\) : props\.textOverrides/);
+  assert.match(renderer, /end=\{isResearchBriefHeading\(block\) \? headingLabel\(block\)\.length : block\.text\.length\}/);
   assert.match(renderer, /label: headingLabel\(heading\)/);
   assert.match(renderer, /href: `#report-block-\$\{heading\.id\}`/);
   for (const source of launchReportSources) {
