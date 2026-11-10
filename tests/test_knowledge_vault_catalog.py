@@ -9,6 +9,7 @@ the generated `prioritized-resources.md` stays in sync with `catalog.json`.
 
 from __future__ import annotations
 
+import copy
 import json
 import subprocess
 import sys
@@ -25,6 +26,8 @@ SOURCE_INDEX_PATH = (
     ROOT / "skills/analyze-survey/references/people-science-source-index.json"
 )
 BUILD_SCRIPT = ROOT / "scripts/build_knowledge_vault_resources.py"
+sys.path.insert(0, str(ROOT / "scripts"))
+import build_knowledge_vault_resources as builder
 
 REQUIRED_ENTRY_FIELDS = (
     "id",
@@ -50,6 +53,40 @@ def load_source_index() -> dict:
 
 def load_workbook_schema() -> dict:
     return json.loads(WORKBOOK_SCHEMA_PATH.read_text(encoding="utf-8"))
+
+
+def test_canonicalize_url_preserves_meaningful_query_parameters():
+    noisy = (
+        "HTTPS://TechCommunity.Microsoft.com:443/blog/post/1/"
+        "?utm_source=mail&b=2&a=1&fbclid=xyz#section"
+    )
+    assert builder.canonicalize_url(noisy) == (
+        "https://techcommunity.microsoft.com/blog/post/1?a=1&b=2"
+    )
+    assert builder.canonicalize_url("http://example.com:80/") == "http://example.com/"
+    assert builder.canonicalize_url("https://example.com/?page=1") != (
+        builder.canonicalize_url("https://example.com/?page=2")
+    )
+
+
+def test_catalog_rejects_canonical_duplicates_without_changing_priorities():
+    catalog = load_catalog()
+    duplicate = copy.deepcopy(catalog["entries"][0])
+    duplicate["id"] = "tracking-link-duplicate"
+    duplicate["url"] = duplicate["url"].rstrip("/") + "/?utm_source=mail#section"
+    catalog["entries"].append(duplicate)
+    original = copy.deepcopy(catalog)
+    assert any("duplicate entry url" in issue for issue in builder.validate_catalog(catalog))
+    assert catalog == original
+
+
+def test_research_workflow_links_topic_aliases_for_discovery():
+    workflow = (VAULT_DIR / "research-workflow.md").read_text(encoding="utf-8")
+    assert "(topic-aliases.md)" in workflow
+    aliases = (VAULT_DIR / "topic-aliases.md").read_text(encoding="utf-8")
+    for phrase in ("burnout", "return to office", "turnover", "copilot adoption"):
+        assert phrase in aliases.casefold()
+    assert "not interchangeable validated survey constructs" in aliases
 
 
 def test_catalog_entries_have_required_fields_and_are_unique():

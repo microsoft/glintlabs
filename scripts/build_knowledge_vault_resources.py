@@ -18,6 +18,7 @@ import json
 import sys
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 MAINTENANCE_DIR = ROOT / "references/maintenance/knowledge-vault"
@@ -57,6 +58,27 @@ REQUIRED_ENTRY_FIELDS = (
     "research_questions",
 )
 PUBLIC_CATALOG_FIELDS = REQUIRED_ENTRY_FIELDS
+
+
+def canonicalize_url(url: str) -> str:
+    parsed = urlsplit(url.strip())
+    scheme = parsed.scheme.lower()
+    host = parsed.netloc.lower()
+    if scheme == "https" and host.endswith(":443"):
+        host = host[:-4]
+    elif scheme == "http" and host.endswith(":80"):
+        host = host[:-3]
+    tracking_names = {
+        "fbclid", "gclid", "msclkid", "ocid", "igshid", "ref", "ref_src", "spm",
+    }
+    query = sorted(
+        (key, value)
+        for key, value in parse_qsl(parsed.query, keep_blank_values=True)
+        if key.lower() not in tracking_names
+        and not key.lower().startswith(("utm_", "mc_", "wt.mc_id"))
+    )
+    path = parsed.path.rstrip("/") if len(parsed.path) > 1 else parsed.path
+    return urlunsplit((scheme, host, path, urlencode(query), ""))
 
 
 def public_catalog(catalog: dict[str, Any]) -> dict[str, Any]:
@@ -101,10 +123,11 @@ def validate_catalog(catalog: dict[str, Any]) -> list[str]:
             issues.append(f"duplicate entry id '{entry_id}'")
         seen_ids.add(entry_id)
         url = entry.get("url")
-        if url in seen_urls:
-            issues.append(f"duplicate entry url '{url}'")
         if url:
-            seen_urls.add(url)
+            canonical_url = canonicalize_url(url)
+            if canonical_url in seen_urls:
+                issues.append(f"duplicate entry url '{url}'")
+            seen_urls.add(canonical_url)
 
     return issues
 

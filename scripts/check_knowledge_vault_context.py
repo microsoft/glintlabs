@@ -119,7 +119,7 @@ def validate_context(context: Path = REFERENCES, root: Path = ROOT) -> None:
     expected = {
         context / name for name in (
             "catalog.json", "theme-index.json", "theme-lookup.md", "topic-lookup.md",
-            "source-priority.md", "corpus-guide.md", "public-use.md",
+            "source-priority.md", "corpus-guide.md", "public-use.md", "topic-aliases.md",
             "media-alternatives.json", "prioritized-resources.md", *pages,
         )
     } | approved | runtime_guides
@@ -129,7 +129,10 @@ def validate_context(context: Path = REFERENCES, root: Path = ROOT) -> None:
     for path in sorted(actual):
         if path.is_symlink():
             raise ValueError(f"{path.name}: context cannot contain symlinks")
-        if path in runtime_guides and len(path.read_bytes()) > MAX_PAGE_BYTES:
+        if (
+            (path in runtime_guides or path.name == "topic-aliases.md")
+            and len(path.read_bytes()) > MAX_PAGE_BYTES
+        ):
             raise ValueError(f"{path.name}: exceeds small-page retrieval budget")
         if PRIVATE_LOCATION.search(path.read_text(encoding="utf-8")):
             raise ValueError(f"{path.name}: private ownership/location data cannot enter public context")
