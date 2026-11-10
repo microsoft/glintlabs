@@ -3164,8 +3164,8 @@
       "source": "public/figma/site-canonical/about/eric.png",
       "destination": "website/public/figma/site-canonical/about/eric.png",
       "sourceSha256": "01fbd670f888ea2627928c8e6814092b2d56fdf75008e6583f6e1ccff8e664db",
-      "destinationSha256": "01fbd670f888ea2627928c8e6814092b2d56fdf75008e6583f6e1ccff8e664db",
-      "intentionalDifference": ""
+      "destinationSha256": "7f3d5679c6a088f9c4feed5348dec87a0cf5ad4eb219944c8a86570906c50312",
+      "intentionalDifference": "Replace the About-page portrait with the user-updated Figma image from Profile 1777:45441, image I1777:45441;1731:39816. Preserve the exact Figma crop, exposure, and grayscale treatment in a 1024px PNG; retain the existing page layout and portrait glow."
     },
     {
       "source": "public/figma/site-canonical/about/linkedin.svg",
