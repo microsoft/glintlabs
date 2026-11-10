@@ -9,8 +9,8 @@
 | `engine.json` | Exact advanced-engine revision and implementation hash |
 
 Use the closed schemas in `schemas/advanced-analysis-config.schema.json`,
-`advanced-analysis-manifest.schema.json`, and
-`advanced-interpretation.schema.json`. These are distinct from basic survey
+`advanced-analysis-manifest.schema.json`, `advanced-interpretation.schema.json`,
+and `advanced-item-candidates.schema.json`. These are distinct from basic survey
 contracts and do not alter the basic runner, report, or default narrative mode.
 First-party modeling code lives in `vivaglint.modeling`, not in the report builder.
 

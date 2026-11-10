@@ -34,7 +34,8 @@
       }
     },
     "interpretation": {"type": "object"},
-    "item_review": {"type": "object"}
+    "item_review": {"type": "object"},
+    "item_candidates": {"type": "object"}
   },
   "additionalProperties": false
 }

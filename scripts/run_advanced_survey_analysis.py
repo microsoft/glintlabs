@@ -246,12 +246,19 @@ def run(options: argparse.Namespace) -> None:
     if mode == "review-items":
         authorize(approval, config, {"interpret", "share"})
         manifest = json.loads((output / "advanced-analysis-manifest.json").read_text(encoding="utf-8"))
-        if manifest["config_sha256"] != digest(config) or not options.item_review:
-            raise ValueError("Question review needs the original experiment and an explicit reviewed assessment.")
-        from build_advanced_analysis_report import build_report, validate_item_review
-        review = json.loads(Path(options.item_review).read_text(encoding="utf-8"))
-        validate_item_review(manifest, review)
-        manifest["item_review"] = review
+        review_path = getattr(options, "item_review", None)
+        candidates_path = getattr(options, "item_candidates", None)
+        if manifest["config_sha256"] != digest(config) or bool(review_path) == bool(candidates_path):
+            raise ValueError("Question review needs the original experiment and exactly one assessment or candidate shortlist.")
+        from build_advanced_analysis_report import build_report, validate_item_candidates, validate_item_review
+        if candidates_path:
+            candidates = json.loads(Path(candidates_path).read_text(encoding="utf-8"))
+            validate_item_candidates(manifest, candidates)
+            manifest["item_candidates"] = candidates
+        else:
+            review = json.loads(Path(review_path).read_text(encoding="utf-8"))
+            validate_item_review(manifest, review)
+            manifest["item_review"] = review
         build_report(output, manifest)
         print("Question review attached; no models were fitted and no questions were deleted.")
         return
@@ -390,7 +397,9 @@ def main() -> int:
     parser.add_argument("--mode", required=True, choices=["inspect", "code", "fit", "tune", "evaluate", "interpret", "review-items"])
     parser.add_argument("--approval")
     parser.add_argument("--narrative")
-    parser.add_argument("--item-review")
+    assessment = parser.add_mutually_exclusive_group()
+    assessment.add_argument("--item-review")
+    assessment.add_argument("--item-candidates")
     parser.add_argument("--frozen-from")
     options = parser.parse_args()
     try:

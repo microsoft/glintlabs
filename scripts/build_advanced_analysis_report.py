@@ -15,8 +15,7 @@ TEMPLATE = ROOT / "skills/analyze-survey-advanced/references/report.html"
 CODE_ARTIFACTS = ("experiment-template.json", "experiment.ipynb", "reproduce.py")
 
 
-def validate_item_review(manifest: dict, review: dict) -> None:
-    validate(review, "advanced-item-review.schema.json")
+def validate_item_assessment_source(manifest: dict, assessment: dict) -> None:
     if (
         manifest["status"] != "completed"
         or manifest["qa"]["repeatability"] != "passed"
@@ -26,10 +25,34 @@ def validate_item_review(manifest: dict, review: dict) -> None:
     ):
         raise ValueError("Question review requires completed, QA-eligible SVD diagnostics.")
     if (
-        review["config_sha256"] != manifest["config_sha256"]
-        or review["summary_sha256"] != digest(manifest["summary"])
+        assessment["config_sha256"] != manifest["config_sha256"]
+        or assessment["summary_sha256"] != digest(manifest["summary"])
     ):
         raise ValueError("Question review is stale; review the current configuration and diagnostics.")
+
+
+def validate_item_candidates(manifest: dict, candidates: dict) -> None:
+    validate(candidates, "advanced-item-candidates.schema.json")
+    validate_item_assessment_source(manifest, candidates)
+    features = set(manifest["summary"]["svd"]["features"])
+    questions = [item["question"] for item in candidates["items"]]
+    if len(set(questions)) != len(questions) or not set(questions).issubset(features):
+        raise ValueError("Candidates must be distinct fitted questions.")
+    protected = set(candidates["protected_items"])
+    if "item_review" in manifest:
+        validate_item_review(manifest, manifest["item_review"])
+        protected.update(manifest["item_review"]["protected_items"])
+    if not protected.issubset(features) or protected.intersection(questions):
+        raise ValueError("Protected questions must be fitted items and cannot be removal candidates.")
+    for item in candidates["items"]:
+        comparison = item.get("comparison_question")
+        if comparison is not None and (comparison not in features or comparison in questions):
+            raise ValueError("Comparison questions must be fitted items outside the candidate shortlist.")
+
+
+def validate_item_review(manifest: dict, review: dict) -> None:
+    validate(review, "advanced-item-review.schema.json")
+    validate_item_assessment_source(manifest, review)
     features = set(manifest["summary"]["svd"]["features"])
     items = {item["question"]: item for item in review["items"]}
     if len(items) != len(review["items"]) or set(items) != features:
@@ -57,8 +80,14 @@ def build_report(output: Path, manifest: dict) -> None:
     review_artifacts = ()
     if "item_review" in manifest:
         validate_item_review(manifest, manifest["item_review"])
+    if "item_candidates" in manifest:
+        validate_item_candidates(manifest, manifest["item_candidates"])
+    if "item_review" in manifest:
         write_json(output / "question-removal-review.json", manifest["item_review"])
         review_artifacts = ("question-removal-review.json",)
+    if "item_candidates" in manifest:
+        write_json(output / "question-removal-candidates.json", manifest["item_candidates"])
+        review_artifacts += ("question-removal-candidates.json",)
     write_json(output / "model-diagnostics.json", manifest["summary"])
     stream = io.StringIO(newline="")
     writer = csv.writer(stream)
