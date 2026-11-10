@@ -36,8 +36,9 @@ Computing the user's survey statistics belongs to the available analysis workflo
    Do not force an irrelevant Drop into an answer or treat its null workbook
    priority as low collection priority.
 3. Read source-specific themes, kind, population, date, product, reviewed asset
-   scope, and shared-study links. Ten editorial themes are not ten independent
-   findings. A documentation page, framework, recommendation, case study, or
+   scope, and shared-study links. Editorial theme counts follow supported
+   coverage, not a fixed quota or a count of independent findings.
+   A documentation page, framework, recommendation, case study, or
    signpost is not automatically empirical evidence. Themes and hashes are
    discovery/provenance, not full-source evidence or freshness checks.
 4. Retrieve the full original public body before supporting a claim. Confirm

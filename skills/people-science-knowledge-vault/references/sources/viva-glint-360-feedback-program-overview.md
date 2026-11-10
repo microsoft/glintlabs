@@ -2,7 +2,7 @@
 
 [Context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md) | [Source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md)
 
-Index review: 2026-10-30. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
+Index review: 2026-11-10. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
 
 <a id="viva-glint-360-feedback-program-overview"></a>
 ## Viva Glint 360 feedback program overview
@@ -15,28 +15,24 @@ Index review: 2026-10-30. These editorial themes route retrieval; they are not a
 
 Complete concise 360 overview and terminology. It introduces development and administrative states, not full privacy, coaching, or configuration manuals linked elsewhere.
 
-**Reviewed asset scope:** Complete published article/documentation body. Linked courses and other resources are separate assets, not automatically reviewed. No claim of complete linked-recording coverage.
+**Reviewed asset scope:** Complete freshly retrieved public Microsoft Learn article text reviewed, including substantive tables. Sign-in notices and page chrome excluded as evidence. Linked pages, courses, downloads, recordings and image-only details were not reviewed; no refreshed comprehensive figure or media review is claimed.
 
-1. **Multisource perspective** (framework) - 360 feedback combines perspectives beyond an immediate supervisor to surface strengths and opportunities.
-   Topics: feedback, manager-effectiveness. Evidence: `L2`, "various viewpoints".
-2. **Development rather than evaluation** (framework) - The stated purpose is self-awareness and growth, explicitly not performance evaluation.
-   Topics: feedback, learning-enablement, growth-development. Evidence: `L4`, "isn't a performance evaluation".
-3. **Manager-oriented program template** (documentation) - The product offers a manager-development template with survey analysis and Focus Area support.
-   Topics: manager-effectiveness, glint-admin. Evidence: `L8`, "designed for managers".
-4. **Subject self-assessment** (documentation) - The subject completes a self-assessment and requests perspectives from others.
-   Topics: feedback. Evidence: `L17`, "self-assessment".
-5. **Feedback-provider groups** (documentation) - Provider categories distinguish self, direct reports, manager, and collaborators.
-   Topics: feedback, survey-design. Evidence: `L19`, "categories".
-6. **Coach independence** (documentation) - A coach helps interpret results and plan next steps and need not be the subject's manager.
-   Topics: learning-enablement, manager-effectiveness, growth-development. Evidence: `L25`, "doesn’t have to".
-7. **Competencies as behaviors and skills** (documentation) - Competencies organize verifiable characteristics and work-relevant skills.
-   Topics: survey-design, learning-enablement, growth-development. Evidence: `L29`, "verifiable".
-8. **Programs, cycles, and scheduling** (documentation) - A program contains one or more cycles; draft setup must complete before scheduling.
-   Topics: glint-admin. Evidence: `L35`, "checkmark".
-9. **Report release conditions** (documentation) - Release depends on completed self-assessment, provider-category confidentiality, another provider, and closure for the subject.
-   Topics: glint-admin, privacy-confidentiality. Evidence: `L43`, "Confidentiality threshold".
-10. **Follow-up and supporting guidance** (signpost) - The overview links Focus Area follow-up, privacy protection, a subject guide, learning, and introduction emails.
-   Topics: action-taking, learning-enablement. Evidence: `L49`, "Focus Area Overview".
+1. **Multisource development, not evaluation** (documentation) - 360 feedback combines perspectives beyond a direct supervisor to increase self-awareness of strengths, opportunities and impact. Its purpose is long-term development; it is explicitly not a performance evaluation.
+   Topics: feedback, growth-development. Evidence: `L19`, "The Microsoft Viva Glint 360 feedback program (360s) and process gives insight into a manager's strengths and opportunities with a long-term focus on ".
+2. **Manager-oriented template and Focus Areas** (documentation) - The Glint 360 template is designed for managers and combines related measures, survey analysis and Focus Area management. These capabilities are distinct from an engagement survey's configuration rules.
+   Topics: feedback, glint-admin. Evidence: `L21`, "Viva Glint offers a 360 program template designed for managers. The program is a set of related measures which generate real-time survey analysis, eng".
+3. **Subject and provider categories** (documentation) - A subject completes a required self-assessment and requests feedback, typically from direct reports, manager and collaborators. The subject is also a required feedback-provider category, distinct from other raters.
+   Topics: feedback. Evidence: `L29`, "The leader who completes a self-assessment and requests feedback from various people such as their manager, direct reports (if they're a people manage".
+4. **Coach role is not necessarily the manager** (documentation) - A coach helps interpret the 360 report and determine next steps, and need not be the subject's manager. Competencies are verifiable characteristics and work-relevant skills.
+   Topics: feedback, growth-development. Evidence: `L33`, "The person who guides a subject in understanding the 360 report and determining next steps. The coach doesn’t have to be the subject's manager.".
+5. **Programs and cycles** (documentation) - A 360 program contains at least one cycle and can group cycles by theme. The number of programs is unlimited; a cycle is one specific feedback process within a program.
+   Topics: glint-admin, feedback. Evidence: `L39`, "A program contains at least one 360 cycle. A program could, however, include cycles focusing on a specific program theme. The number of 360 programs y".
+6. **Draft and scheduled cycle states** (documentation) - Draft cycles remain editable; each setup step needs its completion checkmark before scheduling becomes available. A scheduled cycle goes live on its Cycle Start date.
+   Topics: glint-admin, feedback. Evidence: `L43`, "The cycle is still being set up. You can move between pages and make edits. Once a blue checkmark appears next to each step of the setup page, the opt".
+7. **Report release during a live cycle** (documentation) - A report can be generated/released for a qualifying subject during a live overall cycle only when the self-assessment is complete, the provider-category confidentiality threshold is met including at least one nonself provider, and the cycle is closed for that subject.
+   Topics: privacy-confidentiality, feedback, glint-admin. Evidence: `L47`, "The cycle is in progress and subjects and feedback providers are actively participating. Reports can be generated and released for subjects who qualif".
+8. **Completed cycle scope** (documentation) - A completed cycle is finished for all subjects and reports can be released. Overall completion and individual subject closure are distinct states.
+   Topics: glint-admin, feedback. Evidence: `L49`, "The cycle is complete for all subjects, and reports can be released.".
 
 ## Shared research context
 

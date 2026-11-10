@@ -24,9 +24,9 @@ def test_theme_inventory_reconciles_with_catalog_and_public_drops(index):
     assert lookup.validate_index(index, catalog) == []
     assert len(index["resources"]) == len(catalog["entries"]) + 17
     assert lookup.coverage(index)["reviewed"] == 55
-    assert lookup.coverage(index)["themes"] == 550
+    assert lookup.coverage(index)["themes"] == 589
     for resource in index["resources"]:
-        assert len(resource["themes"]) == (10 if resource["review_status"] == "reviewed" else 0)
+        assert bool(resource["themes"]) == (resource["review_status"] == "reviewed")
         if resource["group"] == "research-drop":
             assert resource["priority_tier"] is None
             assert "published" in resource["asset_scope"].lower()
@@ -74,7 +74,9 @@ def test_shared_research_is_linked_and_methods_preserved(index):
     assert set(april["study_families"]) == set(may["study_families"])
     assert len(april["study_families"]) == 3
     assert "No repeated participants" in april["context"]
-    assert "one-factor-at-a-time" in " ".join(t["summary"] for t in may["themes"])
+    assert "one EX factor" in " ".join(
+        t["summary"] for t in may["themes"] if t["kind"] == "method"
+    )
     assert "independent" in next(
         family["description"] for family in index["study_families"]
         if family["id"] == "agentic-teaming-trust-july-2025"
@@ -128,9 +130,10 @@ def test_generic_privacy_and_career_growth_do_not_imply_ai(index):
     assert "people-success" in {
         r["id"] for r in lookup.search(index, topic="growth-development")
     }
-    assert "people-success" not in {
-        r["id"] for r in lookup.search(index, topic="ai-skills")
-    }
+    people_success = next(r for r in index["resources"] if r["id"] == "people-success")
+    general_growth = [t for t in people_success["themes"] if "growth-development" in t["topics"]]
+    assert general_growth
+    assert all("ai-skills" not in theme["topics"] for theme in general_growth)
 
 
 def test_priority_policy_and_browsable_order_cannot_silently_drift(index):
@@ -150,12 +153,44 @@ def test_short_terms_do_not_match_substrings():
         lookup.search({"resources": []}, "and the")
 
 
-def test_resource_lookup_returns_all_ten_in_editorial_order(index):
+def test_resource_lookup_returns_all_themes_in_editorial_order(index):
+    resource = next(r for r in index["resources"] if r["id"] == "research-drop-4493933")
     result = lookup.search(index, resource_id="research-drop-4493933")
     assert len(result) == 1
-    assert [t["id"] for t in result[0]["themes"]] == [
-        f"research-drop-4493933:{number:02}" for number in range(1, 11)
-    ]
+    assert [t["id"] for t in result[0]["themes"]] == [t["id"] for t in resource["themes"]]
+
+
+@pytest.mark.parametrize("theme_count", [1, 4, 12])
+def test_variable_theme_counts_validate_and_remain_discoverable(index, theme_count):
+    previous_total = lookup.coverage(index)["themes"]
+    resource = next(r for r in index["resources"] if r["review_status"] == "reviewed")
+    template = copy.deepcopy(resource["themes"][0])
+    previous_count = len(resource["themes"])
+    resource["themes"] = []
+    for number in range(1, theme_count + 1):
+        theme = copy.deepcopy(template)
+        theme["id"] = f"{resource['id']}:{number:02}"
+        theme["label"] = f"Fixture grounded theme {number}"
+        resource["themes"].append(theme)
+    assert lookup.validate_index(index, lookup.load_json(lookup.CATALOG_PATH)) == []
+    result = lookup.search(index, resource_id=resource["id"])
+    assert [t["id"] for t in result[0]["themes"]] == [t["id"] for t in resource["themes"]]
+    pages = lookup.render_web_context(index)
+    profile = pages[f"sources/{resource['id']}.md"]
+    assert all(f"**{theme['label']}**" in profile for theme in resource["themes"])
+    topic = template["topics"][0]
+    assert f"({theme_count} relevant themes)" in pages[f"topics/{topic}.md"]
+    assert lookup.coverage(index)["themes"] == previous_total - previous_count + theme_count
+
+
+def test_variable_counts_do_not_allow_ungrounded_review_or_themes_for_gaps(index):
+    reviewed = next(r for r in index["resources"] if r["review_status"] == "reviewed")
+    gap = next(r for r in index["resources"] if r["review_status"] == "gap")
+    gap["themes"] = reviewed["themes"][:1]
+    reviewed["themes"] = []
+    issues = lookup.validate_index(index, lookup.load_json(lookup.CATALOG_PATH))
+    assert any("at least one grounded theme" in issue for issue in issues)
+    assert any("gaps need zero themes" in issue for issue in issues)
 
 
 def test_cached_body_check_detects_anchor_and_source_changes(tmp_path):
@@ -298,8 +333,9 @@ def test_overlap_separates_topic_similarity_from_shared_research():
 
 def test_published_overlap_counts_are_recomputed_from_the_index(index):
     result = lookup.coverage(index)["overlap"]
-    assert set(result["shared_topics"]) == set(index["topics"])
-    assert not result["catalog_only_topics"]
+    assert len(result["shared_topics"]) == 31
+    assert set(result["shared_topics"]) | set(result["catalog_only_topics"]) == set(index["topics"])
+    assert set(result["catalog_only_topics"]) == {"glint-admin", "pulse-admin"}
     assert not result["research_drop_only_topics"]
     assert len(result["drops_with_shared_study_families"]) == 13
     assert len(result["shared_study_families"]) == 3
@@ -329,8 +365,8 @@ def test_repository_bundle_works_without_downloads_sharepoint_or_body_cache(tmp_
 @pytest.mark.parametrize(
     ("arguments", "exit_code", "message"),
     [
-        (["--resource", "research-drop-4493933", "--json"], 0, "research-drop-4493933:10"),
-        (["--topic", "growth-development", "--json"], 0, "Growth and career opportunity"),
+        (["--resource", "research-drop-4493933", "--json"], 0, "research-drop-4493933:01"),
+        (["--topic", "growth-development", "--json"], 0, "growth-development"),
         (["--resource", "think-like-a-people-scientist-series-hub"], 2, "redirects"),
         (["--topic", "not-a-topic"], 2, "unknown topic"),
         (["--limit", "0", "AI"], 2, "positive"),

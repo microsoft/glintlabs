@@ -35,6 +35,10 @@ Retrieve the full public source and review body, figures, context, and any
 claimed media coverage. Update themes, evidence hashes, anchors, review dates,
 and study-family links. Never infer content for an inaccessible resource.
 Keep catalog titles/URLs/priorities synchronized with `analyze-survey`.
+Choose the number of distinct themes from the source's supported coverage;
+there is no fixed target or maximum. Do not pad, artificially split, or omit
+useful material to meet a quota. Reviewed resources need at least one grounded
+theme; inaccessible gaps have zero.
 
 The catalog validator rejects duplicate canonical URLs, ignoring host casing,
 default ports, fragments, trailing slashes, and known tracking parameters while

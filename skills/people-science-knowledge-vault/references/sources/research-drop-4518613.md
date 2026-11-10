@@ -2,7 +2,7 @@
 
 [Context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md) | [Source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md)
 
-Index review: 2026-10-30. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
+Index review: 2026-11-10. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
 
 <a id="research-drop-4518613"></a>
 ## Research Drop: The Human Conditions Behind AI Value at Work
@@ -13,32 +13,34 @@ Index review: 2026-10-30. These editorial themes route retrieval; they are not a
 
 **Source:** https://techcommunity.microsoft.com/blog/microsoftvivablog/research-drop-the-human-conditions-behind-ai-value-at-work/4518613
 
-May 2026 public article and its public coefficient figure reviewed. Same three independent samples totaling n=2,331 as the April 2026 drop, not new longitudinal observations. Each EX factor is modeled separately with job level/use-frequency controls; coefficients are not unique causal contributions or a multivariable importance ranking. Safety and role clarity are unavailable in April 2024, so their strengthening compares only July-November 2025.
+May 2026 article reanalyzing the same three independent AI-user manager/IC samples as April's Drop: April 2024 global n=910, July 2025 global n=811, November 2025 US-only n=610; total n=2,331. Each EX factor enters a separate cross-sectional OLS model with job-level and usage-frequency controls, not a single joint model or causal importance ranking. Safety and clarity were unavailable in April 2024, so their strengthening concerns July–November 2025 only. RIVA averages six item favorability percentages, measures perceived benefits rather than financial ROI, and changes referent from generative AI to AI in the last study.
 
-**Reviewed asset scope:** Complete published article/documentation body. Also reviewed OCR of 1 public figures; numeric claims cross-checked against written text where available. Linked courses and other resources are separate assets, not automatically reviewed. No claim of complete linked-recording coverage.
+**Reviewed asset scope:** Complete freshly retrieved public article body read, including substantive published method/item appendices where present. Figures, chart pixels, linked assets, audio, private decks, and notes were not reviewed in this pass. Current themes are grounded in body prose, not chart alt text. Prior figure review is historical only and is recorded in the audit; it is not refreshed coverage.
 
 **Study-family links:** ai-readiness-april-2024, agentic-teaming-trust-july-2025, ai-outcomes-november-2025
 
-1. **Human conditions alongside access** (framework) - The article shifts attention from tool availability toward the work environment surrounding perceived AI benefit.
-   Topics: ai-strategy, work-design. Evidence: `L5`, "Perceived value".
-2. **Seven employee-experience factors** (method) - The analysis covers safety, clarity, individual/team productivity, intentions to stay, recommendation, and happiness across three domains.
-   Topics: employee-listening, methods. Evidence: `L18`, "seven".
-3. **Separate adjusted associations** (method) - Reported standardized coefficients come from one-factor-at-a-time cross-sectional models, not causal effects or independent shares of explained value.
-   Topics: methods, survey-interpretation. Evidence: `L108`, "one at a time".
-4. **Stable perceived-productivity relationships** (finding) - Individual and team productivity retain relatively stable associations with RIVA across the snapshots.
-   Topics: ai-value, work-design. Evidence: `L66`, "consistent relationship".
-5. **Changing meaning of team productivity** (hypothesis) - The author asks whether employees may eventually include agents in their concept of team productivity; this remains an open construct question.
-   Topics: ai-agents, methods. Evidence: `L68`, "construct itself".
-6. **Psychological safety as an enabling condition** (finding) - Safety is a stronger RIVA correlate in the latest observed comparison, consistent with the practical need for safe experimentation.
-   Topics: psychological-safety, ai-value. Evidence: `L70`, "strengthened".
-7. **Role clarity at the human-machine boundary** (finding) - Clear expectations about automation and augmentation matter as tasks shift; role-clarity associations strengthen in the latest comparison.
-   Topics: work-design, ai-agents, role-clarity. Evidence: `L78`, "boundaries".
-8. **Engagement is context-sensitive** (finding) - eSat and recommendation relationships dip in the middle snapshot and rebound later rather than following a uniform trajectory.
-   Topics: engagement, ai-value. Evidence: `L83`, "fluctuated".
-9. **Emotional-arc explanation remains tentative** (hypothesis) - Early excitement, job-security concerns, and later mastery are proposed explanations, not established reasons for sample differences.
-   Topics: change-management, wellbeing. Evidence: `L84`, "One hypothesis".
-10. **Preserve human contribution while tracking climate** (recommendation) - Monitor perceived value and employee experience, protect creative ownership, and treat safety and clarity as practical infrastructure rather than proof of financial returns.
-   Topics: leadership, ai-value. Evidence: `L94`, "creative ownership".
+1. **Seven EX factors span enablement, productivity, and attachment** (framework) - The framework covers psychological safety, role clarity, individual/team productivity, Intent to Stay, recommendation, and eSat. These constructs are distinct from tool availability and motivate examining the human conditions surrounding perceived AI benefit.
+   Topics: people-science, ai-value, survey-design. Evidence: `L10`, "seven employee experience (EX) factors".
+2. **Adjusted associations are estimated one factor at a time** (method) - Each cross-sectional OLS model relates one EX factor to RIVA while controlling for job level and use frequency. Coefficients do not represent unique causal contributions or a joint multivariable importance ranking; independent samples prevent within-person inference.
+   Topics: methods, ai-value, survey-interpretation. Evidence: `L46`, "one at a time".
+3. **RIVA calculation and wording constrain comparability** (method) - RIVA is mean six-item favorability, not audited ROI. The referent changes from generative AI in the first two studies to AI in the last; changing geography and samples also limit apparent trends to directional comparisons.
+   Topics: methods, ai-value, survey-design. Evidence: `L61`, "referent for the RIVA items changed slightly".
+4. **Perceived productivity remains a stable RIVA correlate** (finding) - Both individual and team productivity retained relatively consistent relationships with RIVA across snapshots. This is stability of reported associations, not proof of objective productivity gains or an invariant causal mechanism.
+   Topics: ai-value, methods, work-design. Evidence: `L28`, "perceptions of both individual and team productivity".
+5. **The meaning of team productivity may change with agents** (hypothesis) - The author asks whether employees may begin including agents in their mental definition of team output. This is an open measurement-validity question, not an observed construct shift already established by the data.
+   Topics: ai-agents, survey-design, methods. Evidence: `L30`, "the construct itself may shift".
+6. **Safety's value association strengthens in the later comparison** (finding) - The prose describes psychological safety as a stronger RIVA correlate in the latest snapshot. Because the measure was absent in April 2024, this is a July–November 2025 comparison, not a three-wave rise or evidence of an intervention effect.
+   Topics: psychological-safety, ai-value, methods. Evidence: `L32`, "psychological safety and role clarity".
+7. **Clarify human-machine responsibility as roles change** (recommendation) - Role clarity also strengthened as a later-snapshot RIVA correlate. The article recommends guidance on automation versus augmentation and expectations as agents absorb tasks, without establishing that clarity causes financial return or that April 2024 measured the same item.
+   Topics: role-clarity, ai-agents, ai-value. Evidence: `L34`, "what to automate versus what to augment".
+8. **Engagement-value associations vary with context** (finding) - eSat and recommendation associations with RIVA dipped in July 2025 and rebounded in November rather than following productivity's stable pattern. The source does not establish identical behavior for every attachment/retention factor.
+   Topics: engagement, ai-value, survey-interpretation. Evidence: `L37`, "engagement metrics (eSat and Recommend) fluctuated".
+9. **An emotional adoption arc is a hypothesis, not a trajectory** (hypothesis) - Early excitement or selection into access, later job-security concerns, and renewed mastery are alternative proposed explanations for the association pattern. Different samples cannot demonstrate this emotional journey within individuals.
+   Topics: change-management, engagement, methods. Evidence: `L38`, "One hypothesis".
+10. **Protect independent contribution while monitoring AI benefit** (recommendation) - The article recommends retaining creative ownership and meaningful individual contribution alongside AI assistance. Its warning about over-reliance is a risk to monitor, not an observed threshold at which a productivity correlation becomes harmful.
+   Topics: meaningful-work, empowerment, ai-governance. Evidence: `L43`, "retain a meaningful sense of individual contribution".
+11. **Track climate and human conditions without promising ROI** (recommendation) - Monitor engagement alongside perceived value and treat safety and clarity as practical supports for experimentation. The source's leading-indicator/ROI language does not make these cross-sectional measures validated financial forecasts or proven causal investments.
+   Topics: employee-listening, ai-value, psychological-safety, role-clarity. Evidence: `L44`, "Treat psychological safety and role clarity as AI infrastructure".
 
 ## Shared research context
 

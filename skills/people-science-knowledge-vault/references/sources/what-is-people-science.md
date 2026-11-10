@@ -2,7 +2,7 @@
 
 [Context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md) | [Source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md)
 
-Index review: 2026-10-30. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
+Index review: 2026-11-10. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
 
 <a id="what-is-people-science"></a>
 ## What is People Science?
@@ -15,28 +15,20 @@ Index review: 2026-10-30. These editorial themes route retrieval; they are not a
 
 Microsoft Viva's definition and service model for People Science; a discipline overview, not an intervention-effect study.
 
-**Reviewed asset scope:** Complete published article/documentation body. Linked courses and other resources are separate assets, not automatically reviewed. No claim of complete linked-recording coverage.
+**Reviewed asset scope:** Complete current cached public article body reviewed; comments, page chrome, and link directories excluded from substantive evidence. Embedded figures were not re-reviewed; claims are restricted to readable prose/page text, not image-only details. Linked publications, courses, and other companion assets are not newly reviewed unless explicitly stated.
 
-1. **Research-backed people-centric practice** (framework) - People Science studies happiness and success at work using research and attention to human experience.
-   Topics: people-science. Evidence: `L6`, "research-backed".
-2. **Engagement and business performance** (framework) - The discipline focuses on the intersection of employees' engagement and organizational outcomes.
-   Topics: people-science, engagement. Evidence: `L4`, "intersection".
-3. **Interdisciplinary foundations** (framework) - Organizational and occupational psychology combine with data science, product management, and design.
-   Topics: people-science, methods. Evidence: `L6`, "industrial-organizational psychology".
-4. **Best selves and best work** (framework) - The stated purpose is helping people bring their best selves to work and do their best work.
-   Topics: people-science, wellbeing. Evidence: `L9`, "best selves".
-5. **Research challenging HR conventions** (framework) - The team describes using its data and expertise to test conventional HR practices.
-   Topics: people-science, methods. Evidence: `L10`, "challenges conventional HR practices".
-6. **Research embedded in products** (framework) - Research informs product design and outreach to create human-centric Viva experiences.
-   Topics: people-science, work-design. Evidence: `L10`, "weave this research".
-7. **Tailored listening strategy** (documentation) - Professional services help customers select an employee-experience measurement and improvement strategy.
-   Topics: employee-listening, survey-design. Evidence: `L13`, "tailored strategy".
-8. **Stakeholder buy-in for change** (documentation) - The service model includes securing support for strategies linked to engagement and business performance.
-   Topics: change-management, leadership. Evidence: `L13`, "get buy-in".
-9. **Customer capability building** (documentation) - People Scientists aim to help customers develop their own People Science expertise.
-   Topics: learning-enablement, people-science. Evidence: `L14`, "People Science pros".
-10. **Empathy-led product advocacy** (documentation) - Customer pain points and user empathy inform product consulting and improvement.
-   Topics: people-science, employee-listening. Evidence: `L15`, "deep user empathy".
+1. **An interdisciplinary, research-backed people-centric practice** (framework) - Microsoft Viva defines People Science as studying and practicing happiness and success at work, integrating organizational psychology and development with data science, product management, and design.
+   Topics: people-science, methods. Evidence: `L6`, "study and practice of happiness and success at work".
+2. **Connect employee engagement with business performance** (commentary) - The discipline overview frames its purpose as finding where engagement and organizational performance intersect. This is a statement of purpose, not evidence that any particular intervention improves profits.
+   Topics: people-science, engagement. Evidence: `L4`, "intersection between people’s engagement and business performance".
+3. **Research informs human-centered products and habits** (documentation) - The team describes challenging HR conventions through research and embedding that learning in product and outreach, while evolving its services and tools to build useful habits and mindsets.
+   Topics: people-science, work-design. Evidence: `L8`, "challenges conventional HR practices".
+4. **Tailor listening strategy and build stakeholder buy-in** (documentation) - The service model includes helping customers gain support for an employee-experience strategy aligned with engagement and business priorities, rather than imposing a generic survey program.
+   Topics: people-science, employee-listening, leadership. Evidence: `L10`, "get buy-in on a tailored strategy".
+5. **Build customer People Science capability** (documentation) - The service model aims to help customers become more capable People Science practitioners and succeed in their roles, rather than leaving interpretation and change entirely with external experts.
+   Topics: people-science, learning-enablement. Evidence: `L11`, "become People Science pros".
+6. **Bring practitioner empathy into product design** (documentation) - The team describes alleviating customer pain by bringing deep user empathy and practical People Science experience into product decisions. This is a service/design commitment, not an intervention-effect finding.
+   Topics: people-science, work-design. Evidence: `L12`, "deep user empathy".
 
 ## Shared research context
 
