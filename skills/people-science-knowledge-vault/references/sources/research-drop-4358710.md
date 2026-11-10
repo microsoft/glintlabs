@@ -2,7 +2,7 @@
 
 [Context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md) | [Source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md)
 
-Index review: 2026-10-30. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
+Index review: 2026-11-10. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
 
 <a id="research-drop-4358710"></a>
 ## Research Drop: What Organizations Ask in Employee Surveys (Plus Three Untapped Opportunities for 2025)
@@ -13,32 +13,30 @@ Index review: 2026-10-30. These editorial themes route retrieval; they are not a
 
 **Source:** https://techcommunity.microsoft.com/blog/viva_glint_blog/research-drop-what-organizations-ask-in-employee-surveys-plus-three-untapped-opp/4358710
 
-December 2024 public article and three figures reviewed. Taxonomy-item utilization September 2022-August 2023 n=729 customers versus September 2023-August 2024 n=728; custom items excluded. These counts measure customer inclusion, not employee favorability or item effectiveness. Separate cited outcome analyses must not be conflated with utilization evidence.
+December 2024 analysis of LinkedIn Glint taxonomy-item inclusion across September 2022–August 2023 (729 customers) and September 2023–August 2024 (728 customers). Custom items were excluded. Utilization is customer inclusion, not employee favorability or evidence that asking an item improves outcomes. Outcome/exit analyses cited for recommendations are separate datasets. A malformed extraction of the outcome-item paragraph limits exact wording verification.
 
-**Reviewed asset scope:** Complete published article/documentation body. Also reviewed OCR of 3 public figures; numeric claims cross-checked against written text where available. Linked courses and other resources are separate assets, not automatically reviewed. No claim of complete linked-recording coverage.
+**Reviewed asset scope:** Complete freshly retrieved public article body read, including substantive published method/item appendices where present. Figures, chart pixels, linked assets, audio, private decks, and notes were not reviewed in this pass. Current themes are grounded in body prose, not chart alt text. Prior figure review is historical only and is recorded in the audit; it is not refreshed coverage.
 
 **Study-family links:** glint-standard-item-utilization-2022-2024
 
-1. **Stable core survey content** (finding) - Nineteen of the twenty most-used items remain in the top twenty across the two annual windows.
-   Topics: survey-design, employee-listening. Evidence: `L13`, "95%".
-2. **Flexibility beyond the core** (finding) - Changes outside the most-used items suggest room to adapt content to local strategy and emerging needs.
-   Topics: survey-design, change-management. Evidence: `L15`, "unique to their context".
-3. **Wellbeing gains prominence** (finding) - The Wellbeing item rises from rank 25 into the top twenty.
-   Topics: wellbeing, survey-design. Evidence: `L20`, "well-being".
-4. **Include an outcome measure** (recommendation) - The article recommends an overall outcome item, with eSat used by 90% of customers.
-   Topics: engagement, survey-design. Evidence: `L29`, "90%".
-5. **Retention intentions are undermeasured** (finding) - Intent to Stay is used by 24% despite a separately cited association with subsequent exits.
-   Topics: retention, survey-design. Evidence: `L41`, "24%".
-6. **All six People Success needs represented** (finding) - The ten most-used driver items collectively cover the six foundational needs.
-   Topics: people-science, survey-design. Evidence: `L48`, "all six".
-7. **Role clarity as an opportunity** (recommendation) - A comparatively underused role-expectations item may add insight during changing work demands.
-   Topics: work-design, survey-design. Evidence: `L56`, "expected of me".
-8. **Career conversations as an opportunity** (recommendation) - The article highlights manager career-development discussions as another underused listening topic.
-   Topics: manager-effectiveness, learning-enablement. Evidence: `L59`, "career development".
-9. **Freedom to speak as an opportunity** (recommendation) - A speak-up item addresses part of psychological safety amid uncertainty and transformation.
-   Topics: psychological-safety, feedback. Evidence: `L63`, "negative consequences".
-10. **Balance trend continuity with follow-through** (recommendation) - Keep useful consistent measures, add strategy-relevant missing experiences, and prioritize action over fashionable topics.
-   Topics: action-taking, employee-listening. Evidence: `L83`, "flashy trends".
+1. **Stable core items leave room for local adaptation** (finding) - The top-20 item set was 95% the same across the annual windows, while more movement appeared outside that core. These are utilization patterns, supporting consistent tracking alongside context-sensitive additions rather than proving a universal optimal questionnaire.
+   Topics: survey-design, employee-listening. Evidence: `L5`, "95% of them are the same".
+2. **Wellbeing entered the most-used core** (finding) - The Wellbeing item moved from 25th into the top 20. This indicates more customer inclusion of perceived organizational care, not improved employee wellbeing or a measured intervention effect.
+   Topics: wellbeing, survey-design. Evidence: `L7`, "Wellbeing".
+3. **Include an overall employee-experience outcome** (recommendation) - The article recommends at least one overall outcome item and identifies eSat as the most frequently used item. Item popularity should not substitute for matching the survey to an organization's outcomes.
+   Topics: engagement, survey-design. Evidence: `L10`, "include at least one outcome item".
+4. **Retention intentions remain less commonly measured** (finding) - Only 24% of customers included the retention-intention item in the later window. The cited exit association comes from a separate 33-customer analysis, not from this utilization comparison and not from a test of adding the item.
+   Topics: retention, survey-design, methods. Evidence: `L11`, "only 24% of our customers".
+5. **Common drivers span all six People Success elements** (finding) - The ten most-used driver items collectively covered wellbeing, connection, clarity, empowerment, growth, and purpose; over half of customers used them. This is evidence of broad topic coverage, not certification of every customer's program.
+   Topics: people-science, survey-design, wellbeing, connection, role-clarity, empowerment, growth-development, meaningful-work. Evidence: `L14`, "covered all six of the People Success elements".
+6. **Ask about role expectations when clarity is missing** (recommendation) - Role Clarity is highlighted as an underused opportunity, especially when AI is changing tasks and expectations. Including it can reveal an experience gap; the external performance literature is rationale, not a tested result of asking this question.
+   Topics: role-clarity, survey-design. Evidence: `L19`, "I clearly understand what is expected of me in my role".
+7. **Ask about meaningful career-development conversations** (recommendation) - The career topic is another comparatively underused opportunity. Understanding manager career discussions may be useful as development paths change, without equating a survey item, internal mobility, and retention as the same construct.
+   Topics: growth-development, manager-effectiveness, survey-design. Evidence: `L20`, "meaningful discussions with me about my career development".
+8. **Ask whether employees can speak without fear** (recommendation) - Speak My Mind captures part of psychological safety and may surface concerns employees have not voiced during change. It is not a complete measure of all psychological-safety practices.
+   Topics: psychological-safety, empowerment, survey-design. Evidence: `L21`, "I feel free to speak my mind without fear of negative consequences".
+9. **Balance continuity, strategy, and action** (recommendation) - Retain useful trend measures but add experiences that matter to local strategy and have been overlooked. Avoid chasing fashionable topics and prioritize acting on feedback rather than expanding survey content for its own sake.
+   Topics: survey-design, action-taking, employee-listening. Evidence: `L30`, "Try not to get caught up in flashy trends".
 
 ## Shared research context
 

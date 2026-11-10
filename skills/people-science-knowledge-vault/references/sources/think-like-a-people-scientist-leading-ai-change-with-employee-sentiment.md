@@ -2,7 +2,7 @@
 
 [Context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md) | [Source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md)
 
-Index review: 2026-10-30. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
+Index review: 2026-11-10. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
 
 <a id="think-like-a-people-scientist-leading-ai-change-with-employee-sentiment"></a>
 ## Think like a People Scientist: Leading AI Change with Employee Sentiment
@@ -13,9 +13,9 @@ Index review: 2026-10-30. These editorial themes route retrieval; they are not a
 
 **Source:** https://techcommunity.microsoft.com/blog/microsoftvivablog/think-like-a-people-scientist-leading-ai-change-with-employee-sentiment/4412911
 
-May 2025 public recap plus the complete 45-minute public webinar audio, locally machine-transcribed and reviewed. Practitioner recommendations, customer anecdotes, and secondary presentations of research are distinct from new empirical studies. Access/use comparisons can be confounded; perceived productivity is not financial ROI. Historic item, benchmark, and integration statements require current product verification.
+May 2025 recap freshly text-reviewed; ten recording-backed themes preserve the earlier complete 45-minute public-webinar machine-transcript review and have not been audio-refreshed. Practitioner recommendations, customer anecdotes, and secondary presentations of research are not new empirical studies. Access/use comparisons can be confounded; perceived productivity is not financial ROI. Historic item, benchmark, and integration statements require current product verification.
 
-**Reviewed asset scope:** Complete published article/documentation body. Linked courses and other resources are separate assets, not automatically reviewed. Complete local machine transcript of embedded public webinar audio reviewed; visual-only content and untranscribed demos not certified.
+**Reviewed asset scope:** Complete current cached public article body reviewed; comments, page chrome, and link directories excluded from substantive evidence. Embedded figures were not re-reviewed; claims are restricted to readable prose/page text, not image-only details. Mixed coverage: 10 previously reviewed recording-backed themes and all additional_media provenance are retained unchanged, apart from ordinal theme IDs. Audio was NOT refreshed or re-reviewed in this pass; prior machine transcription does not certify visual demos. Linked publications, courses, and other companion assets are not newly reviewed unless explicitly stated.
 
 **Study-family links:** ai-readiness-april-2024
 

@@ -2,7 +2,7 @@
 
 [Context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md) | [Source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md)
 
-Index review: 2026-10-30. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
+Index review: 2026-11-10. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
 
 <a id="psychological-safety"></a>
 ## 3 Steps to Build Psychological Safety on Your Team
@@ -13,26 +13,26 @@ Index review: 2026-10-30. These editorial themes route retrieval; they are not a
 
 **Source:** https://techcommunity.microsoft.com/blog/microsoftvivablog/3-steps-to-build-psychological-safety-on-your-team/4297916
 
-Published practical manager guidance plus the complete machine transcript of the 58-minute public webinar audio. Presenter recommendations, teaching anecdotes, and secondary research citations are not an intervention trial. Do not treat infographic effect sizes or causal-sounding presentation language as universal intervention effects. The visual Copilot demo and its exact prompts are not certified by the audio transcript.
+Current public article text reviewed, with five recording themes retained from the earlier complete 58-minute public-webinar machine-transcript review; audio was not refreshed. Manager recommendations, teaching anecdotes, and secondary research citations are not an intervention trial. Infographic effect sizes and causal-sounding presentation language are not universal effects. The visual Copilot demo and exact prompts are not certified by the transcript.
 
-**Reviewed asset scope:** Complete published article/documentation body. Also reviewed OCR of 1 public figures; numeric claims cross-checked against written text where available. Linked courses and other resources are separate assets, not automatically reviewed. Complete local machine transcript of embedded public webinar audio reviewed; visual-only content and untranscribed demos not certified.
+**Reviewed asset scope:** Complete current cached public article body reviewed; comments, page chrome, and link directories excluded from substantive evidence. Embedded figures were not re-reviewed; claims are restricted to readable prose/page text, not image-only details. Mixed coverage: 5 previously reviewed recording-backed themes and all additional_media provenance are retained unchanged, apart from ordinal theme IDs. Audio was NOT refreshed or re-reviewed in this pass; prior machine transcription does not certify visual demos. Linked publications, courses, and other companion assets are not newly reviewed unless explicitly stated.
 
 **Reviewed webinar audio:** https://medius.microsoft.com/Embed/video-nc/2d8add50-af59-4921-9844-aab616803def (publisher-reviewed machine transcript; not hosted here; visual-only content not certified).
 
-1. **Speaking up without punishment** (framework) - Psychological safety means being able to question, take interpersonal risks, and admit errors without feared negative consequences.
-   Topics: psychological-safety. Evidence: `L15`, "without fear".
-2. **Quit intentions and motivation** (finding) - The article cites associations between low safety, desire to quit, and low motivation; intentions are not observed exits, and these citations are not this resource's own experiment.
-   Topics: psychological-safety, retention. Evidence: `L6`, "quit their jobs".
-3. **Recognize collaboration, candor, and belonging** (framework) - The presenter offers help-seeking, honest disagreement, and mutual respect as practical signs to explore, not an exhaustive diagnostic test of team safety.
+1. **Speaking up without interpersonal punishment** (framework) - Psychological safety is a shared understanding that people may take risks, ask questions, voice concerns, and admit errors without embarrassment, rejection, or other negative consequences.
+   Topics: psychological-safety, connection. Evidence: `L6`, "without fear of negative consequences".
+2. **Quit intentions and motivation are associated with safety** (finding) - The article cites the 2024 APA Work in America survey: lower-safety employees were four times as likely to indicate wanting to quit, and 31% said they were not motivated to do their best work. These are secondary survey associations, not manager-intervention effects or observed exits.
+   Topics: psychological-safety, retention, engagement, methods. Evidence: `L1`, "4x as likely".
+3. **Regulate defensiveness before responding** (recommendation) - Notice activation, pause to reflect, and ask curious follow-up questions rather than taking feedback personally. Defensive shutdown can teach employees not to speak; the article recommends self-awareness and respectful responses.
+   Topics: psychological-safety, manager-effectiveness, feedback. Evidence: `L11`, "check reactivity that is defensive or negative".
+4. **Listen to understand rather than immediately solve** (recommendation) - Listen with empathy and curiosity without imposing an agenda, controlling the conversation, explaining away concerns, or assuming every disclosure needs immediate problem-solving.
+   Topics: psychological-safety, feedback, connection. Evidence: `L18`, "understanding and empathizing".
+5. **Model vulnerability instead of declaring trust** (recommendation) - Trust develops over time when leaders admit mistakes, share learning, and respond constructively to others' risk-taking; simply calling oneself a safe manager does not create immediate transparency.
+   Topics: psychological-safety, manager-effectiveness. Evidence: `L22`, "cannot be achieved by simply declaring".
+6. **Recognize collaboration, candor, and belonging** (framework) - The presenter offers help-seeking, honest disagreement, and mutual respect as practical signs to explore, not an exhaustive diagnostic test of team safety.
    Topics: psychological-safety, inclusion, connection. Evidence: `s210` at 1046.2s, [recording](https://medius.microsoft.com/Embed/video-nc/2d8add50-af59-4921-9844-aab616803def), "collaboration".
-4. **Regulate defensiveness and get curious** (recommendation) - Notice reactive feelings, pause to understand them, and ask clarifying questions rather than immediately taking concerns personally or explaining why employees are wrong.
-   Topics: manager-effectiveness, psychological-safety. Evidence: `L26`, "Slowing down".
-5. **Listen without a problem-solving agenda** (recommendation) - Listen to understand and empathize; explicitly distinguish when someone needs to be heard from when they want help solving a problem.
-   Topics: feedback, manager-effectiveness. Evidence: `L30`, "understanding and empathizing".
-6. **Build trust through recurring human check-ins** (recommendation) - Protect time in regular conversations to understand how people are doing; sustained listening matters even when the manager cannot immediately change the situation.
+7. **Build trust through recurring human check-ins** (recommendation) - Protect time in regular conversations to understand how people are doing; sustained listening matters even when the manager cannot immediately change the situation.
    Topics: employee-listening, wellbeing. Evidence: `s441` at 1994.3s, [recording](https://medius.microsoft.com/Embed/video-nc/2d8add50-af59-4921-9844-aab616803def), "scheduling regular check-ins".
-7. **Model vulnerability and learning from mistakes** (recommendation) - Admit fallibility, normalize learning, and show what will change next time rather than performing perfection.
-   Topics: psychological-safety, leadership. Evidence: `L35`, "normalizing mistakes".
 8. **Honor the risk employees take in speaking up** (recommendation) - Thank people for raising concerns or admitting uncertainty, and avoid responses that punish vulnerability or teach others to stay silent.
    Topics: feedback, psychological-safety. Evidence: `s480` at 2132.6s, [recording](https://medius.microsoft.com/Embed/video-nc/2d8add50-af59-4921-9844-aab616803def), "thank them for sharing".
 9. **Managers need safety and peer support too** (recommendation) - The presenter recommends senior-leadership commitment and manager support groups so managers have somewhere to learn and process difficult interactions themselves.

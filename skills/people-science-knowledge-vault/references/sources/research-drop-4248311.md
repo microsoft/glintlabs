@@ -2,7 +2,7 @@
 
 [Context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md) | [Source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md)
 
-Index review: 2026-10-30. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
+Index review: 2026-11-10. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
 
 <a id="research-drop-4248311"></a>
 ## Research Drop: Empowering Managers to Take Action on Survey Results & Insights
@@ -13,32 +13,30 @@ Index review: 2026-10-30. These editorial themes route retrieval; they are not a
 
 **Source:** https://techcommunity.microsoft.com/blog/viva_glint_blog/research-drop-empowering-managers-to-take-action-on-survey-results--insights/4248311
 
-September 2024 public article and six figures reviewed; no private deck notes used. Article reports 703 US managers with 5+ direct reports across 10+ industries. Related manager-behavior publication reports n=500, so these counts are not silently treated as identical. Descriptive self-report, not proof of action-taking interventions.
+September 2024 publication reporting a descriptive survey of 703 US managers across 10+ industries, each with at least five direct reports. The related February 2025 manager-behavior publication reports n=500; these are not silently treated as identical samples. Self-reported needs and action behaviors do not test the effects of the recommended interventions.
 
-**Reviewed asset scope:** Complete published article/documentation body. Also reviewed OCR of 6 public figures; numeric claims cross-checked against written text where available. Linked courses and other resources are separate assets, not automatically reviewed. No claim of complete linked-recording coverage.
+**Reviewed asset scope:** Complete freshly retrieved public article body read, including substantive published method/item appendices where present. Figures, chart pixels, linked assets, audio, private decks, and notes were not reviewed in this pass. Current themes are grounded in body prose, not chart alt text. Prior figure review is historical only and is recorded in the audit; it is not refreshed coverage.
 
 **Study-family links:** manager-action-july-2024
 
-1. **Operational decisions drive insight demand** (finding) - Managers prioritize data for team performance, work prioritization, and decisions affecting their team.
-   Topics: manager-effectiveness, survey-interpretation. Evidence: `L13`, "operational-based activities".
-2. **Relevance makes data actionable** (finding) - Team-specific relevance is the leading characteristic managers want from insights.
-   Topics: survey-interpretation, action-taking. Evidence: `L16`, "relevance".
-3. **Connect insights to organizational purpose** (finding) - Values and business-priority alignment help explain why managers should act.
-   Topics: leadership, action-taking. Evidence: `L18`, "broader goals".
-4. **Map ease and control separately** (framework) - The article classifies topics into quick wins, strategic challenges, collective efforts, and organizational undertakings.
-   Topics: action-taking, methods. Evidence: `L20`, "control".
-5. **Support the strategic sweet spot** (recommendation) - Prioritization and collaboration matter to managers but are not the easiest changes; targeted support can help.
-   Topics: work-design, manager-effectiveness. Evidence: `L30`, "sweet spot".
-6. **Formal processes do not ensure action** (finding) - Having a prescribed action process is not equivalent to routinely taking action.
-   Topics: action-taking, glint-admin. Evidence: `L33`, "doesn't guarantee".
-7. **Result-sharing and follow-up are uncommon** (finding) - The published behavior counts expose gaps in sharing findings, recognizing progress, connecting goals, and checking improvement.
-   Topics: feedback, action-taking. Evidence: `L38`, "38%".
-8. **Control and volume can block follow-through** (finding) - Managers may struggle when insights concern issues beyond their control or overwhelm their attention.
-   Topics: survey-interpretation, work-design. Evidence: `L44`, "not within their control".
-9. **Confidence and shared momentum** (recommendation) - Cross-team collaboration and visible collective effort are suggested ways to sustain action between surveys.
-   Topics: leadership, action-taking. Evidence: `L47`, "cross-team support".
-10. **Invest in tools and targeted resources** (recommendation) - Central tracking, feedback tools, generative AI, targeted insights, and collaborative planning are investment opportunities rather than guaranteed solutions.
-   Topics: action-taking, learning-enablement. Evidence: `L51`, "less frequently provided".
+1. **Operational work drives insight demand** (finding) - Managers sought data especially for operational responsibilities such as performance and prioritization; relational activities ranked lower in their reported reliance on data. This describes demand, not the relative importance of relationship-building.
+   Topics: manager-effectiveness, action-taking. Evidence: `L9`, "operational-based activities".
+2. **Relevance and purpose make insights actionable** (finding) - Managers rated relevance highest and also valued links to organizational goals, values, and priorities. Ground insights in the team's situation and explain why acting matters to the wider business.
+   Topics: action-taking, survey-interpretation. Evidence: `L11`, "relevance was the top characteristic".
+3. **Separate ease of improvement from control** (framework) - The framework distinguishes manager low-hanging fruit, strategic challenges, collective efforts, and organizational undertakings. Ease and manager authority are separate dimensions; some topics need coordinated or organizational ownership.
+   Topics: action-taking, empowerment. Evidence: `L14`, "four categories of topics".
+4. **Support critical but difficult manager work** (recommendation) - Prioritization and collaboration/performance overlapped with strategic challenges: work managers need insights for but find harder to improve. Target additional data or support there rather than selecting only easy wins.
+   Topics: action-taking, manager-effectiveness. Evidence: `L19`, "sweet spot of activities".
+5. **Formal action processes leave a behavior gap** (finding) - Favorable views of organizational processes did not translate into widespread reported follow-through. The prose reports 42% recognizing progress, 38% sharing results, 25% linking plans to business objectives, and 21% conducting progress pulses.
+   Topics: action-taking, employee-listening. Evidence: `L23`, "Under half of the managers".
+6. **Keep action requests within manager influence** (recommendation) - Managers identified insight experience, effort, and tools as leading barriers. The article recommends targeted insights on matters managers feel empowered to affect, rather than holding them solely responsible for uncontrollable themes.
+   Topics: action-taking, empowerment. Evidence: `L30`, "topics that managers feel empowered to act upon".
+7. **Build confidence and shared momentum** (recommendation) - Cross-team support and collaboration are proposed ways to sustain action between survey signals when managers feel overwhelmed or cannot see others staying involved. This is guidance, not a tested confidence intervention.
+   Topics: action-taking, connection. Evidence: `L31`, "cross-team support and collaboration opportunities".
+8. **Equip the process with tracking and feedback tools** (recommendation) - A formal process may lack supporting tools. Centralized tracking, progress feedback, and reminders are recommended to reduce the effort required for ongoing action.
+   Topics: action-taking, learning-enablement. Evidence: `L32`, "centralizing tools for tracking".
+9. **Distinguish standard resources from investment gaps** (finding) - Managers generally received valued templates, recommendations, training, and examples. Generative AI tools, targeted insights, and collaborative planning were described as valued but less consistently supplied opportunities, not proven solutions.
+   Topics: action-taking, learning-enablement. Evidence: `L34`, "high value resources that are less frequently provided".
 
 ## Shared research context
 

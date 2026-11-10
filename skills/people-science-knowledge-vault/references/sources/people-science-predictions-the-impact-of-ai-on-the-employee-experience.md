@@ -2,7 +2,7 @@
 
 [Context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md) | [Source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md)
 
-Index review: 2026-10-30. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
+Index review: 2026-11-10. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
 
 <a id="people-science-predictions-the-impact-of-ai-on-the-employee-experience"></a>
 ## People Science Predictions: The impact of AI on the employee experience
@@ -13,30 +13,34 @@ Index review: 2026-10-30. These editorial themes route retrieval; they are not a
 
 **Source:** https://techcommunity.microsoft.com/blog/microsoftvivablog/people-science-predictions-the-impact-of-ai-on-the-employee-experience/4009288
 
-Twelve forward-looking practitioner predictions published at the end of 2023, consolidated into ten related lookup themes. These are forecasts and proposed risks, not confirmed effects.
+Twelve forward-looking practitioner predictions published in December 2023 about AI and employee experience. These are forecasts, recommendations, and proposed risks rather than confirmed causal effects or a new empirical study. Source references to future developments preserve their historical publication context.
 
-**Reviewed asset scope:** Complete published article/documentation body. Linked courses and other resources are separate assets, not automatically reviewed. No claim of complete linked-recording coverage.
+**Reviewed asset scope:** Complete current cached public article body reviewed; comments, page chrome, and link directories excluded from substantive evidence. Embedded figures were not re-reviewed; claims are restricted to readable prose/page text, not image-only details. Linked publications, courses, and other companion assets are not newly reviewed unless explicitly stated.
 
-1. **Unequal AI skill starting points** (hypothesis) - The authors forecast widening perceived skills gaps and recommend inclusive AI enablement.
-   Topics: ai-skills, inclusion. Evidence: `L6`, "different starting points".
-2. **More strategic talent work** (hypothesis) - AI is expected to free talent professionals from routine drafting and allow more strategic coaching and organizational work.
-   Topics: hr-it, work-design. Evidence: `L10`, "strategic tasks".
-3. **Productivity with security guardrails** (hypothesis) - The article anticipates productivity opportunities alongside proprietary-data and security concerns.
-   Topics: ai-value, ai-governance. Evidence: `L16`, "data security".
-4. **Augmentation rather than replacement** (hypothesis) - AI is envisioned as a partner for brainstorming and drafting, not simply a substitute for human thought.
-   Topics: ai-adoption, work-design. Evidence: `L19`, "augmentation".
-5. **Resilience and continuous learning** (hypothesis) - Adaptation is expected to require experimentation, compassionate leadership, ownership, and ongoing skill development.
-   Topics: change-management, ai-skills. Evidence: `L25`, "resilience and adaptability".
-6. **Human leadership and relationships** (hypothesis) - The authors expect empathy, connection, and bias-aware human judgment to become more valuable.
-   Topics: leadership, ai-governance. Evidence: `L29`, "connection, empathy".
-7. **Future roles and critical-thinking skills** (hypothesis) - Role redesign and workforce relevance are linked to upskilling, curiosity, assumption testing, and critical assessment of AI outputs.
-   Topics: ai-skills, work-design. Evidence: `L58`, "thinking critically".
-8. **Prioritization and behavior change** (hypothesis) - The authors propose focusing on valuable AI use cases and using time saved in analysis for communication and behavior change.
-   Topics: action-taking, ai-strategy. Evidence: `L63`, "behavior change".
-9. **Fair organizational AI norms** (hypothesis) - Clear guidance on rewards and AI usage is proposed as a basis for trust and equitable employee experience.
-   Topics: ai-governance, inclusion. Evidence: `L67`, "clear guidelines".
-10. **Burnout from concentrating difficult work** (hypothesis) - Removing routine tasks could leave employees with sustained cognitively demanding work unless recovery is deliberately protected.
-   Topics: wellbeing, work-design. Evidence: `L76`, "decompression".
+1. **Inclusive enablement for unequal AI skill starting points** (hypothesis) - The authors predict an initially wider perceived technology-skills gap and recommend inclusive AI enablement that recognizes different learning starting points.
+   Topics: ai-skills, inclusion, learning-enablement. Evidence: `L4`, "different starting points".
+2. **Talent professionals may shift toward strategic work** (hypothesis) - The forecast proposes that experimenting with AI for routine drafting could free talent professionals for manager coaching and business-critical talent decisions; this is not a measured productivity effect.
+   Topics: hr-it, work-design, ai-value. Evidence: `L6`, "reallocate time to more strategic".
+3. **Productivity opportunity depends on security guardrails** (hypothesis) - The authors anticipate AI supporting tasks and deliverables while raising proprietary-content and data-security concerns; organizations without adequate tooling and safeguards may miss expected benefits.
+   Topics: ai-governance, ai-value. Evidence: `L8`, "protection of proprietary content".
+4. **Augment human thinking rather than equate AI with replacement** (hypothesis) - The forecast highlights drafts, brainstorming, and additional perspectives as augmentation of human judgment, not just automation or wholesale role replacement.
+   Topics: ai-value, work-design. Evidence: `L10`, "augmentation of work".
+5. **Resilience requires continuous learning and compassionate change** (hypothesis) - The authors expect jobs to change even without changing employer or role, calling for experimentation, adaptability, ownership, and leaders who address uncertainty compassionately.
+   Topics: change-management, learning-enablement, leadership. Evidence: `L12`, "Jobs will change all around you".
+6. **Human connection and accountable managerial judgment** (hypothesis) - The forecast places greater value on empathy, emotional intelligence, and relationships as AI handles analysis; managers also retain responsibility to monitor bias and align AI-supported decisions with organizational values.
+   Topics: connection, manager-effectiveness, ai-governance. Evidence: `L14`, "monitoring and re-aligning AI-driven decisions".
+7. **Plan future skills and roles before they fully emerge** (hypothesis) - Organizations are urged to anticipate how roles may evolve and prepare existing talent, while acknowledging uncertainty about the jobs of the future.
+   Topics: work-design, ai-skills, growth-development. Evidence: `L16`, "We don’t know what jobs of the future look like".
+8. **Prioritize high-value AI uses and explicit trade-offs** (hypothesis) - The authors predict prioritization will become more important for allocating scarce time, energy, budget, and attention to impactful uses while balancing risks.
+   Topics: ai-strategy, leadership, role-clarity. Evidence: `L19`, "balancing the trade-offs and risks".
+9. **Curiosity and critical thinking sustain employee relevance** (hypothesis) - The forecast encourages asking better questions, testing assumptions and hypotheses, experimenting, and critically reviewing AI outputs, alongside organizational conditions for learning.
+   Topics: ai-skills, learning-enablement. Evidence: `L25`, "thinking critically about AI outputs".
+10. **Faster analysis may shift attention toward behavior change** (hypothesis) - One prediction is that reduced time interpreting data could create more room for communication and measurable behavior change. It is an expectation about work allocation, not evidence that AI analysis is effortless or accurate.
+   Topics: action-taking, feedback, ai-value. Evidence: `L27`, "conversation and behavior change".
+11. **Fair AI-use norms may influence employer trust** (hypothesis) - The authors raise questions about rewarding AI-enabled performance and treating nonusers fairly; transparent norms are proposed as a basis for trust rather than leaving employees suspicious about unequal treatment.
+   Topics: ai-governance, inclusion, leadership. Evidence: `L29`, "clear guidelines and organizational norms".
+12. **Removing routine tasks may concentrate mentally taxing work** (hypothesis) - The authors flag a possible burnout risk if automation removes decompression opportunities while leaving sustained hard cognitive work. Organizations are advised to protect recovery rather than assume every saved minute should become demanding work.
+   Topics: wellbeing, work-design, ai-value. Evidence: `L31`, "opportunities for decompression".
 
 ## Shared research context
 

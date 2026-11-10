@@ -132,8 +132,10 @@ def validate_index(index: dict, catalog: dict) -> list[str]:
         reviewed = resource["review_status"] == "reviewed"
         if resource["review_status"] not in {"reviewed", "gap"}:
             issues.append(f"{prefix}: unknown review status")
-        if len(resource["themes"]) != (10 if reviewed else 0):
-            issues.append(f"{prefix}: reviewed resources need ten themes; gaps need zero")
+        if reviewed and not resource["themes"]:
+            issues.append(f"{prefix}: reviewed resources need at least one grounded theme")
+        elif not reviewed and resource["themes"]:
+            issues.append(f"{prefix}: gaps need zero themes")
         if not resource["context"] or not resource["asset_scope"]:
             issues.append(f"{prefix}: missing context or asset scope")
         if reviewed:
@@ -417,8 +419,9 @@ def render_lookup(index: dict) -> str:
         index["scope"], "",
         "**Source priority:** " + index["priority_policy"], "",
         "Editorial routing summaries, not statistical topic-model results or a "
-        "replacement for full-source retrieval. Ten themes need not be ten empirical "
-        "findings: kinds distinguish guidance, methods, documentation, and signposts. "
+        "replacement for full-source retrieval. Theme counts follow source coverage, "
+        "not a fixed quota. Kinds distinguish findings, guidance, methods, "
+        "documentation, and signposts. "
         "Related publications are not automatically independent studies.", "",
         "Generated from `theme-index.json` by "
         "`python scripts/search_knowledge_vault.py --write-reference`.", "",
@@ -606,7 +609,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("query", nargs="?", default="")
     modes = parser.add_mutually_exclusive_group()
-    modes.add_argument("--resource", help="return all ten themes for one resource ID")
+    modes.add_argument("--resource", help="return all reviewed themes for one resource ID")
     modes.add_argument("--coverage", action="store_true")
     modes.add_argument("--topics", action="store_true")
     modes.add_argument("--check", action="store_true")
