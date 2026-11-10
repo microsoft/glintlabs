@@ -36,6 +36,15 @@ claimed media coverage. Update themes, evidence hashes, anchors, review dates,
 and study-family links. Never infer content for an inaccessible resource.
 Keep catalog titles/URLs/priorities synchronized with `analyze-survey`.
 
+The catalog validator rejects duplicate canonical URLs, ignoring host casing,
+default ports, fragments, trailing slashes, and known tracking parameters while
+retaining meaningful query parameters. Resolve duplicate records under the
+current collection and column-J priority rules; do not restore the retired
+two-tier catalog format or overwrite the reviewed catalog with a seed index.
+The optional public `topic-aliases.md` supports human/agent discovery. The
+content-aware source checker below supersedes the older reachability-only
+checker; a successful HTTP response alone is not evidence verification.
+
 ```text
 python scripts/build_knowledge_vault_resources.py
 python scripts/search_knowledge_vault.py --write-reference

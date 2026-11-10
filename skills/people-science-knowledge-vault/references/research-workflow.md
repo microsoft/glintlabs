@@ -24,7 +24,9 @@ Computing the user's survey statistics belongs to the available analysis workflo
 
 ## Retrieve and verify
 
-1. Translate the scoped question into concepts and close variants. For user
+1. Translate the scoped question into concepts and close variants; the optional
+   [topic aliases](topic-aliases.md) can help expand unfamiliar phrasing without
+   replacing the user's terms or treating related constructs as equivalent. For user
    results, use generic research terms without transmitting customer-specific
    results, names, comments, or images to public retrieval.
 2. Read [source priority](source-priority.md) and relevant small topic/source
