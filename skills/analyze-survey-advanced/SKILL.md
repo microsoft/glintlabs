@@ -84,11 +84,15 @@ Open an authorized local preview automatically. Explain what ran, model QA,
 baseline comparisons, caveats, and what did not run. Embed research interpretation
 only after the required evidence review; otherwise mark it unavailable.
 
-For SVD question-removal recommendations, follow the evidence-gated item review
-in `references/modeling-workflow.md`. Ask about protected questions, benchmarks,
-and topic coverage; do not infer removability from a small component weight.
-Recommend no removals when evidence is insufficient, without claiming every
-item is essential. New diagnostic fits still require explicit instruction.
+For SVD survey-shortening requests, prepare a ranked shortlist of the top five
+questions to investigate for removal, not final retain/remove decisions.
+Follow the candidate workflow in `references/modeling-workflow.md`. Give each
+candidate an observed reason and the evidence that would help the decision.
+Use fewer than five when the available evidence or eligible item set warrants
+it; never fill the list with unsupported choices. Ask about protected questions,
+benchmarks, and topic coverage, but incomplete content/stability checks need
+not block a clearly provisional shortlist. Do not infer removability from a
+small component weight. New diagnostic fits still require explicit instruction.
 
 End an experiment discussion with concrete next choices and an invitation for
 the scientist's ideas or relevant data when that could change the next step.

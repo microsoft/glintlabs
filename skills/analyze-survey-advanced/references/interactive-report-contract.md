@@ -40,18 +40,26 @@ complete weight-table CSV/PNG exports include the run/config context and all
 computed items, not just the five-item card summaries. A not-run decomposition
 shows an explicit message, not empty or fabricated charts.
 
-After the component cards, show **Question-removal recommendations**. Distinguish
-an incomplete assessment, a reviewed no-removal outcome, evidence gaps, and
-named removal recommendations. Never derive removal from SVD weight thresholds.
-Show the question, decision, reason, and retained alternative; make the reviewed
-redundancy, coverage, stability evidence and protected-item list inspectable.
-These are analyst-reviewed assessments, not independently verified tests.
-With no attached review, explicitly recommend no removals because the evidence
-is insufficient, not because all items are proven necessary. Reviewed results
-have CSV/PNG and JSON downloads; the allowlisted ZIP includes
-`question-removal-review.json` only when a validated review exists. A stale
-review, protected-item removal, or removal of its retained representative
-blocks serialization. Rendering this section must not fit or change a model.
+After the component cards, show **Top five candidates for removal review**.
+Display the analyst-supplied ordering, fitted question, observed reason, optional
+comparison question, and evidence needed before deciding. Never label a candidate
+as a removal decision, require every fitted question to be assessed, or imply
+all five should be removed together. Known protected questions are excluded and
+comparison anchors cannot themselves be shortlisted. Show ranking basis,
+limitations and incomplete protection/content reviews prominently. SVD-profile
+similarity is at most exploratory evidence to investigate, not measured response
+correlation, duplicate content, or justification to delete.
+
+Support up to five candidates, a reasoned assessed-zero outcome, and a distinct
+not-yet-prepared state. Do not invent candidates to fill five slots. Source-bound
+shortlists have full CSV/PNG and JSON exports; long reasons and evidence must
+wrap rather than clip in PNGs. The allowlisted ZIP includes
+`question-removal-candidates.json` only for a valid attached shortlist. Stale
+assessments, duplicate/unfitted/protected candidates, and invalid comparison
+anchors block serialization. Existing `item_review`/`question-removal-review.json`
+remain compatible historical artifacts, but do not automatically become the
+shortlist or replace its candidate framing. Rendering performs no new
+statistical tests, ranking calculations, model fitting or question deletion.
 
 Survey-score targets with a verified 1-K scale use the 0-100 transformation
 for results and error units. Native targets, AUC, probabilities, explained

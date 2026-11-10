@@ -273,8 +273,9 @@ def test_svd_runs_without_a_predictive_leaderboard(study):
     assert 'data-table="svd-weights-table"' in html
     assert "not factor loadings" in html
     assert 'id="item-removal-review"' in html
-    assert "No removals recommended - assessment incomplete." in html
-    assert "not proof that every question must stay" in html
+    assert "Top five candidates for removal review" in html
+    assert "Candidate shortlist not yet prepared." in html
+    assert "No shortlist does not mean every question must stay" in html
 
 
 def item_review_for(manifest, decision="remove"):
@@ -387,6 +388,140 @@ def test_item_review_rejects_unsupported_removals(invalid):
         )
     with pytest.raises((ValueError, ValidationError)):
         validate_item_review(manifest, review)
+
+
+def item_candidates_for(manifest):
+    features = manifest["summary"]["svd"]["features"]
+    return {
+        "config_sha256": manifest["config_sha256"],
+        "summary_sha256": runner.digest(manifest["summary"]),
+        "approved_for_sharing": True,
+        "ranking_basis": "Synthetic analyst ordering from inspected aggregate diagnostics.",
+        "limitations": ["Content and after-removal stability have not been checked."],
+        "protected_items_reviewed": False, "content_coverage_reviewed": False,
+        "protected_items": [],
+        "items": [{
+            "question": features[0], "comparison_question": features[1],
+            "reason": "Synthetic observed pattern merits investigation, not deletion.",
+            "evidence_needed": ["Compare exact wording and same-population redundancy.", "Check protected coverage and reduced-set stability."],
+        }],
+    }
+
+
+@pytest.mark.parametrize("empty", [False, True])
+def test_candidate_shortlist_attaches_without_reading_data_or_refitting(study, monkeypatch, empty):
+    from build_advanced_analysis_report import build_report
+
+    config = study[2]
+    config["experiment"].update(task="svd", models=[], components=2, metric="reconstruction_rmse")
+    opt = options(study, config)
+    runner.run(opt)
+    output = Path(opt.output_dir)
+    original = json.loads((output / "advanced-analysis-manifest.json").read_text())
+    protected = {path.name: path.read_bytes() for path in (output / "_private").iterdir() if path.is_file()}
+    candidates = item_candidates_for(original)
+    if empty:
+        candidates["items"] = []
+        candidates["ranking_basis"] = "No supported candidates in the inspected synthetic fixture."
+    path = study[0] / "candidates.json"
+    runner.write_json(path, candidates)
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("Candidate attachment tried to read respondent data or fit a model.")
+
+    monkeypatch.setattr(runner, "load_data", forbidden)
+    import vivaglint.modeling
+    monkeypatch.setattr(vivaglint.modeling, "run_model_experiment", forbidden)
+    denied = options(study, config, mode="review-items", actions=["fit", "replay"])
+    denied.item_candidates = str(path)
+    with pytest.raises(PermissionError):
+        runner.run(denied)
+    opt = options(study, config, mode="review-items", actions=["interpret", "share"])
+    opt.item_candidates = str(path)
+    runner.run(opt)
+    updated = json.loads((output / "advanced-analysis-manifest.json").read_text())
+    assert updated["item_candidates"] == candidates
+    for key in ("summary", "provenance", "qa"):
+        assert updated[key] == original[key]
+    assert all((output / "_private" / name).read_bytes() == value for name, value in protected.items())
+    with zipfile.ZipFile(output / "advanced-share.zip") as archive:
+        assert json.loads(archive.read("question-removal-candidates.json")) == candidates
+        assert "question-removal-review.json" not in archive.namelist()
+    before = (output / "advanced-analysis-manifest.json").read_bytes()
+    updated["item_candidates"]["summary_sha256"] = "0" * 64
+    with pytest.raises(ValueError, match="stale"):
+        build_report(output, updated)
+    assert (output / "advanced-analysis-manifest.json").read_bytes() == before
+
+
+@pytest.mark.parametrize("invalid", [
+    "stale_config", "stale_summary", "duplicate", "unknown", "six_items",
+    "protected", "unknown_protected", "self_comparison", "unknown_comparison",
+    "shortlisted_comparison", "blank_reason", "blank_evidence", "unready", "non_svd",
+    "legacy_protected",
+])
+def test_candidates_reject_invalid_or_unsupported_assessments(invalid):
+    from build_advanced_analysis_report import validate_item_candidates
+
+    manifest = {
+        "config_sha256": "a" * 64, "status": "completed",
+        "qa": {"repeatability": "passed", "verdict": "Use with caveats"},
+        "summary": {"task": "svd", "svd": {"features": ["Q_work", "Q_support"]}},
+    }
+    candidates = item_candidates_for(manifest)
+    item = candidates["items"][0]
+    if invalid == "stale_config":
+        candidates["config_sha256"] = "b" * 64
+    elif invalid == "stale_summary":
+        candidates["summary_sha256"] = "b" * 64
+    elif invalid == "duplicate":
+        candidates["items"].append(dict(item))
+    elif invalid == "unknown":
+        item["question"] = "Q_unfitted"
+    elif invalid == "six_items":
+        candidates["items"] *= 6
+    elif invalid == "protected":
+        candidates["protected_items"] = ["Q_work"]
+    elif invalid == "unknown_protected":
+        candidates["protected_items"] = ["Q_unfitted"]
+    elif invalid == "self_comparison":
+        item["comparison_question"] = "Q_work"
+    elif invalid == "unknown_comparison":
+        item["comparison_question"] = "Q_unfitted"
+    elif invalid == "shortlisted_comparison":
+        candidates["items"].append({**item, "question": "Q_support", "comparison_question": "Q_work"})
+    elif invalid == "blank_reason":
+        item["reason"] = " "
+    elif invalid == "blank_evidence":
+        item["evidence_needed"] = [" "]
+    elif invalid == "unready":
+        manifest["qa"]["verdict"] = "Not ready"
+    elif invalid == "non_svd":
+        manifest["summary"]["task"] = "regression"
+        candidates["summary_sha256"] = runner.digest(manifest["summary"])
+    else:
+        manifest["item_review"] = item_review_for(manifest, "retain")
+    with pytest.raises((ValueError, ValidationError)):
+        validate_item_candidates(manifest, candidates)
+
+
+def test_five_candidates_preserve_analyst_order_with_incomplete_reviews():
+    from build_advanced_analysis_report import validate_item_candidates
+
+    manifest = {
+        "config_sha256": "a" * 64, "status": "completed",
+        "qa": {"repeatability": "passed", "verdict": "Use with caveats"},
+        "summary": {"task": "svd", "svd": {"features": [f"Q_{i}" for i in range(6)]}},
+    }
+    candidates = item_candidates_for(manifest)
+    template = candidates["items"][0]
+    order = ["Q_4", "Q_2", "Q_0", "Q_3", "Q_1"]
+    candidates["items"] = [{**template, "question": question, "comparison_question": "Q_5"} for question in order]
+    candidates["protected_items"] = ["Q_5"]
+    validate_item_candidates(manifest, candidates)
+    assert [item["question"] for item in candidates["items"]] == order
+    assert not candidates["protected_items_reviewed"]
+    assert not candidates["content_coverage_reviewed"]
 
 
 def test_skill_has_proactive_collaboration_not_autonomous_tuning():

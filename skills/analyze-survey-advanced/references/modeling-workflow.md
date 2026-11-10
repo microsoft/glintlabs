@@ -122,48 +122,67 @@ Amendments require a new config hash and approval, a new run directory, and
 affected QA. Do not overwrite experiment history. No private source labels,
 paths, identities, or user context should enter public retrieval queries.
 
-## SVD question-removal review
+## Top five SVD candidates for removal review
 
-The report supports removal recommendations, retaining all questions, or an
-explicit insufficient-evidence outcome. It never deletes questions or changes
-the fitted model. Without a completed assessment, display **No removals
-recommended - assessment incomplete**, not an empty shortlist implying all
-questions were tested.
+For a survey-shortening request, recommend the five strongest supported
+**candidates to investigate**, in priority order, rather than issuing final
+retain/remove decisions for every fitted question. Explain why each is worth
+reviewing and what evidence would help decide. This is a shortlist, not a
+joint recommendation to drop all five. Nothing is deleted or refitted.
 
-Use the question wording, approved exact-population diagnostics, and scientist's
-constraints to assess redundancy and content coverage. Ask which items, topics,
-or longitudinal benchmarks must be retained. Do not invent correlation cutoffs,
-guess protected topics, call low SVD weights redundant, or use a five-item card
-as an item-selection rule. Correlated items can still cover distinct content;
-an item poorly represented by the chosen rank can contain important unique
-information. Removing several individually redundant items can also remove
-every representative of a topic.
+Inspect the existing QA-eligible SVD diagnostics, available wording, approved
+same-population redundancy diagnostics, and known constraints. Rank by the
+strongest available evidence and state the actual ranking basis. Prefer
+observed response redundancy plus overlapping content when those checks exist.
+When only SVD output is available, a provisional host/analyst assessment may
+use similar retained-component profiles as a lead to investigate, explicitly
+not as measured item correlations or evidence of interchangeable wording.
+Explain that omitted dimensions may distinguish the items. Do not equate low
+weights with redundancy, invent cutoffs or confidence scores, or claim absent
+checks were completed. The report displays the supplied analyst ordering;
+it does not calculate a statistical ranking or run tests.
 
-A removal needs a retained representative plus concrete aggregate redundancy,
-content-coverage, and stability-after-removal evidence. These checks are
-reviewed evidence, not tests performed by the HTML renderer. Do not manufacture
-checks from the SVD vectors. If required diagnostics or wording are unavailable,
-keep the decision **insufficient_evidence** and explain the gap. Propose a
-bounded diagnostic experiment and obtain instruction before any new fitting
-or data amendment. Retaining every question after review is valid.
+For each candidate, provide:
 
-Record a privacy-reviewed assessment using
-`schemas/advanced-item-review.schema.json`. Bind it to the original config and
-`digest(manifest["summary"])`, assess each fitted item exactly once, and attest
-to protected-item/content review only when those reviews actually happened.
-Reasons and evidence must be aggregate-only, without employee data, private
-paths, or unapproved company context. The serializer checks structure and
-source binding, not whether an analyst's scientific assertions are true.
+- The fitted question ID and an observed, specific reason for its priority.
+- A comparison question, where relevant, outside the shortlist. This is not a
+  confirmed substitute. Keep comparison anchors outside the shortlist so it
+  does not implicitly discard both representatives.
+- Concrete **evidence needed**: exact wording and same-population response
+  redundancy; distinct topic/action, benchmark and trend coverage; and
+  development-only stability/utility checks for the proposed reduced set.
+  Tailor these checks to the candidate instead of presenting generic advice.
+
+Ask which topics, questions or benchmarks are protected. Exclude known
+protected items, but do not claim that protection or content coverage has been
+reviewed when it has not. Incomplete coverage or after-removal stability checks
+can be evidence still needed rather than a reason to block every candidate.
+Correlated items may cover distinct content; an item poorly represented by the
+chosen rank may contain important unique information. Final removal still
+requires content and reduced-set validation, and may ultimately be rejected
+for every shortlisted question. New diagnostic fitting requires instruction;
+do not use the sealed holdout to develop the shortlist.
+
+Use fewer than five candidates if too few eligible items or too little
+supporting evidence exists. An empty assessed shortlist is valid: explain why
+in `ranking_basis` and `limitations`. A missing assessment is a distinct
+**Candidate shortlist not yet prepared** state, not evidence to retain all.
+
+Record the ordered shortlist using
+`schemas/advanced-item-candidates.schema.json`. Bind it to the original config
+and `digest(manifest["summary"])`, list up to five distinct fitted questions,
+and record unresolved checks honestly. Only attest to privacy-safe sharing
+and reviews that actually occurred. Reasons/evidence must contain no employee
+data, private paths or unapproved company context. Validation checks structure
+and source binding, not the truth or quality of scientific judgements.
 
 With explicit `interpret` and `share` approval for the original experiment,
-use the existing runner with `--mode review-items --item-review reviewed.json`.
-This attaches the assessment to the completed run and rebuilds HTML/ZIP without
-reading input rows or refitting. Protected items cannot be removed, and every
-removal's alternative must explicitly remain retained in the final set.
-Include `proposed_set_evidence` whenever any removal is recommended: individually
-redundant items do not establish that the combined reduction preserves coverage
-and stability. Inspect the final proposed set as a whole; any actual reduced-question fit or
-survey revision remains a separate approved action.
+use `--mode review-items --item-candidates candidates.json`. This attaches the
+shortlist and rebuilds HTML/ZIP without reading respondent inputs or refitting.
+Before delivering a requested shortlist, prepare and attach it; merely rebuilding
+the template does not create candidates. Existing `--item-review` assessments
+remain supported for compatibility and their known protected items still
+apply, but final retain/remove decisions are not the new shortlist UI.
 
 ## Selection, final evaluation, and readiness
 

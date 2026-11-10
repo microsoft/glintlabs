@@ -42,6 +42,7 @@ section{padding:var(--spacingHorizontalL);margin-bottom:var(--spacingHorizontalL
 table{width:100%;border-collapse:collapse;margin-top:var(--spacingHorizontalL);font-size:14px}
 th,td{text-align:left;padding:var(--spacingHorizontalM);border-bottom:1px solid var(--colorNeutralStroke1);vertical-align:top}
 th{background:var(--colorNeutralBackground2)}
+#item-review-table td{white-space:pre-line}
 pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
 label{display:block;margin-top:var(--spacingHorizontalL)}
 select{max-width:100%}
@@ -84,14 +85,15 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 <div id="svd-chart" class="svd-chart" role="region" aria-label="SVD item-weight chart" aria-describedby="svd-chart-note" tabindex="0"></div>
 <div id="svd-components" class="svd-grid" role="group" aria-label="Component summaries"></div>
 <div id="item-removal-review">
-<h3>Question-removal recommendations</h3>
-<p>These are analyst-reviewed recommendations, not automatic deletion or statistical checks performed by this report. A low SVD weight alone is not a reason to remove a question.</p>
+<h3>Top five candidates for removal review</h3>
+<p>Start with these ranked questions when reviewing opportunities to shorten the survey. These are exploratory candidates, not decisions to remove them or a recommendation to drop all five. A low SVD weight alone is not a reason to remove a question.</p>
 <p id="item-review-status" class="badge" role="status"></p>
 <p id="item-review-explanation"></p>
 <div id="item-review-results" hidden>
-<div class="section-head"><h3>Question-by-question assessment</h3><div class="toolbar" data-table="item-review-table"><button id="download-item-review" type="button">Download review JSON</button></div></div>
+<ul id="item-candidate-limitations"></ul>
+<div class="section-head"><h3>Ranked shortlist and evidence needed</h3><div class="toolbar" data-table="item-review-table"><button id="download-item-review" type="button">Download candidates JSON</button></div></div>
 <div class="scroll"><table id="item-review-table"></table></div>
-<details><summary>Supporting evidence and protected questions</summary><pre id="item-review-evidence"></pre></details>
+<details><summary>Ranking basis, limitations and protected-item review status</summary><pre id="item-review-evidence"></pre></details>
 </div></div>
 </div>
 <details id="svd-numeric-details"><summary>Full component variance, signed weights and numeric details</summary>
@@ -229,20 +231,20 @@ function renderSVD(){
 }
 function renderItemReview(){
  if(!S.svd)return;
- const review=M.item_review;
- if(!review){
-  text("item-review-status","No removals recommended - assessment incomplete.");
-  text("item-review-explanation","The current SVD output does not establish question redundancy, protected topic/benchmark coverage, or stability after removal. Supporting checks and an analyst-reviewed assessment are needed. This is insufficient evidence, not proof that every question must stay.");
+ const candidates=M.item_candidates;
+ if(!candidates){
+  text("item-review-status","Candidate shortlist not yet prepared.");
+  text("item-review-explanation","Review the available evidence to identify up to five candidates, with reasons and the checks needed before a removal decision. No shortlist does not mean every question must stay. This report does not automatically rank or test redundancy from SVD weights.");
   return;
  }
- const removed=review.items.filter(item=>item.decision==="remove"),gaps=review.items.filter(item=>item.decision==="insufficient_evidence");
- text("item-review-status",removed.length?`${removed.length} question${removed.length===1?"":"s"} recommended for removal.`:gaps.length?"No removals recommended - evidence gaps remain.":"No removals recommended - review completed.");
- text("item-review-explanation",`All ${review.items.length} fitted questions were assessed. ${removed.length} recommended for removal; ${review.items.filter(item=>item.decision==="retain").length} retained; ${gaps.length} have insufficient evidence. Review protected content and the supporting checks before changing a survey; no questions have been deleted.`);
- const labels={remove:"Recommend removal",retain:"Retain",insufficient_evidence:"Insufficient evidence"};
- table("item-review-table",["Question ID","Recommendation","Why","Retained alternative"],review.items.map(item=>[item.question,labels[item.decision],item.reason,item.retained_alternative||"Not applicable"]));
- text("item-review-evidence",JSON.stringify(review,null,2));
+ text("item-review-status",candidates.items.length?`${candidates.items.length} exploratory candidate${candidates.items.length===1?"":"s"} - not removal decisions.`:"No supported candidates identified.");
+ text("item-review-explanation",`${candidates.ranking_basis} Protected-item review: ${candidates.protected_items_reviewed?"completed":"not completed"}. Content-coverage review: ${candidates.content_coverage_reviewed?"completed":"not completed"}. No questions have been deleted or models refitted.`);
+ for(const limitation of candidates.limitations){const li=document.createElement("li");li.textContent=limitation;document.getElementById("item-candidate-limitations").append(li)}
+ const label=question=>`${itemLabel(question)} (${question})`;
+ table("item-review-table",["Review priority","Question","Comparison question (not a confirmed substitute)","Why this is a candidate","Evidence that would help the decision"],candidates.items.map((item,index)=>[index+1,label(item.question),item.comparison_question?label(item.comparison_question):"Not specified",item.reason,item.evidence_needed.map((value,i)=>`${i+1}. ${value}`).join("\n")]));
+ text("item-review-evidence",JSON.stringify(candidates,null,2));
  document.getElementById("item-review-results").hidden=false;
- document.getElementById("download-item-review").onclick=()=>download("question-removal-review.json",JSON.stringify(review,null,2),"application/json");
+ document.getElementById("download-item-review").onclick=()=>download("question-removal-candidates.json",JSON.stringify(candidates,null,2),"application/json");
 }
 renderSVD();renderItemReview();
 const narrative=document.getElementById("narrative");
@@ -261,10 +263,31 @@ for(const bar of document.querySelectorAll(".toolbar[data-table]")){
  csv.onclick=()=>{const rows=Array.from(document.getElementById(id).rows,r=>Array.from(r.cells,c=>c.textContent));
   const quote=value=>'"'+(/^[=+\-@\t\r]/.test(value)&&!Number.isFinite(Number(value))?"'":"")+value.replaceAll('"','""')+'"';
   download(id+".csv",[["Context",context()],...rows].map(row=>row.map(quote).join(",")).join("\r\n"),"text/csv")};
- png.onclick=()=>{try{const rows=Array.from(document.getElementById(id).rows,r=>Array.from(r.cells,c=>c.textContent).join(" | "));
-  const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d");canvas.width=1600;canvas.height=100+rows.length*32;const style=getComputedStyle(document.documentElement);
+ png.onclick=()=>{try{const rows=Array.from(document.getElementById(id).rows,r=>Array.from(r.cells,c=>c.textContent));
+  const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d"),style=getComputedStyle(document.documentElement);
+  const widths=id==="item-review-table"?[80,230,260,480,750]:Array(rows[0].length).fill(1552/rows[0].length);
+  function wrap(value,width){
+   const lines=[];
+   for(const paragraph of value.split("\n")){
+    let line="";
+    for(const word of paragraph.split(/(\s+)/)){
+     if(ctx.measureText(line+word).width>width&&line){lines.push(line);line=""}
+     for(const letter of word){if(ctx.measureText(line+letter).width>width&&line){lines.push(line);line=""}line+=letter}
+    }
+    lines.push(line);
+   }
+   return lines;
+  }
+  ctx.font='16px "Segoe UI"';
+  const wrapped=rows.map(row=>row.map((cell,i)=>wrap(cell,widths[i]-24)));
+  const heights=wrapped.map(row=>Math.max(...row.map(lines=>lines.length))*24+24);
+  canvas.width=widths.reduce((sum,width)=>sum+width,0)+48;
+  const footer=wrap(context(),canvas.width-48);
+  canvas.height=heights.reduce((sum,height)=>sum+height,0)+footer.length*24+48;
   ctx.fillStyle=style.getPropertyValue("--colorNeutralBackground1");ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle=style.getPropertyValue("--colorNeutralForeground1");ctx.font='16px "Segoe UI"';
-  rows.forEach((row,i)=>ctx.fillText(row,24,32+i*32));ctx.fillText(context(),24,canvas.height-24);
+  let y=24;
+  wrapped.forEach((row,index)=>{let x=24;row.forEach((lines,column)=>{lines.forEach((line,i)=>ctx.fillText(line,x+12,y+20+i*24));x+=widths[column]});y+=heights[index]});
+  footer.forEach((line,i)=>ctx.fillText(line,24,y+24+i*24));
   canvas.toBlob(blob=>{if(!blob){text("export-status","PNG export failed.");return}const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=id+".png";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)},"image/png");
  }catch(error){text("export-status","PNG export failed: "+error.message)}};
  bar.append(csv,png);
