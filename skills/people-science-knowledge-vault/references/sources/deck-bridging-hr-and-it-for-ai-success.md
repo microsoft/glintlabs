@@ -2,7 +2,7 @@
 
 [Context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md) | [Source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md)
 
-Index review: 2026-10-30. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
+Index review: 2026-11-10. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
 
 <a id="deck-bridging-hr-and-it-for-ai-success"></a>
 ## Deck — Bridging HR & IT for AI Success
@@ -15,30 +15,34 @@ Index review: 2026-10-30. These editorial themes route retrieval; they are not a
 
 Complete 25-page public April 2025 webinar deck. HR/IT comparisons use 413 global April 2024 respondents; ESS metrics describe Microsoft's case and are not generalized experimental effects.
 
-**Reviewed asset scope:** Complete extracted text of the public 25-page PDF. Linked courses and other resources are separate assets, not automatically reviewed. No claim of complete linked-recording coverage.
+**Reviewed asset scope:** Complete current cached public PDF page text reviewed. Public PDF figures visually inspected on pages 10, 11, 12, 13, 21. Other image-only details are not certified. Linked publications, courses, and other companion assets are not newly reviewed unless explicitly stated.
 
 **Study-family links:** ai-readiness-april-2024
 
-1. **Complementary HR and IT priorities** (framework) - IT and HR bring different rollout, value, risk, privacy, and people concerns to AI transformation.
-   Topics: hr-it, ai-strategy. Evidence: `p8`, "challenges and priorities".
-2. **Different financial expectations** (finding) - HR and IT leaders and employees differ in expectations of AI's business contribution.
-   Topics: hr-it, ai-value. Evidence: `p10`, "financial success".
-3. **Unequal sponsored access** (finding) - Organization-provided access differs between HR and IT despite substantial AI use in both groups.
-   Topics: hr-it, ai-adoption. Evidence: `p11`, "72%".
-4. **Access and realized value** (finding) - Higher sponsored access is associated with more favorable RIVA outcomes; it is not a randomized access effect.
-   Topics: ai-value, methods. Evidence: `p13`, "Realized Individual Value".
-5. **Cross-functional experimentation** (recommendation) - The deck recommends equitable resources, peer sharing, and HR involvement to broaden participation.
-   Topics: hr-it, ai-skills. Evidence: `p14`, "cross-functional".
-6. **Optimization to transformation** (framework) - The ESS strategy distinguishes automating tasks from redesigning end-to-end processes, roles, and the function itself.
-   Topics: ai-agents, work-design. Evidence: `p16`, "Redefining E2E".
-7. **Retrieve, act, and customize** (documentation) - ESS is presented as combining authoritative answers, in-flow HR/IT actions, and configurable connectors or workflows.
-   Topics: ai-agents, hr-it. Evidence: `p17`, "Retrieve".
-8. **Knowledge and content readiness** (case-study) - Preparation included early buy-in, roadmap signals, and a knowledge/content strategy.
-   Topics: ai-agents, ai-governance. Evidence: `p20`, "content strategy".
-9. **ESS service outcomes** (case-study) - Microsoft reports better answer retrieval and self-help with fewer support tickets relative to prior channels; retain the case-specific comparators.
-   Topics: ai-value, ai-agents. Evidence: `p21`, "support ticket".
-10. **Measure early and adapt** (recommendation) - The case emphasizes a growth mindset, iterative and transformative change, measurement from the start, and contextual rather than one-size-fits-all AI.
-   Topics: ai-value, change-management. Evidence: `p22`, "Measure from the start".
+1. **HR and IT bring different but complementary concerns** (framework) - IT priorities include rollout scope, value, habits, skills, and risk; HR priorities include confidentiality, ethics, training, employee buy-in, pace, and preserving the human perspective. This is a practical framing, not a universal department stereotype.
+   Topics: hr-it, ai-strategy, change-management. Evidence: `p8`, "What challenges and priorities".
+2. **Financial expectations differ by function and seniority** (finding) - In the 413-person HR/IT analysis, the inspected slide reports confidence in AI boosting revenue/financial success at 68% for IT employees and 77% for IT leaders, versus 55% and 63% in HR. These are expectations, not measured financial performance.
+   Topics: hr-it, ai-value, methods. Evidence: `p10`, "n = 413".
+3. **Frequent use can coexist with unequal sponsored access** (finding) - More than two-thirds of both HR and IT respondents used AI at least weekly, but all/most tools were employer-provided for 72% of IT versus 59% of HR respondents. Use frequency is not a substitute for measuring equitable access.
+   Topics: hr-it, ai-adoption, inclusion. Evidence: `p11`, "organization-sponsored AI tools is not equal.".
+4. **Access and perceived value are associated, not uniformly ordered** (finding) - The inspected RIVA table generally shows higher reported benefits with more sponsored access, but HR task-speed favorability is 82% with all/most tools provided versus 87% with some/no tools provided. Do not turn the access relationship into a universal causal gain or overlook this exception.
+   Topics: hr-it, ai-value, methods. Evidence: `p13`, "Complete tasks faster".
+5. **Success-story inspiration differs across functions** (finding) - The deck reports 77% of IT and 68% of HR respondents inspired by successful workplace AI stories, suggesting a specific sharing/enablement gap distinct from tool-access measurement.
+   Topics: hr-it, learning-enablement. Evidence: `p12`, "feel inspired by stories".
+6. **Cross-functional experimentation needs equitable resources** (recommendation) - The recommendation is to use HR's employee expertise, encourage peer/team/business-unit sharing, and provide equitable training and resources rather than expect centralized IT access alone to discover every use case.
+   Topics: hr-it, ai-skills, inclusion. Evidence: `p14`, "equitable".
+7. **Optimization and end-to-end transformation differ** (case-study) - Microsoft's case distinguishes automating tasks from redesigning processes, reshaping roles/organizations, and reinventing how HR enables the business. It is a case-specific ambition, not a validated universal maturity sequence.
+   Topics: work-design, hr-it, ai-strategy. Evidence: `p16`, "From Optimization To Transformation".
+8. **ESS combines retrieval, action, and customization** (documentation) - The private-preview slide describes contextual retrieval from authoritative sources, taking HR/IT actions without switching tools, and configurable templates/workflows/connectors. These are historical preview capabilities, not current availability guarantees.
+   Topics: ai-agents, hr-it. Evidence: `p17`, "Private preview".
+9. **Prepare knowledge, signals, and organizational buy-in** (case-study) - The Microsoft ESS preparation case combines top-down and ground-up planning, early buy-in, broad signals for roadmap decisions, and a deliberate knowledge/content strategy.
+   Topics: hr-it, ai-adoption, action-taking. Evidence: `p20`, "knowledge & content".
+10. **Early ESS outcomes are comparative case metrics** (case-study) - The inspected Microsoft case slide reports 25% more likely to retrieve a correct answer and 31% less likely to create a ticket than the current HR chatbot, plus 36% higher IT self-help success than the support channel. Denominators, assignment, and uncertainty are not supplied; these are not generalized experimental effects.
+   Topics: ai-value, methods, hr-it. Evidence: `p21`, "Early Results".
+11. **Measure from the start and adapt rather than standardize blindly** (recommendation) - The case's reflections emphasize growth mindset, incremental and revolutionary change, early measurement, and avoiding one-size-fits-all AI deployment.
+   Topics: action-taking, change-management. Evidence: `p22`, "Measure from the start".
+12. **HR/IT comparisons reuse the April 2024 readiness sample** (method) - The deck's functional analyses use 413 global HR/IT respondents from the April 2024 AI Readiness Survey. These self-report comparisons are a subset of shared research, not a separate replication, while ESS is a distinct implementation case.
+   Topics: methods, hr-it. Evidence: `p11`, "n = 413 global employees".
 
 ## Shared research context
 
