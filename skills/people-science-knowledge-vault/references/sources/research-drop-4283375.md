@@ -2,7 +2,7 @@
 
 [Context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md) | [Source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md)
 
-Index review: 2026-10-30. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
+Index review: 2026-11-10. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
 
 <a id="research-drop-4283375"></a>
 ## Research Drop: How Flexible Work Arrangement Policies Shape Leaders’ Views of Their Organization
@@ -13,32 +13,30 @@ Index review: 2026-10-30. These editorial themes route retrieval; they are not a
 
 **Source:** https://techcommunity.microsoft.com/blog/microsoftvivablog/research-drop-how-flexible-work-arrangement-policies-shape-leaders%e2%80%99-views-of-the/4283375
 
-October 2024 public article and five figures reviewed. Reanalysis of September 2023 HPO survey, n=1,100 global leaders/managers. Work-policy categories are not actual individual attendance or team co-location. Patterns describe leader perceptions; causal explanations offered in the article remain hypotheses.
+October 2024 public reanalysis of the September 2023 HPO survey of 1,100 global leaders and people managers across 10+ industries. Required onsite days classify organizational policy, not actual attendance, time allocation, or team co-location. Outcomes are leader perceptions, not objective performance or a causal policy experiment; explanations about routines and face time remain hypotheses.
 
-**Reviewed asset scope:** Complete published article/documentation body. Also reviewed OCR of 5 public figures; numeric claims cross-checked against written text where available. Linked courses and other resources are separate assets, not automatically reviewed. No claim of complete linked-recording coverage.
+**Reviewed asset scope:** Complete freshly retrieved public article body read, including substantive published method/item appendices where present. Figures, chart pixels, linked assets, audio, private decks, and notes were not reviewed in this pass. Current themes are grounded in body prose, not chart alt text. Prior figure review is historical only and is recorded in the audit; it is not refreshed coverage.
 
 **Study-family links:** high-performance-september-2023
 
-1. **Work-policy groups are not attendance measures** (method) - The comparison distinguishes zero, 1-2, 3-4, and five required onsite days but does not measure actual work locations.
-   Topics: work-design, methods. Evidence: `L8`, "co-located".
-2. **No linear remote-versus-office ranking** (finding) - Fully flexible and predominantly onsite groups report stronger performance than partially or fully onsite groups.
-   Topics: work-design, leadership. Evidence: `L10`, "not a battle".
-3. **Performance and effectiveness perceptions** (finding) - The pattern spans performance indicators and perceived vision, collaboration, innovation, and efficiency.
-   Topics: leadership, survey-interpretation. Evidence: `L20`, "vision".
-4. **Stability and fragmentation are hypotheses** (hypothesis) - The article proposes routine stability or a fragmented workweek as explanations, without establishing mechanisms.
-   Topics: work-design. Evidence: `L21`, "may be".
-5. **Location does not remove virtual coordination** (recommendation) - The article highlights that more office time need not eliminate virtual meetings, supporting location-independent collaboration habits.
-   Topics: work-design. Evidence: `L23`, "asynchronous work".
-6. **Flexible environments and manager alignment** (finding) - Fully flexible leaders give higher manager-effectiveness and goal-alignment ratings in this sample.
-   Topics: manager-effectiveness, work-design. Evidence: `L27`, "goal alignment".
-7. **Face time has nonuniform associations** (finding) - Predominantly onsite leaders rate expectations and growth more positively; the same advantage is not uniform across other onsite policies.
-   Topics: learning-enablement, work-design. Evidence: `L31`, "may be a bell curve".
-8. **Manager overload cuts across policies** (finding) - Overburdened managers appear among the leading barriers in every policy category.
-   Topics: manager-effectiveness, wellbeing. Evidence: `L36`, "common barrier".
-9. **Fix foundational working conditions** (recommendation) - Support managers, improve location-agnostic collaboration, and reserve in-person time for meaningful moments.
-   Topics: action-taking, work-design. Evidence: `L41`, "foundational priorities".
-10. **Combine leader and employee viewpoints** (recommendation) - Employee preferences and actual experiences are needed alongside leader ratings to shape policy.
-   Topics: employee-listening, inclusion. Evidence: `L44`, "employee perceptions".
+1. **Policy requirements are not observed attendance** (method) - The comparison uses no required onsite days, 1–2, 3–4, or five days weekly. It does not show employees' actual location choices, time use, or whether colleagues attend together.
+   Topics: work-design, methods. Evidence: `L8`, "doesn’t provide context on how employees".
+2. **Leader ratings do not follow a flexibility gradient** (finding) - Fully flexible and predominantly onsite respondents rated performance and organizational effectiveness more positively than partially or fully onsite respondents. The pattern includes vision, collaboration, innovation, and efficiency, not a simple remote-versus-office ranking.
+   Topics: work-design, leadership. Evidence: `L9`, "didn’t shift in a straightforward or linear way".
+3. **Routine stability is a proposed explanation** (hypothesis) - The author suggests stable routines may help the higher-rated groups, whereas 1–2 onsite days may fragment a week and five may overwhelm employees. These are possible mechanisms, not demonstrated reasons for the observed ratings.
+   Topics: work-design, methods. Evidence: `L16`, "it may be that leaders".
+4. **Office time does not replace collaboration design** (recommendation) - Citing other research, the article notes virtual-meeting volume need not fall as onsite requirements increase. It recommends effective meetings, intentional communication, and productive asynchronous work regardless of location.
+   Topics: work-design, connection. Evidence: `L16`, "effective collaboration habits regardless of where the work happens".
+5. **Fully flexible leaders rate alignment positively** (finding) - Leaders in fully flexible organizations reported stronger manager effectiveness and goal alignment. The survey does not establish that flexibility caused these ratings or removed organizational silos.
+   Topics: manager-effectiveness, role-clarity, work-design. Evidence: `L20`, "higher on manager effectiveness and goal alignment".
+6. **Face-time associations vary across onsite policies** (finding) - Predominantly onsite leaders expressed the strongest confidence in employees' expectations and growth clarity among onsite groups; partially and fully onsite policies did not share that advantage. Networking and mobility explanations are tentative.
+   Topics: growth-development, role-clarity, work-design. Evidence: `L22`, "doesn’t extend to partially onsite or fully onsite".
+7. **Manager overload is a cross-policy barrier** (finding) - Overburdened managers appeared among the top three high-performance barriers in every policy group. Inefficient work culture was prominent across flexible policies, with tedious tasks or inadequate tools also discussed in particular onsite groups.
+   Topics: manager-effectiveness, wellbeing, work-design. Evidence: `L25`, "All four categories of work arrangement policies shared a common barrier".
+8. **Invest in working conditions and moments that matter** (recommendation) - Support overloaded managers and location-agnostic collaboration norms, and choose purposeful in-person moments such as onboarding, cohesion, or project kick-offs instead of assuming more attendance is always better.
+   Topics: work-design, action-taking, connection. Evidence: `L30`, "set up collaboration norms that are location-agnostic".
+9. **Include employee experience in policy decisions** (recommendation) - Leader assessments alone are incomplete. Connect them with employee preferences and lived experiences when shaping a work arrangement policy; the cited employee-preference data are a separate source, not this HPO sample.
+   Topics: employee-listening, work-design. Evidence: `L31`, "the employee viewpoint is also needed".
 
 ## Shared research context
 

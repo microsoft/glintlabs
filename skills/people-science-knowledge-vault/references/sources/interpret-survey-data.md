@@ -2,7 +2,7 @@
 
 [Context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md) | [Source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md)
 
-Index review: 2026-10-30. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
+Index review: 2026-11-10. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
 
 <a id="interpret-survey-data"></a>
 ## Understanding and interpreting your survey data
@@ -13,9 +13,9 @@ Index review: 2026-10-30. These editorial themes route retrieval; they are not a
 
 **Source:** https://techcommunity.microsoft.com/blog/viva_glint_blog/think-like-a-people-scientist-understanding-and-interpreting-your-survey-data/4063620
 
-February 2024 public recap, the complete 23-page public companion deck text, and the complete 62-minute public webinar audio, locally machine-transcribed and reviewed. Practitioner guidance and illustrative dashboards, not an intervention study; current product behavior and any numeric thresholds need current documentation checks. Small-sample heuristics are not universal guarantees, and historical Copilot preview statements do not establish current availability.
+February 2024 recap freshly text-reviewed in this pass. Earlier review covered the 23-page companion deck text and complete 62-minute public-webinar machine transcript; neither companion deck nor audio was refreshed here. The ten retained recording-backed themes preserve that prior evidence exactly. Practitioner guidance and illustrative dashboards are not an intervention study; current product behavior and thresholds require official-documentation checks. Small-sample heuristics are not universal guarantees, and historical Copilot preview statements do not establish current availability.
 
-**Reviewed asset scope:** Complete published article/documentation body. Also reviewed all 23 pages of the public companion deck text: https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/Viva_Glint_Blog/50/1/Think%20like%20a%20People%20Scientist_Understanding%20and%20interpreting%20results.pdf. Image-only detail is not certified. Linked courses and other resources are separate assets, not automatically reviewed. Complete local machine transcript of embedded public webinar audio reviewed; visual-only content and untranscribed demos not certified.
+**Reviewed asset scope:** Complete current cached public article body reviewed; comments, page chrome, and link directories excluded from substantive evidence. Embedded figures were not re-reviewed; claims are restricted to readable prose/page text, not image-only details. Mixed coverage: 10 previously reviewed recording-backed themes and all additional_media provenance are retained unchanged, apart from ordinal theme IDs. Audio was NOT refreshed or re-reviewed in this pass; prior machine transcription does not certify visual demos. Linked publications, courses, and other companion assets are not newly reviewed unless explicitly stated.
 
 **Reviewed webinar audio:** https://medius.microsoft.com/Embed/video-nc/4021d8c8-2092-4d24-a9e6-601282bd0d0e (publisher-reviewed machine transcript; not hosted here; visual-only content not certified).
 

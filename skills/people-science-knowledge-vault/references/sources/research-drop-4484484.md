@@ -2,7 +2,7 @@
 
 [Context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md) | [Source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md)
 
-Index review: 2026-10-30. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
+Index review: 2026-11-10. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
 
 <a id="research-drop-4484484"></a>
 ## Research Drop: Designing AI Feedback Systems by Industry
@@ -13,32 +13,34 @@ Index review: 2026-10-30. These editorial themes route retrieval; they are not a
 
 **Source:** https://techcommunity.microsoft.com/blog/microsoftvivablog/research-drop-designing-ai-feedback-systems-by-industry/4484484
 
-January 2026 public article and three figures reviewed. July 2025 panel n=1,800 overall; cadence figure n=1,624 AI users. Industry patterns reflect utilized channels, not a causal ranking of channel effectiveness or necessarily preferences. Social-feedback capture must respect privacy and consent.
+January 2026 article analyzing the July 2025 Agentic Teaming & Trust panel of 1,800 global employees across the listed industries and job levels. The baseline recorded 1,624 AI users in the cadence figure, not re-inspected here. Reported channels are utilized channels, not a tested effectiveness ranking or necessarily preferences. Cross-sectional feedback/use links leave direction unresolved; external employee-centricity statistics are separate research. Social feedback capture requires privacy and consent safeguards, not indiscriminate collection of conversations.
 
-**Reviewed asset scope:** Complete published article/documentation body. Also reviewed OCR of 3 public figures; numeric claims cross-checked against written text where available. Linked courses and other resources are separate assets, not automatically reviewed. No claim of complete linked-recording coverage.
+**Reviewed asset scope:** Complete freshly retrieved public article body read, including substantive published method/item appendices where present. Figures, chart pixels, linked assets, audio, private decks, and notes were not reviewed in this pass. Current themes are grounded in body prose, not chart alt text. Prior figure review is historical only and is recorded in the audit; it is not refreshed coverage.
 
 **Study-family links:** agentic-teaming-trust-july-2025
 
-1. **A substantial feedback opportunity gap** (finding) - Only 66% overall and 52% of individual contributors feel they have adequate AI-feedback opportunities.
-   Topics: feedback, inclusion. Evidence: `L9`, "52%".
-2. **Leader-contributor enablement differences** (finding) - Support for agent integration differs sharply between leaders and individual contributors.
-   Topics: leadership, ai-adoption. Evidence: `L22`, "50%".
-3. **Frequent users receive more requests for input** (finding) - Daily users report more company, pulse, and in-product requests than monthly users; direction of influence is unresolved.
-   Topics: employee-listening, ai-adoption. Evidence: `L26`, "company".
-4. **Listening should fit working conditions** (recommendation) - Desk-based and shift-based work, regulation, and communication norms require different channel mixes.
-   Topics: employee-listening, work-design. Evidence: `L31`, "risk profiles".
-5. **Healthcare needs tailored access** (finding) - Healthcare respondents are less satisfied with opportunities than most industry groups, motivating shift- and privacy-aware channels.
-   Topics: inclusion, employee-listening, privacy-confidentiality. Evidence: `L34`, "healthcare".
-6. **Informal conversation and meetings dominate** (finding) - The most-used AI-feedback channels are largely social, so formal survey-only systems may miss nuance.
-   Topics: feedback, employee-listening. Evidence: `L39`, "nearly everywhere".
-7. **Forums and pulses complement conversation** (finding) - Mobile social forums and short pulses appear prominently in some frontline-heavy industries.
-   Topics: employee-listening, pulse-admin. Evidence: `L44`, "shift schedules".
-8. **Embedded feedback follows application workflows** (finding) - Some industries commonly use in-product feedback where employees encounter the tool.
-   Topics: employee-listening, work-design. Evidence: `L48`, "point of experience".
-9. **Capture, route, and visibly close the loop** (recommendation) - Turn contextual feedback into actionable signals for product, IT, or HR owners and show what decisions followed.
-   Topics: feedback, action-taking. Evidence: `L58`, "visibly".
-10. **Connect social nuance with organizational memory** (recommendation) - Combine recurring surveys and pulses with everyday team dialogue rather than replacing one with the other.
-   Topics: employee-listening, action-taking. Evidence: `L59`, "organizational memory".
+1. **Feedback opportunities are uneven, especially for ICs** (finding) - Sixty-six percent overall felt they had adequate AI-feedback opportunities, falling to 52% among individual contributors. The 34% overall opportunity gap is a perceived availability measure, not a response rate.
+   Topics: employee-listening, inclusion, ai-adoption. Evidence: `L6`, "that drops to 52%".
+2. **Leader and contributor support perceptions diverge** (finding) - The article repeats the panel's 78% leader versus 50% IC support contrast. This enablement gap is distinct from feedback-channel availability and should not be hidden by organization-wide averages.
+   Topics: leadership, ai-adoption, inclusion. Evidence: `L11`, "78% of leaders".
+3. **Daily users report more regular feedback requests** (finding) - Daily versus monthly users reported quarterly company surveys at 93% versus 71%, monthly pulses at 83% versus 50%, and weekly in-product prompts at 53% versus 23%. The comparison does not establish whether listening increases use or frequent users receive more attention.
+   Topics: employee-listening, ai-adoption, methods. Evidence: `L12`, "high frequency AI users are markedly more likely".
+4. **Fit the channel mix to actual work** (recommendation) - Desk-based versus shift-based routines, risk, regulation, and communication norms differ. Build accessible, consistent ways to signal what works rather than impose one supposedly optimal channel on every industry.
+   Topics: employee-listening, work-design. Evidence: `L18`, "Roles, risk profiles, and communication norms vary widely".
+5. **Healthcare needs particular attention to access** (finding) - Healthcare respondents were closer to half reporting sufficient feedback opportunities, compared with about two-thirds in many industries. The article recommends shift-aware, clinical-workflow-aware, privacy-sensitive channels; explanations for the gap are not established.
+   Topics: employee-listening, inclusion, privacy-confidentiality. Evidence: `L19`, "healthcare sits closer to half".
+6. **Informal conversations and team meetings dominate usage** (finding) - The most-used channels were largely social across industries. This is an observed usage pattern, not proof that informal feedback is superior or a reason to abandon formal surveys.
+   Topics: employee-listening, connection, feedback. Evidence: `L22`, "Informal conversations and team meetings rank #1 and #2".
+7. **Social forums feature in several frontline-heavy sectors** (finding) - Internal forums appeared prominently in construction, healthcare, and transportation/travel/hospitality. Mobile reach between tasks is the author's workflow interpretation, not a tested explanation of channel preference.
+   Topics: employee-listening, work-design. Evidence: `L24`, "Internal social forums".
+8. **Pulses feature in manufacturing and travel-related work** (finding) - Pulses were prominent in manufacturing and transportation/travel/hospitality. Fit with short, shift-friendly, team-specific check-ins is offered as a potential explanation, not a demonstrated advantage in response quality or outcomes.
+   Topics: employee-listening, survey-design. Evidence: `L25`, "Pulse surveys".
+9. **Embedded prompts follow application-centered work** (finding) - In-product feedback was common in construction, financial/professional services, retail/food/beverage, and technology. Point-of-experience relevance is a practical interpretation rather than a causal ranking of tools.
+   Topics: employee-listening, work-design. Evidence: `L26`, "In ‑ product feedback tools".
+10. **Capture context, route responsibility, and close the loop** (recommendation) - Use lightweight, appropriately governed feedback capture tied to a task or tool, route actionable context to product/IT/HR owners, and show resulting decisions. This is an operating recommendation, not permission to collect private conversations without safeguards.
+   Topics: employee-listening, action-taking, privacy-confidentiality. Evidence: `L33`, "Close the loop  visibly".
+11. **Connect everyday nuance with survey memory** (recommendation) - Recurring surveys and pulses supply organizational memory, while team dialogue supplies context. Connect these signals rather than substituting occasional large surveys for all listening or treating informal comments as representative population evidence.
+   Topics: employee-listening, survey-design. Evidence: `L34`, "Surveys and pulses provide the backbone of organizational memory".
 
 ## Shared research context
 

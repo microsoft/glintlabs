@@ -15,22 +15,35 @@ not permission to supply its claims from general knowledge.
 
 ## What is included
 
-At the October 30, 2026 review:
+At the November 10, 2026 source-driven theme re-review:
 
 | Collection | Inventory | Reviewed resources | Source-level summaries |
 | --- | ---: | ---: | ---: |
-| Original vault | 39 | 38 | 380 |
-| New Research Drops | 17 | 17 | 170 |
-| Combined | 56 | 55 | 550 |
+| Original vault | 39 | 38 | 422 |
+| New Research Drops | 17 | 17 | 167 |
+| Combined | 56 | 55 | 589 |
 
-Each accessible resource has ten editorial entries. They distinguish findings,
-frameworks, recommendations, methods, commentary, hypotheses, case studies,
-documentation, and signposts. **550 entries do not mean 550 distinct ideas or
-550 independent findings.** The ten-per-resource format is not a statistical
-estimate of conceptual diversity.
+The October review recorded 550 entries, with ten per accessible resource.
+The new review has 589 entries, ranging from two to 26 per accessible resource.
+Twenty-one resource counts decreased, nine stayed unchanged, and 25 increased.
+These counts describe editorial coverage, not a quota for additions or updates.
+Use as many distinct, grounded themes as each source warrants, without padding
+or cutting useful material. Themes distinguish findings, frameworks,
+recommendations, methods, commentary, hypotheses, case studies, documentation,
+and signposts. **589 entries do not mean 589 distinct ideas or 589 independent
+findings.** Editorial theme counts are not statistical estimates of conceptual
+diversity.
+
+All 55 current public article/PDF bodies were retrieved and text-reviewed.
+The 35 existing recording-backed themes retain their prior evidence; recordings
+were not replayed for this re-review. Selected PDF figures were inspected, but
+image-only figures and linked assets were not comprehensively refreshed.
+Per-resource asset scopes disclose these boundaries. The change combines removal
+of the quota with current-source review; it does not isolate a causal effect of
+the quota or demonstrate improved assistant answer quality.
 
 The original series-directory URL redirects to a general Viva landing page.
-It has zero themes and a recorded gap, rather than ten inferred themes.
+It has zero themes and a recorded gap, rather than inferred themes.
 The high-performance guide has a recovered official public PDF URL; its original
 catalog URL is preserved separately. Four original-vault companion webinars have
 reviewed machine transcripts with public recording links and timestamps.
@@ -58,13 +71,13 @@ The original Research Drops package contained:
 | Total | 42 |
 
 These are multiple formats of 17 drop bundles, not 42 independent research
-resources. For example, May 2026 has a blog, slides, and audio but one profile
-with ten themes. The profile's citable grounding is the corresponding published
+resources. For example, May 2026 has a blog, slides, and audio but one profile.
+The profile's citable grounding is the corresponding published
 article, including its reviewed public figures.
 
 The original-asset audit informed coverage and exclusion decisions. It does not
 certify that the public articles preserve every unique slide, chart, appendix,
-note, or spoken detail. The 170 Drop themes are not 420 file-level themes, and
+note, or spoken detail. The 167 Drop themes are not 420 file-level themes, and
 neither the source files nor private extraction caches are required or shipped.
 
 ## Topic alignment and overlap
@@ -73,7 +86,10 @@ Use the shared topics as the normal entry point; retain source-level entries in
 the background for provenance and nuance. Topic tags are many-to-many and are
 not replacements for the original catalog's broad categories.
 
-The reviewed index has 33 shared topics, all represented in both collections.
+The reviewed index has 33 topics, with 31 represented in both collections.
+The Glint administration and Pulse administration topics currently occur only
+in the original vault; Research Drops are not assigned those operational tags
+merely because they discuss surveys or feedback.
 Thirteen of the 17 Drops link to at least one study family already represented
 in the original vault. The generated topic directory and CLI `--coverage`
 recompute these descriptive counts from the index.

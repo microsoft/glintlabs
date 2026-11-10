@@ -2,7 +2,7 @@
 
 [Context entry](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/README.md) | [Source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md)
 
-Index review: 2026-10-30. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
+Index review: 2026-11-10. These editorial themes route retrieval; they are not a substitute for the full public source. L locators are extraction lines, p locators are PDF pages, and s locators are reviewed audio segments. Hashes do not prove freshness.
 
 <a id="research-drop-4462903"></a>
 ## Research Drop: Amplifying Clarity and Impact of AI Agents by Aligning on Desired Outcomes
@@ -13,32 +13,26 @@ Index review: 2026-10-30. These editorial themes route retrieval; they are not a
 
 **Source:** https://techcommunity.microsoft.com/blog/microsoftvivablog/research-drop-amplifying-clarity-and-impact-of-ai-agents-by-aligning-on-desired-/4462903
 
-October 2025 public article and four figures reviewed. July 2025 Agentic Teaming & Trust panel n=1,800 overall; figures use subsets n=1,262 users, n=1,008 multi-agent users, and n=1,157 users with teams. Groups are based on self-reported task and outcome alignment. Wipro's published case is separate from survey data; observed associations are not causal ROI.
+October 2025 article using the July 2025 Agentic Teaming & Trust survey of 1,800 global employees. Alignment groups are based on two self-report items about outcomes and human-versus-agent tasks, not assigned treatments. The prior figure review recorded subsets of 1,262 agent users, 1,008 multi-agent users, and 1,157 users with teams; those denominators are not re-inspected here. Findings are concurrent reported associations, not causal ROI. Wipro's published case is separate from survey data.
 
-**Reviewed asset scope:** Complete published article/documentation body. Also reviewed OCR of 4 public figures; numeric claims cross-checked against written text where available. Linked courses and other resources are separate assets, not automatically reviewed. No claim of complete linked-recording coverage.
+**Reviewed asset scope:** Complete freshly retrieved public article body read, including substantive published method/item appendices where present. Figures, chart pixels, linked assets, audio, private decks, and notes were not reviewed in this pass. Current themes are grounded in body prose, not chart alt text. Prior figure review is historical only and is recorded in the audit; it is not refreshed coverage.
 
 **Study-family links:** agentic-teaming-trust-july-2025
 
-1. **Outcomes as well as activities** (recommendation) - Agent planning should specify desired results, not only which tasks to automate or delegate.
-   Topics: ai-agents, ai-strategy. Evidence: `L21`, "work together".
-2. **Alignment and frequent agent use** (finding) - Teams aligned on both activities and outcomes have higher frequent-use rates than activity-only teams.
-   Topics: ai-adoption, ai-agents. Evidence: `L27`, "1.9x".
-3. **Clear capabilities and agent selection** (finding) - Outcome-aligned multi-agent users report greater clarity about agent capabilities and which agent to use.
-   Topics: ai-agents, work-design. Evidence: `L29`, "each agent".
-4. **Role boundaries during scaling** (recommendation) - The article proposes that explicit outcomes can reduce fragmented experimentation and clarify agents' places in workflows.
-   Topics: work-design, ai-governance, role-clarity. Evidence: `L30`, "fragmented experimentation".
-5. **Success beyond individual productivity** (recommendation) - Include collaboration quality and agent evaluation when assessing integration rather than counting only personal output.
-   Topics: ai-value, methods. Evidence: `L32`, "collaboration effectiveness".
-6. **Agents as teammates** (finding) - Outcome-aligned respondents more often view agents as teammates rather than only tools.
-   Topics: ai-agents, work-design. Evidence: `L35`, "teammates".
-7. **Collective work and team pride** (finding) - Alignment groups differ in knowledge sharing, problem-solving, goal alignment, resource use, and pride in team accomplishments.
-   Topics: ai-value, work-design. Evidence: `L37`, "proud".
-8. **Wipro's intake and prioritization example** (case-study) - The customer case screens proposed agents for purpose, value, feasibility, and intended impact.
-   Topics: ai-strategy, ai-governance. Evidence: `L47`, "intake form".
-9. **Avoid duplication through shared criteria** (case-study) - The case describes common stakeholder understanding, resource allocation, and measurable success criteria; it is not the survey's experimental treatment.
-   Topics: leadership, ai-governance. Evidence: `L49`, "avoid duplication".
-10. **Planning questions for teams** (recommendation) - Ask what outcomes matter, how success goes beyond productivity, and where agents fit in the team's work.
-   Topics: action-taking, ai-agents. Evidence: `L55`, "not just tasks".
+1. **Plan desired outcomes alongside agent activities** (recommendation) - Agent planning should define what success changes, not merely which tasks to automate. Ask which outcomes matter and how agents fit the team's way of working; these are recommendations, not proof that discussion itself creates transformation.
+   Topics: ai-strategy, ai-agents, action-taking. Evidence: `L7`, "not just the  activities".
+2. **Alignment groups are concurrent survey responses** (method) - Groups were formed from favorability on team outcome alignment and understanding human-judgment versus agent-supported tasks. This design does not isolate an outcome-planning treatment or independently measure strategy maturity.
+   Topics: methods, ai-agents. Evidence: `L24`, "Employees were grouped in this analysis".
+3. **Outcome-aligned respondents use agents more frequently** (finding) - Employees aligned on both activities and outcomes were 1.9 times as likely to be high-frequency agent users as those aligned only on activities. Shared causes or reverse direction remain possible in the observational comparison.
+   Topics: ai-adoption, ai-agents. Evidence: `L10`, "1.9x as likely to be high-frequency agentic AI users".
+4. **Outcome alignment accompanies multi-agent clarity** (finding) - Aligned respondents described clearer agent capabilities, use cases, and role boundaries. The article proposes this could reduce fragmented experimentation when scaling; it does not establish that alignment caused the clarity.
+   Topics: role-clarity, ai-agents. Evidence: `L11`, "maintain clear role boundaries".
+5. **Assess collective work beyond personal productivity** (recommendation) - Consider collaboration effectiveness and agent evaluation as agents reshape team processes. Personal output alone may miss how coordination and human-agent work change.
+   Topics: ai-value, ai-agents, survey-design. Evidence: `L14`, "moving beyond individual productivity".
+6. **Alignment accompanies team orientation and pride** (finding) - Outcome-aligned teams more often saw agents as teammates and reported knowledge sharing, creative problem-solving, and pride in collective accomplishments. These perceived teaming associations are distinct from objective business impact.
+   Topics: ai-value, ai-agents, connection. Evidence: `L15`, "stronger teaming behaviors".
+7. **Wipro screens agents for purpose, value, and feasibility** (case-study) - The separate Wipro case describes intake criteria for intended outcomes, business value, strategic fit, technical feasibility, and measurable success. Shared criteria are intended to avoid duplication and guide allocation; the Microsoft survey is not Wipro evidence or an evaluation of that process.
+   Topics: ai-strategy, ai-agents, ai-governance. Evidence: `L19`, "Agent Intake and Prioritization Approach".
 
 ## Shared research context
 
