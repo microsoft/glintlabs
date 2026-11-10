@@ -88,12 +88,12 @@ test("analytics requires an explicit public-reader build flag and rejects ambigu
   assert.throws(() => readerTelemetryConfig("true", "yes"), /GLINTLABS_PAGES_CLARITY must be true or false/);
 });
 
-test("browser icon uses the approved transparent publishing mark", async () => {
+test("browser icon uses the approved Glint Labs flask on a pale-gray circle", async () => {
   const icon = await readFile(new URL("../src/app/icon.svg", import.meta.url), "utf8");
   assert.match(icon, /<title>Glint Labs<\/title>/);
-  assert.match(icon, /viewBox="-2\.002 -2\.002 20 20"/);
-  assert.match(icon, /<path d="[^"]+" fill="black"/);
-  assert.doesNotMatch(icon, /<circle/);
+  assert.match(icon, /viewBox="0 0 26 26"/);
+  assert.match(icon, /<circle cx="13" cy="13" r="13" fill="#f3f3f3"\/>/);
+  assert.match(icon, /<path d="M14 3[^"]+" transform="translate\(3 3\)" fill="#222"/);
 });
 
 test("favicon fallback contains PNG frames at standard browser tab sizes", async () => {
