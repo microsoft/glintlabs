@@ -20,6 +20,30 @@ Read this full entry and the colocated `references/README.md`,
 Reuse complete unchanged bodies; do not rely on stale installed copies.
 Use `../../references/design/glint-ui-system.md` before report/UI changes.
 
+## Evidence-led decision guardrail
+
+Every decision in this skill must be evidence-led: use inspected data and
+diagnostics, the user's confirmed objective and constraints, and applicable
+safety requirements. Never substitute habit, convenience, arbitrary defaults,
+or an unexplained recommendation for evidence. This includes component count,
+scaling, features, model/parameter choices, validation, metrics, thresholds,
+and shortlist membership or ordering.
+
+If evidence or context is insufficient, ask the user for the missing information
+and explain which decision it would resolve. When data cannot determine a
+business trade-off, ask for the user's utility criterion rather than inventing
+one. User approval permits execution; it does not establish analytical quality.
+Privacy, consent, supported-engine limits, and holdout integrity remain mandatory.
+
+Before selecting the number of SVD components, present a clean comparison table
+of candidate counts with measured quality metrics, including cumulative variance
+explained and reconstruction MSE/RMSE when available, their units/evaluation
+scope, and the trade-offs. Follow the component-choice workflow below the linked
+modeling reference. Mark missing metrics **Not computed** and ask for approval
+before any bounded diagnostic fits needed to obtain them. Never silently choose
+three, five, or another count, change a confirmed count, fabricate metrics, or
+run an automatic search to fill the table. Preserve the same guardrail in demos.
+
 ## Collaborate proactively; execute only by instruction
 
 Propose specific tuning ideas based on inspected diagnostics and explain what

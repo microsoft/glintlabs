@@ -602,6 +602,26 @@ def test_skill_has_proactive_collaboration_not_autonomous_tuning():
     assert "Before delivering any completed QA-eligible SVD report, prepare and attach" in workflow
 
 
+def test_skill_requires_evidence_and_comparable_component_options_before_selection():
+    skill = (ROOT / "skills/analyze-survey-advanced/SKILL.md").read_text()
+    workflow = (ROOT / "skills/analyze-survey-advanced/references/modeling-workflow.md").read_text()
+    guardrail = skill.split("## Evidence-led decision guardrail\n", 1)[1].split("\n## ", 1)[0]
+    choices = workflow.split("## Evidence-led choices and component selection\n", 1)[1].split("\n## ", 1)[0]
+    assert "Every decision in this skill must be evidence-led" in guardrail
+    assert "ask the user for the missing information" in guardrail
+    assert "User approval permits execution; it does not establish analytical quality." in guardrail
+    assert "There is no fixed default SVD component count." in choices
+    assert "| Components | Variance explained (%) | Reconstruction MSE | RMSE | Evidence / trade-off |" in choices
+    assert "development in-sample reconstruction error" in choices
+    assert "not cross-validated or holdout reconstruction performance" in choices
+    assert "Not computed" in choices
+    assert "not permission to fit or tune" in choices
+    assert "obtain the user's selection" in choices
+    assert "do not manufacture a candidate range or a variance" in choices
+    assert "Do not invent other-rank reconstruction errors" in choices
+    assert "instead of arbitrarily choosing a" in workflow
+
+
 def test_authorized_finite_tuning_preserves_comparison_and_replays_only_winner(study):
     config = study[2]
     config["experiment"]["models"] = [{

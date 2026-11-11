@@ -12,6 +12,10 @@ validity. Independently review:
 - Whether a frozen-fit replay passed and whether the holdout is genuinely
   untouched versus already consumed. Fold SD is not a confidence interval.
 - Suppression before serialization and safe notebook/ZIP contents.
+- Whether analytical choices, including SVD rank and shortlist direction, have
+  traceable data/diagnostic evidence and a confirmed objective. Approval alone
+  is not evidence of quality. Carry missing or incomparable option metrics
+  forward explicitly; ask for missing context rather than inventing a rationale.
 
 Return **Not ready** and stop findings for invalid validation, leaked targets,
 failed repeatability, missing central evidence, or unsafe outputs. Use **Use
