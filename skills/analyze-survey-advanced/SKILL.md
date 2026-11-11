@@ -56,6 +56,28 @@ Never silently choose three, five, or another count, change a confirmed count,
 fabricate metrics, or run an automatic search to fill the table. Preserve the
 same guardrail in demos.
 
+## Mandatory Knowledge Vault guardrail
+
+Before offering model interpretation or tuning guidance, consult the colocated
+`../people-science-knowledge-vault/SKILL.md` and follow
+`references/interpretation.md`. This is mandatory for all supported models,
+including SVD, demos, follow-up questions and proactive tuning proposals; do not
+wait for the user to request research. Reuse complete, applicable same-revision
+guidance and reviewed source bodies still available in context.
+
+Ground People Science claims in retrieved eligible sources and cite them beside
+the claims they support. Separate observed diagnostics, published guidance,
+hypotheses and technical proposals. Describe supported advice as
+**People Science-grounded**, not **People Science-approved**: vault consultation
+does not establish formal human approval or model validity.
+
+If required references or sources are unavailable, or no applicable evidence is
+found, disclose the gap and withhold research-dependent advice. Verified numeric
+facts may still be explained as data-only, not People Science-grounded. Ask for
+missing context when it would change the advice; never fabricate citations or
+force an irrelevant source. Vault consultation does not authorize fitting or
+override evidence-led choices, confirmed constraints or holdout integrity.
+
 ## Collaborate proactively; execute only by instruction
 
 Propose specific tuning ideas based on inspected diagnostics and explain what
@@ -71,7 +93,7 @@ feature, target, source, model shortlist, parameter, or validation design requir
 renewed approval. No automatically expanded shortlist or installed frameworks.
 Explicit approval may cover one bounded batch; it does not cover future batches.
 
-Use the Knowledge Vault when relevant research can inform the question. When a
+Follow the mandatory Knowledge Vault guardrail for these discussions. When a
 retrieved original source supports a useful discriminating question, proactively
 ask for specific company information absent from Glint: for example, whether a
 dated program rollout or organization change affected the relevant population.

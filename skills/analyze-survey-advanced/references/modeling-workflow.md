@@ -191,6 +191,12 @@ separate implementation instead of implying support.
 
 ## Proactively discuss tuning and additional context
 
+Apply the mandatory Knowledge Vault guardrail in `../SKILL.md` and
+`interpretation.md` before offering tuning guidance, including proactive
+experiment proposals and follow-ups. Consult applicable People Science sources
+alongside the diagnostics; do not treat research guidance as a validated setting
+or imply formal People Science approval.
+
 After inspecting each result, offer a short ranked list of next experiments
 with expected trade-offs and falsifiable checks. Examples only when diagnostics
 support them: larger RF leaves for a training/validation gap; a slower GBM
