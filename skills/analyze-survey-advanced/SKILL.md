@@ -41,14 +41,20 @@ Missing context is not a negative finding. Do not hide a blocked decision behind
 "No supported candidates identified"; ask for the specific context and explain
 how to provide it, preserving provisional pair-level leads when supported.
 
-Before selecting the number of SVD components, present a clean comparison table
-of candidate counts with measured quality metrics, including cumulative variance
-explained and reconstruction MSE/RMSE when available, their units/evaluation
-scope, and the trade-offs. Follow the component-choice workflow below the linked
-modeling reference. Mark missing metrics **Not computed** and ask for approval
-before any bounded diagnostic fits needed to obtain them. Never silently choose
-three, five, or another count, change a confirmed count, fabricate metrics, or
-run an automatic search to fill the table. Preserve the same guardrail in demos.
+Before selecting the number of SVD components, default to a comparison of counts
+**1 through 8**, including demos. This is a comparison range, not a selected rank
+or permission to fit. Present a clean table with cumulative variance explained,
+marginal variance gain, reconstruction MSE/RMSE, their units/evaluation scope,
+and trade-offs. Always follow it with an evidence-based recommendation when the
+confirmed objective supports one, or concrete conditional guidance when it does
+not. Do not leave the user with unexplained metrics or an unsupported "best" count.
+Follow the component-choice workflow in the linked modeling reference. Obtain
+approval for the exact bounded comparison before new fits; reuse comparable
+verified runs. Mark unavailable metrics **Not computed** and unsupported counts
+**Not feasible**, explaining why. Respect an explicitly narrower user scope.
+Never silently choose three, five, or another count, change a confirmed count,
+fabricate metrics, or run an automatic search to fill the table. Preserve the
+same guardrail in demos.
 
 ## Collaborate proactively; execute only by instruction
 

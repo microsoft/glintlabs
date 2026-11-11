@@ -67,19 +67,29 @@ justify changing them.
 
 There is no fixed default SVD component count. First clarify what the user wants
 to preserve or simplify and the acceptable reconstruction/stability trade-off.
-Use inspected item count, effective support, existing variance/error diagnostics,
-and content constraints to propose a small, justified set of candidate ranks.
-If these inputs cannot support a shortlist, ask for the missing objective,
-constraint, or evidence; do not manufacture a candidate range or a variance
-cutoff. Technical reproducibility settings and compute limits must be explicit,
-not described as empirically optimal.
+The default comparison range is **1 through 8**, including demos; this is not a
+selected rank or automatic execution permission. Inspect item count, effective
+support, content constraints, and the supported engine's rank/sample limits.
+Include a row for each count from 1 through 8, marking unsupported counts
+**Not feasible** with a reason rather than attempting an invalid fit. Respect an
+explicitly narrower user scope and explain uncomputed rows. Ask for approval
+before comparing beyond eight or changing other settings. Technical
+reproducibility settings and compute limits must be explicit, not described as
+empirically optimal.
 
 Before asking the user to select a count, show one row per candidate in a compact
 Markdown table. Replace placeholders with inspected results, not example numbers:
 
-| Components | Variance explained (%) | Reconstruction MSE | RMSE | Evidence / trade-off |
-| --- | --- | --- | --- | --- |
-| Candidate count | Measured cumulative percentage or Not computed | Measured error or Not computed | Measured error or Not computed | What is gained, lost, or still untested |
+| Components | Variance explained (%) | Gain (pp) | Reconstruction MSE | RMSE | Evidence / trade-off |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Not computed | Not applicable | Not computed | Not computed | Pending approved comparison |
+| 2 | Not computed | Not computed | Not computed | Not computed | Pending approved comparison |
+| 3 | Not computed | Not computed | Not computed | Not computed | Pending approved comparison |
+| 4 | Not computed | Not computed | Not computed | Not computed | Pending approved comparison |
+| 5 | Not computed | Not computed | Not computed | Not computed | Pending approved comparison |
+| 6 | Not computed | Not computed | Not computed | Not computed | Pending approved comparison |
+| 7 | Not computed | Not computed | Not computed | Not computed | Pending approved comparison |
+| 8 | Not computed | Not computed | Not computed | Not computed | Pending approved comparison |
 
 State the shared dataset/cycle, development population, preprocessing/scaling,
 and error units once beneath the table. Compare like with like: the same
@@ -93,14 +103,27 @@ reported component ratios; label it as a prefix of that fit, not a separately
 validated rank. Do not invent other-rank reconstruction errors from variance
 percentages alone.
 
+Calculate marginal gain in percentage points only between comparable available
+counts; do not invent a missing predecessor. Reuse verified, comparable runs
+instead of refitting them merely to fill the default range.
+
 The current SVD engine reports development in-sample reconstruction error,
 not cross-validated or holdout reconstruction performance. Report that scope;
 do not imply the config's fold count creates SVD validation. Missing stability
 or generalization evidence stays **Not computed**, not zero or "passed".
 Higher rank mechanically retains more variance and reduces training error;
 neither the largest rank nor a presumed elbow is automatically the best choice.
-Explain the observed marginal benefit and the unresolved complexity/content
-trade-off, then ask the user which supported option fits their objective.
+Always follow the table with a recommendation or concrete conditional guidance.
+Explain observed marginal variance/error benefits, added complexity, and missing
+interpretability/stability evidence. Recommend a count only when those results
+and the user's confirmed objective support it; distinguish a practical choice
+from a validated optimum. Otherwise explain which counts serve which goals and
+ask for the missing utility criterion, rather than merely asking the user to
+pick an unexplained number. For example, identify the smallest measured feasible
+count meeting a user-confirmed coverage target; never invent that target or
+present illustrative thresholds as statistical standards. Then obtain the
+user's selection. Do not call the largest count best from training error alone
+or manufacture a variance cutoff from an ambiguous elbow.
 
 If comparison needs new fits, first request explicit authorization for the
 exact source-bound candidate configs and bounded actions/budget. A request to
