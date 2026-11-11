@@ -3,7 +3,7 @@
 | File | Responsibility |
 | --- | --- |
 | `modeling-workflow.md` | Evidence-led decisions, default 1-8 SVD quality tables and recommendation/guidance, approval, source-bound execution and amendments |
-| `interpretation.md` | Model QA and the existing Knowledge Vault evidence handoff |
+| `interpretation.md` | Model QA, mandatory Knowledge Vault grounding for interpretation/tuning, evidence gaps and approval-language boundaries |
 | `interactive-report-contract.md` | Advanced report, explicit decision/context notes, provisional pair leads, privacy and packaging |
 | `report.html` | Advanced-only Glint report shell; never contains respondent rows |
 | `engine.json` | Exact advanced-engine revision and implementation hash |

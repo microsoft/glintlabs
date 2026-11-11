@@ -703,6 +703,29 @@ def test_skill_requires_evidence_and_comparable_component_options_before_selecti
     assert "instead of arbitrarily choosing a" in workflow
 
 
+def test_interpretation_and_tuning_require_vault_grounding_without_implied_approval():
+    skill = (ROOT / "skills/analyze-survey-advanced/SKILL.md").read_text()
+    workflow = (ROOT / "skills/analyze-survey-advanced/references/modeling-workflow.md").read_text()
+    interpretation = (ROOT / "skills/analyze-survey-advanced/references/interpretation.md").read_text()
+    guardrail = skill.split("## Mandatory Knowledge Vault guardrail\n", 1)[1].split("\n## ", 1)[0]
+    guardrail = " ".join(guardrail.split())
+    interpretation = " ".join(interpretation.split())
+    assert "Before offering model interpretation or tuning guidance, consult" in guardrail
+    assert "../people-science-knowledge-vault/SKILL.md" in guardrail
+    assert "SVD, demos, follow-up questions and proactive tuning proposals" in guardrail
+    assert "same-revision" in guardrail
+    assert "cite them beside the claims they support" in guardrail
+    assert "**People Science-grounded**, not **People Science-approved**" in guardrail
+    assert "disclose the gap and withhold research-dependent advice" in guardrail
+    assert "data-only, not People Science-grounded" in guardrail
+    assert "does not authorize fitting" in guardrail
+    assert "mandatory Knowledge Vault guardrail" in workflow
+    assert "required-reference gate" in interpretation
+    assert "Do not restart intake or refit unchanged models" in interpretation
+    assert "unless that specific review is documented" in interpretation
+    assert "Keep report interpretation unavailable until" in interpretation
+
+
 def test_svd_defaults_to_one_through_eight_metrics_and_actionable_guidance():
     skill = (ROOT / "skills/analyze-survey-advanced/SKILL.md").read_text()
     workflow = (ROOT / "skills/analyze-survey-advanced/references/modeling-workflow.md").read_text()

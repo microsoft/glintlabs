@@ -23,11 +23,39 @@ with caveats** for exploratory or development-only results and explain their
 limits. Do not present poor/no-improvement models as meaningful discoveries.
 No fit has run in code-only mode, so no fitted findings can be interpreted.
 
+## Mandatory consultation for interpretation and tuning
+
+Consult the colocated Knowledge Vault before helping interpret results or
+proposing, prioritizing or explaining tuning choices, including SVD component
+labels, rank/scaling trade-offs and question-removal review. This applies to
+demos and follow-ups as well as initial results; users need not request research.
+Do not restart intake or refit unchanged models merely to consult the vault.
+
 Read and follow `../../people-science-knowledge-vault/SKILL.md`, including its
 required-reference gate, `references/research-workflow.md`, and common
 reference bodies from the same revision. Reuse full valid bodies still in
 context; loading notes are not source bodies. Retrieve original eligible public
-articles/PDFs before claims; catalog summaries alone are not evidence.
+source bodies before claims; catalog summaries alone are not evidence. Apply
+the vault's relevance and source-priority rules and cite sources beside supported
+claims, preserving their scope and limitations.
+
+Use the vault to inform content meaning, coverage and useful checks, not to
+choose a component count, invent weight thresholds or justify removal without
+model evidence and confirmed constraints. Technical tuning proposals must still
+follow inspected diagnostics and the user's objective; new fits require approval.
+
+Call supported guidance People Science-grounded, not People Science-approved.
+Do not imply a People Science expert approved this interpretation or model
+unless that specific review is documented. Vault consultation and citations
+do not certify scientific validity.
+
+If a required body cannot be loaded, or no applicable source can be retrieved,
+state what is missing and withhold research-dependent claims/recommendations.
+Continue only with verified numerical observations, basic context checks or
+clearly labeled data-only technical limits; do not present them as People
+Science-grounded. Ask for a relevant supplied source or missing context when
+that would resolve the blocker. Keep report interpretation unavailable until
+the required review and source-grounded narrative actually exist.
 
 Supply only privacy-safe aggregate modeling diagnostics to narrative generation.
 Keep observation, user-provided company context, published guidance, hypotheses,
