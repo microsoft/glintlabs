@@ -86,7 +86,7 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 <p id="svd-summary" class="muted"></p><p id="svd-status" role="status"></p>
 <div id="svd-visuals" hidden>
 <div class="section-head"><h3>Item weights by component</h3><div class="toolbar" data-table="svd-weights-table"><button id="svd-chart-png" type="button">Save chart PNG</button></div></div>
-<p id="svd-chart-note" class="muted">Bars show absolute SVD unit weights on a common 0-1 scale, not factor loadings. Labels retain the signs: positive and negative do not mean good and bad, and a component's orientation can flip. Rows are ordered by Component 1 magnitude; item labels are formatted IDs.</p>
+<p id="svd-chart-note" class="muted">Bar length and darker shading show absolute SVD unit weights on the same 0-1 scale across components, not factor loadings. Shading does not indicate validated strength or significance. Labels retain signs; positive and negative do not mean good and bad. Rows are ordered by Component 1 magnitude; item labels are formatted IDs.</p>
 <div id="svd-chart" class="svd-chart" role="region" aria-label="SVD item-weight chart" aria-describedby="svd-chart-note" tabindex="0"></div>
 <div id="svd-components">
 <div class="section-head"><h3>Component summaries</h3><div class="toolbar" data-table="svd-components-table"></div></div>
@@ -215,14 +215,17 @@ function renderSVD(){
   return [`Component ${index+1}`,`${(variance[index]*100).toFixed(2)}%`,...ranked.slice(0,topCount).map(row=>`${itemLabel(row.feature)} ${signedWeight(row.weight)}`)];
  });
  table("svd-components-table",["Component","Variance explained",...Array.from({length:topCount},(_,index)=>`Top item ${index+1}`)],componentRows);
- const labelWidth=250,panelWidth=240,gap=24,right=24,top=56,bottom=56,rowHeight=32;
+ const labelWidth=250,panelWidth=240,gap=24,right=24,top=56,bottom=104,rowHeight=32;
  const ordered=features.map((feature,index)=>({feature,index})).sort((a,b)=>Math.abs(components[0][b.index])-Math.abs(components[0][a.index])||a.feature.localeCompare(b.feature));
  const width=labelWidth+components.length*panelWidth+(components.length-1)*gap+right,height=top+ordered.length*rowHeight+bottom;
  const style=getComputedStyle(document.documentElement),color=token=>style.getPropertyValue(token).trim();
  const foreground=color("--colorNeutralForeground1"),muted=color("--colorNeutralForeground3"),border=color("--colorNeutralStroke1");
  const surface=color("--colorNeutralBackground1"),soft=color("--colorNeutralBackground2"),brand=color("--colorBrandForeground1");
  const chart=svgNode("svg",{width,height,viewBox:`0 0 ${width} ${height}`,role:"img","aria-label":`SVD unit-weight magnitude bars for ${features.length} survey items and ${components.length} components`,"font-family":getComputedStyle(document.body).fontFamily});
- chart.append(svgNode("title",{},`SVD components: common 0-1 magnitude scale with signed weight labels. Full numeric values are available in the table below.`));
+ chart.append(svgNode("title",{},`SVD components: bar length and continuous light-to-dark shading use the same common 0-1 absolute unit-weight scale, not factor-loading thresholds. Signed numeric values remain available.`));
+ const defs=svgNode("defs"),gradient=svgNode("linearGradient",{id:"svd-magnitude-gradient","color-interpolation":"sRGB"});
+ gradient.append(svgNode("stop",{offset:"0%","stop-color":surface}),svgNode("stop",{offset:"100%","stop-color":brand}));
+ defs.append(gradient);chart.append(defs);
  ordered.forEach((row,index)=>{
   const y=top+index*rowHeight+rowHeight/2;
   if(index%2===0)chart.append(svgNode("rect",{x:0,y:top+index*rowHeight,width:width-right,height:rowHeight,fill:soft}));
@@ -239,13 +242,20 @@ function renderSVD(){
   }
   ordered.forEach((row,item)=>{
    const value=weights[row.index],y=top+item*rowHeight+rowHeight/2;
-   const bar=svgNode("rect",{class:"svd-weight-bar","data-component":index+1,"data-feature":row.feature,"data-weight":value,x:scale(0),y:y-8,width:Math.abs(value)*(panelWidth-80),height:16,rx:3,fill:brand,stroke:muted,"stroke-width":1});
+   const shade=`color-mix(in srgb, ${brand} ${Math.min(1,Math.abs(value))*100}%, ${surface})`;
+   const bar=svgNode("rect",{class:"svd-weight-bar","data-component":index+1,"data-feature":row.feature,"data-weight":value,x:scale(0),y:y-8,width:Math.abs(value)*(panelWidth-80),height:16,rx:3,fill:shade,stroke:muted,"stroke-width":1});
    bar.append(svgNode("title",{},`Component ${index+1} | ${row.feature}: ${signedWeight(value)}`));
    chart.append(bar);
    chart.append(svgNode("text",{class:"svd-weight-label",x:scale(Math.abs(value))+6,y:y+4,fill:foreground,"font-size":11,"font-weight":600,"paint-order":"stroke",stroke:surface,"stroke-width":3,"stroke-linejoin":"round"},signedWeight(value)));
   });
-  chart.append(svgNode("text",{x:x0+panelWidth/2,y:height-8,"text-anchor":"middle",fill:muted,"font-size":12},"Unit-weight magnitude"));
+  chart.append(svgNode("text",{x:x0+panelWidth/2,y:height-bottom+48,"text-anchor":"middle",fill:muted,"font-size":12},"Unit-weight magnitude"));
  });
+ const legend=svgNode("g",{id:"svd-magnitude-legend","aria-label":"Continuous unit-weight magnitude shading from 0 to 1; darker means larger magnitude"});
+ legend.append(svgNode("text",{x:24,y:height-34,fill:foreground,"font-size":12},"Unit-weight shade"));
+ legend.append(svgNode("text",{x:24,y:height-16,fill:muted,"font-size":12},"Darker = larger magnitude"));
+ legend.append(svgNode("rect",{id:"svd-magnitude-key",x:labelWidth+18,y:height-38,width:panelWidth-80,height:14,fill:"url(#svd-magnitude-gradient)",stroke:muted}));
+ for(const tick of [0,.5,1])legend.append(svgNode("text",{x:labelWidth+18+tick*(panelWidth-80),y:height-8,"text-anchor":"middle",fill:muted,"font-size":11},tick.toFixed(1)));
+ chart.append(legend);
  document.getElementById("svd-chart").append(chart);
 }
 function renderItemReview(){

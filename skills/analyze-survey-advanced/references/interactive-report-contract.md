@@ -53,6 +53,14 @@ reuse factor-loading strength thresholds. Signs are orientation, not good/bad.
 Use formatted feature IDs when full question wording is unavailable, retaining
 original IDs in the full signed-weight table.
 
+Shade bars continuously from the Glint surface to brand foreground in proportion
+to absolute unit weight on that same shared 0-1 scale, not per-component maxima
+or invented weak/moderate/strong bins. Darker means larger magnitude, not
+validated strength, significance or desirability. Preserve signed labels,
+bar lengths and visible outlines so color is supplementary. Include a numeric
+0-1 shade legend inside the SVG and its full PNG export; rendering changes no
+diagnostics, fitting or item selection.
+
 Show component variance as a percentage of response variation, not employees,
 practical importance, or a confirmed construct. Keep full variance/weight tables
 and raw diagnostics in an expandable numeric-details section. Chart PNG and
