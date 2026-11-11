@@ -35,6 +35,12 @@ business trade-off, ask for the user's utility criterion rather than inventing
 one. User approval permits execution; it does not establish analytical quality.
 Privacy, consent, supported-engine limits, and holdout integrity remain mandatory.
 
+Make decisions and deferrals explicit in the report: state the observed evidence,
+what was chosen or left undecided, why, and the next information/check needed.
+Missing context is not a negative finding. Do not hide a blocked decision behind
+"No supported candidates identified"; ask for the specific context and explain
+how to provide it, preserving provisional pair-level leads when supported.
+
 Before selecting the number of SVD components, default to a comparison of counts
 **1 through 8**, including demos. This is a comparison range, not a selected rank
 or permission to fit. Present a clean table with cumulative variance explained,

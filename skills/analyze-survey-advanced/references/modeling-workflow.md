@@ -248,6 +248,27 @@ to justify that direction. If they cannot discriminate, explain the ambiguity
 and ask the user for the missing information instead of arbitrarily choosing a
 member. A reasoned fewer/zero assessment is safer than unsupported nominations.
 
+When ambiguity blocks directional nominations, preserve up to three supported
+unordered question pairs as `pair_leads`, with observed reasons and the specific
+evidence needed. State the actual pair-ordering basis in `ranking_basis`; neither
+member is a removal nominee, and omitted dimensions may distinguish the pair.
+Do not fabricate pairs to fill three slots or use a pair whose members are both
+known protected questions.
+
+Use `context_request` to record a concise decision note in `reason` and concrete
+`requested_inputs`. Explain the observation, what is deliberately undecided,
+and why. Say **Please provide additional context to help select the top three
+candidates for removal review**, rather than **No supported candidates
+identified** when missing context is the blocker. Guide the user to paste a
+question map or attach a question list/codebook in the chat: question ID, exact
+wording, must-keep status/reason (benchmarks or trend continuity), and distinct
+topic/action. Tailor requests to the observed pairs, allow explicit unknowns,
+and request question-level context only, not employee rows or comments.
+Do not repeatedly ask for inputs already confirmed unavailable; preserve that
+state and actionable guidance in the report without pretending it is a measured
+absence of redundant questions. A reviewed no-nomination conclusion remains
+distinct from both a missing assessment and a pending-context decision.
+
 For each candidate, provide:
 
 - The fitted question ID and an observed, specific reason for its priority.
@@ -271,7 +292,8 @@ do not use the sealed holdout to develop the shortlist.
 
 Use fewer than three candidates if too few eligible items or too little
 supporting evidence exists. An empty assessed shortlist is valid: explain why
-in `ranking_basis` and `limitations`. A missing assessment is a distinct
+in `ranking_basis` and `limitations`, retaining supported pair leads and a guided
+context request when missing information prevents nominations. A missing assessment is a distinct
 **Candidate shortlist not yet prepared** state, not evidence to retain all.
 That state is intermediate, not a completed QA-eligible SVD deliverable.
 Code-only, not-run, or QA-ineligible outputs cannot support a shortlist; disclose

@@ -75,6 +75,25 @@ a paragraph-only width clamp or text truncation. SVD-profile
 similarity is at most exploratory evidence to investigate, not measured response
 correlation, duplicate content, or justification to delete.
 
+When context blocks nominations, show **Please provide additional context to help
+select the top three candidates for removal review**, a concise decision note
+explaining the observation and why selection is pending, and specific requested
+inputs. Explain how to reply in the originating chat or attach a question
+list/codebook using question ID, exact wording, must-keep status/reason, and
+distinct topic/action. Unknowns are allowed; never request employee-level data.
+Do not present missing context as "No supported candidates identified."
+Preserve up to three supplied `pair_leads` in a separate **Similar pairs to
+investigate** table with CSV/PNG exports. Each unordered pair has an observed
+reason and evidence needed; label it as a lead with neither member nominated.
+Keep the directional shortlist table hidden when no questions are nominated,
+not an empty "Not run" table. Retain the assessment JSON download and complete
+ranking/limitations disclosure even for zero nominations.
+Optional `context_request` and `pair_leads` remain source-bound within
+`question-removal-candidates.json` and the manifest/share ZIP. Legacy assessments
+remain valid: incomplete review flags plus zero nominations receive context
+guidance; completed zero-nomination assessments retain their stated rationale.
+Reject repeated/reversed, self, unfitted, or wholly protected pair leads.
+
 Support up to three candidates, a reasoned assessed-zero outcome, and a distinct
 not-yet-prepared state. Every completed, QA-eligible SVD analysis, including demos
 and structure-only explorations, requires an attached shortlist assessment
