@@ -45,7 +45,15 @@ PRIORITY_TIER_GROUPS: dict[str, tuple[int, str]] = {
     "low": (4, "Low priority"),
 }
 
-KNOWN_TIERS = {"viva-blog", "curated-external", "microsoft-learn", "adoption-center"}
+KNOWN_TIERS = {
+    "viva-blog", "curated-external", "microsoft-learn", "adoption-center",
+    "repository-publication",
+}
+REPOSITORY_PUBLICATIONS = {
+    "https://raw.githubusercontent.com/microsoft/glintlabs/main/"
+    "publications/people-science/human-judgment-in-ai-evaluation.md":
+    "publications/people-science/human-judgment-in-ai-evaluation.md",
+}
 
 REQUIRED_ENTRY_FIELDS = (
     "id",
@@ -119,6 +127,13 @@ def validate_catalog(catalog: dict[str, Any]) -> list[str]:
                 f"entry '{entry_id}' has unknown priority_tier "
                 f"'{entry.get('priority_tier')}'"
             )
+        if entry.get("tier") == "repository-publication" and (
+            entry.get("url") not in REPOSITORY_PUBLICATIONS
+            or entry.get("priority_tier") != "curated"
+        ):
+            issues.append(f"entry '{entry_id}' needs an approved curated repository publication")
+        if entry.get("url") in REPOSITORY_PUBLICATIONS and entry.get("tier") != "repository-publication":
+            issues.append(f"entry '{entry_id}' must identify its repository-publication channel")
         if entry_id in seen_ids:
             issues.append(f"duplicate entry id '{entry_id}'")
         seen_ids.add(entry_id)

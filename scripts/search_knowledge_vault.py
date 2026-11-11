@@ -12,7 +12,7 @@ from collections import Counter
 from pathlib import Path
 from urllib.parse import urlparse
 
-from build_knowledge_vault_resources import PRIORITY_TIER_GROUPS
+from build_knowledge_vault_resources import PRIORITY_TIER_GROUPS, REPOSITORY_PUBLICATIONS
 
 ROOT = Path(__file__).resolve().parents[1]
 REFERENCES = ROOT / "skills/people-science-knowledge-vault/references"
@@ -81,6 +81,8 @@ def priority_key(resource: dict) -> tuple[int, int]:
 
 
 def is_public_url(value: str) -> bool:
+    if value in REPOSITORY_PUBLICATIONS:
+        return True
     url = urlparse(value)
     return (
         url.scheme == "https" and url.hostname in PUBLIC_HOSTS
@@ -145,8 +147,12 @@ def validate_index(index: dict, catalog: dict) -> list[str]:
                 for key in ("content_sha256", "extracted_text_sha256")
             ):
                 issues.append(f"{prefix}: invalid provenance hash")
-            if evidence["format"] not in {"html", "pdf"} or not evidence["retrieved_at"]:
+            if evidence["format"] not in {"html", "pdf", "markdown"} or not evidence["retrieved_at"]:
                 issues.append(f"{prefix}: incomplete retrieval provenance")
+            if (evidence["format"] == "markdown") != (resource["url"] in REPOSITORY_PUBLICATIONS):
+                issues.append(f"{prefix}: Markdown requires an approved repository publication")
+            if evidence["format"] == "markdown" and evidence.get("review_basis") != "repository-source":
+                issues.append(f"{prefix}: repository source review must be explicit")
             if not re.fullmatch(r"[a-z0-9-]+\.json", evidence["cache_file"]):
                 issues.append(f"{prefix}: cache file must be a public extraction basename")
         elif not resource.get("gap_reason"):
@@ -192,6 +198,52 @@ def validate_index(index: dict, catalog: dict) -> list[str]:
         "internal_record", "c:\\\\",
     )):
         issues.append("private ownership/location metadata must not enter the theme index")
+    return issues
+
+
+def verify_evidence(resource: dict, units: dict[str, str]) -> list[str]:
+    issues = []
+    for theme in resource["themes"]:
+        evidence = theme["evidence"]
+        text = units.get(evidence["locator"], "")
+        if (
+            normalize(evidence["anchor"]) not in normalize(text)
+            or digest(text) != evidence["unit_sha256"]
+        ):
+            issues.append(f"{theme['id']}: anchor/locator no longer matches source")
+    return issues
+
+
+def verify_repository_publications(index: dict, root: Path = ROOT) -> list[str]:
+    issues = []
+    for resource in index["resources"]:
+        relative = REPOSITORY_PUBLICATIONS.get(resource["url"])
+        if relative is None:
+            continue
+        path = root / relative
+        if (
+            any((root / parent).is_symlink() for parent in (Path(relative), *Path(relative).parents[:-1]))
+            or not path.resolve().is_relative_to(root.resolve())
+        ):
+            issues.append(f"{resource['id']}: repository publication must not use symlinks or escape the repository")
+            continue
+        try:
+            content = path.read_bytes()
+            body = content.decode("utf-8").strip()
+        except (OSError, ValueError) as error:
+            issues.append(f"{resource['id']}: cannot read repository publication: {error}")
+            continue
+        provenance = resource["provenance"]
+        if (
+            hashlib.sha256(content).hexdigest() != provenance["content_sha256"]
+            or digest(body) != provenance["extracted_text_sha256"]
+        ):
+            issues.append(f"{resource['id']}: repository publication hash mismatch; review required")
+        units = {
+            f"L{i}": line.strip()
+            for i, line in enumerate((line for line in body.splitlines() if line.strip()), 1)
+        }
+        issues.extend(verify_evidence(resource, units))
     return issues
 
 
@@ -245,14 +297,7 @@ def verify_bodies(index: dict, directory: Path) -> list[str]:
                             issues.append(f"{theme['id']}: transcript timestamp mismatch")
             except (OSError, ValueError, KeyError, IndexError) as error:
                 issues.append(f"{resource['id']}: cannot verify transcript cache: {error}")
-        for theme in resource["themes"]:
-            evidence = theme["evidence"]
-            text = units.get(evidence["locator"], "")
-            if (
-                normalize(evidence["anchor"]) not in normalize(text)
-                or digest(text) != evidence["unit_sha256"]
-            ):
-                issues.append(f"{theme['id']}: anchor/locator no longer matches source")
+        issues.extend(verify_evidence(resource, units))
     return issues
 
 
@@ -633,6 +678,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         index = load_json(INDEX_PATH)
         issues = validate_index(index, load_json(CATALOG_PATH))
+        if args.check or args.write_reference:
+            issues.extend(verify_repository_publications(index))
         if args.bodies_dir:
             issues.extend(verify_bodies(index, args.bodies_dir))
         if issues:

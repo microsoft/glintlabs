@@ -17,6 +17,7 @@ Reviewed 2026-11-10. Read the source profiles for evidence scope, study families
 
 ## Original vault
 
+- [Human Judgment in AI Evaluation](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/sources/human-judgment-in-ai-evaluation.md) (8 relevant themes).
 - [Research Readout - Agentic Teaming & Trust Research](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/sources/agentic-teaming-trust-research.md) (1 relevant themes).
 - [The state of AI change readiness](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/sources/ai-change-readiness.md) (3 relevant themes).
 - [Think like a People Scientist: Bridging HR & IT for AI Success](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/sources/think-like-a-people-scientist-bridging-hr-and-it-for-ai-success.md) (4 relevant themes).

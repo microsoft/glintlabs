@@ -2,7 +2,7 @@
 
 Use this library by following links from the [skill instructions](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/SKILL.md). No ZIP, installation, repository clone, or local scripts are required.
 
-**Reviewed 2026-11-10: 55 reviewed resources, 589 source-level summaries, 33 topics, 1 explicit gap.**
+**Reviewed 2026-11-10: 56 reviewed resources, 597 source-level summaries, 33 topics, 1 explicit gap.**
 
 Read [source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md), [corpus scope](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/corpus-guide.md), and [link-only use](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/public-use.md). Then choose relevant topics below.
 

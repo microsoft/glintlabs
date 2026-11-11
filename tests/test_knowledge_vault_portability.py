@@ -10,6 +10,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
+import build_knowledge_vault_resources as builder
 import check_knowledge_vault_context as context_check
 import check_knowledge_vault_sources as live
 import search_knowledge_vault as lookup
@@ -48,6 +49,7 @@ def test_private_locations_and_missing_links_block_context_checks(tmp_path):
     root = tmp_path / "repository"
     context = root / "skills/people-science-knowledge-vault/references"
     shutil.copytree(lookup.REFERENCES, context)
+    shutil.copytree(ROOT / "publications", root / "publications")
     skill = root / "skills/people-science-knowledge-vault/SKILL.md"
     shutil.copyfile(context_check.SKILL_PATH, skill)
     path = context / "public-use.md"
@@ -160,6 +162,120 @@ def test_pdf_content_and_extraction_are_required(monkeypatch):
     assert live.check_resource(resource, response)["status"] == "retrieval-error"
 
 
+def publication_fixture(tmp_path):
+    index = lookup.load_json(lookup.INDEX_PATH)
+    resource = next(r for r in index["resources"] if r.get("provenance", {}).get("format") == "markdown")
+    relative = lookup.REPOSITORY_PUBLICATIONS[resource["url"]]
+    path = tmp_path / relative
+    path.parent.mkdir(parents=True)
+    path.write_bytes((ROOT / relative).read_bytes())
+    return resource, path
+
+
+def test_repository_source_policy_does_not_allow_arbitrary_github_files():
+    url = next(iter(lookup.REPOSITORY_PUBLICATIONS))
+    assert lookup.is_public_url(url)
+    for rejected in (
+        url.replace("/main/", "/draft/"),
+        url.replace("glintlabs/", "glintlabs_staging/"),
+        url.replace("human-judgment-in-ai-evaluation.md", "unapproved.md"),
+        url + "?token=example",
+        url + "#fragment",
+        url.replace("https://", "https://user@"),
+    ):
+        assert not lookup.is_public_url(rejected), rejected
+    catalog = lookup.load_json(ROOT / "references/maintenance/knowledge-vault/catalog.json")
+    entry = next(e for e in catalog["entries"] if e["tier"] == "repository-publication")
+    entry["url"] = url.replace("/main/", "/draft/")
+    assert any("approved curated repository publication" in issue for issue in builder.validate_catalog(catalog))
+
+
+def test_repository_publication_requires_explicit_review_provenance(tmp_path):
+    resource, _ = publication_fixture(tmp_path)
+    index = lookup.load_json(lookup.INDEX_PATH)
+    index["resources"] = [resource if r["id"] == resource["id"] else r for r in index["resources"]]
+    resource["provenance"].pop("review_basis")
+    assert any("repository source review must be explicit" in issue for issue in lookup.validate_index(
+        index, lookup.load_json(lookup.CATALOG_PATH)
+    ))
+
+
+@pytest.mark.parametrize("defect", ["missing", "content", "anchor", "unit-hash"])
+def test_local_publication_requires_matching_source_and_evidence(tmp_path, defect):
+    resource, path = publication_fixture(tmp_path)
+    index = {"resources": [resource]}
+    assert lookup.verify_repository_publications(index, tmp_path) == []
+    if defect == "missing":
+        path.unlink()
+    elif defect == "content":
+        path.write_bytes(path.read_bytes() + b"\nChanged without a review.\n")
+    elif defect == "anchor":
+        resource["themes"][0]["evidence"]["anchor"] = "Not in the approved summary"
+    else:
+        resource["themes"][0]["evidence"]["unit_sha256"] = "0" * 64
+    assert lookup.verify_repository_publications(index, tmp_path)
+
+
+def test_private_publication_content_is_rejected_even_with_updated_hashes(tmp_path):
+    root = tmp_path / "repository"
+    resource, path = publication_fixture(root)
+    content = path.read_bytes() + b"\nhttps://example.sharepoint.com/private\n"
+    path.write_bytes(content)
+    resource["provenance"]["content_sha256"] = hashlib.sha256(content).hexdigest()
+    resource["provenance"]["extracted_text_sha256"] = lookup.digest(content.decode("utf-8").strip())
+    context = root / "skills/people-science-knowledge-vault/references"
+    shutil.copytree(lookup.REFERENCES, context)
+    shutil.copyfile(context_check.SKILL_PATH, context.parent / "SKILL.md")
+    index = lookup.load_json(context / "theme-index.json")
+    index["resources"] = [resource if r["id"] == resource["id"] else r for r in index["resources"]]
+    (context / "theme-index.json").write_text(json.dumps(index), encoding="utf-8")
+    for name, rendered in lookup.render_web_context(index).items():
+        (context / name).write_text(rendered, encoding="utf-8")
+    with pytest.raises(ValueError, match="private ownership/location data cannot enter a public publication"):
+        context_check.validate_context(context, root)
+
+
+@pytest.mark.parametrize("parent_link", [False, True])
+def test_publication_symlinks_are_rejected_before_body_reads(tmp_path, monkeypatch, parent_link):
+    resource, path = publication_fixture(tmp_path)
+    link = path.parent if parent_link else path
+    original_is_symlink, original_read = Path.is_symlink, Path.read_bytes
+
+    def guarded_read(candidate):
+        assert candidate != path, "publication read before rejecting its symlink"
+        return original_read(candidate)
+
+    monkeypatch.setattr(Path, "is_symlink", lambda p: p == link or original_is_symlink(p))
+    monkeypatch.setattr(Path, "read_bytes", guarded_read)
+    issues = lookup.verify_repository_publications({"resources": [resource]}, tmp_path)
+    assert any("must not use symlinks" in issue for issue in issues)
+
+
+def test_live_markdown_checks_require_the_exact_approved_source_bytes(tmp_path):
+    resource, path = publication_fixture(tmp_path)
+    content = path.read_bytes()
+    result = live.check_resource(resource, lambda url: (url, "text/plain; charset=utf-8", content))
+    assert result["status"] == "verified-text"
+    changed = live.check_resource(resource, lambda url: (url, "text/markdown", content + b"\nNew text."))
+    assert changed["status"] == "content-gap"
+    assert "changed; review required" in changed["reason"]
+    resource["url"] = "https://learn.microsoft.com/en-us/viva/glint/test"
+    rejected = live.check_resource(resource, lambda url: (url, "text/plain", content))
+    assert rejected["status"] == "retrieval-error"
+    assert "not an approved repository publication" in rejected["reason"]
+
+
+@pytest.mark.parametrize(
+    ("content_type", "content"),
+    [("text/html", b"<main>Not Markdown</main>"), ("text/plain", b"\xff")],
+)
+def test_markdown_wrong_type_or_encoding_is_an_explicit_failure(tmp_path, content_type, content):
+    resource, _ = publication_fixture(tmp_path)
+    result = live.check_resource(resource, lambda url: (url, content_type, content))
+    assert result["status"] == "retrieval-error"
+    assert result["reason"]
+
+
 def test_player_pages_and_recorded_gaps_never_count_as_verified_evidence():
     resource = sample_resource()
     asset = {"url": "https://medius.microsoft.com/Embed/video-nc/test"}
@@ -245,6 +361,7 @@ def test_runtime_workflows_cannot_be_omitted_or_outgrow_retrieval_budget(
     root = tmp_path / "repository"
     context = root / "skills/people-science-knowledge-vault/references"
     shutil.copytree(lookup.REFERENCES, context)
+    shutil.copytree(ROOT / "publications", root / "publications")
     shutil.copyfile(context_check.SKILL_PATH, context.parent / "SKILL.md")
     path = context / name
     if failure == "missing":
@@ -261,6 +378,7 @@ def test_registering_workflows_does_not_allow_arbitrary_public_context(tmp_path)
     root = tmp_path / "repository"
     context = root / "skills/people-science-knowledge-vault/references"
     shutil.copytree(lookup.REFERENCES, context)
+    shutil.copytree(ROOT / "publications", root / "publications")
     shutil.copyfile(context_check.SKILL_PATH, context.parent / "SKILL.md")
     (context / "unreviewed.md").write_text("Unregistered content", encoding="utf-8")
     with pytest.raises(ValueError, match="missing/unregistered files"):

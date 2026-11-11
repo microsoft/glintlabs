@@ -110,7 +110,8 @@ People Science-backed.
 - User-authorized screenshots and aggregates support observations about their
   displayed scope, not research claims, causal explanations, or individual
   predictions. Never invent unreadable values, missing context, or suppressed data.
-- Published claims require retrieved full article/PDF bodies or eligible reviewed
+- Published claims require retrieved full article/PDF bodies, approved first-party
+  public summary bodies, or eligible reviewed
   recording evidence. Keep citations beside the claims they support. Verify
   substantive numbers, their meaning, units, population, dates, and limitations;
   omit unsupported claims and explicitly correct errors already delivered.

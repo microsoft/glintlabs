@@ -39,7 +39,10 @@ REQUIRED_ENTRY_FIELDS = (
     "description",
     "research_questions",
 )
-KNOWN_TIERS = {"viva-blog", "curated-external", "microsoft-learn", "adoption-center"}
+KNOWN_TIERS = {
+    "viva-blog", "curated-external", "microsoft-learn", "adoption-center",
+    "repository-publication",
+}
 KNOWN_PRIORITY_TIERS = {"top5", "high", "medium", "low", "curated"}
 
 

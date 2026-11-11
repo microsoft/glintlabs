@@ -5,6 +5,8 @@ on:
     paths:
       - "skills/people-science-knowledge-vault/**"
       - "references/maintenance/knowledge-vault/**"
+      - "publications/people-science/**"
+      - ".gitattributes"
       - "scripts/*knowledge_vault*"
       - "tests/test_knowledge_vault*"
       - "tests/test_skill_structure.py"
@@ -16,6 +18,8 @@ on:
     paths:
       - "skills/people-science-knowledge-vault/**"
       - "references/maintenance/knowledge-vault/**"
+      - "publications/people-science/**"
+      - ".gitattributes"
       - "scripts/*knowledge_vault*"
       - "tests/test_knowledge_vault*"
       - "tests/test_skill_structure.py"

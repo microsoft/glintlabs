@@ -14,6 +14,14 @@ follow `source-priority.md`, which also covers the supplementary live checks
 (Microsoft Viva Blog category page, Microsoft Learn, Adoption Center) useful
 for material newer than the publisher-maintained catalog.
 
+## Curated - high value, not present in the workbook snapshot
+
+| Title | Theme | Link |
+| --- | --- | --- |
+| Building a holistic employee listening ecosystem | Employee listening | [source](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/894/1/Holistic%20Listening%20Infographic_09292023%201.pdf) |
+| Human Judgment in AI Evaluation | AI Evaluation & Human Judgment | [source](https://raw.githubusercontent.com/microsoft/glintlabs/main/publications/people-science/human-judgment-in-ai-evaluation.md) |
+| Redefining High Performance in the New Era of Work | High performance | [source](https://www.microsoft.com/content/dam/microsoft/final/en-us/microsoft-brand/documents/Microsoft-HPO-Guide-Oct-2023.pdf) |
+
 ## Top5 - highest priority
 
 | Title | Theme | Link |
@@ -26,13 +34,6 @@ for material newer than the publisher-maintained catalog.
 | Think like a People Scientist: Leading AI Change with Employee Sentiment | AI Transformation & Adoption | [source](https://techcommunity.microsoft.com/blog/microsoftvivablog/think-like-a-people-scientist-leading-ai-change-with-employee-sentiment/4412911) |
 | Understanding and interpreting your survey data | Survey Design & Methodology | [source](https://techcommunity.microsoft.com/blog/viva_glint_blog/think-like-a-people-scientist-understanding-and-interpreting-your-survey-data/4063620) |
 | What’s New with Viva Glint Benchmarks? | Measurement & Benchmarks | [source](https://techcommunity.microsoft.com/blog/viva_glint_blog/what%E2%80%99s-new-with-viva-glint-benchmarks/4448380) |
-
-## Curated - high value, not present in the workbook snapshot
-
-| Title | Theme | Link |
-| --- | --- | --- |
-| Building a holistic employee listening ecosystem | Employee listening | [source](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/894/1/Holistic%20Listening%20Infographic_09292023%201.pdf) |
-| Redefining High Performance in the New Era of Work | High performance | [source](https://www.microsoft.com/content/dam/microsoft/final/en-us/microsoft-brand/documents/Microsoft-HPO-Guide-Oct-2023.pdf) |
 
 ## High priority
 

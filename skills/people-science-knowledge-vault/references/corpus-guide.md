@@ -15,32 +15,41 @@ not permission to supply its claims from general knowledge.
 
 ## What is included
 
-At the November 10, 2026 source-driven theme re-review:
+Current registered coverage, including the approved November 2026 public summary:
 
 | Collection | Inventory | Reviewed resources | Source-level summaries |
 | --- | ---: | ---: | ---: |
-| Original vault | 39 | 38 | 422 |
+| Original vault | 40 | 39 | 430 |
 | New Research Drops | 17 | 17 | 167 |
-| Combined | 56 | 55 | 589 |
+| Combined | 57 | 56 | 597 |
 
 The October review recorded 550 entries, with ten per accessible resource.
-The new review has 589 entries, ranging from two to 26 per accessible resource.
+The November 10 source-driven review produced 589 entries across 55 reviewed
+resources, ranging from two to 26 per accessible resource.
 Twenty-one resource counts decreased, nine stayed unchanged, and 25 increased.
 These counts describe editorial coverage, not a quota for additions or updates.
 Use as many distinct, grounded themes as each source warrants, without padding
 or cutting useful material. Themes distinguish findings, frameworks,
 recommendations, methods, commentary, hypotheses, case studies, documentation,
-and signposts. **589 entries do not mean 589 distinct ideas or 589 independent
+and signposts. **597 entries do not mean 597 distinct ideas or 597 independent
 findings.** Editorial theme counts are not statistical estimates of conceptual
 diversity.
 
-All 55 current public article/PDF bodies were retrieved and text-reviewed.
+All 55 article/PDF bodies in that re-review were retrieved and text-reviewed.
 The 35 existing recording-backed themes retain their prior evidence; recordings
 were not replayed for this re-review. Selected PDF figures were inspected, but
 image-only figures and linked assets were not comprehensively refreshed.
 Per-resource asset scopes disclose these boundaries. The change combines removal
 of the quota with current-source review; it does not isolate a causal effect of
 the quota or demonstrate improved assistant answer quality.
+
+The approved first-party
+[Human Judgment in AI Evaluation public summary](https://raw.githubusercontent.com/microsoft/glintlabs/main/publications/people-science/human-judgment-in-ai-evaluation.md)
+adds eight grounded themes. Its complete repository source was reviewed
+separately; this does not refresh the earlier sources or certify a live URL
+before publication. It proposes a practitioner framework, not new empirical
+findings or a validated instrument. The summary is the eligible source edition;
+the underlying full paper, figures, and references are not hosted or required.
 
 The original series-directory URL redirects to a general Viva landing page.
 It has zero themes and a recorded gap, rather than inferred themes.
@@ -162,7 +171,7 @@ In particular:
   short anchor to find the passage in the public body. `p` means PDF page; `s`
   means reviewed transcript segment with a public recording and start time.
 
-Full article bodies, original Office/audio files, private links, and machine
+Other full article bodies, original Office/audio files, private links, and machine
 transcripts are not republished here. Public source links remain necessary for
 full evidence and current-source verification; the repository supplies portable
 discovery context rather than a lossless, offline source archive.

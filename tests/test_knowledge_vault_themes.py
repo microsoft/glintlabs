@@ -23,8 +23,8 @@ def test_theme_inventory_reconciles_with_catalog_and_public_drops(index):
     catalog = lookup.load_json(lookup.CATALOG_PATH)
     assert lookup.validate_index(index, catalog) == []
     assert len(index["resources"]) == len(catalog["entries"]) + 17
-    assert lookup.coverage(index)["reviewed"] == 55
-    assert lookup.coverage(index)["themes"] == 589
+    assert lookup.coverage(index)["reviewed"] == 56
+    assert lookup.coverage(index)["themes"] == 597
     for resource in index["resources"]:
         assert bool(resource["themes"]) == (resource["review_status"] == "reviewed")
         if resource["group"] == "research-drop":
@@ -350,6 +350,7 @@ def test_repository_bundle_works_without_downloads_sharepoint_or_body_cache(tmp_
     for name in ("search_knowledge_vault.py", "build_knowledge_vault_resources.py"):
         shutil.copyfile(ROOT / "scripts" / name, scripts / name)
     shutil.copytree(lookup.REFERENCES, references, dirs_exist_ok=True)
+    shutil.copytree(ROOT / "publications", bundle / "publications")
     for arguments in (
         ["--check"],
         ["--resource", "research-drop-4493933", "--json"],
@@ -365,6 +366,7 @@ def test_repository_bundle_works_without_downloads_sharepoint_or_body_cache(tmp_
 @pytest.mark.parametrize(
     ("arguments", "exit_code", "message"),
     [
+        (["AI models evaluation", "--json"], 0, "human-judgment-in-ai-evaluation:06"),
         (["--resource", "research-drop-4493933", "--json"], 0, "research-drop-4493933:01"),
         (["--topic", "growth-development", "--json"], 0, "growth-development"),
         (["--resource", "think-like-a-people-scientist-series-hub"], 2, "redirects"),

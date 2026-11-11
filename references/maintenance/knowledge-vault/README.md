@@ -67,6 +67,25 @@ If a reviewed body/transcript cache is available, optionally run
 Do not commit the cache. Cache basenames/hashes are provenance pointers, not
 bundled files or online freshness checks.
 
+## Approved first-party public summaries
+
+An explicitly approved standalone public summary may use the
+`repository-publication` channel and `curated` priority without inventing workbook
+provenance. Only exact URLs in `REPOSITORY_PUBLICATIONS` are eligible. Adding a
+different URL requires a separately approved eligibility change; do not allow
+arbitrary GitHub paths, branches, drafts, or private intake.
+
+The approved Markdown source lives under `publications/people-science/`, outside
+the discovery context. Keep it UTF-8 with LF line endings. Record its exact byte
+and trimmed-body hashes, `format: markdown`, `review_basis: repository-source`,
+and evidence anchored to its nonblank lines. Context checks verify its presence,
+hashes, and anchors locally; live checks retrieve its published URL separately.
+Do not claim network verification before publication.
+
+Registration covers this public summary edition only. Never copy the underlying
+full paper, figures, private links, or unreviewed research citations into it.
+Content approval and staging preparation do not authorize a merge or release.
+
 ## Rights-reviewed text alternatives
 
 Before adding source text, independently verify permission for redistribution
