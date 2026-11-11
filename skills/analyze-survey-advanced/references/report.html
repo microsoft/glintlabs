@@ -76,8 +76,8 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 </dl>
 </header>
 <nav aria-label="Report sections">
-<a href="#svd">SVD</a><a href="#comparison">Model comparison</a><a href="#diagnostics">Diagnostics</a>
-<a href="#interpretation">Interpretation</a><a href="#methodology">Methodology</a><a href="#downloads">Downloads</a>
+<a href="#svd">SVD</a><a href="#interpretation">Interpretation</a><a href="#comparison">Model comparison</a>
+<a href="#diagnostics">Diagnostics</a><a href="#methodology">Methodology</a><a href="#downloads">Downloads</a>
 </nav>
 <section id="svd"><h2>Centered SVD exploration</h2>
 <p class="section-intro muted">Singular value decomposition (SVD) summarizes variation across numeric survey items as a smaller set of components. Use explained variance and item weights to explore shared response patterns; this is not a validated measurement model or a predictive leaderboard.</p>
@@ -121,6 +121,8 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 <div class="scroll"><table id="svd-table"></table></div>
 <h3>All signed item weights</h3><div class="scroll"><table id="svd-weights-table"></table></div>
 <h3>Raw diagnostics</h3><pre id="svd-details"></pre></details></section>
+<section id="interpretation"><h2>People Science interpretation</h2>
+<div id="narrative"></div></section>
 <section id="comparison"><div class="section-head"><h2>Model comparison</h2><div class="toolbar" data-table="comparison-table"></div></div>
 <p class="section-intro muted">Compares predictive models on the same development folds. Use the agreed metric and baseline to judge whether a more complex model adds useful predictive accuracy.</p>
 <div class="section-action"><h3>How to action these results</h3><p>Prefer the simplest candidate that meets your agreed improvement criterion over the baseline. Freeze selection and request untouched-holdout evaluation before making a final performance claim; development scores alone do not establish practical usefulness.</p></div>
@@ -132,10 +134,6 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 <p>Choosing a view does not retrain a model. Permutation importance is not causal influence; correlated predictors may share importance.</p>
 <label for="model-select">Approved fitted candidate</label><select id="model-select"></select>
 <pre id="diagnostic-details"></pre></section>
-<section id="interpretation"><h2>People Science interpretation</h2>
-<p class="section-intro muted">Relates reviewed model evidence to published People Science research, keeping observations, hypotheses and suggested checks distinct. Interpretations appear only after the required sources have been reviewed.</p>
-<div class="section-action"><h3>How to action these results</h3><p>Use supported hypotheses to ask a focused question about relevant company context or an eligible additional dataset. Verify the explanation locally before choosing an intervention; research relevance and model associations do not establish a local cause.</p></div>
-<div id="narrative"></div></section>
 <section id="methodology"><h2>Methodology and limitations</h2>
 <p class="section-intro muted">Documents the approved modeling design, repeatability checks, and limitations. Use this section to judge what the results do and do not support.</p>
 <div class="section-action"><h3>How to action these results</h3><p>Resolve leakage, privacy, measurement, or validation problems before relying on findings. Carry remaining caveats into decisions and shared outputs; deterministic repeatability alone is not evidence of scientific validity.</p></div>
@@ -299,7 +297,7 @@ renderSVD();renderItemReview();
 const narrative=document.getElementById("narrative");
 if(M.interpretation.status!=="reviewed"){narrative.textContent="Research-backed interpretation unavailable: "+M.interpretation.reason}
 else{for(const claim of M.interpretation.claims){const article=document.createElement("article");
- for(const key of ["observation","interpretation","hypothesis","next_check","caveat"]){const p=document.createElement("p");const label=document.createElement("strong");label.textContent=key.replaceAll("_"," ")+": ";p.append(label,document.createTextNode(claim[key]));article.append(p)}
+ const p=document.createElement("p");p.textContent=claim.text??["observation","interpretation","hypothesis","next_check","caveat"].map(key=>claim[key]).filter(Boolean).join(" ");article.append(p);
  for(const source of claim.sources){const p=document.createElement("p"),a=document.createElement("a");a.href=source.url;a.rel="noopener noreferrer";a.textContent=source.title;p.append(a);article.append(p)}narrative.append(article)}}
 function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type})),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 document.getElementById("download-json").onclick=()=>download("model-diagnostics.json",JSON.stringify(S,null,2),"application/json");

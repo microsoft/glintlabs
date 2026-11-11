@@ -145,6 +145,10 @@ clean notebook/script, portable config template, and allowlisted share ZIP.
 Open an authorized local preview automatically. Explain what ran, model QA,
 baseline comparisons, caveats, and what did not run. Embed research interpretation
 only after the required evidence review; otherwise mark it unavailable.
+Write the interpretation as concise, connected natural-language paragraphs with
+citations beside the supported guidance. Explain what the results mean and the
+material limits or next check without Observation / Interpretation / Hypothesis
+blocks. Place it immediately after SVD and before Model comparison.
 
 For every completed, QA-eligible SVD analysis, including demos and structure-only
 explorations, always prepare and attach a ranked shortlist of the top three
