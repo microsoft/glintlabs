@@ -6,6 +6,16 @@
   "properties": {
     "schema_version": {"const": "1.0.0"},
     "source": {"$ref": "#/$defs/source"},
+    "survey": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 300, "pattern": "\\S"},
+        "invited_count": {"type": "integer", "minimum": 5},
+        "respondent_column": {"type": "string", "minLength": 1}
+      },
+      "dependentRequired": {"invited_count": ["respondent_column"]},
+      "additionalProperties": false
+    },
     "joins": {
       "type": "array", "maxItems": 5,
       "items": {

@@ -132,6 +132,51 @@ def provenance() -> dict:
     }
 
 
+def survey_overview(config: dict, frame: pd.DataFrame | None = None) -> dict:
+    details = config.get("survey", {})
+    minimum = config["experiment"]["min_group_size"]
+    invited = details.get("invited_count")
+    if invited is not None and invited < minimum:
+        raise ValueError("The invitation count is below the configured privacy minimum.")
+    overview = {
+        "name": details.get("name"),
+        "response_count": None,
+        "feature_count": len(config["experiment"]["features"]),
+        "invited_count": invited,
+        "response_rate": None,
+    }
+    if frame is None:
+        return overview
+    titles = (
+        frame["survey_cycle_title"].dropna().astype(str).str.strip()
+        if "survey_cycle_title" in frame else pd.Series(dtype=str)
+    )
+    titles = titles[titles.ne("")].unique()
+    if overview["name"] is None and len(titles) == 1:
+        overview["name"] = titles[0]
+    count = len(frame)
+    if invited is not None:
+        respondent = details["respondent_column"]
+        if (
+            respondent not in frame or frame[respondent].isna().any()
+            or frame[respondent].astype(str).str.strip().eq("").any()
+            or frame[respondent].duplicated().any()
+            or any(
+                frame[column].dropna().nunique() > 1
+                for column in ("survey_cycle_title", "survey_cycle_id", "survey_cycle")
+                if column in frame
+            )
+        ):
+            raise ValueError("Response rate needs one confirmed survey scope and one response per identified respondent.")
+        if count > invited:
+            raise ValueError("Survey responses exceed the confirmed invitation count.")
+    if count >= minimum:
+        overview["response_count"] = count
+        if invited is not None:
+            overview["response_rate"] = 100 * count / invited
+    return overview
+
+
 def seal_holdout_design(project: Path, config: dict, frame: pd.DataFrame) -> Path:
     experiment = config["experiment"]
     validation = experiment["validation"]
@@ -312,12 +357,14 @@ def run(options: argparse.Namespace) -> None:
         "provenance": {}, "summary": {},
         "qa": {"verdict": "Not ready", "repeatability": "not_run", "limitations": ["Code generated; no models executed."]},
         "artifacts": [], "interpretation": {"status": "unavailable", "reason": "Research has not been retrieved and reviewed."},
+        "survey": survey_overview(config),
     }
     if mode != "code":
         from vivaglint.modeling import run_model_experiment
 
         manifest["provenance"] = provenance()
         frame = load_data(config, config_path.parent, private)
+        manifest["survey"] = survey_overview(config, frame)
         if len(frame) > config["experiment"]["budget"]["max_rows"]:
             raise ValueError("The loaded/joined data exceeds the approved row budget.")
         if mode == "fit" and any(model.get("grid") for model in config["experiment"]["models"]):

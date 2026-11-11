@@ -49,6 +49,10 @@ Clarify the decision, confirmed target/task, predictor eligibility and timing,
 respondent/group identity, repeated cycles, missing values, validation objective,
 metrics, utility criterion, company context, and compute limits. Reuse answers
 already given. Do not invoke the basic skill's fixed five-analysis intake.
+Record the confirmed survey name and, when available, its invitation count and
+respondent ID column in the optional config `survey` metadata. Missing invitation
+coverage does not block analysis: show response rate as unavailable, never infer
+it from the export's respondent count.
 Ask whether to execute locally or generate clean code/notebook guidance.
 If demo data is requested, use only the registered Analyze Survey workbook and
 confirm a non-attrition target and eligible cycles before execution.

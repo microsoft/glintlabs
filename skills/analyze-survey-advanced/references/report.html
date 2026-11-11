@@ -38,6 +38,12 @@ section{padding:var(--spacingHorizontalL);margin-bottom:var(--spacingHorizontalL
 .toolbar{display:flex;gap:var(--spacingHorizontalS)}
 .muted{color:var(--colorNeutralForeground3)}
 .badge{display:inline-block;background:var(--colorStatusWarningBackground);padding:var(--spacingHorizontalS) var(--spacingHorizontalM);border-radius:var(--borderRadiusMedium)}
+.survey-overview{display:grid;grid-template-columns:2fr repeat(3,minmax(0,1fr));gap:var(--spacingHorizontalM);margin:var(--spacingHorizontalL) 0}
+.survey-overview>div{min-width:0;padding:var(--spacingHorizontalM);background:var(--colorNeutralBackground1);border-radius:var(--borderRadiusMedium)}
+.survey-overview dt{font-size:14px;color:var(--colorNeutralForeground3)}
+.survey-overview dd{margin:var(--spacingHorizontalS) 0 0;font-size:24px;font-weight:600;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.survey-overview .survey-name{font-size:20px}
+.survey-overview small{display:block;margin-top:var(--spacingHorizontalS);color:var(--colorNeutralForeground3)}
 .scroll{overflow:auto}
 table{width:100%;border-collapse:collapse;margin-top:var(--spacingHorizontalL);font-size:14px}
 th,td{text-align:left;padding:var(--spacingHorizontalM);border-bottom:1px solid var(--colorNeutralStroke1);vertical-align:top}
@@ -60,8 +66,8 @@ select{max-width:100%}
 .svd-weight{margin-left:var(--spacingHorizontalS);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--colorBrandForeground1);font-weight:600}
 details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 [hidden]{display:none!important}
-@media(max-width:1023px){.svd-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:767px){.svd-grid{grid-template-columns:1fr}}
+@media(max-width:1023px){.svd-grid,.survey-overview{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:767px){.svd-grid,.survey-overview{grid-template-columns:1fr}}
 @media(max-width:767px){main{padding:var(--spacingHorizontalM)}header,section{padding:var(--spacingHorizontalL)}h1{font-size:28px}.toolbar{flex-wrap:wrap}}
 @media print{nav,.toolbar{display:none}section{break-inside:avoid}main{max-width:none}}
 </style>
@@ -70,6 +76,12 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 <main>
 <header><p>Glint Labs / Expert exploration</p><h1>Advanced survey analysis</h1>
 <p>Collaborative modeling, reproducible diagnostics, and bounded People Science interpretation.</p>
+<dl class="survey-overview" aria-label="Survey overview">
+<div><dt>Survey name</dt><dd id="survey-name" class="survey-name">Not recorded</dd></div>
+<div><dt>Responses (N)</dt><dd id="survey-response-count">Not available</dd><small>Survey response rows, not necessarily distinct people</small></div>
+<div><dt id="survey-feature-label">Questions analyzed</dt><dd id="survey-feature-count">Not available</dd></div>
+<div><dt>Response rate</dt><dd id="survey-response-rate">Not available</dd><small id="survey-response-rate-note">Invitation count not recorded</small></div>
+</dl>
 <p id="status" class="badge"></p><p id="scope" class="muted"></p></header>
 <nav aria-label="Report sections">
 <a href="#svd">SVD</a><a href="#comparison">Model comparison</a><a href="#diagnostics">Diagnostics</a>
@@ -135,6 +147,13 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 "use strict";
 const M=JSON.parse(document.getElementById("aggregate-data").textContent), S=M.summary;
 const text=(id,value)=>{document.getElementById(id).textContent=value};
+const survey=M.survey||{}, number=value=>Number.isInteger(value)?value.toLocaleString("en-US"):"Not available";
+text("survey-name",survey.name||"Not recorded");
+text("survey-response-count",number(survey.response_count));
+text("survey-feature-label",M.status==="not_run"?"Questions / predictors planned":S.task==="svd"?"Questions analyzed":"Predictors analyzed");
+text("survey-feature-count",number(survey.feature_count??S.svd?.features?.length??S.design?.features?.length));
+text("survey-response-rate",typeof survey.response_rate==="number"?`${survey.response_rate.toFixed(1)}%`:"Not available");
+text("survey-response-rate-note",survey.invited_count==null?"Invitation count not recorded":survey.response_rate==null?"Response count unavailable or suppressed":`${number(survey.invited_count)} invited in the confirmed survey scope`);
 text("status",`${M.status} / ${M.qa.verdict}`);
 text("scope",`${S.task||"Code-only design"} | score units: ${S.score_units||"not applicable"} | ${S.holdout_evaluated?"Final holdout evaluated":"No final holdout result"}`);
 text("qa",`Frozen-fit repeatability: ${M.qa.repeatability}`);

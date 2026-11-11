@@ -85,6 +85,9 @@ def test_source_bound_consent_and_no_autonomous_tuning(study):
 
 
 def test_end_to_end_report_replay_and_privacy(study):
+    study[2]["survey"] = {
+        "name": "Engagement pulse", "invited_count": 300, "respondent_column": "respondent",
+    }
     opt = options(study, study[2])
     runner.run(opt)
     output = Path(opt.output_dir)
@@ -93,6 +96,10 @@ def test_end_to_end_report_replay_and_privacy(study):
     assert manifest["qa"]["repeatability"] == "passed"
     assert manifest["summary"]["development_reference"]["meets_utility_criterion"]
     assert manifest["interpretation"]["status"] == "unavailable"
+    assert manifest["survey"] == {
+        "name": "Engagement pulse", "response_count": 240, "feature_count": 2,
+        "invited_count": 300, "response_rate": 80,
+    }
     assert (output / "_private/frozen-config.json").is_file()
     with zipfile.ZipFile(output / "advanced-share.zip") as archive:
         assert "OPEN_REPORT.html" in archive.namelist()
@@ -104,6 +111,7 @@ def test_end_to_end_report_replay_and_privacy(study):
             assert "development_indices" not in content
             assert "holdout_indices" not in content
         notebook = json.loads(archive.read("experiment.ipynb"))
+        assert json.loads(archive.read("advanced-analysis-manifest.json"))["survey"] == manifest["survey"]
         cell = notebook["cells"][1]
         assert cell["outputs"] == [] and cell["execution_count"] is None
         compile("".join(cell["source"]), "notebook", "exec")
@@ -120,14 +128,60 @@ def test_code_only_does_not_read_or_fit_data(study, monkeypatch):
     monkeypatch.setattr(vivaglint.modeling, "run_model_experiment", forbidden)
     config = study[2]
     config["source"]["path"] = "UNAVAILABLE.csv"
+    config["survey"] = {
+        "name": "Planned pulse", "invited_count": 300, "respondent_column": "respondent",
+    }
     opt = options(study, config, mode="code", actions=["code"])
     runner.run(opt)
     manifest = json.loads((Path(opt.output_dir) / "advanced-analysis-manifest.json").read_text())
     assert manifest["status"] == "not_run"
     assert manifest["qa"]["verdict"] == "Not ready"
+    assert manifest["survey"]["name"] == "Planned pulse"
+    assert manifest["survey"]["feature_count"] == 2
+    assert manifest["survey"]["response_count"] is None
+    assert manifest["survey"]["response_rate"] is None
     html = (Path(opt.output_dir) / "advanced-report.html").read_text(encoding="utf-8")
     assert '<div id="svd-visuals" hidden>' in html
     assert html.count("<h3>How to action these results</h3>") == 6
+
+
+def test_survey_overview_uses_source_title_without_inventing_invitation_coverage(study):
+    _, frame, config = study
+    frame["survey_cycle_title"] = "H2 engagement"
+    overview = runner.survey_overview(config, frame)
+    assert overview["name"] == "H2 engagement"
+    assert overview["response_count"] == 240
+    assert overview["invited_count"] is None
+    assert overview["response_rate"] is None
+    frame.loc[0, "survey_cycle_title"] = "H1 engagement"
+    assert runner.survey_overview(config, frame)["name"] is None
+    config["survey"] = {"name": "Confirmed combined scope"}
+    assert runner.survey_overview(config, frame)["name"] == "Confirmed combined scope"
+    assert runner.survey_overview(config, frame.head(4))["response_count"] is None
+
+
+@pytest.mark.parametrize("invalid", [
+    "duplicate", "missing_id", "unknown_id", "multiple_cycles", "multiple_cycle_ids", "too_few_invited",
+])
+def test_survey_overview_rejects_misleading_response_rates(study, invalid):
+    _, frame, config = study
+    config["survey"] = {
+        "name": "Confirmed pulse", "invited_count": 300, "respondent_column": "respondent",
+    }
+    if invalid == "duplicate":
+        frame.loc[0, "respondent"] = frame.loc[1, "respondent"]
+    elif invalid == "missing_id":
+        frame.loc[0, "respondent"] = np.nan
+    elif invalid == "unknown_id":
+        config["survey"]["respondent_column"] = "unknown"
+    elif invalid == "multiple_cycles":
+        frame["survey_cycle_title"] = ["H1"] * 120 + ["H2"] * 120
+    elif invalid == "multiple_cycle_ids":
+        frame["survey_cycle_id"] = [1001] * 120 + [1002] * 120
+    else:
+        config["survey"]["invited_count"] = 200
+    with pytest.raises(ValueError, match="Response rate needs|exceed"):
+        runner.survey_overview(config, frame)
 
 
 @pytest.mark.parametrize("task", ["regression", "svd"])

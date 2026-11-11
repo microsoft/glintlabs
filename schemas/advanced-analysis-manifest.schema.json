@@ -10,6 +10,18 @@
     "config_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "provenance": {"type": "object"},
+    "survey": {
+      "type": "object",
+      "required": ["name", "response_count", "feature_count", "invited_count", "response_rate"],
+      "properties": {
+        "name": {"type": ["string", "null"], "minLength": 1, "maxLength": 300},
+        "response_count": {"type": ["integer", "null"], "minimum": 5},
+        "feature_count": {"type": "integer", "minimum": 1},
+        "invited_count": {"type": ["integer", "null"], "minimum": 5},
+        "response_rate": {"type": ["number", "null"], "minimum": 0, "maximum": 100}
+      },
+      "additionalProperties": false
+    },
     "qa": {
       "type": "object",
       "required": ["verdict", "repeatability", "limitations"],
