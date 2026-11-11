@@ -74,10 +74,27 @@ For low-score explanations, inspect authorized aggregate comment themes where
 available or ask once for a redacted export/themes. Raw comments never enter
 model fitting, public retrieval, or shared report narratives.
 
+## Write a natural interpretation
+
+Lead with what the inspected results mean for the user's question. Use concise,
+connected paragraphs that read like an explanation to a colleague, with sources
+beside the guidance they support. Weave in only the uncertainty, constraints and
+next checks that could change the decision. Keep published guidance, the user's
+results and your suggested application distinguishable in the prose.
+
+Do not expose an Observation / Interpretation / Hypothesis / Next check / Caveat
+template, manufacture a hypothesis, or repeat generic action-taking instructions.
+Evidence review remains mandatory; removing labels does not remove caveats or
+permit unsupported conclusions. Show the interpretation immediately after SVD,
+above Model comparison, in both navigation and page order.
+
 For embedding, create a narrative matching
 `schemas/advanced-interpretation.schema.json`, bound to the exact config and
-summary hashes. Review original source bodies and required guidance and approve
-the text for privacy-safe sharing before setting those attestations. They are
+summary hashes. Each new `claims` entry contains a natural-language paragraph in
+`text` and its `sources`. Legacy five-field entries remain readable for
+compatibility, without displaying the field labels. Review original source bodies
+and required guidance and approve the text for privacy-safe sharing before
+setting those attestations. They are
 host review records, not an automated proof of model attention or source truth.
 The local serializer validates structure, hashes and source hosts, not whether
 the scientific interpretation is correct. Approved sources follow the existing

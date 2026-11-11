@@ -142,7 +142,7 @@ def test_code_only_does_not_read_or_fit_data(study, monkeypatch):
     assert manifest["survey"]["response_rate"] is None
     html = (Path(opt.output_dir) / "advanced-report.html").read_text(encoding="utf-8")
     assert '<div id="svd-visuals" hidden>' in html
-    assert html.count("<h3>How to action these results</h3>") == 6
+    assert html.count("<h3>How to action these results</h3>") == 5
 
 
 def test_survey_overview_uses_source_title_without_inventing_invitation_coverage(study):
@@ -199,15 +199,18 @@ def test_report_leads_with_svd_and_explains_each_section(study, task):
     assert 'id="scope"' not in header
     assert 'id="scope"' in methodology
     assert 'id="qa"' in methodology
-    expected = ["svd", "comparison", "diagnostics", "interpretation", "methodology", "downloads"]
+    expected = ["svd", "interpretation", "comparison", "diagnostics", "methodology", "downloads"]
     assert re.findall(r'<section id="([^"]+)"', html) == expected
     nav = re.search(r'<nav aria-label="Report sections">(.*?)</nav>', html, re.DOTALL).group(1)
     assert re.findall(r'href="#([^"]+)"', nav) == expected
-    intros = dict(re.findall(
-        r'<section id="([^"]+)"[^>]*>.*?<p class="section-intro muted">(.*?)</p>',
-        html, re.DOTALL,
-    ))
-    assert set(intros) == set(expected)
+    sections = dict(re.findall(r'<section id="([^"]+)"[^>]*>(.*?)</section>', html, re.DOTALL))
+    intros = {}
+    for section, body in sections.items():
+        intro = re.search(r'<p class="section-intro muted">(.*?)</p>', body, re.DOTALL)
+        if intro:
+            intros[section] = intro.group(1)
+    assert set(intros) == set(expected) - {"interpretation"}
+    assert 'class="section-action"' not in sections["interpretation"]
     assert all(intro.strip() for intro in intros.values())
     assert "Singular value decomposition" in intros["svd"]
     assert "variance" in intros["svd"]
@@ -216,7 +219,7 @@ def test_report_leads_with_svd_and_explains_each_section(study, task):
         r'<div class="section-action"><h3>How to action these results</h3><p>(.*?)</p></div>',
         html, re.DOTALL,
     )
-    assert len(actions) == len(expected)
+    assert len(actions) == len(expected) - 1
     assert "not a causal priority for intervention" in actions[0]
     assert "untouched-holdout evaluation" in actions[1]
     assert "obtain explicit instruction" in actions[2]
@@ -279,7 +282,8 @@ def test_project_preserves_holdout_while_allowing_approved_model_seed_changes(st
     assert actual == expected
 
 
-def test_stale_research_narrative_cannot_be_embedded(study):
+@pytest.mark.parametrize("legacy", [False, True])
+def test_stale_research_narrative_cannot_be_embedded(study, legacy):
     opt = options(study, study[2])
     runner.run(opt)
     output = Path(opt.output_dir)
@@ -297,6 +301,11 @@ def test_stale_research_narrative_cannot_be_embedded(study):
             "sources": [{"url": "https://learn.microsoft.com/en-us/viva/glint/", "title": "Synthetic citation fixture", "body_reviewed": True}],
         }],
     }
+    if not legacy:
+        narrative["claims"][0] = {
+            "text": "Synthetic prose fixture only, not a research claim.",
+            "sources": narrative["claims"][0]["sources"],
+        }
     path = study[0] / "narrative.json"
     runner.write_json(path, narrative)
     runner.embed_interpretation(manifest, path)
@@ -785,7 +794,8 @@ def test_source_change_after_approval_is_rejected(study):
         runner.run(opt)
 
 
-def test_interpret_mode_does_not_reload_private_source(study):
+@pytest.mark.parametrize("legacy", [False, True])
+def test_interpret_mode_does_not_reload_private_source(study, legacy):
     opt = options(study, study[2])
     runner.run(opt)
     output = Path(opt.output_dir)
@@ -801,6 +811,11 @@ def test_interpret_mode_does_not_reload_private_source(study):
             "sources": [{"url": "https://learn.microsoft.com/en-us/viva/glint/", "title": "Synthetic fixture", "body_reviewed": True}],
         }],
     }
+    if not legacy:
+        narrative["claims"][0] = {
+            "text": "</script><script>window.injected=true</script> Synthetic prose fixture only.",
+            "sources": narrative["claims"][0]["sources"],
+        }
     path = study[0] / "narrative.json"
     runner.write_json(path, narrative)
     Path(study[2]["source"]["path"]).unlink()
@@ -813,3 +828,33 @@ def test_interpret_mode_does_not_reload_private_source(study):
     html = (output / "advanced-report.html").read_text()
     assert "</script><script>window.injected" not in html
     assert "\\u003c/script\\u003e" in html
+    updated = json.loads((output / "advanced-analysis-manifest.json").read_text())
+    assert updated["interpretation"] == {"status": "reviewed", **narrative}
+    for field in ("summary", "qa", "provenance", "config_sha256", "source_sha256", "survey"):
+        assert updated[field] == manifest[field]
+    with zipfile.ZipFile(output / "advanced-share.zip") as archive:
+        assert json.loads(archive.read("advanced-analysis-manifest.json")) == updated
+
+
+@pytest.mark.parametrize("invalid", ["blank", "whitespace", "mixed_format", "unreviewed"])
+def test_natural_interpretation_requires_unambiguous_reviewed_prose(invalid):
+    narrative = {
+        "config_sha256": "0" * 64, "summary_sha256": "1" * 64,
+        "approved_for_sharing": True, "reference_revision": "synthetic-only",
+        "required_references_complete": True,
+        "claims": [{
+            "text": "Synthetic prose fixture only.",
+            "sources": [{"url": "https://learn.microsoft.com/en-us/viva/glint/", "title": "Synthetic fixture", "body_reviewed": True}],
+        }],
+    }
+    claim = narrative["claims"][0]
+    if invalid == "blank":
+        claim["text"] = ""
+    elif invalid == "whitespace":
+        claim["text"] = " \t\n"
+    elif invalid == "mixed_format":
+        claim.update(observation="Synthetic fixture.", interpretation="", hypothesis="", next_check="", caveat="")
+    else:
+        claim["sources"][0]["body_reviewed"] = False
+    with pytest.raises(ValidationError):
+        runner.validate(narrative, "advanced-interpretation.schema.json")
