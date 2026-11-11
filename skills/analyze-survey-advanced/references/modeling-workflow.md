@@ -31,6 +31,24 @@ SVD-only task uses an empty model list and `reconstruction_rmse`; it does not
 enter a supervised leaderboard. RF/GBM complexity, feature selection, and SVD
 rank are choices to discuss, not autonomous settings to optimize.
 
+For the header overview, optional config `survey` metadata accepts a confirmed
+`name`, `invited_count`, and `respondent_column`. Supplying `invited_count`
+requires `respondent_column` and confirmation that invitations cover the same
+single-survey population as the export. The runner rejects missing/duplicate
+respondent IDs, multiple cycle titles/IDs, or responses exceeding invitations
+instead of publishing a misleading rate. Without a confirmed denominator,
+response rate stays unavailable. Do not equate observed respondents with
+invitations or infer a survey name from a file path.
+
+The manifest's aggregate `survey` overview records input response rows,
+selected feature count, survey name, and a supported response rate. N is the
+full input cohort, not just development rows or a claim of independent people.
+For SVD the selected numeric survey features are questions; predictive runs
+label the count as predictors, since approved external features may be present.
+One unambiguous `survey_cycle_title` can supply a missing name. Code-only runs
+do not read data and cannot report observed N or a response rate. Counts below
+the configured privacy minimum remain null.
+
 Group validation keeps repeated people together. For unseen organizations use
 that grouping unit. Chronological validation respects whole date boundaries;
 `unseen_groups: false` is allowed only for explicitly confirmed forecasting of

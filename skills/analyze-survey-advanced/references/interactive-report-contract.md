@@ -22,6 +22,24 @@ These are instructions, not findings about the current dataset or permission
 to tune. Do not prescribe causal interventions or employee-level actions from
 component weights or predictive importance.
 
+## Header survey overview
+
+Inside the top header, show **Survey name**, **Responses (N)**, **Questions
+analyzed** for SVD (or **Predictors analyzed** for predictive models), and
+**Response rate**. Use the manifest's aggregate `survey` overview, not browser
+calculations against respondent rows. N counts the full input response cohort,
+including reserved rows, not independent people or development-only support.
+Keep that scope visible and preserve responsive reading order.
+
+Use the confirmed survey name or an unambiguous source cycle title; never use
+private filenames or paths as a fallback. Show **Not recorded** for an unknown
+name and **Not available** for missing/suppressed counts or rates, not zero.
+Response rate needs a confirmed invitation denominator for the same single
+survey population and one response per identified respondent. Show the
+denominator beside an available rate, or **Invitation count not recorded** when
+it is absent. Code-only and legacy manifests without observed cohort metadata
+must not fabricate N or response rates. Preserve these states in the share ZIP.
+
 ## SVD visual presentation
 
 Follow the basic report's factor-analysis layout: aligned horizontal item bars
