@@ -611,15 +611,31 @@ def test_skill_requires_evidence_and_comparable_component_options_before_selecti
     assert "ask the user for the missing information" in guardrail
     assert "User approval permits execution; it does not establish analytical quality." in guardrail
     assert "There is no fixed default SVD component count." in choices
-    assert "| Components | Variance explained (%) | Reconstruction MSE | RMSE | Evidence / trade-off |" in choices
+    assert "| Components | Variance explained (%) | Gain (pp) | Reconstruction MSE | RMSE | Evidence / trade-off |" in choices
     assert "development in-sample reconstruction error" in choices
     assert "not cross-validated or holdout reconstruction performance" in choices
     assert "Not computed" in choices
     assert "not permission to fit or tune" in choices
     assert "obtain the user's selection" in choices
-    assert "do not manufacture a candidate range or a variance" in choices
     assert "Do not invent other-rank reconstruction errors" in choices
     assert "instead of arbitrarily choosing a" in workflow
+
+
+def test_svd_defaults_to_one_through_eight_metrics_and_actionable_guidance():
+    skill = (ROOT / "skills/analyze-survey-advanced/SKILL.md").read_text()
+    workflow = (ROOT / "skills/analyze-survey-advanced/references/modeling-workflow.md").read_text()
+    choices = workflow.split("## Evidence-led choices and component selection\n", 1)[1].split("\n## ", 1)[0]
+    assert "**1 through 8**" in skill and "**1 through 8**" in choices
+    for rank in range(1, 9):
+        assert f"| {rank} | Not computed |" in choices
+    assert "not a selected rank" in skill
+    assert "Not feasible" in choices and "explicitly narrower user scope" in choices
+    assert "Reuse verified, comparable runs" in choices
+    assert "Always follow the table with a recommendation or concrete conditional guidance." in choices
+    assert "user-confirmed coverage target; never invent that target" in choices
+    assert "first request explicit authorization" in choices
+    assert "same project, preserving its reserved holdout design" in choices
+    assert "obtain the user's selection" in choices
 
 
 def test_authorized_finite_tuning_preserves_comparison_and_replays_only_winner(study):
