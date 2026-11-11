@@ -24,7 +24,6 @@ header{background:var(--colorVivaBrandBackground2);padding:var(--spacingHorizont
 h1{font-size:32px;line-height:1.2}
 h2{font-size:24px;margin:0}
 h3{font-size:20px}
-p{max-width:85ch}
 nav{display:flex;flex-wrap:wrap;gap:var(--spacingHorizontalS);padding-block:var(--spacingHorizontalL)}
 a{color:var(--colorBrandForeground1)}
 nav a,button,select{font:inherit;border:1px solid var(--colorNeutralStroke1);border-radius:var(--borderRadiusMedium);padding:var(--spacingHorizontalS) var(--spacingHorizontalM);background:var(--colorNeutralBackground1);color:var(--colorBrandForeground1)}
@@ -57,17 +56,10 @@ select{max-width:100%}
 .section-action p{margin:var(--spacingHorizontalS) 0}
 .svd-chart{max-width:100%;overflow:auto;margin-block:var(--spacingHorizontalM) var(--spacingHorizontalL);border:1px solid var(--colorNeutralStroke1);border-radius:var(--borderRadiusMedium)}
 .svd-chart svg{display:block}
-.svd-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--spacingHorizontalM);margin-bottom:var(--spacingHorizontalL)}
-.svd-card{padding:var(--spacingHorizontalL);background:var(--colorNeutralBackground2);border-radius:var(--borderRadiusLarge);overflow-wrap:anywhere}
-.svd-card h3{margin:0}
-.svd-card p{margin:var(--spacingHorizontalS) 0}
-.svd-card ol{padding-left:var(--spacingHorizontalL)}
-.svd-card li{margin-block:var(--spacingHorizontalS)}
-.svd-weight{margin-left:var(--spacingHorizontalS);font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--colorBrandForeground1);font-weight:600}
 details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 [hidden]{display:none!important}
-@media(max-width:1023px){.svd-grid,.survey-overview{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:767px){.svd-grid,.survey-overview{grid-template-columns:1fr}}
+@media(max-width:1023px){.survey-overview{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:767px){.survey-overview{grid-template-columns:1fr}}
 @media(max-width:767px){main{padding:var(--spacingHorizontalM)}header,section{padding:var(--spacingHorizontalL)}h1{font-size:28px}.toolbar{flex-wrap:wrap}}
 @media print{nav,.toolbar{display:none}section{break-inside:avoid}main{max-width:none}}
 </style>
@@ -95,17 +87,20 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 <div class="section-head"><h3>Item weights by component</h3><div class="toolbar" data-table="svd-weights-table"><button id="svd-chart-png" type="button">Save chart PNG</button></div></div>
 <p id="svd-chart-note" class="muted">Bars show absolute SVD unit weights on a common 0-1 scale, not factor loadings. Labels retain the signs: positive and negative do not mean good and bad, and a component's orientation can flip. Rows are ordered by Component 1 magnitude; item labels are formatted IDs.</p>
 <div id="svd-chart" class="svd-chart" role="region" aria-label="SVD item-weight chart" aria-describedby="svd-chart-note" tabindex="0"></div>
-<div id="svd-components" class="svd-grid" role="group" aria-label="Component summaries"></div>
+<div id="svd-components">
+<div class="section-head"><h3>Component summaries</h3><div class="toolbar" data-table="svd-components-table"></div></div>
+<p class="muted">Items are ranked by absolute unit weight; signs are preserved. Full weights are available in numeric details.</p>
+<div class="scroll"><table id="svd-components-table" aria-label="Component summaries"></table></div>
+</div>
 <div id="item-removal-review">
 <h3>Top three candidates for removal review</h3>
-<p>Start with these ranked questions when reviewing opportunities to shorten the survey. These are exploratory candidates, not decisions to remove them or a recommendation to drop all three. A low SVD weight alone is not a reason to remove a question.</p>
-<p id="item-review-status" class="badge" role="status"></p>
+<p>Use this provisional shortlist to review survey length. Check wording, coverage and reduced-set stability before removing questions; SVD weights alone do not justify removal.</p>
+<p id="item-review-status" role="status" hidden></p>
 <p id="item-review-explanation"></p>
 <div id="item-review-results" hidden>
-<ul id="item-candidate-limitations"></ul>
 <div class="section-head"><h3>Ranked shortlist and evidence needed</h3><div class="toolbar" data-table="item-review-table"><button id="download-item-review" type="button">Download candidates JSON</button></div></div>
 <div class="scroll"><table id="item-review-table"></table></div>
-<details><summary>Ranking basis, limitations and protected-item review status</summary><pre id="item-review-evidence"></pre></details>
+<details id="item-review-details"><summary>Ranking basis and limitations</summary><p id="item-review-ranking"></p><ul id="item-candidate-limitations"></ul></details>
 </div></div>
 </div>
 <details id="svd-numeric-details"><summary>Full component variance, signed weights and numeric details</summary>
@@ -200,21 +195,12 @@ function renderSVD(){
  const rows=[];
  components.forEach((weights,index)=>weights.forEach((weight,item)=>rows.push([index+1,features[item],weight,Math.abs(weight)])));
  table("svd-weights-table",["Component","Item ID","Signed unit weight","Magnitude"],rows);
- const cards=document.getElementById("svd-components");
- components.forEach((weights,index)=>{
-  const card=document.createElement("article");card.className="svd-card";
-  const heading=document.createElement("h3");heading.textContent=`Component ${index+1}`;
-  const description=document.createElement("p");description.className="muted";description.textContent=`${(variance[index]*100).toFixed(2)}% of response variance`;
-  const list=document.createElement("ol");list.setAttribute("aria-label",`Component ${index+1} highest-magnitude items`);
+ const topCount=Math.min(5,features.length);
+ const componentRows=components.map((weights,index)=>{
   const ranked=features.map((feature,item)=>({feature,weight:weights[item]})).sort((a,b)=>Math.abs(b.weight)-Math.abs(a.weight)||a.feature.localeCompare(b.feature));
-  for(const row of ranked.slice(0,5)){
-   const li=document.createElement("li"),label=document.createElement("span"),value=document.createElement("span");
-   label.textContent=itemLabel(row.feature);label.title=row.feature;
-   value.className="svd-weight";value.textContent=signedWeight(row.weight);
-   li.append(label,value);list.append(li);
-  }
-  card.append(heading,description,list);cards.append(card);
+  return [`Component ${index+1}`,`${(variance[index]*100).toFixed(2)}%`,...ranked.slice(0,topCount).map(row=>`${itemLabel(row.feature)} ${signedWeight(row.weight)}`)];
  });
+ table("svd-components-table",["Component","Variance explained",...Array.from({length:topCount},(_,index)=>`Top item ${index+1}`)],componentRows);
  const labelWidth=250,panelWidth=240,gap=24,right=24,top=56,bottom=56,rowHeight=32;
  const ordered=features.map((feature,index)=>({feature,index})).sort((a,b)=>Math.abs(components[0][b.index])-Math.abs(components[0][a.index])||a.feature.localeCompare(b.feature));
  const width=labelWidth+components.length*panelWidth+(components.length-1)*gap+right,height=top+ordered.length*rowHeight+bottom;
@@ -252,16 +238,19 @@ function renderItemReview(){
  if(!S.svd)return;
  const candidates=M.item_candidates;
  if(!candidates){
+  document.getElementById("item-review-status").hidden=false;
   text("item-review-status","Candidate shortlist not yet prepared.");
-  text("item-review-explanation","This SVD report is pending its required shortlist assessment. Review the available evidence to identify up to three candidates, with reasons and the checks needed before a removal decision. No shortlist does not mean every question must stay. This report does not automatically rank or test redundancy from SVD weights.");
+  text("item-review-explanation","This SVD report is pending its required shortlist assessment. Missing candidates do not mean every question must stay.");
   return;
  }
- text("item-review-status",candidates.items.length?`${candidates.items.length} exploratory candidate${candidates.items.length===1?"":"s"} - not removal decisions.`:"No supported candidates identified.");
- text("item-review-explanation",`${candidates.ranking_basis} Protected-item review: ${candidates.protected_items_reviewed?"completed":"not completed"}. Content-coverage review: ${candidates.content_coverage_reviewed?"completed":"not completed"}. No questions have been deleted or models refitted.`);
+ document.getElementById("item-review-status").hidden=Boolean(candidates.items.length);
+ text("item-review-status",candidates.items.length?"":"No supported candidates identified.");
+ const reviews=`Protected-item review: ${candidates.protected_items_reviewed?"completed":"not completed"}. Content coverage: ${candidates.content_coverage_reviewed?"completed":"not completed"}.`;
+ text("item-review-explanation",candidates.items.length?reviews:`${candidates.ranking_basis} ${reviews}`);
  for(const limitation of candidates.limitations){const li=document.createElement("li");li.textContent=limitation;document.getElementById("item-candidate-limitations").append(li)}
  const label=question=>`${itemLabel(question)} (${question})`;
  table("item-review-table",["Review priority","Question","Comparison question (not a confirmed substitute)","Why this is a candidate","Evidence that would help the decision"],candidates.items.map((item,index)=>[index+1,label(item.question),item.comparison_question?label(item.comparison_question):"Not specified",item.reason,item.evidence_needed.map((value,i)=>`${i+1}. ${value}`).join("\n")]));
- text("item-review-evidence",JSON.stringify(candidates,null,2));
+ text("item-review-ranking",candidates.ranking_basis);
  document.getElementById("item-review-results").hidden=false;
  document.getElementById("download-item-review").onclick=()=>download("question-removal-candidates.json",JSON.stringify(candidates,null,2),"application/json");
 }
