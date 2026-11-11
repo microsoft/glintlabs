@@ -574,16 +574,14 @@ def render_web_context(index: dict) -> dict[str, str]:
         f"Read [source priority]({RAW_BASE}/source-priority.md), "
         f"[corpus scope]({RAW_BASE}/corpus-guide.md), and "
         f"[link-only use]({RAW_BASE}/public-use.md). Then choose relevant topics below.", "",
-        "Use the same skill for published guidance and user-authorized Glint results. "
-        f"Follow the [research workflow]({RAW_BASE}/research-workflow.md); "
-        f"for screenshots/results also read [results exploration]({RAW_BASE}/results-exploration.md). "
-        "Substantive interpretation and the next verification require applicable "
-        "full-source research, not just a description of the screen. User evidence "
-        "stays separate from this public library.", "",
-        "Before named Glint report/view recommendations, click paths, or browser "
-        f"navigation, also load [Glint navigation]({RAW_BASE}/glint-navigation.md). "
-        "It is not required for research-only answers; missing navigation guidance "
-        "blocks directions, not otherwise-supported research or interpretation.", "",
+        "Knowledge Vault focuses on general People Science research guidance. "
+        f"Follow the [research workflow]({RAW_BASE}/research-workflow.md). "
+        "For user-authorized screenshots/results and the next useful view, use "
+        "[Platform Screenshot Interpretation]"
+        "(https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/platform-screenshot-interpretation/SKILL.md). "
+        "That skill owns results exploration and conditional Glint navigation, "
+        "using this shared library for research. User evidence stays separate "
+        "from the public library.", "",
         "These are discovery summaries, not full source bodies. Follow a topic "
         "to its source profiles, then retrieve the original public publications "
         "before supporting claims. Prioritize relevant Research Drops, then the "

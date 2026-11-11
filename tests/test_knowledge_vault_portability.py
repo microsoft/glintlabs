@@ -16,6 +16,16 @@ import check_knowledge_vault_sources as live
 import search_knowledge_vault as lookup
 
 
+SCREENSHOT_REFERENCES = context_check.SCREENSHOT_SKILL_PATH.parent / "references"
+
+
+def copy_skill_context(root):
+    for skill in (context_check.SKILL_PATH, context_check.SCREENSHOT_SKILL_PATH):
+        shutil.copytree(skill.parent, root / "skills" / skill.parent.name)
+    shutil.copytree(ROOT / "references/general", root / "references/general")
+    return root / "skills/people-science-knowledge-vault/references"
+
+
 def test_link_entry_reaches_all_topics_and_sources_in_small_public_pages():
     context_check.validate_context()
     index = lookup.load_json(lookup.INDEX_PATH)
@@ -47,11 +57,8 @@ def test_link_entry_reaches_all_topics_and_sources_in_small_public_pages():
 
 def test_private_locations_and_missing_links_block_context_checks(tmp_path):
     root = tmp_path / "repository"
-    context = root / "skills/people-science-knowledge-vault/references"
-    shutil.copytree(lookup.REFERENCES, context)
+    context = copy_skill_context(root)
     shutil.copytree(ROOT / "publications", root / "publications")
-    skill = root / "skills/people-science-knowledge-vault/SKILL.md"
-    shutil.copyfile(context_check.SKILL_PATH, skill)
     path = context / "public-use.md"
     original = path.read_text(encoding="utf-8")
     path.write_text(original + "\nhttps://example.sharepoint.com/private\n", encoding="utf-8")
@@ -223,9 +230,7 @@ def test_private_publication_content_is_rejected_even_with_updated_hashes(tmp_pa
     path.write_bytes(content)
     resource["provenance"]["content_sha256"] = hashlib.sha256(content).hexdigest()
     resource["provenance"]["extracted_text_sha256"] = lookup.digest(content.decode("utf-8").strip())
-    context = root / "skills/people-science-knowledge-vault/references"
-    shutil.copytree(lookup.REFERENCES, context)
-    shutil.copyfile(context_check.SKILL_PATH, context.parent / "SKILL.md")
+    context = copy_skill_context(root)
     index = lookup.load_json(context / "theme-index.json")
     index["resources"] = [resource if r["id"] == resource["id"] else r for r in index["resources"]]
     (context / "theme-index.json").write_text(json.dumps(index), encoding="utf-8")
@@ -315,6 +320,11 @@ def test_required_workflows_are_reachable_from_skill_and_public_context():
         assert f"(references/{name})" in skill
         assert f"({lookup.RAW_BASE}/{name})" in entry
         context_check.validate_links(lookup.REFERENCES / name)
+    screenshot = context_check.SCREENSHOT_SKILL_PATH.read_text(encoding="utf-8")
+    assert "/platform-screenshot-interpretation/SKILL.md" in entry
+    for name in context_check.SCREENSHOT_GUIDES:
+        assert f"(references/{name})" in screenshot
+        context_check.validate_links(SCREENSHOT_REFERENCES / name)
 
 
 def test_reference_gate_requires_complete_guidance_before_substantive_work():
@@ -353,17 +363,19 @@ def test_controlled_host_guidance_does_not_promise_portable_enforcement():
     assert "does not guarantee correct model behavior" in public_use
 
 
-@pytest.mark.parametrize("name", context_check.RUNTIME_GUIDES)
+@pytest.mark.parametrize("skill_name,name", [
+    ("people-science-knowledge-vault", name) for name in context_check.RUNTIME_GUIDES
+] + [
+    ("platform-screenshot-interpretation", name) for name in context_check.SCREENSHOT_GUIDES
+])
 @pytest.mark.parametrize("failure", ["missing", "oversized"])
 def test_runtime_workflows_cannot_be_omitted_or_outgrow_retrieval_budget(
-    tmp_path, name, failure
+    tmp_path, skill_name, name, failure
 ):
     root = tmp_path / "repository"
-    context = root / "skills/people-science-knowledge-vault/references"
-    shutil.copytree(lookup.REFERENCES, context)
+    context = copy_skill_context(root)
     shutil.copytree(ROOT / "publications", root / "publications")
-    shutil.copyfile(context_check.SKILL_PATH, context.parent / "SKILL.md")
-    path = context / name
+    path = root / "skills" / skill_name / "references" / name
     if failure == "missing":
         path.unlink()
         message = "missing/unregistered files"
@@ -374,19 +386,24 @@ def test_runtime_workflows_cannot_be_omitted_or_outgrow_retrieval_budget(
         context_check.validate_context(context, root)
 
 
-def test_registering_workflows_does_not_allow_arbitrary_public_context(tmp_path):
+@pytest.mark.parametrize("skill_name", [
+    "people-science-knowledge-vault", "platform-screenshot-interpretation",
+])
+def test_registering_workflows_does_not_allow_arbitrary_public_context(tmp_path, skill_name):
     root = tmp_path / "repository"
-    context = root / "skills/people-science-knowledge-vault/references"
-    shutil.copytree(lookup.REFERENCES, context)
+    context = copy_skill_context(root)
     shutil.copytree(ROOT / "publications", root / "publications")
-    shutil.copyfile(context_check.SKILL_PATH, context.parent / "SKILL.md")
-    (context / "unreviewed.md").write_text("Unregistered content", encoding="utf-8")
+    unreviewed = root / "skills" / skill_name / "references/unreviewed.md"
+    unreviewed.write_text("Unregistered content", encoding="utf-8")
     with pytest.raises(ValueError, match="missing/unregistered files"):
         context_check.validate_context(context, root)
 
 
-def test_runtime_workflow_symlink_is_rejected_before_reading_its_body(monkeypatch):
-    guide = lookup.REFERENCES / context_check.RUNTIME_GUIDES[0]
+@pytest.mark.parametrize("guide", [
+    lookup.REFERENCES / "research-workflow.md",
+    SCREENSHOT_REFERENCES / "results-exploration.md",
+])
+def test_runtime_workflow_symlink_is_rejected_before_reading_its_body(monkeypatch, guide):
     original_is_symlink = Path.is_symlink
     original_read_bytes = Path.read_bytes
 
@@ -403,9 +420,9 @@ def test_runtime_workflow_symlink_is_rejected_before_reading_its_body(monkeypatc
 
 
 def test_results_contract_requires_research_and_conditional_brief_followups():
-    skill = " ".join(context_check.SKILL_PATH.read_text(encoding="utf-8").split())
+    skill = " ".join(context_check.SCREENSHOT_SKILL_PATH.read_text(encoding="utf-8").split())
     results = " ".join(
-        (lookup.REFERENCES / "results-exploration.md").read_text(encoding="utf-8").split()
+        (SCREENSHOT_REFERENCES / "results-exploration.md").read_text(encoding="utf-8").split()
     )
     research = " ".join(
         (lookup.REFERENCES / "research-workflow.md").read_text(encoding="utf-8").split()
@@ -419,9 +436,9 @@ def test_results_contract_requires_research_and_conditional_brief_followups():
 
 
 def test_navigation_loading_is_conditional_and_preserves_unaffected_work():
-    skill = " ".join(context_check.SKILL_PATH.read_text(encoding="utf-8").split())
+    skill = " ".join(context_check.SCREENSHOT_SKILL_PATH.read_text(encoding="utf-8").split())
     navigation = " ".join(
-        (lookup.REFERENCES / "glint-navigation.md").read_text(encoding="utf-8").split()
+        (SCREENSHOT_REFERENCES / "glint-navigation.md").read_text(encoding="utf-8").split()
     )
     public_use = " ".join(
         (lookup.REFERENCES / "public-use.md").read_text(encoding="utf-8").split()
@@ -437,10 +454,10 @@ def test_navigation_loading_is_conditional_and_preserves_unaffected_work():
 
 def test_results_orientation_starts_with_strengths_without_overriding_user_focus():
     results = " ".join(
-        (lookup.REFERENCES / "results-exploration.md").read_text(encoding="utf-8").split()
+        (SCREENSHOT_REFERENCES / "results-exploration.md").read_text(encoding="utf-8").split()
     )
     navigation = " ".join(
-        (lookup.REFERENCES / "glint-navigation.md").read_text(encoding="utf-8").split()
+        (SCREENSHOT_REFERENCES / "glint-navigation.md").read_text(encoding="utf-8").split()
     )
     orientation = results.split("### Start with strengths and opportunities", 1)[1].split(
         "### Heat Map-first comparative deep dives", 1
@@ -460,7 +477,7 @@ def test_results_orientation_starts_with_strengths_without_overriding_user_focus
 
 def test_comparative_deep_dives_require_heatmap_context_and_evidence_updates():
     results = " ".join(
-        (lookup.REFERENCES / "results-exploration.md").read_text(encoding="utf-8").split()
+        (SCREENSHOT_REFERENCES / "results-exploration.md").read_text(encoding="utf-8").split()
     )
     deep_dive = results.split("### Heat Map-first comparative deep dives", 1)[1].split(
         "### Request the next useful view", 1
@@ -485,10 +502,10 @@ def test_comparative_deep_dives_require_heatmap_context_and_evidence_updates():
 
 def test_navigation_contract_prevents_ambiguous_routes_and_unrequested_actions():
     navigation = " ".join(
-        (lookup.REFERENCES / "glint-navigation.md").read_text(encoding="utf-8").split()
+        (SCREENSHOT_REFERENCES / "glint-navigation.md").read_text(encoding="utf-8").split()
     )
     results = " ".join(
-        (lookup.REFERENCES / "results-exploration.md").read_text(encoding="utf-8").split()
+        (SCREENSHOT_REFERENCES / "results-exploration.md").read_text(encoding="utf-8").split()
     )
     for requirement in (
         "it is not a complete question list",
@@ -510,17 +527,18 @@ def test_navigation_contract_prevents_ambiguous_routes_and_unrequested_actions()
 
 
 def test_screenshot_routing_preserves_artifact_qa_without_manifest_intake():
-    vault = context_check.SKILL_PATH.read_text(encoding="utf-8")
+    screenshot = context_check.SCREENSHOT_SKILL_PATH.read_text(encoding="utf-8")
     analysis = (ROOT / "skills/analyze-survey/SKILL.md").read_text(encoding="utf-8")
     handoff = " ".join(
         (ROOT / "skills/analyze-survey/references/interpretation.md")
         .read_text(encoding="utf-8").split()
     )
-    assert "screenshots" in vault and "analyze-survey" in vault
-    assert "../people-science-knowledge-vault/SKILL.md" in analysis
+    assert "Screenshots" in screenshot and "analyze-survey" in screenshot
+    assert "../platform-screenshot-interpretation/SKILL.md" in analysis
+    assert "../../platform-screenshot-interpretation/SKILL.md" in handoff
     assert "Do not require a manifest merely to discuss a screen" in handoff
     assert "reuse established QA" in (
-        lookup.REFERENCES / "results-exploration.md"
+        SCREENSHOT_REFERENCES / "results-exploration.md"
     ).read_text(encoding="utf-8")
     assert "Apply the **Analysis QA** gate" in handoff
 
@@ -529,3 +547,37 @@ def test_context_is_colocated_with_the_skill_not_a_root_level_library():
     assert lookup.REFERENCES == context_check.SKILL_PATH.parent / "references"
     assert lookup.RAW_BASE.endswith("/skills/people-science-knowledge-vault/references")
     assert not (ROOT / "context" / "people-science-knowledge-vault").exists()
+
+
+def test_separate_entries_route_research_and_platform_work_without_duplicating_the_corpus():
+    research = context_check.SKILL_PATH.read_text(encoding="utf-8")
+    screenshot = context_check.SCREENSHOT_SKILL_PATH.read_text(encoding="utf-8")
+    description = research.split("description:", 1)[1].splitlines()[0]
+    assert "research" in description and "screenshots" not in description
+    assert "not platform screenshot" in research
+    assert "screenshot, manifest, or survey export to answer a research-only question" in research
+    assert "../platform-screenshot-interpretation/SKILL.md" in research
+    assert "Own the screenshot conversation across turns" in screenshot
+    assert "do not bounce between skills for every source or" in screenshot
+    for name in ("README.md", "source-priority.md", "public-use.md", "research-workflow.md"):
+        assert f"(../people-science-knowledge-vault/references/{name})" in screenshot
+    for skill in (research, screenshot):
+        assert "same repository and same ref" in " ".join(skill.split())
+    assert not (SCREENSHOT_REFERENCES / "catalog.json").exists()
+    assert not (lookup.REFERENCES / "results-exploration.md").exists()
+
+
+@pytest.mark.parametrize("failure", ["private", "broken-link"])
+def test_screenshot_reference_safety_is_validated_with_the_shared_library(tmp_path, failure):
+    root = tmp_path / "repository"
+    context = copy_skill_context(root)
+    shutil.copytree(ROOT / "publications", root / "publications")
+    guide = root / "skills/platform-screenshot-interpretation/references/results-exploration.md"
+    extra = (
+        "\nhttps://example.sharepoint.com/private\n" if failure == "private"
+        else "\n[Research](../../people-science-knowledge-vault/references/missing.md)\n"
+    )
+    guide.write_text(guide.read_text(encoding="utf-8") + extra, encoding="utf-8")
+    message = "private ownership" if failure == "private" else "missing repository link"
+    with pytest.raises(ValueError, match=message):
+        context_check.validate_context(context, root)

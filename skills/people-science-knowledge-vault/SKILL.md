@@ -1,16 +1,19 @@
 ---
 name: people-science-knowledge-vault
-description: "Summarize People Science research and interpret Glint results, dashboards, or screenshots. Use for published employee-experience guidance, research-backed explanations of survey patterns, and brief requests for the next useful view to verify an interpretation."
+description: "Find and synthesize published People Science research and guidance. Use for employee-experience questions, research-backed recommendations, survey methodology, questionnaire review, and comparisons of published findings."
 allowed-tools: Read, Glob, Grep, WebFetch
 ---
 
 # People Science Knowledge Vault
 
-Help users understand published research and their own Glint results in one
-conversation. Use research to interpret results and choose what to investigate
-next, not merely to describe a screenshot or decorate an answer with citations.
-Keep observed results, published findings, product rules, suggestions, and
-hypotheses distinct.
+Help users answer People Science questions with relevant published evidence.
+Clarify concepts, compare findings, review questionnaire coverage, and distinguish
+research-backed guidance from your suggested application. Lead with a synthesis
+that answers the user's question, not a catalog of articles.
+
+This skill owns general PS research guidance, not platform screenshot
+interpretation or a guided dashboard investigation. Keep published findings,
+product rules, suggestions, and hypotheses distinct.
 
 ## Start from the link: no installation
 
@@ -30,8 +33,9 @@ Do not ask users to download a ZIP, clone, install a plugin, run scripts, or obt
 Microsoft-internal access for this workflow. Reading a link is conversation-scoped,
 not native skill registration or a persistent connection. Follow the linked
 revision rather than a stale installed copy. Resolve all repository links,
-including the instructions below, against the same ref as the supplied skill URL;
-never silently mix branches or commits. If rendered GitHub pages are unreadable,
+including the instructions below, against the same repository and same ref as
+the supplied skill URL; never silently mix branches or commits. If rendered
+GitHub pages are unreadable,
 use their raw-file equivalents. Check for truncation and read smaller linked pages.
 
 ## Choose the work automatically
@@ -41,34 +45,23 @@ Users do not need to choose a mode or another skill.
 | User's task | Required instructions |
 | --- | --- |
 | Research, published guidance, shareable sources, or questionnaire review | Read and follow [research workflow](references/research-workflow.md). |
-| Interpret screenshots, dashboard results, or supplied aggregate values; explain a pattern; decide where to look next | Read and follow [results exploration](references/results-exploration.md) and the research workflow. |
-| Recommend a named Glint report/view, give click paths, or navigate an authorized Glint session | Also read [Glint navigation](references/glint-navigation.md). This guide is not required for research-only answers. |
+| Interpret platform screenshots, dashboard results, or supplied aggregate values; choose the next view or navigate a report | Use [Platform Screenshot Interpretation](../platform-screenshot-interpretation/SKILL.md), carrying forward the question, available views, and already retrieved evidence. |
 | New computations, artifact QA, or an uninspected manifest/codebook | Use `analyze-survey` when available, preserving its Analysis QA gate and inspected aggregate evidence. Do not claim a handoff ran when it did not. |
 
-Substantive results interpretation requires research retrieval. Research must
-inform both the explanation and the next observation to verify. Relevant full
-sources already retrieved in the conversation may be reused when their scope
-and currency still fit. A prerequisite question about an unreadable label or
-missing filter does not require a new search.
-
-Screenshots can support bounded interpretation without a manifest or export;
-they cannot establish that the underlying analysis passed QA. For manifest-based
-results, retain QA already established by `analyze-survey` and answer the research
-follow-up here. Return to analysis only for new computations or required QA;
-do not restart intake, rerun unchanged analyses, or bounce between skills.
-Purely conceptual questions never require survey data or QA.
+Purely conceptual questions never require survey data or QA. Do not ask for a
+screenshot, manifest, or survey export to answer a research-only question.
+For research follow-ups on already inspected analysis artifacts, retain established
+QA and caveats; do not restart intake, rerun unchanged analyses, or bounce between
+skills. A platform interpretation may use this skill's shared research references
+without transferring ownership of the screenshot conversation here.
 
 ## Required-reference gate
 
-Before substantive research, results interpretation, or a research-informed next
-check, fully load `references/README.md`, `references/source-priority.md`,
+Before substantive research, fully load `references/README.md`,
+`references/source-priority.md`,
 `references/public-use.md`, and the task's required workflows from the routing
 table. For a supplied local skill, use its colocated files; for a link, keep the
 same ref. Reading instructions does not replace original-source retrieval.
-
-The conditional navigation guide follows the same loading, reuse, and recovery
-rules. If it cannot be loaded, block report/view directions and browser navigation,
-not otherwise-supported research or interpretation whose own requirements pass.
 
 Confirm file identity, revision, and complete readable bodies, not just titles,
 headings, previews, successful HTTP responses, or a list of filenames. Recover
@@ -87,22 +80,17 @@ If a required body is missing, partial, or wrong-version and recovery fails,
 stop the affected substantive workflow and briefly disclose the blocker. Keep
 the entry's safeguards active; offer only verified visible facts, a basic context
 check, or a prerequisite clarification. Do not bypass the gate with model memory,
-an installed copy at another revision, or available research articles. Unaffected
-research can continue if only results-specific guidance is blocked. Do not label
+an installed copy at another revision, or available research articles. Do not label
 fallback reasoning research-backed or repeat an unavailable request.
 
 ## Check capabilities without blocking unrelated work
 
 Follow [host capabilities and fallbacks](references/public-use.md). Tool names
 above are host-specific; equivalent approved tools are acceptable. Confirm actual
-source retrieval and image readability. A skill link does not supply vision,
-browser access, permissions, or authentication.
-
-Browser control is optional. Only use an approved, user-authenticated browser for
-authorized read-only navigation. Do not change surveys, publish actions, export
-data, or send messages without explicit authorization for that action. Missing
-browser access does not block research or supplied screenshots. Missing research
-access must be disclosed: do not present unsupported interpretation as
+source retrieval. A skill link does not supply permissions or authentication.
+Research-only guidance needs no platform access, browser control, or image input.
+If source retrieval is unavailable, disclose the gap and offer discovery links
+or request a supplied public source body; do not present unsupported guidance as
 People Science-backed.
 
 ## Shared evidence and privacy rules

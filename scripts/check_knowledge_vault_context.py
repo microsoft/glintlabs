@@ -21,8 +21,10 @@ PRIVATE_LOCATION = re.compile(
     re.IGNORECASE,
 )
 MAX_PAGE_BYTES = 20_000
-RUNTIME_GUIDES = ("research-workflow.md", "results-exploration.md", "glint-navigation.md")
+RUNTIME_GUIDES = ("research-workflow.md",)
 SKILL_PATH = ROOT / "skills/people-science-knowledge-vault/SKILL.md"
+SCREENSHOT_SKILL_PATH = ROOT / "skills/platform-screenshot-interpretation/SKILL.md"
+SCREENSHOT_GUIDES = ("README.md", "results-exploration.md", "glint-navigation.md")
 
 
 def validate_media(context: Path, index: dict, manifest: dict) -> set[Path]:
@@ -101,6 +103,25 @@ def validate_links(path: Path, root: Path = ROOT) -> None:
             raise ValueError(f"{path.name}: missing repository link target: {target}")
 
 
+def validate_screenshot_context(root: Path = ROOT) -> None:
+    skill = root / "skills/platform-screenshot-interpretation/SKILL.md"
+    context = skill.parent / "references"
+    expected = {context / name for name in SCREENSHOT_GUIDES}
+    actual = {path for path in context.rglob("*") if path.is_file()}
+    if actual != expected:
+        raise ValueError("screenshot context contains missing/unregistered files; review its public inventory")
+    for path in [skill, *sorted(actual)]:
+        if path.is_symlink():
+            raise ValueError(f"{path.name}: context cannot contain symlinks")
+        if not path.is_file():
+            raise ValueError(f"{path.name}: missing platform skill entry")
+        if len(path.read_bytes()) > MAX_PAGE_BYTES:
+            raise ValueError(f"{path.name}: exceeds small-page retrieval budget")
+        if PRIVATE_LOCATION.search(path.read_text(encoding="utf-8")):
+            raise ValueError(f"{path.name}: private ownership/location data cannot enter public context")
+        validate_links(path, root)
+
+
 def validate_context(context: Path = REFERENCES, root: Path = ROOT) -> None:
     index = load_json(context / "theme-index.json")
     catalog = load_json(context / "catalog.json")
@@ -129,6 +150,7 @@ def validate_context(context: Path = REFERENCES, root: Path = ROOT) -> None:
     actual = {path for path in context.rglob("*") if path.is_file()}
     if actual != expected:
         raise ValueError("context contains missing/unregistered files; review its public inventory")
+    validate_screenshot_context(root)
     for path in sorted(actual):
         if path.is_symlink():
             raise ValueError(f"{path.name}: context cannot contain symlinks")
