@@ -36,7 +36,6 @@ section{padding:var(--spacingHorizontalL);margin-bottom:var(--spacingHorizontalL
 .section-head{display:flex;align-items:center;justify-content:space-between;gap:var(--spacingHorizontalM);flex-wrap:wrap}
 .toolbar{display:flex;gap:var(--spacingHorizontalS)}
 .muted{color:var(--colorNeutralForeground3)}
-.badge{display:inline-block;background:var(--colorStatusWarningBackground);padding:var(--spacingHorizontalS) var(--spacingHorizontalM);border-radius:var(--borderRadiusMedium)}
 .survey-overview{display:grid;grid-template-columns:2fr repeat(3,minmax(0,1fr));gap:var(--spacingHorizontalM);margin:var(--spacingHorizontalL) 0}
 .survey-overview>div{min-width:0;padding:var(--spacingHorizontalM);background:var(--colorNeutralBackground1);border-radius:var(--borderRadiusMedium)}
 .survey-overview dt{font-size:14px;color:var(--colorNeutralForeground3)}
@@ -75,7 +74,7 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 <div><dt id="survey-feature-label">Questions analyzed</dt><dd id="survey-feature-count">Not available</dd></div>
 <div><dt>Response rate</dt><dd id="survey-response-rate">Not available</dd><small id="survey-response-rate-note">Invitation count not recorded</small></div>
 </dl>
-<p id="status" class="badge"></p><p id="scope" class="muted"></p></header>
+</header>
 <nav aria-label="Report sections">
 <a href="#svd">SVD</a><a href="#comparison">Model comparison</a><a href="#diagnostics">Diagnostics</a>
 <a href="#interpretation">Interpretation</a><a href="#methodology">Methodology</a><a href="#downloads">Downloads</a>
@@ -140,7 +139,7 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 <section id="methodology"><h2>Methodology and limitations</h2>
 <p class="section-intro muted">Documents the approved modeling design, repeatability checks, and limitations. Use this section to judge what the results do and do not support.</p>
 <div class="section-action"><h3>How to action these results</h3><p>Resolve leakage, privacy, measurement, or validation problems before relying on findings. Carry remaining caveats into decisions and shared outputs; deterministic repeatability alone is not evidence of scientific validity.</p></div>
-<p id="qa"></p><ul id="limitations"></ul>
+<p id="qa"></p><p id="scope" class="muted"></p><ul id="limitations"></ul>
 <p>This report cannot establish causes, representative sampling, individual risk, or a deployable prediction service. Native score units and 100-point survey-score units are distinct.</p>
 <h3>Approved modeling design</h3><pre id="design"></pre>
 <h3>Reproducibility and provenance</h3><pre id="provenance"></pre></section>
@@ -163,9 +162,8 @@ text("survey-feature-label",M.status==="not_run"?"Questions / predictors planned
 text("survey-feature-count",number(survey.feature_count??S.svd?.features?.length??S.design?.features?.length));
 text("survey-response-rate",typeof survey.response_rate==="number"?`${survey.response_rate.toFixed(1)}%`:"Not available");
 text("survey-response-rate-note",survey.invited_count==null?"Invitation count not recorded":survey.response_rate==null?"Response count unavailable or suppressed":`${number(survey.invited_count)} invited in the confirmed survey scope`);
-text("status",`${M.status} / ${M.qa.verdict}`);
 text("scope",`${S.task||"Code-only design"} | score units: ${S.score_units||"not applicable"} | ${S.holdout_evaluated?"Final holdout evaluated":"No final holdout result"}`);
-text("qa",`Frozen-fit repeatability: ${M.qa.repeatability}`);
+text("qa",`${M.status} / ${M.qa.verdict}. Frozen-fit repeatability: ${M.qa.repeatability}`);
 text("provenance",JSON.stringify(M.provenance,null,2));
 text("design",JSON.stringify(S.design||{},null,2));
 for(const limitation of M.qa.limitations){const li=document.createElement("li");li.textContent=limitation;document.getElementById("limitations").append(li)}
