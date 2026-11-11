@@ -219,7 +219,7 @@ tracking mode/region rather than treating Clarity as a census. Supabase remains
 the existing event-count baseline; its browser counts are approximate too.
 
 Privacy checks run before loading and again on navigation, focus, visibility,
-and cross-tab preference updates. A refusal stops Clarity and removes the tag;
+cross-tab preference updates, and tool feedback. A refusal stops Clarity and removes the tag;
 already transmitted data cannot be recalled, and stopping can flush prior buffered
 events. Once stopped, Clarity does not restart until a reload passes the checks.
 Tag-loading failure logs a diagnostic and leaves navigation/Supabase unaffected.
@@ -230,6 +230,65 @@ run `npm run pages:build`, then run `npm run pages:test:telemetry` with the same
 flags. The browser check intercepts **all** page requests and uses a fake Clarity
 tag; no test visits reach either analytics provider. A disabled build can be
 checked with both flags `false`.
+
+### Tool feedback
+
+The Home and Tools cards offer thumbs up/down. A new selection sends one
+allowlisted Clarity custom event, independently of Supabase:
+
+| Tool | Thumbs up | Thumbs down |
+| --- | --- | --- |
+| Analyze Survey | `tool_analyze_survey_thumbs_up` | `tool_analyze_survey_thumbs_down` |
+| People Science Knowledge Vault | `tool_knowledge_vault_thumbs_up` | `tool_knowledge_vault_thumbs_down` |
+
+Thumbs up shows a compact, text-only "Thanks for the feedback" confirmation
+centered beneath the selected, filled thumb rather than a bottom-right toast.
+Thumbs down opens a compact, nonmodal popover anchored to the thumb, with three optional
+reasons and Submit. It flips above the thumb when needed and stays within the
+viewport. There is no backdrop, scroll lock, repeated heading, or focus trap.
+Escape, clicking outside, or tabbing back into the page dismisses it without
+changing the initial rating or sending reason events. Escape and Submit return
+focus to the thumb; outside interactions keep their destination focus. Submit
+shows the same confirmation, which is announced to screen readers, does not take
+focus, and dismisses after three seconds or an outside interaction. The confirmation
+follows its thumb on scroll and resize, flips above when needed, and stays within
+the viewport. The thumb remains selected after it disappears. Selecting the
+same thumb shows its feedback UI again without sending another rating event.
+
+Submit sends one fixed event per selected category, using
+`<thumbs-down-event>_reason_<category>` (for example,
+`tool_analyze_survey_thumbs_down_reason_hard_to_use`):
+
+| Category | Reason |
+| --- | --- |
+| `not_useful` | Not useful to me |
+| `hard_to_use` | Hard to use |
+| `technical_issue` | Something didn't work |
+
+Submit stays disabled until at least one reason is selected and disables again
+when the last reason is cleared. Empty submissions generate no category events
+or submitted confirmation; the initial rating remains selected. Repeated Submit activation
+within one popover cannot duplicate events; a new explicit submission after
+reopening can. Reason counts are category interactions, not unique submissions
+or voters. There are no comment fields, screenshots, uploads, or diagnostic
+attachments. Only allowlisted tool/category pairs can reach Clarity, through
+the same guarded runtime as the initial rating.
+
+Use Clarity's custom-event filters to inspect these interactions. Counts are
+**interaction history**, not unique voters, tool executions, or authoritative
+current-vote totals. Repeating the selected thumb while the card remains mounted
+does not send another event; switching thumbs sends the opposite event. Selection
+is local React state, so navigation or reload can allow another event. There are
+no feedback identifiers, persistent ratings, public counts, or new Supabase records.
+The existing Supabase analytics remain unchanged.
+
+The pressed state and submitted confirmation acknowledge the local action, not confirmed delivery. Events remain
+best-effort and obey all existing Clarity build, production-origin, route, privacy,
+and stopped-runtime guards. Private staging can review the UI but sends no live
+Clarity feedback. The intercepted browser check covers mouse and keyboard input,
+repeat-click/submission suppression, per-tool rating/reason events, cancellation,
+accessibility, and action-time privacy
+checks; it does not verify receipt in the live Clarity dashboard.
 
 ## Prototype contract
 

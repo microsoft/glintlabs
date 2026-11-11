@@ -44,9 +44,10 @@ const sections = [
 ] as const;
 type SectionId = (typeof sections)[number]["id"];
 
-export function SkillDetails({ content, onClose }: {
+export function SkillDetails({ content, onClose, className }: {
   content: SkillDetailsContent;
   onClose?: () => void;
+  className?: string;
 }) {
   const { title, skillUrl, starterPrompt } = content;
   const [copied, setCopied] = useState<"skill" | "prompt" | null>(null);
@@ -137,7 +138,7 @@ export function SkillDetails({ content, onClose }: {
   };
 
   return (
-    <article ref={detailsRef} className={`${styles.details} ${onClose ? styles.modalDetails : ""}`} data-scroll-more={isModal && canScrollMore || undefined} data-figma-node-id={content.figmaNodeId}>
+    <article ref={detailsRef} className={`${styles.details} ${onClose ? styles.modalDetails : ""} ${className ?? ""}`} data-scroll-more={isModal && canScrollMore || undefined} data-figma-node-id={content.figmaNodeId}>
       <header className={styles.header}>
         {!onClose ? <div className={styles.topRow}>
           <Link className={styles.backAction} href="/tools"><ArrowLeft24Regular aria-hidden="true" />All tools</Link>

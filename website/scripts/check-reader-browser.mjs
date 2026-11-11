@@ -100,6 +100,341 @@ async function key(key, code, number, text) {
   });
 }
 
+async function checkFeedbackFlow() {
+  const popover = '[popover][role="dialog"]:popover-open';
+  for (const name of ["tool_knowledge_vault_thumbs_down", "tool_analyze_survey_thumbs_down"]) {
+    const button = `document.querySelector('button[data-glintlabs-feedback="${name}"]')`;
+    const overflow = await evaluate("[document.documentElement.style.overflow, document.body.style.overflow]");
+    const closed = async (restoreFocus = true) => {
+      await waitFor(() => evaluate(`!document.querySelector('${popover}') && ${button}.getAttribute("aria-expanded") === "false"`),
+        "Dismissal must close the feedback popover and reset its trigger.");
+      if (restoreFocus) {
+        await waitFor(() => evaluate(`document.activeElement === ${button}`),
+          "Escape or Submit must restore focus to the initiating thumb.");
+      }
+      assert.deepEqual(await evaluate("[document.documentElement.style.overflow, document.body.style.overflow]"), overflow,
+        "Optional feedback must not lock page scrolling.");
+      assert.equal(await evaluate(`${button}.getAttribute("aria-pressed")`), "true", "Dismissal must preserve the initial rating.");
+    };
+    const open = async () => {
+      await evaluate(`${button}.scrollIntoView({block:"center",behavior:"instant"}); ${button}.focus(); ${button}.click()`);
+      await waitFor(() => evaluate('!!document.querySelector("dialog[open] input, [popover]:popover-open input")'),
+        "Thumbs down must offer preset reasons.");
+      assert.equal(await evaluate('!!document.querySelector("dialog:modal")'), false,
+        "Optional feedback must be a nonmodal popover, not a blocking dialog.");
+      await waitFor(() => evaluate(`!!document.querySelector('${popover}')`), "Feedback popover must open.");
+    };
+    const anchored = () => evaluate(`(() => {
+      const bounds = document.querySelector('${popover}').getBoundingClientRect();
+      const target = ${button}.getBoundingClientRect();
+      const edge = document.documentElement.clientWidth;
+      const gap = Math.min(Math.abs(bounds.top - target.bottom - 8), Math.abs(target.top - bounds.bottom - 8));
+      return bounds.left >= 15.5 && bounds.right <= edge - 15.5 &&
+        bounds.top >= 15.5 && bounds.bottom <= innerHeight - 15.5 && gap <= 0.5 &&
+        (Math.abs(bounds.right - target.right) <= 0.5 || bounds.left <= 16.5 || bounds.right >= edge - 16.5);
+    })()`);
+    await open();
+    assert.equal(await evaluate(`document.querySelector('${popover} button[type=submit]').disabled`), true,
+      "Submit must be disabled until at least one reason is selected.");
+    for (const target of ["legend", null, "button[type=submit]"]) {
+      await evaluate(`document.querySelector('${popover} input').focus()`);
+      const point = await evaluate(`(() => {
+        const panel = document.querySelector('${popover}');
+        const element = ${target ? `panel.querySelector('${target}')` : "panel"};
+        element.scrollIntoView({block:"nearest",inline:"nearest",behavior:"instant"});
+        const bounds = element.getBoundingClientRect();
+        return {x:bounds.x + ${target ? "bounds.width / 2" : "8"},
+          y:bounds.y + ${target ? "bounds.height / 2" : "8"}};
+      })()`);
+      await send("Input.dispatchMouseEvent", { type: "mousePressed", ...point, button: "left", clickCount: 1 });
+      await send("Input.dispatchMouseEvent", { type: "mouseReleased", ...point, button: "left", clickCount: 1 });
+      assert.equal(await evaluate(`!!document.querySelector('${popover}')`), true,
+        `Clicking ${target ?? "popover padding"} must keep feedback open.`);
+    }
+    for (const checked of [true, false]) {
+      const point = await evaluate(`(() => {
+        const label = document.querySelector('${popover} label');
+        label.scrollIntoView({block:"nearest",inline:"nearest",behavior:"instant"});
+        const bounds = label.getBoundingClientRect();
+        return {x:bounds.x + bounds.width/2,y:bounds.y + bounds.height/2};
+      })()`);
+      await send("Input.dispatchMouseEvent", { type: "mousePressed", ...point, button: "left", clickCount: 1 });
+      await send("Input.dispatchMouseEvent", { type: "mouseReleased", ...point, button: "left", clickCount: 1 });
+      assert.equal(await evaluate(`!!document.querySelector('${popover}')`), true,
+        "Clicking a reason label must keep feedback open.");
+      assert.equal(await evaluate(`document.querySelector('${popover} input').checked`), checked,
+        "Clicking a reason label must toggle its checkbox.");
+    }
+    await evaluate(`document.querySelector('${popover} input').focus()`);
+    assert.deepEqual(await evaluate(`Array.from(document.querySelectorAll('${popover} button'), button => button.textContent)`),
+      ["Submit"], "Lightweight feedback needs only its Submit action.");
+    assert.deepEqual(await evaluate(`Array.from(document.querySelectorAll('${popover} label'), label => label.textContent)`),
+      ["Not useful to me", "Hard to use", "Something didn't work"],
+      "Feedback must offer only the three approved reasons.");
+    assert.equal(await evaluate(`getComputedStyle(document.querySelector('${popover} legend')).fontWeight`),
+      "600", "The feedback question must use semibold.");
+    const appearance = await evaluate(`(() => {
+      const panel = document.querySelector('${popover}');
+      const button = getComputedStyle(panel.querySelector("button[type=submit]"));
+      const style = getComputedStyle(panel);
+      const anchor = ${button}.getBoundingClientRect();
+      return {color:button.color, background:button.backgroundColor,
+        shadow:style.boxShadow, backdrop:getComputedStyle(panel,"::backdrop").backgroundColor,
+        padding:style.padding, radius:style.borderRadius, buttonRadius:button.borderRadius,
+        width:panel.getBoundingClientRect().width, height:panel.getBoundingClientRect().height,
+        availableHeight:Math.max(anchor.top - 24, innerHeight - anchor.bottom - 24), touch:innerWidth <= 600,
+        modal:panel.getAttribute("aria-modal"), controlled:${button}.getAttribute("aria-controls") === panel.id,
+        heading:!!panel.querySelector("h2"), toolContext:panel.textContent.includes(" skill")};
+    })()`);
+    assert.equal(appearance.width, 232, "Feedback must match the new Figma popover width.");
+    assert.ok(Math.abs(appearance.height - Math.min(appearance.touch ? 260 : 212, appearance.availableHeight)) <= 0.5,
+      `Feedback must match Figma spacing, with larger touch targets and short-viewport containment: ${JSON.stringify(appearance)}`);
+    assert.equal(appearance.padding, "20px");
+    assert.equal(appearance.radius, "16px");
+    assert.equal(appearance.buttonRadius, "12px");
+    assert.equal(await evaluate(`getComputedStyle(${button}).color`), "rgb(0, 0, 0)",
+      "The selected thumb must remain black while feedback is open.");
+    assert.equal(await evaluate(`(() => {
+      const button = ${button};
+      const filled = button.querySelector('[class*="filledIcon"]');
+      const regular = button.querySelector('[class*="regularIcon"]');
+      return getComputedStyle(filled).display !== "none" && getComputedStyle(regular).display === "none";
+    })()`), true, "The selected thumb must remain filled while feedback is open.");
+    assert.equal(appearance.modal, "false");
+    assert.equal(appearance.controlled, true, "The thumb must identify its controlled popover.");
+    assert.equal(appearance.heading, false, "The redundant Share feedback heading must be removed.");
+    assert.equal(appearance.toolContext, false, "The repeated tool-name panel must be removed.");
+    assert.notEqual(appearance.color, appearance.background, "Submit text must not disappear against its background.");
+    assert.notEqual(appearance.shadow, "none", "Feedback must retain themed popover elevation.");
+    assert.equal(appearance.backdrop, "rgba(0, 0, 0, 0)", "Optional feedback must not dim the page.");
+    assert.deepEqual(await evaluate("[document.documentElement.style.overflow, document.body.style.overflow]"), overflow);
+    await waitFor(anchored, "Feedback must anchor to its thumb, flip vertically, and stay inside the viewport.");
+    if (await evaluate("innerWidth === 1440")) {
+      const top = await evaluate(`${button}.getBoundingClientRect().top`);
+      await evaluate("window.scrollBy({top:24,behavior:'instant'})");
+      await waitFor(async () => Math.abs(await evaluate(`${button}.getBoundingClientRect().top`) - top) > 20,
+        "The page must remain scrollable while reasons are open.");
+      await waitFor(anchored, "Feedback must follow its thumb when the page scrolls.");
+      const height = await evaluate("innerHeight");
+      await send("Emulation.setDeviceMetricsOverride", { width: 1280, height, deviceScaleFactor: 1, mobile: false });
+      await waitFor(anchored, "Feedback must stay attached when the viewport resizes.");
+      await send("Emulation.setDeviceMetricsOverride", { width: 1440, height, deviceScaleFactor: 1, mobile: false });
+      await waitFor(anchored, "Feedback must reanchor after restoring the viewport.");
+    }
+    assert.equal(await evaluate(`!!document.querySelector('${popover} textarea, ${popover} input:not([type=checkbox])')`), false,
+      "Clarity-only feedback must not collect comments or attachments.");
+    assert.equal(await evaluate(`document.activeElement === document.querySelector('${popover} input')`), true,
+      "Reasons must receive initial keyboard focus.");
+    await key("Tab", "Tab", 9);
+    await send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, modifiers: 8 });
+    await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, modifiers: 8 });
+    await key(" ", "Space", 32, " ");
+    assert.equal(await evaluate(`document.querySelector('${popover} button[type=submit]').disabled`), false,
+      "Selecting a reason must enable Submit.");
+    await key(" ", "Space", 32, " ");
+    assert.equal(await evaluate(`document.querySelector('${popover} button[type=submit]').disabled`), true,
+      "Clearing the last checked reason must disable Submit again.");
+    await evaluate(`document.querySelector('${popover} form').requestSubmit()`);
+    assert.equal(await evaluate(`!!document.querySelector('${popover}')`), true,
+      "An empty submission must not close feedback or show a submitted confirmation.");
+    await key(" ", "Space", 32, " ");
+    await evaluate(`document.querySelector('${popover} input[value="hard_to_use"]').click()`);
+    assert.equal(await evaluate(`document.querySelectorAll('${popover} input:checked').length`), 2,
+      "Reasons must support multiple choices and keyboard selection.");
+    assert.equal(await evaluate(`(() => {
+      const focused = document.activeElement;
+      const indicator = getComputedStyle(focused.closest(".fui-Checkbox"), "::after");
+      return parseFloat(indicator.borderTopWidth) >= 2 && indicator.borderTopStyle === "solid";
+    })()`), true, "Keyboard selection must keep the Fluent checkbox focus indicator.");
+    await evaluate(`(async () => {
+      const submit = document.querySelector('${popover} button[type=submit]');
+      getComputedStyle(submit).backgroundColor;
+      await Promise.all(submit.getAnimations().map(animation => animation.finished.catch(() => {})));
+    })()`);
+    assert.deepEqual(await evaluate(`(async () => (await axe.run(document.querySelector('${popover}'),
+      {runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21aa"]}})).violations)()`), []);
+    await evaluate(`document.querySelector('${popover} button[type=submit]').focus()`);
+    await key("Enter", "Enter", 13, "\r");
+    await checkFeedbackSubmitted();
+    await closed();
+    await open();
+    assert.equal(await evaluate(`document.querySelectorAll('${popover} input:checked').length`), 0,
+      "A new reason submission must start with no stale choices.");
+    await key("Escape", "Escape", 27);
+    await closed();
+    await open();
+    await send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, modifiers: 8 });
+    await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, modifiers: 8 });
+    await closed();
+    await open();
+    await evaluate(`document.querySelector('${popover} input').click()`);
+    await evaluate(`document.querySelector('${popover} button[type=submit]').focus()`);
+    await key("Tab", "Tab", 9);
+    await closed(false);
+    assert.equal(await evaluate(`document.activeElement === ${button}`), false,
+      "Tab must continue into the page rather than trapping or returning focus.");
+    await open();
+    const outside = await evaluate(`(() => {
+      const outside = document.createElement("button");
+      outside.id = "feedback-outside-test";
+      outside.textContent = "Outside feedback";
+      outside.style.cssText = "position:fixed;left:16px;top:16px;z-index:1000";
+      document.body.append(outside);
+      const bounds = outside.getBoundingClientRect();
+      return {x:bounds.x + bounds.width/2,y:bounds.y + bounds.height/2};
+    })()`);
+    await send("Input.dispatchMouseEvent", { type: "mousePressed", ...outside, button: "left", clickCount: 1 });
+    await send("Input.dispatchMouseEvent", { type: "mouseReleased", ...outside, button: "left", clickCount: 1 });
+    await closed(false);
+    assert.equal(await evaluate('document.activeElement?.id'), "feedback-outside-test",
+      "Click-outside dismissal must not steal focus from the clicked control.");
+    await evaluate('document.getElementById("feedback-outside-test").remove()');
+  }
+}
+
+async function checkFeedbackSubmitted() {
+  await waitFor(() => evaluate('document.querySelector("[popover]:popover-open")?.textContent === "Thanks for the feedback"'),
+    "Feedback must show the compact Thanks for the feedback confirmation.");
+  assert.equal(await evaluate('!!document.querySelector("dialog[open]")'), false,
+    "Submitted feedback must not open another modal.");
+  assert.equal(await evaluate(`Array.from(document.querySelectorAll('[role="status"]'))
+    .some(status => status.textContent.startsWith("Thanks for the feedback on "))`), true,
+    "Submitted feedback must have a polite screen-reader status.");
+  assert.equal(await evaluate(`Array.from(document.querySelectorAll('button[data-glintlabs-feedback][aria-pressed="true"]'))
+    .every(button => {
+      const style = getComputedStyle(button);
+      return style.boxShadow === "none" && style.borderTopWidth === "0px";
+    })`), true, "Selected thumbs must not have a persistent outline.");
+  assert.equal(await evaluate(`Array.from(document.querySelectorAll('button[data-glintlabs-feedback][aria-pressed="true"]'))
+    .every(button => getComputedStyle(button).color === "rgb(0, 0, 0)")`), true,
+    "Selected thumbs must use the site's black ink, not its blue accent.");
+  const appearance = await evaluate(`(() => {
+    const confirmation = document.querySelector("[popover]:popover-open");
+    const bounds = confirmation.getBoundingClientRect();
+    const style = getComputedStyle(confirmation);
+    const thumb = confirmation.closest('[role="group"]').querySelector('button[aria-pressed="true"]');
+    const anchor = thumb.getBoundingClientRect();
+    return {width:bounds.width,height:bounds.height,radius:style.borderRadius,
+      icons:confirmation.querySelectorAll("svg").length,font:style.fontSize,lineHeight:style.lineHeight,
+      weight:style.fontWeight,padding:[style.paddingTop,style.paddingRight,style.paddingBottom,style.paddingLeft],
+      anchorGap:Math.min(Math.abs(bounds.top - anchor.bottom - 8), Math.abs(anchor.top - bounds.bottom - 8)),
+      centerDelta:bounds.left + bounds.width/2 - (anchor.left + anchor.width/2),
+      left:bounds.left,right:bounds.right,viewport:document.documentElement.clientWidth,
+      filled:getComputedStyle(thumb.querySelector('[class*="filledIcon"]')).display !== "none" &&
+        getComputedStyle(thumb.querySelector('[class*="regularIcon"]')).display === "none",
+      visible:bounds.left >= 15.5 && bounds.right <= document.documentElement.clientWidth - 15.5 &&
+        bounds.top >= 15.5 && bounds.bottom <= innerHeight - 15.5,
+      background:style.backgroundColor,shadow:style.boxShadow};
+  })()`);
+  assert.deepEqual([appearance.height, appearance.radius, appearance.icons,
+    appearance.font, appearance.lineHeight, appearance.weight, ...appearance.padding],
+  [46, "16px", 0, "14px", "20px", "400", "12px", "16px", "12px", "16px"],
+  "The acknowledgment must be compact, text-only and regular weight.");
+  assert.equal(appearance.visible, true);
+  assert.ok(appearance.anchorGap <= 0.5 && (Math.abs(appearance.centerDelta) <= 0.5 ||
+    (appearance.left <= 16.5 && appearance.centerDelta >= 0) ||
+    (appearance.right >= appearance.viewport - 16.5 && appearance.centerDelta <= 0)),
+  "The acknowledgment must center beneath its selected thumb, shifting or flipping only to stay in the viewport.");
+  assert.equal(appearance.filled, true, "The selected thumb must remain filled during confirmation.");
+  assert.equal(appearance.background, "rgb(255, 255, 255)", "Confirmation must inherit its Fluent theme.");
+  assert.notEqual(appearance.shadow, "none");
+}
+
+async function checkFeedbackHover() {
+  for (let index = 0; index < 4; index++) {
+    await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: 0, y: 0 });
+    const before = await evaluate(`(() => {
+      const button = document.querySelectorAll("button[data-glintlabs-feedback]")[${index}];
+      button.scrollIntoView({ block: "center", behavior: "instant" });
+      const bounds = button.getBoundingClientRect();
+      button.addEventListener("pointerenter", () => {
+        const tooltip = document.getElementById(button.getAttribute("aria-describedby"));
+        const started = performance.now();
+        window.__feedbackHoverDelay = null;
+        const measure = () => {
+          if (!tooltip.hidden && getComputedStyle(tooltip).visibility === "visible") {
+            window.__feedbackHoverDelay = performance.now() - started;
+          } else if (performance.now() - started < 2000) {
+            requestAnimationFrame(measure);
+          }
+        };
+        measure();
+      }, { once: true });
+      return { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2,
+        path: button.querySelector("svg path").getAttribute("d") };
+    })()`);
+    await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: before.x, y: before.y });
+    await waitFor(() => evaluate('Number.isFinite(window.__feedbackHoverDelay)'),
+      "Feedback tooltip must appear after a short hover delay.");
+    const delay = await evaluate('window.__feedbackHoverDelay');
+    assert(delay >= 250 && delay < 1000, `Feedback tooltip must wait about 300ms, not ${delay}ms.`);
+    const tooltip = await evaluate(`(() => {
+      const button = document.querySelectorAll("button[data-glintlabs-feedback]")[${index}];
+      const tooltip = document.getElementById(button.getAttribute("aria-describedby"));
+      if (!tooltip || tooltip.getAttribute("role") !== "tooltip" ||
+          !tooltip.getClientRects().length || getComputedStyle(tooltip).visibility !== "visible") {
+        throw Error("Feedback hover must expose its accessible custom tooltip");
+      }
+      const style = getComputedStyle(tooltip);
+      const bounds = tooltip.getBoundingClientRect();
+      const card = button.closest("article").getBoundingClientRect();
+      const target = button.getBoundingClientRect();
+      const icons = [...button.querySelectorAll("svg")].filter(svg => svg.getBoundingClientRect().width);
+      if (icons.length !== 1) throw Error("Feedback hover must show exactly one thumb glyph");
+      const icon = icons[0];
+      return {
+        text: tooltip.textContent, background: style.backgroundColor,
+        font: style.fontSize, lineHeight: style.lineHeight, radius: style.borderRadius, shadow: style.boxShadow,
+        padding: [style.paddingTop, style.paddingRight],
+        highlight: getComputedStyle(button, "::before").backgroundColor,
+        path: icon.querySelector("path").getAttribute("d"),
+        selected: button.getAttribute("aria-pressed"), nativeTitle: button.hasAttribute("title"),
+        centerDelta: bounds.x + bounds.width / 2 - (target.x + target.width / 2),
+        below: bounds.top >= target.bottom,
+        contained: bounds.left >= 0 && bounds.right <= document.documentElement.clientWidth &&
+          [bounds.left + 1, bounds.right - 1].every(x =>
+            tooltip.contains(document.elementFromPoint(x, bounds.y + bounds.height / 2))),
+        geometry: { tooltip: bounds.toJSON(), card: card.toJSON(), viewport: innerWidth },
+        x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2,
+        bridgeX: target.x + target.width / 2,
+        bridgeY: bounds.top < target.top ? target.top - 2 : target.bottom + 2,
+      };
+    })()`);
+    assert.equal(tooltip.text, index % 2 ? "I don't like this tool" : "I like this tool");
+    assert.equal(tooltip.background, "rgb(252, 253, 255)");
+    assert.deepEqual([tooltip.font, tooltip.lineHeight, tooltip.radius, ...tooltip.padding],
+      ["12px", "16px", "8px", "8px", "12px"]);
+    assert.equal(tooltip.shadow,
+      "rgba(0, 0, 0, 0.12) 0px 0px 2px 0px, rgba(0, 0, 0, 0.14) 0px 2px 4px 0px",
+      "Feedback tooltips must use the slightly raised shadow4 elevation.");
+    assert.equal(tooltip.highlight, "rgb(243, 243, 243)");
+    assert.notEqual(tooltip.path, before.path, "Hover must switch the outline to the filled thumb.");
+    assert.equal(tooltip.selected, "false", "Hover must not submit or select a rating.");
+    assert.equal(tooltip.nativeTitle, false, "Do not show a second native tooltip.");
+    if (index % 2) {
+      assert(Math.abs(tooltip.centerDelta) <= 0.5,
+        `Thumbs-down tooltip must be centered on its icon, not shifted ${tooltip.centerDelta}px.`);
+      assert(tooltip.below, "The thumbs-down tooltip must appear below its icon.");
+    }
+    assert(tooltip.contained, `Feedback tooltip ${index} must not be clipped: ${JSON.stringify(tooltip.geometry)}`);
+    const visible = `(() => {
+      const button = document.querySelectorAll("button[data-glintlabs-feedback]")[${index}];
+      const tooltip = document.getElementById(button.getAttribute("aria-describedby"));
+      return !!tooltip.getClientRects().length && getComputedStyle(tooltip).visibility === "visible";
+    })()`;
+    await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: tooltip.bridgeX, y: tooltip.bridgeY });
+    assert.equal(await evaluate(visible), true, "The pointer must cross the tooltip gap without dismissal.");
+    await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: tooltip.x, y: tooltip.y });
+    assert.equal(await evaluate(visible), true, "The tooltip must remain open when hovered.");
+    await key("Escape", "Escape", 27);
+    await waitFor(async () => !(await evaluate(visible)), "Escape must dismiss a hovered tooltip without moving focus.");
+  }
+  await send("Input.dispatchMouseEvent", { type: "mouseMoved", x: 0, y: 0 });
+  assert.equal(await evaluate(`Array.from(document.querySelectorAll('[role="tooltip"]'))
+    .every(tooltip => tooltip.hidden || getComputedStyle(tooltip).visibility === "hidden")`), true,
+    "Feedback tooltips must hide immediately when the pointer leaves.");
+}
+
 async function stop(child) {
   if (!child || child.exitCode !== null || child.signalCode !== null || !child.pid) return;
   await new Promise((resolve) => {
@@ -237,6 +572,140 @@ try {
         assert.equal(await evaluate('document.querySelector("[data-glintlabs-environment]")'), null);
       }
       if (route === "/" || route === "/tools") {
+        assert.deepEqual(await evaluate(`(() => {
+          const cards = [...document.querySelectorAll('[aria-labelledby="tools-library-title"] article')];
+          return cards.map(card => {
+            const content = card.querySelector('[class*="cardContent"]');
+            const padding = getComputedStyle(content);
+            const bounds = content.getBoundingClientRect();
+            return {
+              title: card.querySelector("h3").textContent,
+              vertical: padding.paddingTop,
+              bottom: padding.paddingBottom,
+              left: padding.paddingLeft,
+              right: padding.paddingRight,
+              topInset: Math.round(content.firstElementChild.getBoundingClientRect().top - bounds.top),
+              bottomInset: Math.round(bounds.bottom - content.lastElementChild.getBoundingClientRect().bottom),
+            };
+          });
+        })()`), ["People Science Knowledge Vault", "Analyze Survey"].map(title => ({
+          title,
+          vertical: width <= 600 ? "24px" : "40px",
+          bottom: width <= 600 ? "24px" : "40px",
+          left: width <= 1100 ? "24px" : "40px",
+          right: width <= 1100 ? "24px" : "40px",
+          topInset: width <= 600 ? 24 : 40,
+          bottomInset: width <= 600 ? 24 : 40,
+        })), "Tool card order and padding must match the updated design.");
+        await evaluate(`(() => {
+          const buttons = [...document.querySelectorAll("button[data-glintlabs-feedback]")];
+          if (buttons.length !== 4) throw Error("Both tool cards need thumbs up/down");
+          for (const button of buttons) {
+            const rect = button.getBoundingClientRect();
+            const icons = [...button.querySelectorAll("svg")].filter(svg => svg.getBoundingClientRect().width);
+            if (icons.length !== 1) throw Error("Feedback must show exactly one thumb glyph");
+            const icon = icons[0].getBoundingClientRect();
+            const minimum = innerWidth <= 600 ? 44 : 40;
+            if (rect.width < minimum || rect.height < minimum || icon.width !== 20 || icon.height !== 20 ||
+                !button.getAttribute("aria-label") || button.getAttribute("aria-pressed") !== "false") {
+              throw Error("Feedback size, labels, icons or initial selection changed");
+            }
+          }
+        })()`);
+        await checkFeedbackHover();
+        await key("Tab", "Tab", 9);
+        await evaluate('document.querySelector("button[data-glintlabs-feedback]").focus()');
+        await waitFor(() => evaluate(`(() => {
+          const button = document.querySelector("button[data-glintlabs-feedback]");
+          const tooltip = document.getElementById(button.getAttribute("aria-describedby"));
+          return !!tooltip?.getClientRects().length && getComputedStyle(tooltip).visibility === "visible";
+        })()`), "Keyboard focus must expose the feedback tooltip.");
+        await key("Escape", "Escape", 27);
+        await waitFor(() => evaluate(`(() => {
+          const button = document.querySelector("button[data-glintlabs-feedback]");
+          const tooltip = document.getElementById(button.getAttribute("aria-describedby"));
+          return document.activeElement === button && !tooltip.getClientRects().length;
+        })()`), "Escape must dismiss the focused tooltip without blurring the button.");
+        await key("Enter", "Enter", 13, "\r");
+        await waitFor(() => evaluate('document.querySelector("button[data-glintlabs-feedback]").getAttribute("aria-pressed") === "true"'),
+          "Feedback is not keyboard accessible");
+        const feedbackStarted = await evaluate("performance.now()");
+        await checkFeedbackSubmitted();
+        assert.deepEqual(await evaluate(`(async () => (await axe.run(document.querySelector('[role="group"][aria-label^="Feedback on"]'),
+          {runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21aa"]}})).violations)()`), []);
+        assert.equal(await evaluate('document.activeElement === document.querySelector("button[data-glintlabs-feedback]")'), true,
+          "The submitted confirmation must not steal focus from its thumb.");
+        if (route === "/tools" && width === 390) {
+          await waitFor(() => evaluate('!document.querySelector("[popover]:popover-open")'),
+            "The submitted confirmation must dismiss automatically.");
+          const elapsed = await evaluate("performance.now()") - feedbackStarted;
+          assert.ok(elapsed >= 2700 && elapsed < 4500,
+            `Submitted feedback must dismiss after about three seconds, not ${elapsed}ms.`);
+          assert.equal(await evaluate('document.querySelector("button[data-glintlabs-feedback]").getAttribute("aria-pressed")'),
+            "true", "The thumb must stay selected after the confirmation disappears.");
+          assert.equal(await evaluate('document.activeElement === document.querySelector("button[data-glintlabs-feedback]")'), true,
+            "Automatic dismissal must preserve keyboard focus.");
+          await key("Enter", "Enter", 13, "\r");
+          await checkFeedbackSubmitted();
+        }
+        await key("Escape", "Escape", 27);
+        await waitFor(() => evaluate('!document.querySelector("[popover]:popover-open")'),
+          "Escape must dismiss the anchored confirmation.");
+        await send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value: "active" }] });
+        await evaluate(`(() => {
+          const button = document.querySelector("button[data-glintlabs-feedback]");
+          button.blur();
+          button.focus();
+        })()`);
+        await waitFor(() => evaluate(`(() => {
+          const button = document.querySelector("button[data-glintlabs-feedback]");
+          const tooltip = document.getElementById(button.getAttribute("aria-describedby"));
+          const bounds = tooltip.getBoundingClientRect();
+          return !!tooltip.getClientRects().length && getComputedStyle(tooltip).visibility === "visible" &&
+            getComputedStyle(tooltip).outlineWidth === "1px" &&
+            bounds.left >= 0 && bounds.right <= document.documentElement.clientWidth &&
+            [bounds.left + 1, bounds.right - 1].every(x =>
+              tooltip.contains(document.elementFromPoint(x, bounds.y + bounds.height / 2)));
+        })()`), "Forced-colors tooltips must remain visible and unclipped.");
+        assert.equal(await evaluate('getComputedStyle(document.querySelector("button[data-glintlabs-feedback]")).outlineWidth'),
+          "3px", "A selected thumb must keep its visible keyboard focus in forced colors.");
+        assert.equal(await evaluate('getComputedStyle(document.querySelector("button[data-glintlabs-feedback]")).borderTopWidth'),
+          "0px", "Selected thumbs must not gain a border in forced colors.");
+        assert.equal(await evaluate(`Array.from(document.querySelector("button[data-glintlabs-feedback]").querySelectorAll("svg"))
+          .filter(icon => getComputedStyle(icon).display !== "none").map(icon => icon.className.baseVal.includes("filledIcon"))[0]`),
+          true, "The filled thumb must identify selection in forced colors.");
+        await send("Emulation.setEmulatedMedia", { features: [] });
+        if (route === "/tools" && width === 390) {
+          const position = await evaluate(`(() => {
+            const button = document.querySelector("button[data-glintlabs-feedback]");
+            const bounds = button.getBoundingClientRect();
+            return { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
+          })()`);
+          await send("Input.dispatchMouseEvent", { type: "mouseMoved", ...position });
+          await send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 1 });
+          await send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ ...position, id: 1 }] });
+          await send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+          await waitFor(() => evaluate(`(() => {
+            const button = document.querySelector("button[data-glintlabs-feedback]");
+            const tooltip = document.getElementById(button.getAttribute("aria-describedby"));
+            return button.getAttribute("aria-pressed") === "true" && !tooltip.getClientRects().length;
+          })()`), "Touch must keep the selection without leaving a hover tooltip open.");
+          await checkFeedbackSubmitted();
+          await send("Emulation.setTouchEmulationEnabled", { enabled: false });
+          for (const name of ["tool_analyze_survey_thumbs_up", "tool_knowledge_vault_thumbs_up"]) {
+            await evaluate(`document.querySelector('button[data-glintlabs-feedback="${name}"]').click()`);
+            await checkFeedbackSubmitted();
+            assert.equal(await evaluate('document.querySelectorAll("[popover]:popover-open").length'), 1,
+              "Tool confirmations must not overlap.");
+            await waitFor(() => evaluate(`document.querySelector('button[data-glintlabs-feedback="${name}"]')
+              .closest('[role="group"]').querySelector("[popover]")?.matches(":popover-open")`),
+            "Returning to a previous tool must show its confirmation again.");
+          }
+        }
+        await checkFeedbackFlow();
+        assert.deepEqual(await evaluate(`(async () => (await axe.run(
+          document.querySelector('[aria-labelledby="tools-library-title"]'),
+          {runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21aa"]}})).violations)()`), []);
         await checkToolsModals();
       }
       if (route === "/" || route === "/reports") {
@@ -447,6 +916,7 @@ try {
     await send("Page.navigate", { url: `${origin}${prefix}/tools/` });
     await waitFor(() => evaluate('window.__readerPending !== true && document.readyState === "complete"'), "Short viewport navigation");
     await evaluate(`${axe}\ntrue`);
+    await checkFeedbackFlow();
     await checkToolsModals();
     console.log(`Verified Tools modals at ${viewport.width}x${viewport.height}`);
   }
@@ -495,7 +965,7 @@ async function checkToolsModals() {
       if (!card) throw Error("Missing tool card: " + title);
       const trigger = [...card.querySelectorAll("button")].find(button => button.textContent === "Start using");
       if (!trigger) throw Error("Missing tool action: " + title);
-      if (title === "People Science Knowledge Vault" && card.querySelectorAll("button").length !== 1) throw Error("Unimplemented feedback controls");
+      if (card.querySelectorAll("button[data-glintlabs-feedback]").length !== 2) throw Error("Missing tool feedback: " + title);
       window.__toolsTrigger = trigger;
       trigger.scrollIntoView({block:"center"});
       trigger.focus();
@@ -519,6 +989,46 @@ async function checkToolsModals() {
       window.__toolsLastControl = controls.at(-1);
       Object.defineProperty(navigator.clipboard, "writeText", {configurable:true, value:async text => {window.__toolsCopied = text;}});
     })()`);
+    if (tool.title === "People Science Knowledge Vault") {
+      assert.deepEqual(await evaluate(`(() => {
+        const results = ${dialog}.querySelector("#results");
+        return {
+          introduction: results.querySelector("p").textContent,
+          cards: [...results.querySelectorAll("article")].map(card => ({
+            title: card.querySelector("h3").textContent,
+            description: card.querySelector("p").textContent,
+          })),
+        };
+      })()`), {
+        introduction: "Move from “What am I looking at?” to “What could this mean for our people?” Explore your results with an AI thought partner that helps you connect the dots, question first impressions, and build a story grounded in evidence.",
+        cards: [
+          { title: "Find the story worth exploring", description: "Look beyond individual scores to explore how strengths, tensions, and differences between groups fit together." },
+          { title: "Give the story depth", description: "Connect what you’re seeing with People Science research and your organization’s context. Consider different explanations and identify what would help distinguish them." },
+          { title: "Put the story to work", description: "Develop a clear narrative to discuss with leaders or your team, including what you know, what remains uncertain, and what to explore next." },
+        ],
+      }, "Knowledge Vault Results must match the updated Figma content.");
+      await waitFor(() => evaluate(`${dialog}.querySelector('#results img')?.complete && ${dialog}.querySelector('#results img').naturalWidth > 0`),
+        "Knowledge Vault Auto Fit asset must load.");
+      assert.deepEqual(await evaluate(`(() => {
+        const icon = ${dialog}.querySelector("#results img");
+        return [icon.getAttribute("src"), icon.getAttribute("alt"), icon.getAttribute("aria-hidden"), icon.getBoundingClientRect().width, icon.getBoundingClientRect().height];
+      })()`), [`${prefix}/figma/site-canonical/tools/knowledge-vault-auto-fit.svg`, "", "true", 24, 24],
+      "The updated Results icon must keep its exact asset, decorative semantics and 24px slot.");
+    }
+    assert.deepEqual(await evaluate(`(() => {
+      const dialog = ${dialog};
+      const codes = [...dialog.querySelectorAll("#start-using code")].map(code => getComputedStyle(code));
+      const actions = dialog.querySelector("#start-using code").nextElementSibling;
+      return {
+        skill: [codes[0].fontSize, codes[0].lineHeight],
+        prompt: [codes[1].fontSize, codes[1].lineHeight],
+        actionGap: getComputedStyle(actions).gap,
+        cardGap: getComputedStyle(dialog.querySelector("#results article")).gap,
+      };
+    })()`), tool.title === "People Science Knowledge Vault"
+      ? { skill: ["14px", "22px"], prompt: ["16px", "22px"], actionGap: "16px", cardGap: "12px" }
+      : { skill: ["14px", "20px"], prompt: ["14px", "20px"], actionGap: "8px", cardGap: "16px" },
+    "Knowledge Vault typography and spacing must match Figma without changing Analyze Survey.");
     const summaryScrollable = await evaluate(`(() => {
       const summary = ${dialog}.querySelector('[role="region"]');
       if (summary?.getAttribute("aria-label") !== ${JSON.stringify(`${tool.title} summary`)}) throw Error("Missing accessible tool summary");

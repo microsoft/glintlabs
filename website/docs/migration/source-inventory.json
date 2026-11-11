@@ -49,8 +49,8 @@
       "source": "README.md",
       "destination": "website/README.md",
       "sourceSha256": "5d8bf5442839d7989a24a82b72496f407066ecd3381247fdfe35d4995571e0a2",
-      "destinationSha256": "8f4b8ba2bf277f097ce24f119dd3d9afeba2c46d00b405b7e3c97b8e3e0841ed",
-      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback. The approved distinct-browser and automatic-analytics extensions document first-visit tracking without on-site consent/opt-out controls, privacy approval, preserved refusals and DNT/GPC, fixed 18-calendar-month random browser IDs, separate server-side keyed hashing, compatible anonymous events and restricted 90-day distinct counts. The requested removal of floating analytics UI moves its disclosure into plain text in the existing marketing footer. The requested Clarity integration documents regional vendor consent defaults without a banner, project cookie settings, privacy/data boundaries, verification and rollback independently of Supabase."
+      "destinationSha256": "9d8f4cb69b6179a541842b332485c2d01cd4c9210661ab280ab5eb04075fa977",
+      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback. The approved distinct-browser and automatic-analytics extensions document first-visit tracking without on-site consent/opt-out controls, privacy approval, preserved refusals and DNT/GPC, fixed 18-calendar-month random browser IDs, separate server-side keyed hashing, compatible anonymous events and restricted 90-day distinct counts. The requested removal of floating analytics UI moves its disclosure into plain text in the existing marketing footer. The requested Clarity integration documents regional vendor consent defaults without a banner, project cookie settings, privacy/data boundaries, verification and rollback independently of Supabase. Tool feedback documentation specifies the four per-tool rating events, fixed reason events, optional reason dialog and nonmodal submitted confirmation, cancellation and repeat-submission behavior, local-only acknowledgement, interaction-history semantics and intercepted verification without changing Supabase or collecting comments/uploads."
     },
     {
       "source": "artifacts/README.md",
@@ -4102,8 +4102,8 @@
       "source": "src/app/tools/analyze-survey/analyze-survey-details.module.css",
       "destination": "website/src/app/tools/skill-details.module.css",
       "sourceSha256": "c8c606c052dc5425465afe28d04ea9f435e307d335cff20641bb6fe12ac09ef3",
-      "destinationSha256": "fc659d9c88fc9d05fd4a8cd4828776e4d696c14a0c4a0780dddf6729a8de8f8f",
-      "intentionalDifference": "Use compact setup code, outlined copy actions and the site accent for the three safeguard icons; preserve wrapping, control targets, focus states, forced-color borders and icon dimensions. Relocate the stylesheet to the shared skill-details surface for Analyze Survey and Knowledge Vault, extending its existing focus-visible style to the keyboard-scrollable modal summary."
+      "destinationSha256": "7b9af30b274cc0df3ae242258c58d5146eb7fa2adccc007cfdd1481cf73fd29c",
+      "intentionalDifference": "Use compact setup code, outlined copy actions and the site accent for the three safeguard icons; preserve wrapping, control targets, focus states, forced-color borders and icon dimensions. Relocate the stylesheet to the shared skill-details surface for Analyze Survey and Knowledge Vault, extending its existing focus-visible style to the keyboard-scrollable modal summary. Scope the updated Knowledge Vault typography and spacing to its opt-in class: 22px setup line height, 16px starter prompt, 16px copy-action gap and 12px Results icon-to-text gap; Analyze Survey retains its prior styling."
     },
     {
       "source": "src/app/tools/analyze-survey/analyze-survey-details.test.ts",
@@ -4151,15 +4151,15 @@
       "source": "src/app/tools/tools-catalog.module.css",
       "destination": "website/src/app/tools/tools-catalog.module.css",
       "sourceSha256": "d3a77322ca2a0836dcdf4b12719a3c1791935a14c4218a805fab0ace8b074fa4",
-      "destinationSha256": "6f724b29ead0c4ed66883c3ff27ce2cd2ac01c96b7677fe056cf054be351e5fa",
-      "intentionalDifference": "Add the Glint spacingL gap between the Analyze Survey and Knowledge Vault cards; preserve existing card, modal and responsive styles."
+      "destinationSha256": "a3b36896ff2743ed2dc1150cff651ca432e52b212256c2038a17aa0969ee21e2",
+      "intentionalDifference": "Add the Glint spacingL gap between tool cards and a wrapping action row for the existing Start using action and tool feedback. Match the updated 40px desktop content padding, distributing spare height between text and actions so the visible insets match; preserve existing card heights, modal styles and narrower-screen padding. Allow centered feedback tooltips to extend beyond the card while clipping illustrations to the original rounded inner corners."
     },
     {
       "source": "src/app/tools/tools-catalog.tsx",
       "destination": "website/src/app/tools/tools-catalog.tsx",
       "sourceSha256": "0b92989dd11d9f401c796cb3f1880608041c25658783d9219acf455fef925214",
-      "destinationSha256": "7cd30a9b120d36ab9f4d4a6a20dcc7d38c644b4b7fbcf259c4fdbedf75e73ba0",
-      "intentionalDifference": "Retain Analyze Survey first with its approved Blue report illustration and unchanged copy. Add the requested People Science Knowledge Vault card and modal action on Home and Tools, using shared content and the existing decorative 170px Blue briefcase illustration; omit nonfunctional feedback controls."
+      "destinationSha256": "4306d337bf6296b9816df3f6085de9be18f3f5d6a15a3827256358cc968ef7dc",
+      "intentionalDifference": "Place People Science Knowledge Vault above Analyze Survey on Home and Tools, matching the updated design. Add the requested Knowledge Vault card and modal action using shared content and the existing decorative 170px Blue briefcase illustration; preserve Analyze Survey copy and its approved Blue report illustration. Add the approved thumbs up/down controls beside both modal actions, tracked only through the guarded Clarity integration."
     },
     {
       "source": "src/app/tools/tools-page.module.css",

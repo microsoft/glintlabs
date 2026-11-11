@@ -3,11 +3,12 @@
 import type { ReactNode } from "react";
 
 import { SkillDetails } from "../skill-details";
+import styles from "../skill-details.module.css";
 import { SkillModalTrigger } from "../skill-modal-trigger";
 import { knowledgeVaultContent } from "./knowledge-vault-content";
 
 function KnowledgeVaultDetails({ onClose }: { onClose?: () => void }) {
-  return <SkillDetails content={knowledgeVaultContent} onClose={onClose} />;
+  return <SkillDetails content={knowledgeVaultContent} onClose={onClose} className={styles.knowledgeVault} />;
 }
 
 export function KnowledgeVaultModalTrigger({ children, className }: {
