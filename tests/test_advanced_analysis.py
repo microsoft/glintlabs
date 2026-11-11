@@ -329,6 +329,11 @@ def test_svd_runs_without_a_predictive_leaderboard(study):
     assert "svd-card" not in html
     assert 'data-table="svd-weights-table"' in html
     assert "not factor loadings" in html
+    assert 'id:"svd-magnitude-legend"' in html
+    assert 'id:"svd-magnitude-key"' in html
+    assert "color-mix(in srgb" in html
+    assert "Darker = larger magnitude" in html
+    assert "Shading does not indicate validated strength or significance." in html
     assert 'id="item-removal-review"' in html
     assert "Top three candidates for removal review" in html
     assert "Candidate shortlist not yet prepared." in html
