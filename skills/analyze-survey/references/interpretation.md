@@ -59,7 +59,8 @@ actual analysis artifacts, retain the QA gate above and use the vault to supplem
 not replace, the inspected aggregate evidence.
 
 For an ordinary dashboard screenshot or supplied aggregate values without a
-computation/QA request, use the vault's results-exploration workflow directly.
+computation/QA request, use
+`../../platform-screenshot-interpretation/SKILL.md` directly.
 Do not require a manifest merely to discuss a screen or claim its underlying
 analysis passed QA. This document's artifact QA, output template, and
 post-analysis prompt apply to analysis outputs, not every screenshot follow-up.

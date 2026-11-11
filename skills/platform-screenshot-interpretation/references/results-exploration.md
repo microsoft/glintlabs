@@ -1,8 +1,9 @@
 # Glint results interpretation and exploration
 
-Use the [Knowledge Vault](../SKILL.md) as the single entry point for interpreting
+Use [Platform Screenshot Interpretation](../SKILL.md) as the entry point for interpreting
 user-authorized screenshots, dashboard views, or supplied aggregates. Follow
-its shared evidence rules and [research workflow](research-workflow.md).
+its evidence rules and the shared
+[research workflow](../../people-science-knowledge-vault/references/research-workflow.md).
 This is bounded interpretation, not a replacement statistical engine or Analysis QA.
 Apply the entry's [required-reference gate](../SKILL.md#required-reference-gate)
 before interpreting or proposing a research-informed check. If required guidance
