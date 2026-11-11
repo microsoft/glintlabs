@@ -470,8 +470,23 @@ def item_candidates_for(manifest):
     }
 
 
-@pytest.mark.parametrize("empty", [False, True])
-def test_candidate_shortlist_attaches_without_reading_data_or_refitting(study, monkeypatch, empty):
+def context_candidates_for(manifest):
+    candidates = item_candidates_for(manifest)
+    candidates["items"] = []
+    candidates["context_request"] = {
+        "reason": "Synthetic profiles support reviewing a pair, not choosing which question to nominate.",
+        "requested_inputs": ["Provide exact question wording.", "Mark must-keep questions and explain why."],
+    }
+    candidates["pair_leads"] = [{
+        "questions": manifest["summary"]["svd"]["features"][:2],
+        "reason": "The inspected synthetic profiles merit paired review, not deletion.",
+        "evidence_needed": ["Compare exact wording and protected content before choosing a nominee."],
+    }]
+    return candidates
+
+
+@pytest.mark.parametrize("state", ["nominees", "assessed_zero", "context_needed", "legacy_missing_context"])
+def test_candidate_shortlist_attaches_without_reading_data_or_refitting(study, monkeypatch, state):
     from build_advanced_analysis_report import build_report
 
     config = study[2]
@@ -482,9 +497,14 @@ def test_candidate_shortlist_attaches_without_reading_data_or_refitting(study, m
     original = json.loads((output / "advanced-analysis-manifest.json").read_text())
     protected = {path.name: path.read_bytes() for path in (output / "_private").iterdir() if path.is_file()}
     candidates = item_candidates_for(original)
-    if empty:
+    if state in {"assessed_zero", "legacy_missing_context"}:
         candidates["items"] = []
         candidates["ranking_basis"] = "No supported candidates in the inspected synthetic fixture."
+    if state == "assessed_zero":
+        candidates["protected_items_reviewed"] = True
+        candidates["content_coverage_reviewed"] = True
+    elif state == "context_needed":
+        candidates = context_candidates_for(original)
     path = study[0] / "candidates.json"
     runner.write_json(path, candidates)
 
@@ -506,6 +526,13 @@ def test_candidate_shortlist_attaches_without_reading_data_or_refitting(study, m
     for key in ("summary", "provenance", "qa"):
         assert updated[key] == original[key]
     assert all((output / "_private" / name).read_bytes() == value for name, value in protected.items())
+    html = (output / "advanced-report.html").read_text()
+    assert "No supported candidates identified." not in html
+    assert "Please provide additional context to help select the top three candidates for removal review." in html
+    assert 'id="item-review-shortlist" hidden' in html
+    assert 'id="item-review-requested-inputs"' in html
+    assert 'data-table="item-pair-leads-table"' in html
+    assert "Question ID | Exact wording | Must keep and why | Distinct topic/action" in html
     with zipfile.ZipFile(output / "advanced-share.zip") as archive:
         assert json.loads(archive.read("question-removal-candidates.json")) == candidates
         assert "question-removal-review.json" not in archive.namelist()
@@ -514,6 +541,49 @@ def test_candidate_shortlist_attaches_without_reading_data_or_refitting(study, m
     with pytest.raises(ValueError, match="stale"):
         build_report(output, updated)
     assert (output / "advanced-analysis-manifest.json").read_bytes() == before
+
+
+@pytest.mark.parametrize("invalid", [
+    "unfitted_pair", "self_pair", "reversed_pair", "protected_pair",
+    "four_pairs", "blank_context", "missing_context_inputs",
+])
+def test_pair_leads_and_context_reject_unsupported_or_ambiguous_records(invalid):
+    from build_advanced_analysis_report import validate_item_candidates
+
+    manifest = {
+        "config_sha256": "a" * 64, "status": "completed",
+        "qa": {"repeatability": "passed", "verdict": "Use with caveats"},
+        "summary": {"task": "svd", "svd": {"features": ["Q_work", "Q_support"]}},
+    }
+    candidates = context_candidates_for(manifest)
+    pair = candidates["pair_leads"][0]
+    if invalid == "unfitted_pair":
+        pair["questions"][1] = "Q_unfitted"
+    elif invalid == "self_pair":
+        pair["questions"][1] = pair["questions"][0]
+    elif invalid == "reversed_pair":
+        candidates["pair_leads"].append({**pair, "questions": list(reversed(pair["questions"]))})
+    elif invalid == "protected_pair":
+        candidates["protected_items"] = ["Q_work", "Q_support"]
+    elif invalid == "four_pairs":
+        candidates["pair_leads"] *= 4
+    elif invalid == "blank_context":
+        candidates["context_request"]["reason"] = " "
+    else:
+        del candidates["context_request"]["requested_inputs"]
+    with pytest.raises((ValueError, ValidationError)):
+        validate_item_candidates(manifest, candidates)
+
+
+def test_missing_context_requires_explicit_decision_note_and_provisional_pair_guidance():
+    skill = (ROOT / "skills/analyze-survey-advanced/SKILL.md").read_text()
+    workflow = (ROOT / "skills/analyze-survey-advanced/references/modeling-workflow.md").read_text()
+    assert "Make decisions and deferrals explicit in the report" in skill
+    assert "Missing context is not a negative finding." in skill
+    assert "unordered question pairs as `pair_leads`" in workflow
+    assert "`context_request`" in workflow and "`requested_inputs`" in workflow
+    assert "Guide the user to paste a" in workflow
+    assert "Do not repeatedly ask for inputs already confirmed unavailable" in workflow
 
 
 @pytest.mark.parametrize("invalid", [

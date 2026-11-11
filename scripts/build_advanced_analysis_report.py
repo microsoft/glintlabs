@@ -48,6 +48,14 @@ def validate_item_candidates(manifest: dict, candidates: dict) -> None:
         comparison = item.get("comparison_question")
         if comparison is not None and (comparison not in features or comparison in questions):
             raise ValueError("Comparison questions must be fitted items outside the candidate shortlist.")
+    pairs = set()
+    for lead in candidates.get("pair_leads", []):
+        pair = frozenset(lead["questions"])
+        if not pair.issubset(features) or pair in pairs:
+            raise ValueError("Pair leads must be distinct unordered pairs of fitted questions.")
+        if pair.issubset(protected):
+            raise ValueError("A pair with both questions protected cannot be a removal-review lead.")
+        pairs.add(pair)
 
 
 def validate_item_review(manifest: dict, review: dict) -> None:
