@@ -192,6 +192,13 @@ def test_report_leads_with_svd_and_explains_each_section(study, task):
     opt = options(study, config)
     runner.run(opt)
     html = (Path(opt.output_dir) / "advanced-report.html").read_text(encoding="utf-8")
+    header = re.search(r"<header>(.*?)</header>", html, re.DOTALL).group(1)
+    methodology = re.search(r'<section id="methodology">(.*?)</section>', html, re.DOTALL).group(1)
+    assert 'id="status"' not in html
+    assert 'class="badge"' not in header
+    assert 'id="scope"' not in header
+    assert 'id="scope"' in methodology
+    assert 'id="qa"' in methodology
     expected = ["svd", "comparison", "diagnostics", "interpretation", "methodology", "downloads"]
     assert re.findall(r'<section id="([^"]+)"', html) == expected
     nav = re.search(r'<nav aria-label="Report sections">(.*?)</nav>', html, re.DOTALL).group(1)

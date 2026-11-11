@@ -31,6 +31,10 @@ calculations against respondent rows. N counts the full input response cohort,
 including reserved rows, not independent people or development-only support.
 Keep that scope visible and preserve responsive reading order.
 
+Keep the header free of the execution/QA status badge and technical task,
+score-unit and holdout summary. Present that context as plain text in
+**Methodology and limitations**, alongside repeatability and QA limitations.
+
 Use the confirmed survey name or an unambiguous source cycle title; never use
 private filenames or paths as a fallback. Show **Not recorded** for an unknown
 name and **Not available** for missing/suppressed counts or rates, not zero.
