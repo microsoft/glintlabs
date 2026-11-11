@@ -1,4 +1,4 @@
-# Glint navigation for the next useful check
+# Glint navigation for Platform Screenshot Interpretation
 
 Required before recommending a named Glint report/view, giving click paths, or
 navigating an authorized Glint session. Apply the entry's

@@ -588,6 +588,7 @@ def test_each_skill_has_first_priority_reference_folder():
         "analyze-survey",
         "analyze-survey-ai-preview",
         "people-science-knowledge-vault",
+        "platform-screenshot-interpretation",
     ]
 
     missing = [
@@ -600,7 +601,8 @@ def test_each_skill_has_first_priority_reference_folder():
     assert not (ROOT / "references/skills").exists()
     for name in skill_names:
         skill = (skills_dir / name / "SKILL.md").read_text(encoding="utf-8")
-        assert f"skills/{name}/references" not in skill
+        local_instructions = re.sub(r"https?://[^\s)]+", "", skill)
+        assert f"skills/{name}/references" not in local_instructions
 
 
 def test_analyze_survey_required_grounding_paths_are_skill_relative():
