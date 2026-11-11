@@ -59,6 +59,10 @@
 .card p { margin-top: 8px; color: var(--site-muted); }
 .backAction:focus-visible, .closeAction:focus-visible, .githubAction:focus-visible, .sectionNav a:focus-visible, .copyBlock button:focus-visible, .copyBlock a:focus-visible, .sectionLead a:focus-visible, .section h2:focus-visible { outline: 3px solid var(--site-focus); outline-offset: 3px; }
 .visuallyHidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; white-space: nowrap; border: 0; clip: rect(0 0 0 0); }
+.knowledgeVault .copyBlock code { line-height: 22px; }
+.knowledgeVault .setupSteps > li + li code { font-size: 16px; }
+.knowledgeVault .copyActions { gap: 16px; }
+.knowledgeVault .card { gap: 12px; }
 
 @media (max-width: 760px) {
   .details { padding: 24px; }

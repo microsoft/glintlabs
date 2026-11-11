@@ -1,11 +1,24 @@
-import { ArrowDownExclamation24Regular } from "@fluentui/react-icons/svg/arrow-down-exclamation";
-import { EyeCircle24Regular } from "@fluentui/react-icons/svg/eye-circle";
+import { ChatMultiple24Regular } from "@fluentui/react-icons/svg/chat-multiple";
 import { Fluid24Regular } from "@fluentui/react-icons/svg/fluid";
-import { PeopleCheckmark24Regular } from "@fluentui/react-icons/svg/people-checkmark";
+import { PersonWarning24Regular } from "@fluentui/react-icons/svg/person-warning";
 import { Production24Regular } from "@fluentui/react-icons/svg/production";
-import { ShieldTask24Regular } from "@fluentui/react-icons/svg/shield-task";
+import { TabDesktopSearch24Regular } from "@fluentui/react-icons/svg/tab-desktop-search";
+import Image from "next/image";
+import { createElement } from "react";
 
 import type { SkillDetailsContent } from "../skill-details";
+
+function AutoFitIcon() {
+  return createElement(Image, {
+    src: "/figma/site-canonical/tools/knowledge-vault-auto-fit.svg",
+    alt: "",
+    "aria-hidden": true,
+    width: 24,
+    height: 24,
+    loading: "eager",
+    unoptimized: true,
+  });
+}
 
 export const knowledgeVaultContent: SkillDetailsContent = {
   title: "People Science Knowledge Vault",
@@ -25,27 +38,27 @@ export const knowledgeVaultContent: SkillDetailsContent = {
     { Icon: Production24Regular, title: "Understand results", questions: [
       "What might this Glint results pattern mean, and what context or evidence would help us interpret it?",
     ] },
-    { Icon: PeopleCheckmark24Regular, title: "Explore next steps", questions: [
+    { Icon: PersonWarning24Regular, title: "Explore next steps", questions: [
       "What should we check before drawing a conclusion?",
       "Which follow-up view or question could help us test an explanation?",
     ] },
   ],
-  results: "Expect a research-informed conversation, not a single right answer. Use the response, sources, and follow-up questions to support your judgment.",
+  results: "Move from “What am I looking at?” to “What could this mean for our people?” Explore your results with an AI thought partner that helps you connect the dots, question first impressions, and build a story grounded in evidence.",
   safeguards: [
     {
-      Icon: ArrowDownExclamation24Regular,
-      title: "Check the evidence",
-      description: "Review the linked sources, their scope, and any limits. Research findings may not explain your organization's results.",
+      Icon: TabDesktopSearch24Regular,
+      title: "Find the story worth exploring",
+      description: "Look beyond individual scores to explore how strengths, tensions, and differences between groups fit together.",
     },
     {
-      Icon: ShieldTask24Regular,
-      title: "Share safely",
-      description: "Use redacted screenshots or aggregate results. Leave out employee names, raw comments, and identifying details.",
+      Icon: AutoFitIcon,
+      title: "Give the story depth",
+      description: "Connect what you’re seeing with People Science research and your organization’s context. Consider different explanations and identify what would help distinguish them.",
     },
     {
-      Icon: EyeCircle24Regular,
-      title: "Keep context in view",
-      description: "Treat possible explanations as hypotheses. Check your context before turning a suggestion into action.",
+      Icon: ChatMultiple24Regular,
+      title: "Put the story to work",
+      description: "Develop a clear narrative to discuss with leaders or your team, including what you know, what remains uncertain, and what to explore next.",
     },
   ],
   figmaNodeId: "2146:606",
