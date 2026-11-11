@@ -10,15 +10,18 @@ import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
-from build_knowledge_vault_resources import PUBLIC_CATALOG_FIELDS
-from search_knowledge_vault import REFERENCES, ROOT, load_json, render_web_context, validate_index
+from build_knowledge_vault_resources import PUBLIC_CATALOG_FIELDS, REPOSITORY_PUBLICATIONS
+from search_knowledge_vault import (
+    REFERENCES, ROOT, load_json, render_web_context, validate_index,
+    verify_repository_publications,
+)
 
 PRIVATE_LOCATION = re.compile(
     r"(?:sharepoint(?:-df)?\.com/|onedrive\.live\.com/|[a-z]:\\|\"internal_record\")",
     re.IGNORECASE,
 )
 MAX_PAGE_BYTES = 20_000
-RUNTIME_GUIDES = ("research-workflow.md", "results-exploration.md")
+RUNTIME_GUIDES = ("research-workflow.md", "results-exploration.md", "glint-navigation.md")
 SKILL_PATH = ROOT / "skills/people-science-knowledge-vault/SKILL.md"
 
 
@@ -119,7 +122,7 @@ def validate_context(context: Path = REFERENCES, root: Path = ROOT) -> None:
     expected = {
         context / name for name in (
             "catalog.json", "theme-index.json", "theme-lookup.md", "topic-lookup.md",
-            "source-priority.md", "corpus-guide.md", "public-use.md",
+            "source-priority.md", "corpus-guide.md", "public-use.md", "topic-aliases.md",
             "media-alternatives.json", "prioritized-resources.md", *pages,
         )
     } | approved | runtime_guides
@@ -129,7 +132,10 @@ def validate_context(context: Path = REFERENCES, root: Path = ROOT) -> None:
     for path in sorted(actual):
         if path.is_symlink():
             raise ValueError(f"{path.name}: context cannot contain symlinks")
-        if path in runtime_guides and len(path.read_bytes()) > MAX_PAGE_BYTES:
+        if (
+            (path in runtime_guides or path.name == "topic-aliases.md")
+            and len(path.read_bytes()) > MAX_PAGE_BYTES
+        ):
             raise ValueError(f"{path.name}: exceeds small-page retrieval budget")
         if PRIVATE_LOCATION.search(path.read_text(encoding="utf-8")):
             raise ValueError(f"{path.name}: private ownership/location data cannot enter public context")
@@ -139,6 +145,17 @@ def validate_context(context: Path = REFERENCES, root: Path = ROOT) -> None:
     if len(skill.read_bytes()) > MAX_PAGE_BYTES:
         raise ValueError("SKILL.md: exceeds link-entry retrieval budget")
     validate_links(skill, root)
+    issues = verify_repository_publications(index, root)
+    if issues:
+        raise ValueError("; ".join(issues))
+    for resource in index["resources"]:
+        relative = REPOSITORY_PUBLICATIONS.get(resource["url"])
+        if relative is None:
+            continue
+        publication = root / relative
+        if PRIVATE_LOCATION.search(publication.read_text(encoding="utf-8")):
+            raise ValueError(f"{publication.name}: private ownership/location data cannot enter a public publication")
+        validate_links(publication, root)
 
 
 def main(argv: list[str] | None = None) -> int:

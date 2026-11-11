@@ -18,6 +18,7 @@ import json
 import sys
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 MAINTENANCE_DIR = ROOT / "references/maintenance/knowledge-vault"
@@ -44,7 +45,15 @@ PRIORITY_TIER_GROUPS: dict[str, tuple[int, str]] = {
     "low": (4, "Low priority"),
 }
 
-KNOWN_TIERS = {"viva-blog", "curated-external", "microsoft-learn", "adoption-center"}
+KNOWN_TIERS = {
+    "viva-blog", "curated-external", "microsoft-learn", "adoption-center",
+    "repository-publication",
+}
+REPOSITORY_PUBLICATIONS = {
+    "https://raw.githubusercontent.com/microsoft/glintlabs/main/"
+    "publications/people-science/human-judgment-in-ai-evaluation.md":
+    "publications/people-science/human-judgment-in-ai-evaluation.md",
+}
 
 REQUIRED_ENTRY_FIELDS = (
     "id",
@@ -57,6 +66,27 @@ REQUIRED_ENTRY_FIELDS = (
     "research_questions",
 )
 PUBLIC_CATALOG_FIELDS = REQUIRED_ENTRY_FIELDS
+
+
+def canonicalize_url(url: str) -> str:
+    parsed = urlsplit(url.strip())
+    scheme = parsed.scheme.lower()
+    host = parsed.netloc.lower()
+    if scheme == "https" and host.endswith(":443"):
+        host = host[:-4]
+    elif scheme == "http" and host.endswith(":80"):
+        host = host[:-3]
+    tracking_names = {
+        "fbclid", "gclid", "msclkid", "ocid", "igshid", "ref", "ref_src", "spm",
+    }
+    query = sorted(
+        (key, value)
+        for key, value in parse_qsl(parsed.query, keep_blank_values=True)
+        if key.lower() not in tracking_names
+        and not key.lower().startswith(("utm_", "mc_", "wt.mc_id"))
+    )
+    path = parsed.path.rstrip("/") if len(parsed.path) > 1 else parsed.path
+    return urlunsplit((scheme, host, path, urlencode(query), ""))
 
 
 def public_catalog(catalog: dict[str, Any]) -> dict[str, Any]:
@@ -97,14 +127,22 @@ def validate_catalog(catalog: dict[str, Any]) -> list[str]:
                 f"entry '{entry_id}' has unknown priority_tier "
                 f"'{entry.get('priority_tier')}'"
             )
+        if entry.get("tier") == "repository-publication" and (
+            entry.get("url") not in REPOSITORY_PUBLICATIONS
+            or entry.get("priority_tier") != "curated"
+        ):
+            issues.append(f"entry '{entry_id}' needs an approved curated repository publication")
+        if entry.get("url") in REPOSITORY_PUBLICATIONS and entry.get("tier") != "repository-publication":
+            issues.append(f"entry '{entry_id}' must identify its repository-publication channel")
         if entry_id in seen_ids:
             issues.append(f"duplicate entry id '{entry_id}'")
         seen_ids.add(entry_id)
         url = entry.get("url")
-        if url in seen_urls:
-            issues.append(f"duplicate entry url '{url}'")
         if url:
-            seen_urls.add(url)
+            canonical_url = canonicalize_url(url)
+            if canonical_url in seen_urls:
+                issues.append(f"duplicate entry url '{url}'")
+            seen_urls.add(canonical_url)
 
     return issues
 

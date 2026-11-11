@@ -26,6 +26,7 @@ Reviewed 2026-11-10. Read the source profiles for evidence scope, study families
 ## Original vault
 
 - [Building a holistic employee listening ecosystem](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/sources/holistic-listening-ecosystem.md) (3 relevant themes).
+- [Human Judgment in AI Evaluation](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/sources/human-judgment-in-ai-evaluation.md) (8 relevant themes).
 - [People Science Explained - Benchmark Documentation](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/sources/benchmark-documentation.md) (8 relevant themes).
 - [Redefining High Performance in the New Era of Work](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/sources/redefining-high-performance.md) (6 relevant themes).
 - [Research Readout - Agentic Teaming & Trust Research](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/sources/agentic-teaming-trust-research.md) (3 relevant themes).

@@ -92,6 +92,21 @@ PDF substitutes are already catalogued:
 - [Research Readout - Agentic Teaming & Trust Research](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/1027.2/2/2025%20Agentic%20Teaming%20%26%20Trust%20Research%20Report%20-%20Chapter%204.pdf)
 - [The state of AI change readiness](https://adoption.microsoft.com/files/viva/The-state-of-AI-change-readiness-eBook.pdf)
 
+### Publisher-approved first-party public summaries
+
+The original vault also includes explicitly approved repository publications
+with channel `repository-publication` and priority `curated`. The current
+[Human Judgment in AI Evaluation](https://raw.githubusercontent.com/microsoft/glintlabs/main/publications/people-science/human-judgment-in-ai-evaluation.md)
+source is a standalone public prose summary of a proposed practitioner framework.
+It is guidance, not a new empirical study or a validated rating instrument.
+
+Retrieve the complete public summary before using its claims. Cite that edition
+and stay within its content; do not request the underlying full paper, infer
+missing figures, or treat its cited research as independently verified. These
+sources require explicit publisher approval and an exact registered public URL;
+arbitrary repository files and private intake remain ineligible. A repository
+source review is not a claim that its public URL was checked before publication.
+
 ## Secondary, supplementary check: live Microsoft sources
 
 These live sources are useful **in addition to** the combined reviewed index, mainly to catch
@@ -121,6 +136,7 @@ this:
 | Theme | Reach for this when the user is asking about... |
 | --- | --- |
 | AI Transformation & Adoption | Whether/how AI helps or harms the organization, what "good" outcomes mean, how sentiment shifts across rollout phases, HR/IT collaboration on AI change |
+| AI Evaluation & Human Judgment | Defining AI quality, behavioral rating anchors, calibrating human reviewers, validating model judges, and continuing human audits |
 | Measurement & Benchmarks | How scores compare to benchmarks, benchmark methodology, interpreting score movement |
 | Frameworks & Definitions | What People Science is and the methodology behind its claims |
 | Psychological Safety & Manager Enablement | How managers build trust and psychological safety on a team |

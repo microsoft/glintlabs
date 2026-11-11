@@ -1,6 +1,6 @@
 # People Science topic-first directory
 
-Reviewed 2026-11-10. **33 topics; 55 reviewed resources; 589 source-level summaries.**
+Reviewed 2026-11-10. **33 topics; 56 reviewed resources; 597 source-level summaries.**
 
 Browse concepts here instead of treating every source summary as a different idea. Read the [corpus guide](corpus-guide.md) for grouping, eligibility, coverage gaps, and evidence limits.
 
@@ -217,8 +217,9 @@ AI-specific trust, oversight, risk, and quality guardrails
 
 ### Original vault
 
-8 resources; 16 tagged summaries.
+9 resources; 24 tagged summaries.
 
+- [Human Judgment in AI Evaluation](theme-lookup.md#human-judgment-in-ai-evaluation) (8 summaries); [public source](https://raw.githubusercontent.com/microsoft/glintlabs/main/publications/people-science/human-judgment-in-ai-evaluation.md).
 - [Research Readout - Agentic Teaming & Trust Research](theme-lookup.md#agentic-teaming-trust-research) (1 summary); [public source](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/1027.2/2/2025%20Agentic%20Teaming%20%26%20Trust%20Research%20Report%20-%20Chapter%204.pdf).
 - [The state of AI change readiness](theme-lookup.md#ai-change-readiness) (3 summaries); [public source](https://adoption.microsoft.com/files/viva/The-state-of-AI-change-readiness-eBook.pdf).
 - [Think like a People Scientist: Bridging HR & IT for AI Success](theme-lookup.md#think-like-a-people-scientist-bridging-hr-and-it-for-ai-success) (4 summaries); [public source](https://techcommunity.microsoft.com/blog/microsoftvivablog/think-like-a-people-scientist-bridging-hr--it-for-ai-success/4404470).
@@ -859,9 +860,10 @@ Samples, measurement, and limitations
 
 ### Original vault
 
-17 resources; 57 tagged summaries.
+18 resources; 65 tagged summaries.
 
 - [Building a holistic employee listening ecosystem](theme-lookup.md#holistic-listening-ecosystem) (3 summaries); [public source](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/894/1/Holistic%20Listening%20Infographic_09292023%201.pdf).
+- [Human Judgment in AI Evaluation](theme-lookup.md#human-judgment-in-ai-evaluation) (8 summaries); [public source](https://raw.githubusercontent.com/microsoft/glintlabs/main/publications/people-science/human-judgment-in-ai-evaluation.md).
 - [People Science Explained - Benchmark Documentation](theme-lookup.md#benchmark-documentation) (8 summaries); [public source](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/Viva_Glint_Blog/131/2/PSE_2025_Benchmark%20Documentation_Public.pdf).
 - [Redefining High Performance in the New Era of Work](theme-lookup.md#redefining-high-performance) (6 summaries); [public source](https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-brand/documents/Microsoft-HPO-Guide-Oct-2023.pdf).
 - [Research Readout - Agentic Teaming & Trust Research](theme-lookup.md#agentic-teaming-trust-research) (3 summaries); [public source](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/1027.2/2/2025%20Agentic%20Teaming%20%26%20Trust%20Research%20Report%20-%20Chapter%204.pdf).
