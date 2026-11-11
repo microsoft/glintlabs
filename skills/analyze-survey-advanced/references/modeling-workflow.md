@@ -55,6 +55,63 @@ that grouping unit. Chronological validation respects whole date boundaries;
 known people. Train-fitted imputers/scalers/encoders/SVD remain inside CV.
 Do not pool repeated rows to claim more independent respondents.
 
+## Evidence-led choices and component selection
+
+Ground each analytical choice in inspected evidence and the confirmed decision
+objective. Explain which artifact or diagnostic supports it, what remains
+unknown, and what could change the choice. If information is missing, ask the
+user for it instead of choosing an arbitrary default. Existing approval or an
+earlier demo configuration is not evidence that a choice is good. Keep previously
+confirmed settings fixed unless a supported comparison and renewed approval
+justify changing them.
+
+There is no fixed default SVD component count. First clarify what the user wants
+to preserve or simplify and the acceptable reconstruction/stability trade-off.
+Use inspected item count, effective support, existing variance/error diagnostics,
+and content constraints to propose a small, justified set of candidate ranks.
+If these inputs cannot support a shortlist, ask for the missing objective,
+constraint, or evidence; do not manufacture a candidate range or a variance
+cutoff. Technical reproducibility settings and compute limits must be explicit,
+not described as empirically optimal.
+
+Before asking the user to select a count, show one row per candidate in a compact
+Markdown table. Replace placeholders with inspected results, not example numbers:
+
+| Components | Variance explained (%) | Reconstruction MSE | RMSE | Evidence / trade-off |
+| --- | --- | --- | --- | --- |
+| Candidate count | Measured cumulative percentage or Not computed | Measured error or Not computed | Measured error or Not computed | What is gained, lost, or still untested |
+
+State the shared dataset/cycle, development population, preprocessing/scaling,
+and error units once beneath the table. Compare like with like: the same
+source, rows, reserved split, feature set, and preprocessing. Label any
+non-comparable option rather than ranking its raw metrics. For common unscaled
+0-100 inputs, RMSE is in score points and MSE in score points squared;
+standardized inputs have standardized error units. MSE may be calculated as
+the square of an inspected reconstruction RMSE, with that derivation disclosed.
+Cumulative variance for an existing retained prefix may be summed from its
+reported component ratios; label it as a prefix of that fit, not a separately
+validated rank. Do not invent other-rank reconstruction errors from variance
+percentages alone.
+
+The current SVD engine reports development in-sample reconstruction error,
+not cross-validated or holdout reconstruction performance. Report that scope;
+do not imply the config's fold count creates SVD validation. Missing stability
+or generalization evidence stays **Not computed**, not zero or "passed".
+Higher rank mechanically retains more variance and reduces training error;
+neither the largest rank nor a presumed elbow is automatically the best choice.
+Explain the observed marginal benefit and the unresolved complexity/content
+trade-off, then ask the user which supported option fits their objective.
+
+If comparison needs new fits, first request explicit authorization for the
+exact source-bound candidate configs and bounded actions/budget. A request to
+edit this skill or see options is not permission to fit or tune. Run only the
+approved candidates through the supported engine in separate run directories
+inside the same project, preserving its reserved holdout design. Do not use
+the sealed holdout for rank selection, silently expand the range, or imply an
+unsupported SVD rank grid/validation feature exists. Return with the measured
+table and obtain the user's selection before presenting a final chosen rank.
+Keep the evidence and choice rationale in the private approval/context record.
+
 ## Runtime and source-bound approval
 
 Use a separate virtual environment and the complete plugin:
@@ -161,6 +218,12 @@ Explain that omitted dimensions may distinguish the items. Do not equate low
 weights with redundancy, invent cutoffs or confidence scores, or claim absent
 checks were completed. The report displays the supplied analyst ordering;
 it does not calculate a statistical ranking or run tests.
+
+A similar-profile pair does not by itself identify which member to nominate.
+Use observed item-specific evidence and confirmed protection/content constraints
+to justify that direction. If they cannot discriminate, explain the ambiguity
+and ask the user for the missing information instead of arbitrarily choosing a
+member. A reasoned fewer/zero assessment is safer than unsupported nominations.
 
 For each candidate, provide:
 
