@@ -273,8 +273,9 @@ def test_svd_runs_without_a_predictive_leaderboard(study):
     assert 'data-table="svd-weights-table"' in html
     assert "not factor loadings" in html
     assert 'id="item-removal-review"' in html
-    assert "Top five candidates for removal review" in html
+    assert "Top three candidates for removal review" in html
     assert "Candidate shortlist not yet prepared." in html
+    assert "This SVD report is pending its required shortlist assessment." in html
     assert "No shortlist does not mean every question must stay" in html
 
 
@@ -455,7 +456,7 @@ def test_candidate_shortlist_attaches_without_reading_data_or_refitting(study, m
 
 
 @pytest.mark.parametrize("invalid", [
-    "stale_config", "stale_summary", "duplicate", "unknown", "six_items",
+    "stale_config", "stale_summary", "duplicate", "unknown",
     "protected", "unknown_protected", "self_comparison", "unknown_comparison",
     "shortlisted_comparison", "blank_reason", "blank_evidence", "unready", "non_svd",
     "legacy_protected",
@@ -478,8 +479,6 @@ def test_candidates_reject_invalid_or_unsupported_assessments(invalid):
         candidates["items"].append(dict(item))
     elif invalid == "unknown":
         item["question"] = "Q_unfitted"
-    elif invalid == "six_items":
-        candidates["items"] *= 6
     elif invalid == "protected":
         candidates["protected_items"] = ["Q_work"]
     elif invalid == "unknown_protected":
@@ -505,7 +504,8 @@ def test_candidates_reject_invalid_or_unsupported_assessments(invalid):
         validate_item_candidates(manifest, candidates)
 
 
-def test_five_candidates_preserve_analyst_order_with_incomplete_reviews():
+@pytest.mark.parametrize("count", [3, 4])
+def test_shortlist_accepts_three_in_analyst_order_but_rejects_four(count):
     from build_advanced_analysis_report import validate_item_candidates
 
     manifest = {
@@ -515,9 +515,13 @@ def test_five_candidates_preserve_analyst_order_with_incomplete_reviews():
     }
     candidates = item_candidates_for(manifest)
     template = candidates["items"][0]
-    order = ["Q_4", "Q_2", "Q_0", "Q_3", "Q_1"]
+    order = ["Q_4", "Q_2", "Q_0", "Q_3"][:count]
     candidates["items"] = [{**template, "question": question, "comparison_question": "Q_5"} for question in order]
     candidates["protected_items"] = ["Q_5"]
+    if count > 3:
+        with pytest.raises(ValidationError, match="too long"):
+            validate_item_candidates(manifest, candidates)
+        return
     validate_item_candidates(manifest, candidates)
     assert [item["question"] for item in candidates["items"]] == order
     assert not candidates["protected_items_reviewed"]
@@ -531,6 +535,10 @@ def test_skill_has_proactive_collaboration_not_autonomous_tuning():
     assert "Proactively discuss tuning and additional context" in workflow
     assert "external dataset" in workflow
     assert "specific company information" in skill
+    assert "For every completed, QA-eligible SVD analysis, including demos and structure-only" in skill
+    assert "always prepare and attach a ranked shortlist of the top three" in skill
+    assert "Do not wait for a separate survey-shortening request" in skill
+    assert "Before delivering any completed QA-eligible SVD report, prepare and attach" in workflow
 
 
 def test_authorized_finite_tuning_preserves_comparison_and_replays_only_winner(study):

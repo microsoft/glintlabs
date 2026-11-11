@@ -122,13 +122,15 @@ Amendments require a new config hash and approval, a new run directory, and
 affected QA. Do not overwrite experiment history. No private source labels,
 paths, identities, or user context should enter public retrieval queries.
 
-## Top five SVD candidates for removal review
+## Top three SVD candidates for removal review
 
-For a survey-shortening request, recommend the five strongest supported
+For every completed, QA-eligible SVD analysis, including demos and structure-only
+explorations, prepare and attach the three strongest supported
 **candidates to investigate**, in priority order, rather than issuing final
-retain/remove decisions for every fitted question. Explain why each is worth
+retain/remove decisions for every fitted question. Do not wait for a separate
+survey-shortening request. Explain why each is worth
 reviewing and what evidence would help decide. This is a shortlist, not a
-joint recommendation to drop all five. Nothing is deleted or refitted.
+joint recommendation to drop all three. Nothing is deleted or refitted.
 
 Inspect the existing QA-eligible SVD diagnostics, available wording, approved
 same-population redundancy diagnostics, and known constraints. Rank by the
@@ -163,14 +165,17 @@ requires content and reduced-set validation, and may ultimately be rejected
 for every shortlisted question. New diagnostic fitting requires instruction;
 do not use the sealed holdout to develop the shortlist.
 
-Use fewer than five candidates if too few eligible items or too little
+Use fewer than three candidates if too few eligible items or too little
 supporting evidence exists. An empty assessed shortlist is valid: explain why
 in `ranking_basis` and `limitations`. A missing assessment is a distinct
 **Candidate shortlist not yet prepared** state, not evidence to retain all.
+That state is intermediate, not a completed QA-eligible SVD deliverable.
+Code-only, not-run, or QA-ineligible outputs cannot support a shortlist; disclose
+the blocker rather than inventing candidates.
 
 Record the ordered shortlist using
 `schemas/advanced-item-candidates.schema.json`. Bind it to the original config
-and `digest(manifest["summary"])`, list up to five distinct fitted questions,
+and `digest(manifest["summary"])`, list up to three distinct fitted questions,
 and record unresolved checks honestly. Only attest to privacy-safe sharing
 and reviews that actually occurred. Reasons/evidence must contain no employee
 data, private paths or unapproved company context. Validation checks structure
@@ -179,8 +184,10 @@ and source binding, not the truth or quality of scientific judgements.
 With explicit `interpret` and `share` approval for the original experiment,
 use `--mode review-items --item-candidates candidates.json`. This attaches the
 shortlist and rebuilds HTML/ZIP without reading respondent inputs or refitting.
-Before delivering a requested shortlist, prepare and attach it; merely rebuilding
-the template does not create candidates. Existing `--item-review` assessments
+Before delivering any completed QA-eligible SVD report, prepare and attach the
+shortlist; merely rebuilding the template does not create candidates. If
+`interpret` and `share` approval is missing, request it and disclose the pending
+attachment rather than claiming completion. Existing `--item-review` assessments
 remain supported for compatibility and their known protected items still
 apply, but final retain/remove decisions are not the new shortlist UI.
 

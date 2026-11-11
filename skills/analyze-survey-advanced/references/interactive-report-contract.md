@@ -40,18 +40,23 @@ complete weight-table CSV/PNG exports include the run/config context and all
 computed items, not just the five-item card summaries. A not-run decomposition
 shows an explicit message, not empty or fabricated charts.
 
-After the component cards, show **Top five candidates for removal review**.
+After the component cards, show **Top three candidates for removal review**.
 Display the analyst-supplied ordering, fitted question, observed reason, optional
 comparison question, and evidence needed before deciding. Never label a candidate
 as a removal decision, require every fitted question to be assessed, or imply
-all five should be removed together. Known protected questions are excluded and
+all three should be removed together. Known protected questions are excluded and
 comparison anchors cannot themselves be shortlisted. Show ranking basis,
 limitations and incomplete protection/content reviews prominently. SVD-profile
 similarity is at most exploratory evidence to investigate, not measured response
 correlation, duplicate content, or justification to delete.
 
-Support up to five candidates, a reasoned assessed-zero outcome, and a distinct
-not-yet-prepared state. Do not invent candidates to fill five slots. Source-bound
+Support up to three candidates, a reasoned assessed-zero outcome, and a distinct
+not-yet-prepared state. Every completed, QA-eligible SVD analysis, including demos
+and structure-only explorations, requires an attached shortlist assessment
+before delivery; a missing assessment is an intermediate state, not completion.
+If attachment approval is missing, disclose the pending approval. Code-only,
+not-run, and QA-ineligible outputs must not invent candidates.
+Do not invent candidates to fill three slots. Source-bound
 shortlists have full CSV/PNG and JSON exports; long reasons and evidence must
 wrap rather than clip in PNGs. The allowlisted ZIP includes
 `question-removal-candidates.json` only for a valid attached shortlist. Stale
