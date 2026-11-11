@@ -47,6 +47,9 @@ Computing the user's survey statistics belongs to the available analysis workflo
    article bodies. Do not replace missing evidence with remembered claims.
    For PDF-backed claims retrieve the PDF and inspect relevant figures when
    needed; text extraction alone does not certify image-only information.
+   For an approved first-party public summary, retrieve its complete Markdown
+   body and cite that edition. Its scope is the summary itself, not an
+   unpublished full paper, omitted figures, or independently verified studies.
 5. Match every claim to the asset actually inspected. `L` anchors are nonblank
    extraction lines, not browser lines; `p` means PDF page; `s` means reviewed
    machine-transcript segment and recording start time. Retrieve eligible audio,

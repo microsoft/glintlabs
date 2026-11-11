@@ -1,7 +1,21 @@
 {
   "schema_version": "2.0.0",
-  "generated_at": "2026-10-08",
+  "generated_at": "2026-11-10",
   "entries": [
+    {
+      "id": "human-judgment-in-ai-evaluation",
+      "title": "Human Judgment in AI Evaluation",
+      "url": "https://raw.githubusercontent.com/microsoft/glintlabs/main/publications/people-science/human-judgment-in-ai-evaluation.md",
+      "tier": "repository-publication",
+      "priority_tier": "curated",
+      "theme": "AI Evaluation & Human Judgment",
+      "description": "Approved public prose summary of a proposed practitioner framework for contextual AI quality, human review, behavioral rating anchors, and validated model judges. The source is this summary edition, not the underlying full paper.",
+      "research_questions": [
+        "How should we evaluate AI models and assistants beyond factual accuracy?",
+        "How can human reviewers use behavioral anchors and calibration to assess AI quality?",
+        "How should we validate model judges and maintain human audits after delegation?"
+      ]
+    },
     {
       "id": "people-success",
       "title": "Reimagining People Success in the age of AI",

@@ -2,11 +2,11 @@
 
 Start with the [corpus guide](corpus-guide.md) or [topic-first directory](topic-lookup.md); this file preserves the individual source profiles.
 
-**55 reviewed resources; 589 themes; 1 explicit gap.**
+**56 reviewed resources; 597 themes; 1 explicit gap.**
 
 **Reviewed companion webinar audio:** 4 recordings (machine transcripts; visual-only content not certified).
 
-39 canonical catalog resources plus 17 published Research Drop counterparts, grouped by resource rather than file format. Theme counts follow distinct supported source content with no fixed quota. All 55 eligible article/PDF bodies were retrieved and text-reviewed on 2026-11-10. Previously reviewed recording-backed themes (35) retain their earlier evidence; recordings and visual-only figure content were not comprehensively re-reviewed. The unrelated webinar-directory redirect remains a zero-theme gap. Only published public evidence enters the lookup; private intake is excluded.
+40 canonical catalog resources plus 17 published Research Drop counterparts, grouped by resource rather than file format. Theme counts follow distinct supported source content with no fixed quota. All 55 eligible article/PDF bodies were retrieved and text-reviewed on 2026-11-10. One approved first-party public summary edition was separately reviewed from its repository source; this is not live URL verification before publication. Previously reviewed recording-backed themes (35) retain their earlier evidence; recordings and visual-only figure content were not comprehensively re-reviewed. The unrelated webinar-directory redirect remains a zero-theme gap. Private intake and underlying unpublished full papers are excluded.
 
 **Source priority:** Filter for relevance and applicability first. New-catalog Research Drops precede original vault resources. Within the original vault preserve top5/curated-equivalent > high > medium > low; within equal priority use relevance. Collection priority does not establish evidence quality, causality, or current product validity.
 
@@ -21,7 +21,7 @@ Generated from `theme-index.json` by `python scripts/search_knowledge_vault.py -
 - [`ai-value`](topic-lookup.md#ai-value) - Perceived individual and team AI value (66 themes)
 - [`ai-skills`](topic-lookup.md#ai-skills) - AI-specific skills and critical thinking when using AI (41 themes)
 - [`ai-agents`](topic-lookup.md#ai-agents) - Agents and human-agent teaming (26 themes)
-- [`ai-governance`](topic-lookup.md#ai-governance) - AI-specific trust, oversight, risk, and quality guardrails (33 themes)
+- [`ai-governance`](topic-lookup.md#ai-governance) - AI-specific trust, oversight, risk, and quality guardrails (41 themes)
 - [`change-management`](topic-lookup.md#change-management) - Change experience and transformation (43 themes)
 - [`hr-it`](topic-lookup.md#hr-it) - HR and IT partnership (31 themes)
 - [`leadership`](topic-lookup.md#leadership) - Leadership behavior and organizational direction (46 themes)
@@ -40,7 +40,7 @@ Generated from `theme-index.json` by `python scripts/search_knowledge_vault.py -
 - [`pulse-admin`](topic-lookup.md#pulse-admin) - Pulse setup, access, and privacy (30 themes)
 - [`feedback`](topic-lookup.md#feedback) - Feedback practices and coaching (50 themes)
 - [`learning-enablement`](topic-lookup.md#learning-enablement) - Learning resources and practical enablement (59 themes)
-- [`methods`](topic-lookup.md#methods) - Samples, measurement, and limitations (98 themes)
+- [`methods`](topic-lookup.md#methods) - Samples, measurement, and limitations (106 themes)
 - [`people-science`](topic-lookup.md#people-science) - People Science frameworks and practice (27 themes)
 - [`work-design`](topic-lookup.md#work-design) - Roles, workflows, and work arrangements (54 themes)
 - [`privacy-confidentiality`](topic-lookup.md#privacy-confidentiality) - Data privacy, feedback confidentiality, and access controls (38 themes)
@@ -70,6 +70,7 @@ Generated from `theme-index.json` by `python scripts/search_knowledge_vault.py -
 - [Research Drop: Unlocking AI Potential for Frontline Workers](#research-drop-4404476) (new catalog - first collection)
 - [Research Drop: What Organizations Ask in Employee Surveys (Plus Three Untapped Opportunities for 2025)](#research-drop-4358710) (new catalog - first collection)
 - [Building a holistic employee listening ecosystem](#holistic-listening-ecosystem) (original vault - curated)
+- [Human Judgment in AI Evaluation](#human-judgment-in-ai-evaluation) (original vault - curated)
 - [People Science Explained - Benchmark Documentation](#benchmark-documentation) (original vault - top5)
 - [Redefining High Performance in the New Era of Work](#redefining-high-performance) (original vault - curated)
 - [Research Readout - Agentic Teaming & Trust Research](#agentic-teaming-trust-research) (original vault - top5)
@@ -750,6 +751,36 @@ Both pages of a published 2023 infographic reviewed. A concise strategic framewo
    Topics: employee-listening, survey-design. Evidence: `p2`, "Prepare for pivots".
 11. **State what the listening strategy will not solve** (recommendation) - Explicitly outline the strategy's limitations so stakeholders do not assume the ecosystem can deliver unsupported answers or outcomes.
    Topics: employee-listening, methods. Evidence: `p2`, "Clarify what the strategy won't solve for".
+
+<a id="human-judgment-in-ai-evaluation"></a>
+## Human Judgment in AI Evaluation
+
+`human-judgment-in-ai-evaluation` | catalog | reviewed
+
+**Priority:** Original vault; retained tier `curated`.
+
+**Source:** https://raw.githubusercontent.com/microsoft/glintlabs/main/publications/people-science/human-judgment-in-ai-evaluation.md
+
+November 2026 approved first-party public prose summary proposing four stages: define quality, choose evidence, run and refine, and scale. Practitioner guidance to pilot and refine, not a new empirical study, validated rating instrument, universal passing threshold, or demonstrated product performance. The source edition is this summary, not the underlying full paper.
+
+**Reviewed asset scope:** Complete approved public prose summary reviewed from its repository source. Figures, example rating tables, the full underlying paper, and separately verified research citations are not included or required. Repository-source review is not live public-URL verification.
+
+1. **Contextual AI quality extends factual correctness** (framework) - Define AI evaluation around the intended task, intent, usefulness, clarity, trust, and user control. Observed behavior, reported experience, and downstream impact require different evidence.
+   Topics: methods, ai-governance. Evidence: `L3`, "Factual correctness is one part of quality.".
+2. **Define quality dimensions and behavioral rating anchors** (framework) - Start with intended users, tasks, decisions, and consequential failures. Specify observable criteria and behaviorally anchored rating scales, then pilot and calibrate them; personas plan coverage but do not replace user research.
+   Topics: methods, ai-governance. Evidence: `L4`, "Behaviorally anchored rating scales describe what each level looks like".
+3. **Match evaluation methods and reviewers to the claim** (method) - Use deterministic checks for explicit requirements, human reviewers for contextual qualities, and model judges within a validated scope. Trained raters, domain specialists, and intended users need the relevant interaction, sources, and context.
+   Topics: methods, ai-governance. Evidence: `L5`, "Choose methods that fit the claim.".
+4. **Calibrate human reviewers without confusing agreement and validity** (method) - Review shared calibration cases independently before discussing differences. Reviewer agreement alone does not establish that a criterion measures the intended quality.
+   Topics: methods, ai-governance. Evidence: `L6`, "Agreement does not establish that a criterion measures the intended quality.".
+5. **Preserve evaluation evidence and separate critical failures** (recommendation) - Freeze evaluation materials and system configuration, preserve outputs and rating rationales, and report missing evidence and uncertainty. Keep critical safety, privacy, security, and policy failures separate from quality averages.
+   Topics: methods, ai-governance. Evidence: `L6`, "Keep critical safety, privacy, security, and policy failures separate from quality averages.".
+6. **Validate AI models used as judges** (method) - For AI models used as judges, compare human and model judgments on the same held-out cases with the same rubric and context. Assess consequential errors and critical failures rather than relying on similar average scores.
+   Topics: methods, ai-governance. Evidence: `L7`, "compare human and model judgments on the same held-out cases".
+7. **Separate final validation from judge development and regression checks** (method) - Keep final validation separate from rubric and judge development: cases used for tuning are no longer untouched validation evidence. Use versioned regression cases to check later changes.
+   Topics: methods, ai-governance. Evidence: `L7`, "cases used for tuning are no longer untouched validation evidence".
+8. **Continue human audits of ordinary and flagged cases** (recommendation) - When scaling contextual scoring, continue human audits of ordinary cases as well as flagged failures. This is proposed practitioner guidance to pilot and refine, not demonstrated product performance.
+   Topics: methods, ai-governance. Evidence: `L7`, "continue human audits of ordinary cases as well as flagged failures".
 
 <a id="benchmark-documentation"></a>
 ## People Science Explained - Benchmark Documentation

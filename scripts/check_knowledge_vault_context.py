@@ -10,8 +10,11 @@ import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
-from build_knowledge_vault_resources import PUBLIC_CATALOG_FIELDS
-from search_knowledge_vault import REFERENCES, ROOT, load_json, render_web_context, validate_index
+from build_knowledge_vault_resources import PUBLIC_CATALOG_FIELDS, REPOSITORY_PUBLICATIONS
+from search_knowledge_vault import (
+    REFERENCES, ROOT, load_json, render_web_context, validate_index,
+    verify_repository_publications,
+)
 
 PRIVATE_LOCATION = re.compile(
     r"(?:sharepoint(?:-df)?\.com/|onedrive\.live\.com/|[a-z]:\\|\"internal_record\")",
@@ -142,6 +145,17 @@ def validate_context(context: Path = REFERENCES, root: Path = ROOT) -> None:
     if len(skill.read_bytes()) > MAX_PAGE_BYTES:
         raise ValueError("SKILL.md: exceeds link-entry retrieval budget")
     validate_links(skill, root)
+    issues = verify_repository_publications(index, root)
+    if issues:
+        raise ValueError("; ".join(issues))
+    for resource in index["resources"]:
+        relative = REPOSITORY_PUBLICATIONS.get(resource["url"])
+        if relative is None:
+            continue
+        publication = root / relative
+        if PRIVATE_LOCATION.search(publication.read_text(encoding="utf-8")):
+            raise ValueError(f"{publication.name}: private ownership/location data cannot enter a public publication")
+        validate_links(publication, root)
 
 
 def main(argv: list[str] | None = None) -> int:

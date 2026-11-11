@@ -15,7 +15,9 @@ from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
-from search_knowledge_vault import INDEX_PATH, is_public_url, load_json, normalize
+from search_knowledge_vault import (
+    INDEX_PATH, REPOSITORY_PUBLICATIONS, is_public_url, load_json, normalize,
+)
 
 MAX_BYTES = 32 * 1024 * 1024
 MIN_BODY_CHARS = 600
@@ -133,6 +135,19 @@ def check_resource(resource: dict, fetch=retrieve) -> dict:
             if not content.startswith(b"%PDF-"):
                 raise ValueError("expected PDF bytes, received a different response")
             body = pdf_text(content)
+        elif expected_format == "markdown":
+            if resource["url"] not in REPOSITORY_PUBLICATIONS:
+                raise ValueError("Markdown source is not an approved repository publication")
+            if content_type.split(";", 1)[0].strip().lower() not in {"text/plain", "text/markdown"}:
+                raise ValueError("expected a UTF-8 Markdown publication")
+            body = content.decode("utf-8").strip()
+            if (
+                result["response_sha256"] != resource["provenance"]["content_sha256"]
+                or hashlib.sha256(body.encode("utf-8")).hexdigest()
+                != resource["provenance"]["extracted_text_sha256"]
+            ):
+                return {**result, "status": "content-gap",
+                        "reason": "repository publication changed; review required"}
         else:
             if "html" not in content_type.lower():
                 raise ValueError("expected an HTML article response")

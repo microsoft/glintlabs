@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
   "reviewed_at": "2026-11-10",
-  "catalog_sha256": "4bf35642f446749c88f0260024993a9924e97b57cbea90eff1bc178aa1d459e4",
+  "catalog_sha256": "e080de418ffe6e655b76a9982faa9c44008e02e422eb256cb406a2563f2a61e9",
   "priority_policy": "Filter for relevance and applicability first. New-catalog Research Drops precede original vault resources. Within the original vault preserve top5/curated-equivalent > high > medium > low; within equal priority use relevance. Collection priority does not establish evidence quality, causality, or current product validity.",
-  "scope": "39 canonical catalog resources plus 17 published Research Drop counterparts, grouped by resource rather than file format. Theme counts follow distinct supported source content with no fixed quota. All 55 eligible article/PDF bodies were retrieved and text-reviewed on 2026-11-10. Previously reviewed recording-backed themes (35) retain their earlier evidence; recordings and visual-only figure content were not comprehensively re-reviewed. The unrelated webinar-directory redirect remains a zero-theme gap. Only published public evidence enters the lookup; private intake is excluded.",
+  "scope": "40 canonical catalog resources plus 17 published Research Drop counterparts, grouped by resource rather than file format. Theme counts follow distinct supported source content with no fixed quota. All 55 eligible article/PDF bodies were retrieved and text-reviewed on 2026-11-10. One approved first-party public summary edition was separately reviewed from its repository source; this is not live URL verification before publication. Previously reviewed recording-backed themes (35) retain their earlier evidence; recordings and visual-only figure content were not comprehensively re-reviewed. The unrelated webinar-directory redirect remains a zero-theme gap. Private intake and underlying unpublished full papers are excluded.",
   "evidence_locators": {
     "L": "1-based nonblank stripped lines of the retrieved published body, not browser DOM/source line numbers.",
     "p": "1-based PDF page numbers from the reviewed public PDF extraction.",
     "s": "1-based segment of a reviewed local machine transcript, with recording URL and exact start time in seconds.",
-    "verification": "Short anchors and SHA-256 hashes identify the reviewed extraction/locator. Use --check --bodies-dir to recheck cached evidence; a normal --check does not certify network freshness."
+    "verification": "Short anchors and SHA-256 hashes identify the reviewed extraction/locator. Use --check --bodies-dir to recheck cached evidence. Normal --check also verifies registered repository publications locally, but does not certify network freshness."
   },
   "limitations": [
     "This is a reviewed topic-routing layer, not a lossless archive, statistical topic model, causal analysis, or replacement for full published-source retrieval.",
@@ -123,6 +123,149 @@
     }
   ],
   "resources": [
+    {
+      "id": "human-judgment-in-ai-evaluation",
+      "title": "Human Judgment in AI Evaluation",
+      "group": "catalog",
+      "priority_tier": "curated",
+      "study_families": [],
+      "catalog_url": "https://raw.githubusercontent.com/microsoft/glintlabs/main/publications/people-science/human-judgment-in-ai-evaluation.md",
+      "url": "https://raw.githubusercontent.com/microsoft/glintlabs/main/publications/people-science/human-judgment-in-ai-evaluation.md",
+      "review_status": "reviewed",
+      "context": "November 2026 approved first-party public prose summary proposing four stages: define quality, choose evidence, run and refine, and scale. Practitioner guidance to pilot and refine, not a new empirical study, validated rating instrument, universal passing threshold, or demonstrated product performance. The source edition is this summary, not the underlying full paper.",
+      "asset_scope": "Complete approved public prose summary reviewed from its repository source. Figures, example rating tables, the full underlying paper, and separately verified research citations are not included or required. Repository-source review is not live public-URL verification.",
+      "provenance": {
+        "cache_file": "human-judgment-in-ai-evaluation.json",
+        "retrieved_at": "2026-11-10T23:04:00.627090+00:00",
+        "format": "markdown",
+        "review_basis": "repository-source",
+        "content_sha256": "915a5b39102b0986e460da48a307f356b9733787008b3f71a1eaba2ad44b9181",
+        "extracted_text_sha256": "475b3581a5cd4d6239aa576985d26b4041b8a75d913b074fffd7c5c99e31d811"
+      },
+      "additional_media": [],
+      "themes": [
+        {
+          "label": "Contextual AI quality extends factual correctness",
+          "summary": "Define AI evaluation around the intended task, intent, usefulness, clarity, trust, and user control. Observed behavior, reported experience, and downstream impact require different evidence.",
+          "topics": [
+            "methods",
+            "ai-governance"
+          ],
+          "kind": "framework",
+          "id": "human-judgment-in-ai-evaluation:01",
+          "evidence": {
+            "locator": "L3",
+            "anchor": "Factual correctness is one part of quality.",
+            "unit_sha256": "8a13118d346004ea9a10dc548bb368a5bba3df793566efb551fd5e12bf62f4ff"
+          }
+        },
+        {
+          "label": "Define quality dimensions and behavioral rating anchors",
+          "summary": "Start with intended users, tasks, decisions, and consequential failures. Specify observable criteria and behaviorally anchored rating scales, then pilot and calibrate them; personas plan coverage but do not replace user research.",
+          "topics": [
+            "methods",
+            "ai-governance"
+          ],
+          "kind": "framework",
+          "id": "human-judgment-in-ai-evaluation:02",
+          "evidence": {
+            "locator": "L4",
+            "anchor": "Behaviorally anchored rating scales describe what each level looks like",
+            "unit_sha256": "8e502c47b4f3ce3f2b5ee9aa93222506aed6f7d8ddd059c8ff82040926635337"
+          }
+        },
+        {
+          "label": "Match evaluation methods and reviewers to the claim",
+          "summary": "Use deterministic checks for explicit requirements, human reviewers for contextual qualities, and model judges within a validated scope. Trained raters, domain specialists, and intended users need the relevant interaction, sources, and context.",
+          "topics": [
+            "methods",
+            "ai-governance"
+          ],
+          "kind": "method",
+          "id": "human-judgment-in-ai-evaluation:03",
+          "evidence": {
+            "locator": "L5",
+            "anchor": "Choose methods that fit the claim.",
+            "unit_sha256": "4f3697555b904bb6b048f12be400ea358423d69fb3c8d984394a3ac5053d09c2"
+          }
+        },
+        {
+          "label": "Calibrate human reviewers without confusing agreement and validity",
+          "summary": "Review shared calibration cases independently before discussing differences. Reviewer agreement alone does not establish that a criterion measures the intended quality.",
+          "topics": [
+            "methods",
+            "ai-governance"
+          ],
+          "kind": "method",
+          "id": "human-judgment-in-ai-evaluation:04",
+          "evidence": {
+            "locator": "L6",
+            "anchor": "Agreement does not establish that a criterion measures the intended quality.",
+            "unit_sha256": "1e09743d6655fbde9ddf628ca60bce52da576a91b3c4956c7e78d4bc316efedf"
+          }
+        },
+        {
+          "label": "Preserve evaluation evidence and separate critical failures",
+          "summary": "Freeze evaluation materials and system configuration, preserve outputs and rating rationales, and report missing evidence and uncertainty. Keep critical safety, privacy, security, and policy failures separate from quality averages.",
+          "topics": [
+            "methods",
+            "ai-governance"
+          ],
+          "kind": "recommendation",
+          "id": "human-judgment-in-ai-evaluation:05",
+          "evidence": {
+            "locator": "L6",
+            "anchor": "Keep critical safety, privacy, security, and policy failures separate from quality averages.",
+            "unit_sha256": "1e09743d6655fbde9ddf628ca60bce52da576a91b3c4956c7e78d4bc316efedf"
+          }
+        },
+        {
+          "label": "Validate AI models used as judges",
+          "summary": "For AI models used as judges, compare human and model judgments on the same held-out cases with the same rubric and context. Assess consequential errors and critical failures rather than relying on similar average scores.",
+          "topics": [
+            "methods",
+            "ai-governance"
+          ],
+          "kind": "method",
+          "id": "human-judgment-in-ai-evaluation:06",
+          "evidence": {
+            "locator": "L7",
+            "anchor": "compare human and model judgments on the same held-out cases",
+            "unit_sha256": "cb235b169ebcabb71b4f9f95c5b5fd725c0dc72a5bcfb4acc45134a453bfcc92"
+          }
+        },
+        {
+          "label": "Separate final validation from judge development and regression checks",
+          "summary": "Keep final validation separate from rubric and judge development: cases used for tuning are no longer untouched validation evidence. Use versioned regression cases to check later changes.",
+          "topics": [
+            "methods",
+            "ai-governance"
+          ],
+          "kind": "method",
+          "id": "human-judgment-in-ai-evaluation:07",
+          "evidence": {
+            "locator": "L7",
+            "anchor": "cases used for tuning are no longer untouched validation evidence",
+            "unit_sha256": "cb235b169ebcabb71b4f9f95c5b5fd725c0dc72a5bcfb4acc45134a453bfcc92"
+          }
+        },
+        {
+          "label": "Continue human audits of ordinary and flagged cases",
+          "summary": "When scaling contextual scoring, continue human audits of ordinary cases as well as flagged failures. This is proposed practitioner guidance to pilot and refine, not demonstrated product performance.",
+          "topics": [
+            "methods",
+            "ai-governance"
+          ],
+          "kind": "recommendation",
+          "id": "human-judgment-in-ai-evaluation:08",
+          "evidence": {
+            "locator": "L7",
+            "anchor": "continue human audits of ordinary cases as well as flagged failures",
+            "unit_sha256": "cb235b169ebcabb71b4f9f95c5b5fd725c0dc72a5bcfb4acc45134a453bfcc92"
+          }
+        }
+      ]
+    },
     {
       "id": "people-success",
       "title": "Reimagining People Success in the age of AI",

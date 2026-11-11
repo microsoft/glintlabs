@@ -44,7 +44,7 @@ unavailable, general research may continue once its own required files are compl
 | Capability | Needed for | If unavailable |
 | --- | --- | --- |
 | Read public GitHub/raw file bodies and follow links | Loading this skill and context | Say the library has not been loaded; do not imply a connection |
-| Retrieve complete HTML article bodies | Article-grounded answers | Offer discovery links only, or request a supplied public source body |
+| Retrieve complete HTML articles or approved public Markdown summaries | Source-grounded answers | Offer discovery links only, or request a supplied public source body |
 | Extract PDF text and inspect relevant figures | PDF-backed claims | Exclude unreadable claims and disclose the gap |
 | Read audio/captions or an approved hosted alternative | Recording-only claims | Use article evidence only and disclose omitted media |
 | Read supplied images and their labels reliably | Screenshot observations | Ask for the minimum visible labels/values in text; do not pretend to see the image |
