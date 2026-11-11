@@ -42,9 +42,11 @@ must not fabricate N or response rates. Preserve these states in the share ZIP.
 
 ## SVD visual presentation
 
-Follow the basic report's factor-analysis layout: aligned horizontal item bars
-across components, then component cards with explained variance and the five
-highest-magnitude items. Use one shared item order based on Component 1.
+Show aligned horizontal item bars across components, then a compact component
+summary table. Use one row per component, with explained variance and its five
+highest-magnitude items (or all items when fewer than five are fitted), retaining
+signed unit weights. Give the table CSV/PNG exports and horizontal scrolling on
+narrow screens. Use one shared chart item order based on Component 1.
 Bars show absolute **SVD unit weights** on a common 0-1 scale; labels and full
 exports preserve signs and precision. Do not call them factor loadings or
 reuse factor-loading strength thresholds. Signs are orientation, not good/bad.
@@ -55,16 +57,21 @@ Show component variance as a percentage of response variation, not employees,
 practical importance, or a confirmed construct. Keep full variance/weight tables
 and raw diagnostics in an expandable numeric-details section. Chart PNG and
 complete weight-table CSV/PNG exports include the run/config context and all
-computed items, not just the five-item card summaries. A not-run decomposition
+computed items, not just the five-item summaries. A not-run decomposition
 shows an explicit message, not empty or fabricated charts.
 
-After the component cards, show **Top three candidates for removal review**.
+After the component summary table, show **Top three candidates for removal review**.
 Display the analyst-supplied ordering, fitted question, observed reason, optional
 comparison question, and evidence needed before deciding. Never label a candidate
 as a removal decision, require every fitted question to be assessed, or imply
 all three should be removed together. Known protected questions are excluded and
-comparison anchors cannot themselves be shortlisted. Show ranking basis,
-limitations and incomplete protection/content reviews prominently. SVD-profile
+comparison anchors cannot themselves be shortlisted. Keep the introduction
+concise and show incomplete protection/content reviews beside it as plain text,
+without a redundant yellow candidate-count badge. Put the complete ranking
+basis and limitations in a clearly labeled expandable section; retain them in
+JSON and share exports. Show missing-assessment and assessed-zero states
+explicitly. Paragraphs and lists use the same available section width, without
+a paragraph-only width clamp or text truncation. SVD-profile
 similarity is at most exploratory evidence to investigate, not measured response
 correlation, duplicate content, or justification to delete.
 

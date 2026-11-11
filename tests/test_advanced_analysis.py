@@ -324,13 +324,20 @@ def test_svd_runs_without_a_predictive_leaderboard(study):
     ).group(1))
     assert payload["summary"]["svd"] == summary["svd"]
     assert 'id="svd-chart"' in html and 'id="svd-components"' in html
+    assert '<table id="svd-components-table" aria-label="Component summaries">' in html
+    assert 'data-table="svd-components-table"' in html
+    assert "svd-card" not in html
     assert 'data-table="svd-weights-table"' in html
     assert "not factor loadings" in html
     assert 'id="item-removal-review"' in html
     assert "Top three candidates for removal review" in html
     assert "Candidate shortlist not yet prepared." in html
     assert "This SVD report is pending its required shortlist assessment." in html
-    assert "No shortlist does not mean every question must stay" in html
+    assert "Missing candidates do not mean every question must stay" in html
+    assert '<p id="item-review-status" role="status" hidden>' in html
+    assert 'id="item-review-status" class="badge"' not in html
+    assert '<details id="item-review-details">' in html
+    assert "max-width:85ch" not in html
 
 
 def item_review_for(manifest, decision="remove"):
