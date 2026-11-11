@@ -85,8 +85,8 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 <div id="svd-chart" class="svd-chart" role="region" aria-label="SVD item-weight chart" aria-describedby="svd-chart-note" tabindex="0"></div>
 <div id="svd-components" class="svd-grid" role="group" aria-label="Component summaries"></div>
 <div id="item-removal-review">
-<h3>Top five candidates for removal review</h3>
-<p>Start with these ranked questions when reviewing opportunities to shorten the survey. These are exploratory candidates, not decisions to remove them or a recommendation to drop all five. A low SVD weight alone is not a reason to remove a question.</p>
+<h3>Top three candidates for removal review</h3>
+<p>Start with these ranked questions when reviewing opportunities to shorten the survey. These are exploratory candidates, not decisions to remove them or a recommendation to drop all three. A low SVD weight alone is not a reason to remove a question.</p>
 <p id="item-review-status" class="badge" role="status"></p>
 <p id="item-review-explanation"></p>
 <div id="item-review-results" hidden>
@@ -234,7 +234,7 @@ function renderItemReview(){
  const candidates=M.item_candidates;
  if(!candidates){
   text("item-review-status","Candidate shortlist not yet prepared.");
-  text("item-review-explanation","Review the available evidence to identify up to five candidates, with reasons and the checks needed before a removal decision. No shortlist does not mean every question must stay. This report does not automatically rank or test redundancy from SVD weights.");
+  text("item-review-explanation","This SVD report is pending its required shortlist assessment. Review the available evidence to identify up to three candidates, with reasons and the checks needed before a removal decision. No shortlist does not mean every question must stay. This report does not automatically rank or test redundancy from SVD weights.");
   return;
  }
  text("item-review-status",candidates.items.length?`${candidates.items.length} exploratory candidate${candidates.items.length===1?"":"s"} - not removal decisions.`:"No supported candidates identified.");
