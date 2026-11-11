@@ -2,11 +2,13 @@
 
 Use this library by following links from the [skill instructions](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/SKILL.md). No ZIP, installation, repository clone, or local scripts are required.
 
-**Reviewed 2026-11-10: 55 reviewed resources, 589 source-level summaries, 33 topics, 1 explicit gap.**
+**Reviewed 2026-11-10: 56 reviewed resources, 597 source-level summaries, 33 topics, 1 explicit gap.**
 
 Read [source priority](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/source-priority.md), [corpus scope](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/corpus-guide.md), and [link-only use](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/public-use.md). Then choose relevant topics below.
 
 Use the same skill for published guidance and user-authorized Glint results. Follow the [research workflow](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/research-workflow.md); for screenshots/results also read [results exploration](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/results-exploration.md). Substantive interpretation and the next verification require applicable full-source research, not just a description of the screen. User evidence stays separate from this public library.
+
+Before named Glint report/view recommendations, click paths, or browser navigation, also load [Glint navigation](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/references/glint-navigation.md). It is not required for research-only answers; missing navigation guidance blocks directions, not otherwise-supported research or interpretation.
 
 These are discovery summaries, not full source bodies. Follow a topic to its source profiles, then retrieve the original public publications before supporting claims. Prioritize relevant Research Drops, then the original-vault tiers. Shared studies are not independent replications.
 
