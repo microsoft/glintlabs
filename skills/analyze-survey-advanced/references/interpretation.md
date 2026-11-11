@@ -24,8 +24,7 @@ limits. Do not present poor/no-improvement models as meaningful discoveries.
 No fit has run in code-only mode, so no fitted findings can be interpreted.
 
 Read and follow `../../people-science-knowledge-vault/SKILL.md`, including its
-required-reference gate, `references/research-workflow.md`,
-`references/results-exploration.md` when interpreting results, and common
+required-reference gate, `references/research-workflow.md`, and common
 reference bodies from the same revision. Reuse full valid bodies still in
 context; loading notes are not source bodies. Retrieve original eligible public
 articles/PDFs before claims; catalog summaries alone are not evidence.

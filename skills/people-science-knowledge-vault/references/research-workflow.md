@@ -1,9 +1,11 @@
 # Research workflow
 
-Follow the [skill](../SKILL.md)'s shared evidence and privacy rules. This procedure
+Follow the active skill's evidence and privacy rules. This shared procedure
 supports research-only questions and the research required for results
 interpretation. It defines evidence obligations, not a mandatory answer outline.
-Apply the entry's [required-reference gate](../SKILL.md#required-reference-gate)
+Apply the active entry's required-reference gate:
+[research](../SKILL.md#required-reference-gate) or
+[platform interpretation](../../platform-screenshot-interpretation/SKILL.md#required-reference-gate)
 before substantive answers. Readable research articles do not compensate for
 missing required instructions; loading instructions does not establish evidence
 for an article's claims.
@@ -119,7 +121,7 @@ retrieval, state the gap and exclude unread bodies from counts and claim support
 Recover with another relevant eligible source when possible. If none is readable,
 offer discovery links or request a supplied public source body; do not claim a
 research-backed answer. For results, follow the bounded fallback in
-[results exploration](results-exploration.md).
+[results exploration](../../platform-screenshot-interpretation/references/results-exploration.md).
 
 ## Explore explanations without diagnosing
 

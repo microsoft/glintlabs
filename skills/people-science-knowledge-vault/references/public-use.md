@@ -12,12 +12,12 @@ published sources. The user does not download files, install a ZIP/plugin,
 clone the repository, or run scripts. Reading a link is conversation-scoped:
 it does not register a native skill or guarantee persistence into another chat.
 
-For your own Glint results, use the same skill and supply an authorized, redacted
-screenshot or aggregate values in an organization-approved host. For example:
-"What might this pattern mean, and what should I check next?" The assistant
-retrieves applicable research, interprets within the visible scope, and asks for
-another view only when it would help. No mode selection or manifest is required
-for ordinary screenshot interpretation.
+For your own Glint results, use
+[Platform Screenshot Interpretation](../../platform-screenshot-interpretation/SKILL.md)
+and supply an authorized, redacted screenshot or aggregate values in an
+organization-approved host. That skill owns the investigation and uses this
+same research library; no mode selection or manifest is required for ordinary
+screenshot interpretation. General PS research guidance stays in Knowledge Vault.
 
 ## Retrieval sequence
 
@@ -25,12 +25,15 @@ Start with [the context entry](README.md) and [source priority](source-priority.
 Follow relevant small topic pages, then individual source profiles. Retrieve
 the original public article/PDF/recording before using its substantive claims.
 The larger combined indexes are optional bulk views, not required downloads.
-If the skill URL specifies a non-main ref, keep all repository context on it.
+Keep all repository context on the same repository and ref as the skill URL,
+including shared references used by Platform Screenshot Interpretation.
 
 If GitHub's rendered page is unreadable, try its raw file URL:
 https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/SKILL.md
 
-The entry's [required-reference gate](../SKILL.md#required-reference-gate) applies
+The active entry's required-reference gate
+([research](../SKILL.md#required-reference-gate) or
+[platform interpretation](../../platform-screenshot-interpretation/SKILL.md#required-reference-gate)) applies
 before substantive answers. Missing/partial instruction bodies block the affected
 workflow even if research articles are readable. Recover same-ref raw content or
 continuation pages first; if still blocked, disclose that limitation briefly.
@@ -76,10 +79,12 @@ a URL. Regional restrictions and extraction limits remain possible.
 Confirm actual file/body retrieval, not just titles, previews, successful HTTP
 responses, or player shells. Check truncation; the small topic and source pages
 avoid requiring the entire index in one model context.
-Follow [research workflow](research-workflow.md) and, for results,
-[results exploration](results-exploration.md); load these only for the task at hand.
+Follow [research workflow](research-workflow.md) and, in the platform skill,
+[results exploration](../../platform-screenshot-interpretation/references/results-exploration.md);
+load these only for the task at hand.
 Before named Glint report/view recommendations, click paths, or browser navigation,
-also load [Glint navigation](glint-navigation.md) under the same gate. Research-only
+also load [Glint navigation](../../platform-screenshot-interpretation/references/glint-navigation.md)
+under the platform skill's gate. Research-only
 answers do not require it. If it is unavailable, withhold navigation directions
 without blocking otherwise-supported research or interpretation.
 
