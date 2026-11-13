@@ -1,5 +1,6 @@
 import JSZip from "jszip";
 import { z } from "zod";
+import { assertLineChartSourceIntegrity } from "../visualization/line-chart-authoring.ts";
 
 import {
   canonicalJson,
@@ -20,6 +21,7 @@ import {
 } from "./publication-preparation.ts";
 import { parseStudioProject, type StudioProject } from "./studio-project.ts";
 import { estimateReportReadingTime } from "./report-reading-time.ts";
+import { wordStyleView } from "./word-style-mapping.ts";
 import { needsImageDescription, publicationDetailsIssues } from "./publication-flow.ts";
 
 const assetPathSchema = z.string().regex(/^assets\/[a-f0-9]{64}\.(png|jpg|webp|gif)$/);
@@ -90,7 +92,7 @@ export function publicationReadiness(
   } else if (sourceEvidence.hyperlinkCount > 0 && (
     sourceEvidence.representedHyperlinkCount !== sourceEvidence.hyperlinkCount ||
     project.manifest.blocks.reduce((count, block) => count +
-      (block.type === "paragraph" || block.type === "list-item" ? block.links?.length ?? 0
+      (block.type === "paragraph" || block.type === "list-item" || block.type === "heading" ? block.links?.length ?? 0
         : block.type === "references" ? block.references.filter((reference) => reference.href).length : 0), 0) !== sourceEvidence.hyperlinkCount
   )) {
     issues.push({
@@ -217,13 +219,14 @@ export async function preparePublicationPackage({
   readAsset?: AssetReader;
 }) {
   const project = parseStudioProject(inputProject);
+  await assertLineChartSourceIntegrity(project.manifest.blocks);
   const issues = publicationReadiness(project, inputMetadata, imageReviews);
   if (issues.length > 0) {
     throw new Error(`Publication package is not ready:\n${issues.map((issue) => `${issue.field}: ${issue.message}`).join("\n")}`);
   }
   const metadata = {
     ...publicationMetadataSchema.parse(inputMetadata),
-    readTimeMinutes: estimateReportReadingTime(project.manifest),
+    readTimeMinutes: estimateReportReadingTime(wordStyleView(project.manifest)),
   };
   const approvedContent = project.approvedContent;
   if (!approvedContent || await sha256Text(canonicalJson(approvedContent.snapshot)) !== approvedContent.sha256) {
@@ -275,6 +278,7 @@ export async function preparePublicationPackage({
       author: metadata.author,
       publishedDate: metadata.displayDate,
       readTimeMinutes: metadata.readTimeMinutes,
+      ...(metadata.employeeCount !== undefined ? { employeeCount: metadata.employeeCount } : {}),
       topics: metadata.topics,
     },
   });
@@ -345,6 +349,7 @@ export async function validateDraftPublicationPackage(zipBytes: Uint8Array) {
   }
   const publication = draftPublicationSchema.parse(JSON.parse(await publicationEntry.async("string")));
   const manifest = reportManifestSchema.parse(JSON.parse(await manifestEntry.async("string")));
+  await assertLineChartSourceIntegrity(manifest.blocks);
   if (manifest.reviewItems.some((issue) => issue.severity === "blocker") ||
     manifest.blocks.some((block) => block.type === "unsupported" || block.type === "visual-placeholder")) {
     throw new Error("The package contains unresolved blocking content.");

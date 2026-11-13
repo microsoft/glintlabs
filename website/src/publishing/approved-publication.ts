@@ -8,6 +8,7 @@ import { canonicalJson } from "../integrity/approved-content.ts";
 import { reportManifestSchema } from "../manifest/report-manifest.ts";
 import { draftPublicationSchema, validateDraftPublicationPackage } from "../project/publication-package.ts";
 import { OwnerRequestError } from "./owner-access.ts";
+import { readHomepagePlacement } from "./homepage-placement.ts";
 import {
   loadPublicationPreview,
   replacePublicationDirectories,
@@ -64,7 +65,7 @@ export async function loadApprovedPublication(reportId: string, options: Options
   await validateDraftPublicationPackage(await zip.generateAsync({ type: "uint8array" }));
   const fingerprint = createHash("sha256").update(canonicalJson({ manifest: packageManifest, publication: draft })).digest("hex");
   if (fingerprint !== approval.packageFingerprint) throw new Error("Website approval does not match this exact report revision.");
-  return { publication, manifest };
+  return { publication, manifest, homepage: await readHomepagePlacement(root, publication) };
 }
 
 export async function listApprovedPublications(options: Options = {}) {
@@ -150,6 +151,6 @@ export async function approvePublicationForLocalWebsite(input: unknown, options:
       await rm(assetStage, { recursive: true, force: true });
       throw error;
     }
-    return { publication, manifest };
+    return { publication, manifest, homepage: await readHomepagePlacement(root, publication) };
   } finally { await lock.close(); await rm(lockPath); }
 }

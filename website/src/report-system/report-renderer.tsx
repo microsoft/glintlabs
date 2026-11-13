@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { ChevronDown16Regular } from "@fluentui/react-icons/svg/chevron-down";
-import type { ElementType, ReactNode } from "react";
+import { Fragment, type ElementType, type ReactNode } from "react";
 
 import { SiteNavigation } from "../app/_components/site-navigation";
 import type {
@@ -10,6 +10,8 @@ import type {
 } from "../manifest/report-manifest.ts";
 import { estimateReportReadingTime } from "../project/report-reading-time.ts";
 import { reportAuthor } from "../project/report-author.ts";
+import { wordReferenceTextIds, wordStyleView } from "../project/word-style-mapping.ts";
+import { textCalloutSegments } from "../project/text-callout.ts";
 import { ListeningMaturityScorecard } from "../visualization/listening-maturity-scorecard";
 import {
   canonicalVisualOptions,
@@ -33,7 +35,7 @@ import styles from "./report-renderer.module.css";
 type ImageBlock = Extract<ReportBlock, { type: "image" }>;
 type TextBlock = Extract<
   ReportBlock,
-  { type: "paragraph" | "list-item" }
+  { type: "heading" | "paragraph" | "list-item" }
 >;
 
 type ReportRendererProps = {
@@ -90,11 +92,12 @@ function isReferencesHeading(block: ReportBlock) {
     /^(?:references|resources)\s*:?\s*$/i.test(block.text.trim());
 }
 
-function reportReferenceMarkers(blocks: readonly ReportBlock[], hiddenBlockIds?: ReadonlySet<string>) {
+function reportReferenceMarkers(blocks: readonly ReportBlock[], hiddenBlockIds?: ReadonlySet<string>, referenceBlockIds?: ReadonlySet<string>) {
   const markers = new Set<string>();
   let headingLevel: number | undefined;
   for (const block of blocks) {
     if (hiddenBlockIds?.has(block.id)) continue;
+    if (referenceBlockIds?.has(block.id) && headingLevel === undefined) headingLevel = 2;
     if (block.type === "heading") {
       if (isReferencesHeading(block)) headingLevel = block.level;
       else if (headingLevel !== undefined && block.level <= headingLevel) headingLevel = undefined;
@@ -129,8 +132,9 @@ function imagePresentation(block: ImageBlock) {
   );
 }
 
-function RichText({ block, reference = false, referenceMarkers }: {
+function RichText({ block, reference = false, referenceMarkers, start = 0, end = block.text.length }: {
   block: TextBlock; reference?: boolean; referenceMarkers?: ReadonlySet<string>;
+  start?: number; end?: number;
 }) {
   const links = block.links ?? [];
   const label = reference ? block.text.match(/^\s*\[\d+\]/)?.[0] : undefined;
@@ -138,45 +142,51 @@ function RichText({ block, reference = false, referenceMarkers }: {
     .filter(marker => reference ? marker.index + marker[0].length === label?.length
       : referenceMarkers?.has(marker[0]))
     .map(marker => ({ start: marker.index, end: marker.index + marker[0].length }));
-  if (links.length === 0 && markers.length === 0) {
-    return block.text;
+  if (links.length === 0 && markers.length === 0 && !block.marks?.length) {
+    return block.text.slice(start, end);
   }
 
   function textRange(start: number, end: number) {
     const nodes: ReactNode[] = [];
-    let cursor = start;
-    for (const marker of markers) {
-      const from = Math.max(start, marker.start);
-      const to = Math.min(end, marker.end);
-      if (from >= to) continue;
-      if (cursor < from) nodes.push(block.text.slice(cursor, from));
-      nodes.push(
-        <sup className={styles.referenceMarker} key={`${block.id}-reference-${from}-${to}`}>
-          {block.text.slice(from, to)}
-        </sup>,
-      );
-      cursor = to;
+    const boundaries = [...new Set([
+      start, end,
+      ...[...markers, ...(block.marks ?? [])].flatMap(range => [range.start, range.end])
+        .filter(offset => offset > start && offset < end),
+    ])].sort((a, b) => a - b);
+    for (let index = 0; index < boundaries.length - 1; index += 1) {
+      const from = boundaries[index];
+      const to = boundaries[index + 1];
+      const mark = block.marks?.find(range => range.start <= from && range.end >= to);
+      let text: ReactNode = block.text.slice(from, to);
+      if (mark?.italic) text = <em>{text}</em>;
+      if (mark?.bold) text = <strong>{text}</strong>;
+      if (mark?.superscript || markers.some(range => range.start <= from && range.end >= to)) {
+        text = <sup className={styles.referenceMarker}>{text}</sup>;
+      } else if (mark?.subscript) text = <sub>{text}</sub>;
+      nodes.push(<Fragment key={`${block.id}-text-${from}-${to}`}>{text}</Fragment>);
     }
-    if (cursor < end) nodes.push(block.text.slice(cursor, end));
     return nodes;
   }
 
   const content: ReactNode[] = [];
-  let cursor = 0;
+  let cursor = start;
   for (const [index, link] of links.entries()) {
-    if (cursor < link.start) {
-      content.push(...textRange(cursor, link.start));
+    const from = Math.max(start, link.start);
+    const to = Math.min(end, link.end);
+    if (from >= to) continue;
+    if (cursor < from) {
+      content.push(...textRange(cursor, from));
     }
-    const children = textRange(link.start, link.end);
+    const children = textRange(from, to);
     content.push(
       <a href={link.href} key={`${block.id}-link-${index}`}>
         {children.length === 1 ? children[0] : children}
       </a>,
     );
-    cursor = link.end;
+    cursor = to;
   }
-  if (cursor < block.text.length) {
-    content.push(...textRange(cursor, block.text.length));
+  if (cursor < end) {
+    content.push(...textRange(cursor, end));
   }
   return content;
 }
@@ -314,16 +324,28 @@ function renderBlock(
       const Heading = headingTag(block.level);
       return (
         <Heading className={`${styles[`heading${block.level}`]} ${isResearchBriefHeading(block) ? styles.briefHeading : ""} ${isReferencesHeading(block) ? styles.referencesHeading : ""}`}>
-          {isResearchBriefHeading(block) ? headingLabel(block) : props.textOverrides?.[block.id] ?? block.text}
+          {block.marks?.length || block.links?.length
+            ? props.textOverrides?.[block.id] ?? <RichText block={block} reference={isReference} referenceMarkers={referenceMarkers}
+              end={isResearchBriefHeading(block) ? headingLabel(block).length : block.text.length} />
+            : isResearchBriefHeading(block) ? headingLabel(block) : props.textOverrides?.[block.id] ?? block.text}
         </Heading>
       );
     }
-    case "paragraph":
+    case "paragraph": {
+      if (block.callouts?.length && props.textOverrides?.[block.id] === undefined) {
+        return <div>
+          {textCalloutSegments(block).map(range => <p key={`${range.start}-${range.end}`}
+            className={range.callout ? styles.textCallout : styles.paragraph} data-text-callout={range.callout || undefined}>
+            <RichText block={block} start={range.start} end={range.end} reference={isReference} referenceMarkers={referenceMarkers} />
+          </p>)}
+        </div>;
+      }
       return (
         <p className={styles.paragraph}>
           {props.textOverrides?.[block.id] ?? <RichText block={block} reference={isReference} referenceMarkers={referenceMarkers} />}
         </p>
       );
+    }
     case "image":
       return (
         <figure className={styles.figure} title={locator}>
@@ -438,6 +460,15 @@ function renderBlock(
         </div>
       );
     case "data-visual-source": {
+      if (props.manifest.readerPresentation?.rowHeaderTableBlockIds.includes(block.id)) {
+        const rows = [block.data.columns, ...block.data.rows.map(row => row.cells)];
+        return <div className={styles.accessibleData}>
+          <div aria-label={block.data.title} className={styles.accessibleDataScroller} role="region" tabIndex={0}>
+            <table aria-label={block.data.title}><tbody>{rows.map(([dimension, principle], index) =>
+              <tr key={index}><th scope="row">{dimension}</th><td>{principle}</td></tr>)}</tbody></table>
+          </div>
+        </div>;
+      }
       const recommendedType = block.data.recommendedVisualType;
       const automaticallyVerifiedType =
         automaticallyVerifiedVisualType(block);
@@ -515,7 +546,7 @@ function reportContent(
   props: ReportRendererProps,
 ) {
   const content: ReactNode[] = [];
-  const referenceMarkers = reportReferenceMarkers(blocks, props.hiddenBlockIds);
+  const referenceMarkers = reportReferenceMarkers(blocks, props.hiddenBlockIds, props.referenceBlockIds);
   let briefHeadingLevel: number | undefined;
   let briefHeadingIndex: number | undefined;
   let referencesHeadingLevel: number | undefined;
@@ -530,6 +561,10 @@ function reportContent(
     const isDivider = block.type === "paragraph" && /^-{3,}$/.test(block.text.trim());
     const followsDivider = previousBlockWasDivider;
     previousBlockWasDivider = isDivider;
+    if (props.referenceBlockIds?.has(block.id) && referencesHeadingLevel === undefined) {
+      referencesHeadingLevel = 2;
+      briefHeadingLevel = undefined;
+    }
     if (block.type === "heading") {
       if (isReferencesHeading(block)) {
         referencesHeadingLevel = block.level;
@@ -566,7 +601,11 @@ function reportContent(
           key={block.id}
           role={isDivider ? "separator" : undefined}
         >
-          {isDivider ? null : props.blockOverrides?.[block.id] ?? renderBlock(block, props, isReference, referenceMarkers)}
+          {startsReferences && !isReferencesHeading(block) &&
+            (props.manifest.readerPresentation || props.manifest.wordStyles) ? <>
+            <h2 className={`${styles.heading2} ${styles.referencesHeading}`}>References</h2>
+            {props.blockOverrides?.[block.id] ?? renderBlock(block, props, isReference, referenceMarkers)}
+          </> : isDivider ? null : props.blockOverrides?.[block.id] ?? renderBlock(block, props, isReference, referenceMarkers)}
         </div>,
       );
       continue;
@@ -622,6 +661,13 @@ function reportContent(
 }
 
 export function ReportRenderer(props: ReportRendererProps) {
+  const presentation = props.manifest.readerPresentation;
+  props = {
+    ...props, manifest: wordStyleView(props.manifest),
+    figureDescriptions: { ...presentation?.figureDescriptions, ...props.figureDescriptions },
+    orderedListBlockIds: new Set([...presentation?.orderedListBlockIds ?? [], ...props.orderedListBlockIds ?? []]),
+    referenceBlockIds: new Set([...presentation?.referenceBlockIds ?? [], ...props.referenceBlockIds ?? [], ...wordReferenceTextIds(props.manifest)]),
+  };
   const reportStyle = props.reportStyle ?? DEFAULT_REPORT_STYLE;
   const isNewFluentColors = reportStyle === "new-fluent-colors";
   const firstBlock = props.manifest.blocks[0];
@@ -630,13 +676,14 @@ export function ReportRenderer(props: ReportRendererProps) {
       ? firstBlock
       : undefined;
   const firstBodyBlockIndex = coverTitleBlock ? 1 : 0;
-  const possibleHeroImage = props.manifest.blocks[firstBodyBlockIndex];
+  const possibleHeroImage = props.manifest.blocks.find(block => block.type === "image" && block.placement === "hero")
+    ?? props.manifest.blocks[firstBodyBlockIndex];
   const heroImageBlock =
     possibleHeroImage?.type === "image" &&
     possibleHeroImage.placement === "hero"
       ? possibleHeroImage
       : undefined;
-  const contentStartIndex = firstBodyBlockIndex + (heroImageBlock ? 1 : 0);
+  const contentStartIndex = firstBodyBlockIndex + (heroImageBlock && heroImageBlock.id === props.manifest.blocks[firstBodyBlockIndex]?.id ? 1 : 0);
   const possibleHeroSummary = props.manifest.blocks[contentStartIndex];
   const heroSummaryBlock =
     reportStyle === "annual-report-2026" &&
@@ -644,7 +691,7 @@ export function ReportRenderer(props: ReportRendererProps) {
       ? possibleHeroSummary
       : undefined;
   const bodyBlockIndexOffset = contentStartIndex + (heroSummaryBlock ? 1 : 0);
-  const bodyBlocks = props.manifest.blocks.slice(bodyBlockIndexOffset);
+  const bodyBlocks = props.manifest.blocks.slice(bodyBlockIndexOffset).filter(block => block.id !== heroImageBlock?.id);
   const sectionHeadings = bodyBlocks.filter(
     (
       block,
@@ -656,6 +703,13 @@ export function ReportRenderer(props: ReportRendererProps) {
   const readTimeMinutes = props.mode === "read" && props.manifest.metadata.readTimeMinutes
     ? props.manifest.metadata.readTimeMinutes : estimateReportReadingTime(props.manifest);
   const author = reportAuthor(props.manifest);
+  const isoDate = props.manifest.metadata.publishedDate?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const coverDetails = props.coverDetails ?? (presentation?.showCoverDetails ? [
+    ...(isoDate ? [`${new Date(`${isoDate[0]}T00:00:00Z`).toLocaleDateString("en-US", {
+      month: "long", day: "numeric", year: "numeric", timeZone: "UTC",
+    })} • Research Drop`] : []),
+    ...(props.manifest.metadata.employeeCount ? [`${props.manifest.metadata.employeeCount.toLocaleString("en-US")} Employees`] : []),
+  ] : undefined);
   const sourceCoverTitle =
     coverTitleBlock?.text || props.manifest.metadata.title;
   const coverTitle = props.coverTitle ??
@@ -761,7 +815,7 @@ export function ReportRenderer(props: ReportRendererProps) {
           ) : null}
           <h1 className={styles.coverTitle}>{coverTitle}</h1>
           {props.coverNotice ? <p className={styles.coverNotice} role="note">{props.coverNotice}</p> : null}
-          {props.coverDetails ? <ul className={styles.coverDetails} aria-label="Report details">{props.coverDetails.map(detail => <li key={detail}>{detail}</li>)}</ul> : null}
+          {coverDetails ? <ul className={styles.coverDetails} aria-label="Report details">{coverDetails.map(detail => <li key={detail}>{detail}</li>)}</ul> : null}
           {coverSummary ? (
             <p className={styles.coverSummary}>{coverSummary}</p>
           ) : null}

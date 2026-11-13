@@ -1,6 +1,9 @@
 import type { ReportBlock } from "../manifest/report-manifest.ts";
+import { createResearchVisualBlock } from "./research-visual-blocks.ts";
 
 export const canonicalVisualTypes = [
+  "line-chart",
+  "research-visual",
   "listening-approach-continuum",
   "featured-statistic",
   "data-callout",
@@ -8,8 +11,15 @@ export const canonicalVisualTypes = [
   "listening-methods-comparison",
   "pull-quote",
   "percentage-ring-group",
+  "illustrated-statistics",
+  "quadrant-scatter-plot",
+  "paired-percentage-comparison",
+  "percentage-comparison-grid",
   "horizontal-bar-chart",
   "grouped-column-comparison",
+  "grouped-bar-comparison",
+  "comparison-panel-group",
+  "coefficient-heatmap",
   "before-after-comparison",
   "impact-metrics",
   "two-column-insight",
@@ -22,10 +32,15 @@ export type CanonicalVisualBlock = Extract<
 >;
 
 export const canonicalVisualOptions: Array<{
-  kind: CanonicalVisualType;
+  kind: Exclude<CanonicalVisualType, "illustrated-statistics" | "quadrant-scatter-plot" | "coefficient-heatmap" | "line-chart">;
   name: string;
   reason: string;
 }> = [
+  {
+    kind: "research-visual",
+    name: "Research framework or table",
+    reason: "Present an editable research framework, comparison, or data table",
+  },
   {
     kind: "listening-approach-continuum",
     name: "Listening approach continuum",
@@ -59,7 +74,17 @@ export const canonicalVisualOptions: Array<{
   {
     kind: "percentage-ring-group",
     name: "Percentage ring group",
-    reason: "Show three related percentages with explanations",
+    reason: "Show two or three related percentages with explanations",
+  },
+  {
+    kind: "paired-percentage-comparison",
+    name: "Paired percentage comparison",
+    reason: "Contrast two independent percentage findings",
+  },
+  {
+    kind: "percentage-comparison-grid",
+    name: "Percentage comparison grid",
+    reason: "Show four independent percentage findings in two rows",
   },
   {
     kind: "horizontal-bar-chart",
@@ -69,7 +94,17 @@ export const canonicalVisualOptions: Array<{
   {
     kind: "grouped-column-comparison",
     name: "Grouped column comparison",
-    reason: "Compare two series across four measures",
+    reason: "Compare one to three percentage series across up to twelve measures",
+  },
+  {
+    kind: "grouped-bar-comparison",
+    name: "Grouped bar comparison",
+    reason: "Compare percentage series with long category labels",
+  },
+  {
+    kind: "comparison-panel-group",
+    name: "Comparison panels",
+    reason: "Compare pairs with a separate legend for each panel",
   },
   {
     kind: "before-after-comparison",
@@ -95,11 +130,27 @@ export function isCanonicalVisualBlock(
 }
 
 export function createCanonicalVisualBlock(
-  type: CanonicalVisualType,
+  type: Exclude<CanonicalVisualType, "illustrated-statistics" | "quadrant-scatter-plot" | "coefficient-heatmap" | "line-chart">,
   id: string,
   source: ReportBlock["source"],
 ): CanonicalVisualBlock {
   switch (type) {
+    case "grouped-bar-comparison":
+      return {
+        id, source, type, title: "Synthetic comparison", subtitle: "Illustrative percentages",
+        series: ["Example group A", "Example group B"],
+        groups: [{ id: `${id}-group-1`, label: "Example measure", values: [72, 48] }],
+        sourceNote: "Synthetic example. Not research findings.",
+      };
+    case "comparison-panel-group":
+      return {
+        id, source, type, title: "Synthetic comparison panels", subtitle: "Illustrative independent percentages",
+        panels: [{ id: `${id}-panel-1`, title: "Example measure",
+          series: ["Example condition A", "Example condition B"], values: [72, 48] }],
+        sourceNote: "Synthetic example. Not research findings.",
+      };
+    case "research-visual":
+      return createResearchVisualBlock("manager-behaviors", id, source);
     case "listening-approach-continuum":
       return {
         id,
@@ -259,6 +310,28 @@ export function createCanonicalVisualBlock(
         footnote:
           "Source: Microsoft People Science Agentic Teaming & Trust Survey, n = 520 global, full-time, English-speaking managers. July 2025.",
       };
+    case "paired-percentage-comparison":
+      return {
+        id, source, type,
+        title: "Two findings side by side",
+        metrics: [
+          { id: `${id}-metric-1`, value: 83, description: "See an opportunity" },
+          { id: `${id}-metric-2`, value: 43, description: "Have a clear plan" },
+        ],
+        footnote: "Synthetic example. Not research findings.",
+      };
+    case "percentage-comparison-grid":
+      return {
+        id, source, type,
+        title: "Four findings in two rows",
+        metrics: [
+          { id: `${id}-metric-1`, value: 38, description: "First illustrative finding" },
+          { id: `${id}-metric-2`, value: 29, description: "Second illustrative finding" },
+          { id: `${id}-metric-3`, value: 80, description: "Third illustrative finding" },
+          { id: `${id}-metric-4`, value: 75, description: "Fourth illustrative finding" },
+        ],
+        footnote: "Synthetic example. Not research findings.",
+      };
     case "horizontal-bar-chart":
       return {
         id,
@@ -288,26 +361,25 @@ export function createCanonicalVisualBlock(
         id,
         source,
         type,
-        title:
-          "Psychologically safe employees report higher readiness and impact of AI agents",
+        title: "Synthetic grouped comparison",
         subtitle: "Average percent favorable",
-        series: ["Psychologically safe", "Everyone else"],
+        series: ["Example group A", "Example group B"],
         groups: [
           {
             id: `${id}-group-1`,
-            label: "Individual Agent Readiness",
-            values: [76, 60],
+            label: "Example category A",
+            values: [72, 48],
           },
           {
             id: `${id}-group-2`,
-            label: "Team Agent Readiness",
-            values: [76, 56],
+            label: "Example category B",
+            values: [64, 52],
           },
-          { id: `${id}-group-3`, label: "Agent RIVA", values: [82, 71] },
-          { id: `${id}-group-4`, label: "Agent RTVA", values: [85, 72] },
+          { id: `${id}-group-3`, label: "Example category C", values: [56, 36] },
+          { id: `${id}-group-4`, label: "Example category D", values: [80, 60] },
         ],
         sourceNote:
-          "Note: Agent RIVA stands for \"Realized Individual Value of Agentic AI\", and Agent RTVA stands for \"Realized Team Value of Agentic AI\".\nSource: Microsoft People Science Agentic Teaming & Trust Survey, n = 1,800 global, full-time, English-speaking employees. July 2025.",
+          "Synthetic example · Not research findings.",
       };
     case "before-after-comparison":
       return {

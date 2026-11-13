@@ -552,9 +552,17 @@
 }
 
 .horizontalChart {
-  height: 857px;
-  min-height: 857px;
-  padding: 40px 32px 32px;
+  --chart-blue: #5f82f2;
+  --chart-teal: #6a908d;
+  --chart-lavender: #8e83ad;
+  --chart-mauve: #ad83a0;
+  --chart-track: #f8f8f8;
+  height: auto;
+  min-height: 0;
+  max-width: 100%;
+  border: 1px solid var(--report-light-blue, #cedeff);
+  border-radius: 20px;
+  padding: 40px;
 }
 
 .horizontalChart h3,
@@ -565,10 +573,10 @@
 }
 
 .horizontalChart h3 {
-  width: 700px;
-  margin: 0 auto;
-  text-align: center;
-  text-wrap: balance;
+  width: 100%;
+  font-weight: 600;
+  letter-spacing: -0.15px;
+  text-align: left;
 }
 
 .rule {
@@ -579,50 +587,99 @@
 
 .horizontalRows {
   display: grid;
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: 20px 12px;
+}
+
+.horizontalChart .rule {
+  background: #eff4ff;
 }
 
 .horizontalRow {
   display: grid;
-  grid-template-columns: 234px 428px;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   align-items: center;
-  gap: 24px;
-  min-height: 40px;
+  row-gap: 8px;
 }
 
 .horizontalRow > span {
+  grid-column: 1 / -1;
+  overflow-wrap: anywhere;
   font-size: 14px;
-  font-weight: 625;
+  font-weight: 420;
   line-height: 20px;
 }
 
 .horizontalValue {
   display: grid;
-  grid-template-columns: 383px 33px;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   align-items: center;
-  gap: 12px;
 }
 
 .horizontalBarTrack {
+  position: relative;
   height: 24px;
-  background: transparent;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--chart-track);
+}
+
+.chartZero {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid var(--colorNeutralForeground3);
+}
+
+.chartScale {
+  margin: 12px 0 0;
+  color: var(--colorNeutralForeground3);
+  font-size: 12px;
 }
 
 .horizontalBarTrack i {
   display: block;
   height: 100%;
+  border-radius: inherit;
   background: linear-gradient(90deg, #15a0b9 0%, #16bbda 100%);
 }
 
 .horizontalValue strong {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 625;
-  line-height: 22px;
+  line-height: 20px;
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-.chartLegend,
+.horizontalDisclosure {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  min-width: 0;
+}
+.horizontalDisclosure::details-content { grid-column: 1 / -1; }
+.horizontalDisclosure > summary { min-height: 44px; list-style: none; cursor: pointer; border-radius: 8px; -webkit-tap-highlight-color: transparent; }
+.horizontalDisclosure > summary::-webkit-details-marker { display: none; }
+.horizontalDisclosure > summary:hover { color: var(--colorBrandForeground1, #335ccc); }
+.horizontalDisclosure > summary:active { background: var(--colorVivaBrandBackground2, #e5eeff); }
+.horizontalDisclosure > summary:focus-visible { outline: 2px solid var(--colorBrandStroke1, #335ccc); outline-offset: 4px; }
+.horizontalDisclosureLabel { display: flex; align-items: center; gap: 8px; }
+.horizontalDisclosureLabel svg { flex: 0 0 16px; }
+.horizontalDisclosure[open] .horizontalDisclosureLabel svg { rotate: 180deg; }
+.horizontalSupportingText {
+  grid-column: 1 / -1;
+  margin: 12px 0 0;
+  padding: 0 16px 16px 32px;
+  border-radius: 8px;
+  font: 14px/20px "Segoe UI", sans-serif;
+  list-style: disc;
+}
+.horizontalSupportingText li { overflow-wrap: anywhere; }
+.horizontalSupportingText li + li { margin-top: 8px; }
+
 .seriesLegend {
   display: flex;
   align-items: center;
@@ -633,18 +690,12 @@
   line-height: 16px;
 }
 
-.horizontalChart .chartLegend {
-  margin-top: 16px;
-}
-
-.chartLegend i,
 .seriesLegend i {
   width: 12px;
   height: 12px;
   background: #16bbda;
 }
 
-.horizontalChart .sourceNote,
 .groupedColumns .sourceNote {
   display: block;
   margin-top: 16px;
@@ -652,15 +703,39 @@
   white-space: pre-line;
 }
 
-.horizontalChart .sourceNote {
-  width: 642px;
-  margin-top: 13px;
-  margin-left: 44px;
+.horizontalChart .chartSubtitle {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+
+.horizontalChart .chartNote {
+  font-size: 12px;
+  font-style: italic;
+  line-height: 16px;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.horizontalChart .chartSubtitle { text-align: left; }
+.horizontalChart .chartSynthetic {
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.horizontalChart[data-density="compact"] .horizontalRows { gap: 12px; }
+.horizontalChart[data-density="compact"] .horizontalBarTrack { height: 16px; }
+.chartDataTable {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .groupedColumns {
-  height: 586px;
-  min-height: 586px;
   padding: 38px 32px 32px;
 }
 
@@ -684,22 +759,22 @@
 
 .columnGroups {
   display: grid;
-  grid-template-columns: repeat(4, 108px);
-  gap: 56px;
-  height: 263px;
-  padding-left: 43px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
 }
 
 .columnGroup {
   display: grid;
-  grid-template-rows: 211px 40px;
+  grid-template-rows: 244px auto;
   gap: 12px;
+  min-width: 0;
   text-align: center;
 }
 
 .columns {
   display: flex;
   align-items: flex-end;
+  justify-content: center;
   gap: 12px;
   border-bottom: 1px solid #a8a8a8;
 }
@@ -948,10 +1023,88 @@
   line-height: 16px;
 }
 
+.pairedComparison {
+  --paired-primary: #294482;
+  --paired-secondary: #5c8df8;
+  --report-heading: #000;
+  --report-text: #000;
+  position: relative;
+  display: grid;
+  gap: 48px;
+  max-width: 100%;
+  padding: 40px;
+  border-color: #cedeff;
+  border-radius: 20px;
+  font-family: "Segoe Sans", "Segoe UI Variable", "Segoe UI", sans-serif;
+  color: var(--report-text);
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.pairedComparison::before,
+.pairedComparison::after {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: #cedeff;
+  opacity: 0.3;
+  filter: blur(250px);
+  pointer-events: none;
+  content: "";
+}
+
+.pairedComparison::before { top: -200px; left: -200px; }
+.pairedComparison::after { right: -170px; bottom: -170px; width: 340px; height: 340px; }
+.pairedComparison > * { position: relative; }
+.pairedComparison[data-palette="blue"] { --paired-primary: #5c8df8; }
+.pairedComparison[data-palette="teal"] { --paired-primary: #6a908d; --paired-secondary: #6a908d; }
+
+.pairedComparison h3 {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.15px;
+  font-variation-settings: "opsz" 36;
+}
+
+.pairedMetrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+.pairedMetric { display: grid; align-content: start; gap: 10px; min-width: 0; }
+.pairedLeadIn { display: flex; align-items: center; gap: 16px; }
+.pairedLeadIn::before,
+.pairedLeadIn::after { flex: 1; height: 1px; background: #eff4ff; content: ""; }
+.pairedFinding { display: grid; gap: 4px; }
+.pairedLeadIn,
+.pairedFinding p { font-size: 20px; font-weight: 550; line-height: 24px; letter-spacing: -0.15px; font-variation-settings: "opsz" 10.5; }
+.pairedFinding strong { color: var(--paired-primary); font-size: 56px; font-weight: 420; line-height: 68px; letter-spacing: -0.75px; font-variation-settings: "opsz" 36; }
+.pairedMetric:nth-child(2) strong { color: var(--paired-secondary); }
+.pairedRule { height: 1px; background: #eff4ff; }
+.pairedFootnote { display: grid; gap: 8px; font-size: 12px; font-weight: 420; font-style: italic; line-height: 16px; font-variation-settings: "opsz" 8; }
+.pairedComparison .chartSynthetic { font-size: 12px; line-height: 16px; }
+
+.comparisonGrid { gap: 32px; }
+.comparisonGrid[data-chart-draft] { margin: 0; }
+.comparisonGridRow { display: grid; gap: 20px; }
+.comparisonGridFindings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.comparisonGrid .pairedFinding { align-content: start; gap: 6px; min-width: 0; }
+.comparisonGridRow:nth-of-type(2) strong { color: var(--paired-secondary); }
+.comparisonGrid[data-chart-draft] .pairedFinding [data-chart-placeholder] {
+  color: var(--report-muted, var(--colorNeutralForeground3));
+  font-size: var(--fontSizeBase300, 14px);
+  font-weight: var(--fontWeightRegular, 400);
+  line-height: var(--lineHeightBase300, 20px);
+  letter-spacing: normal;
+}
+
 :global([data-report-style="new-fluent-colors"]) .card {
   border-color: var(--report-rule);
   color: var(--report-text);
   background: var(--report-canvas);
+}
+
+:global([data-report-style="new-fluent-colors"]) .horizontalChart,
+:global([data-report-style="new-fluent-colors"]) .pairedComparison {
+  border-color: var(--report-light-blue);
 }
 
 :global([data-report-style="new-fluent-colors"]) .continuum > .eyebrow,
@@ -992,7 +1145,6 @@
 :global([data-report-style="new-fluent-colors"]) .pullQuote > span,
 :global([data-report-style="new-fluent-colors"]) .methodBarTrack span,
 :global([data-report-style="new-fluent-colors"]) .horizontalBarTrack i,
-:global([data-report-style="new-fluent-colors"]) .chartLegend i,
 :global([data-report-style="new-fluent-colors"]) .columnPrimary,
 :global([data-report-style="new-fluent-colors"]) .seriesLegend .columnPrimary {
   background: var(--report-blue);
@@ -1005,7 +1157,6 @@
 }
 
 :global([data-report-style="new-fluent-colors"]) .sourceNote,
-:global([data-report-style="new-fluent-colors"]) .horizontalChart .sourceNote,
 :global([data-report-style="new-fluent-colors"]) .groupedColumns .sourceNote {
   color: var(--report-muted);
 }
@@ -1029,7 +1180,6 @@
   }
 
   .continuumRow,
-  .horizontalRow,
   .insightColumns,
   .referencesLayout {
     grid-template-columns: 1fr;
@@ -1049,46 +1199,10 @@
     width: 100%;
   }
 
-  .horizontalValue {
-    grid-template-columns: minmax(0, 1fr) 42px;
-  }
-
-  .horizontalChart {
-    padding: 24px 20px;
-  }
-
-  .horizontalChart h3,
   .groupedColumns > h3 {
     width: 100%;
     font-size: 20px;
     line-height: 26px;
-  }
-
-  .horizontalChart .rule {
-    margin: 24px 0;
-  }
-
-  .horizontalRows {
-    gap: 20px;
-  }
-
-  .horizontalRow {
-    gap: 8px;
-    min-height: 0;
-  }
-
-  .horizontalRow > span {
-    font-size: 14px;
-    line-height: 20px;
-  }
-
-  .horizontalBarTrack {
-    height: 18px;
-  }
-
-  .horizontalChart .sourceNote {
-    width: 100%;
-    margin: 16px 0 0;
   }
 
   .groupedColumns {
@@ -1113,17 +1227,13 @@
 
   .columnGroups {
     gap: 28px 12px;
-    padding-left: 0;
   }
 
   .columnGroup {
-    grid-template-rows: 211px auto;
     gap: 8px;
-    min-width: 0;
   }
 
   .columns {
-    justify-content: center;
     gap: 6px;
   }
 
@@ -1175,5 +1285,28 @@
   .shiftArrow {
     justify-self: center;
     transform: rotate(90deg);
+  }
+}
+
+@container report (max-width: 479px) {
+  .pairedComparison { gap: 32px; padding: 24px 20px; }
+  .pairedComparison h3 { font-size: 20px; line-height: 26px; }
+  .pairedMetrics { grid-template-columns: 1fr; gap: 32px; }
+  .comparisonGridFindings { gap: 16px; }
+  .comparisonGrid .pairedFinding strong { font-size: clamp(20px, 7cqi, 32px); line-height: 1.2; }
+  .comparisonGrid .pairedFinding p,
+  .comparisonGrid .pairedLeadIn { font-size: 16px; line-height: 22px; }
+
+  .horizontalChart {
+    padding: 24px 20px;
+  }
+
+  .horizontalChart h3 {
+    font-size: 20px;
+    line-height: 26px;
+  }
+
+  .horizontalChart .rule {
+    margin: 24px 0;
   }
 }

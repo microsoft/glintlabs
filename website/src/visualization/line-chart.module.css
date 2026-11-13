@@ -1,0 +1,78 @@
+.scope {
+  container: trends / inline-size;
+  color-scheme: light;
+  --trend-blue: #3f5cb4;
+  --trend-teal: #3f6564;
+  --trend-lavender: #625583;
+  --trend-text: #242424;
+  --trend-muted: #616161;
+  --trend-rule: #cedeff;
+  --trend-surface: #fff;
+  --trend-title: #5e78eb;
+  color: var(--trend-text);
+  font: 400 14px/22px "Segoe UI", Arial, sans-serif;
+}
+.scope, .scope * { box-sizing: border-box; }
+.chart { margin: 0; padding: 32px; border-radius: 20px; background: var(--trend-surface); border: 1px solid var(--trend-rule); overflow-wrap: anywhere; }
+.header { margin-bottom: 24px; }
+.header h3 { margin: 0; color: var(--trend-title); font: 600 24px/32px "Segoe UI", Arial, sans-serif; }
+.header p { margin: 12px 0 0; white-space: pre-wrap; }
+.scale, .pattern { color: var(--trend-muted); font-size: 12px; line-height: 18px; }
+.scale { margin: 0 0 24px; }
+.series { display: none; gap: 24px; }
+.panel { min-width: 0; }
+.panel, .seriesInk { color: var(--trend-blue); }
+.panel[data-series="1"], .seriesInk[data-series="1"] { color: var(--trend-teal); }
+.panel[data-series="2"], .seriesInk[data-series="2"] { color: var(--trend-lavender); }
+.chart[data-palette="blue"] :is(.panel, .seriesInk) { color: var(--trend-blue); }
+.chart[data-palette="teal"] :is(.panel, .seriesInk) { color: var(--trend-teal); }
+.panel h4 { margin: 0; font-size: 16px; line-height: 24px; font-weight: 600; }
+.pattern { margin: 8px 0 12px; }
+.scroll, .tableScroll { overflow-x: auto; max-width: 100%; }
+.plot { min-width: var(--plot-width); }
+.plot svg { width: 100%; height: auto; display: block; }
+.grid { stroke: var(--trend-rule); stroke-width: 1; }
+.legend { display: flex; flex-wrap: wrap; gap: 24px; list-style: none; margin: 0 0 24px; padding: 0; }
+.legend li { flex: 1 1 160px; min-width: 0; }
+.legend strong, .legend .pattern { display: block; }
+.legend .pattern { margin-bottom: 0; }
+.sharedCanvas { min-width: var(--plot-width); position: relative; }
+.sharedAxis { position: absolute; inset: 0 auto auto 0; width: 40px; height: 360px; color: var(--trend-muted); font-size: 12px; }
+.sharedAxis span { position: absolute; transform: translateY(-50%); }
+.sharedGraph { position: relative; margin-left: 40px; height: 360px; }
+.sharedGraph > svg { position: absolute; inset: 0; display: block; }
+.sharedValue { position: absolute; transform: translateX(-50%); white-space: nowrap; padding: 0 4px; background: var(--trend-surface); border-radius: 3px; font-size: 14px; line-height: 22px; font-variant-numeric: tabular-nums; }
+.sharedPeriods { display: grid; grid-template-columns: repeat(var(--period-count), minmax(0, 1fr)); list-style: none; margin: 0 0 0 40px; padding: 0; }
+.sharedPeriods li { min-width: 0; padding: 0 4px; text-align: center; }
+.screenReaderOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.points { display: grid; grid-template-columns: repeat(var(--period-count), minmax(0, 1fr)); list-style: none; padding: 0; margin: 0; }
+.points li { min-width: 0; padding: 0 4px; text-align: center; }
+.points strong, .points span { display: block; }
+.points strong { font-variant-numeric: tabular-nums; font-size: 16px; line-height: 24px; }
+.points span { color: var(--trend-text); margin-top: 8px; }
+.samples { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr)); gap: 12px; margin: 24px 0 0; }
+.samples dt { font-weight: 600; }
+.samples dd { margin: 8px 0 0; white-space: pre-wrap; }
+.note { margin: 24px 0 0; white-space: pre-wrap; color: var(--trend-muted); }
+.details { margin-top: 24px; }
+.details summary { cursor: pointer; min-height: 44px; padding: 12px 0; font-weight: 600; }
+.scope :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; border-radius: 3px; }
+.tableScroll table { border-collapse: collapse; width: 100%; min-width: 480px; font: inherit; }
+.tableScroll th, .tableScroll td { padding: 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--trend-rule); }
+.tableScroll thead th:first-child { white-space: nowrap; }
+.tableScroll caption { text-align: left; padding-bottom: 12px; }
+@container trends (max-width: 600px) {
+  .chart { padding: 24px; }
+  .shared { display: none; }
+  .series { display: grid; grid-template-columns: 1fr; }
+}
+@media (forced-colors: active) {
+  .panel, .seriesInk, .header h3 { color: CanvasText; }
+  .grid { stroke: CanvasText; }
+}
+@media print {
+  .scroll { overflow: visible; }
+  .plot { min-width: 0; }
+  .details > .tableScroll { display: block; overflow: visible; }
+  .tableScroll table { min-width: 0; }
+}

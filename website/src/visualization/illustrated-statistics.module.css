@@ -1,0 +1,94 @@
+.visual {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 752px;
+  max-width: 100%;
+  margin: 64px 0;
+  padding: 40px;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--report-light-blue, #cedeff);
+  border-radius: var(--borderRadiusXLarge, 20px);
+  color: var(--report-text, #242424);
+  background: url("/figma/illustrated-statistics/card-glow.svg") -700px -700px / 1400px 1400px no-repeat
+    var(--report-canvas, #fff);
+  font-family: var(--site-content-font, "Segoe UI", sans-serif);
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--fontSizeBase600, 24px);
+  font-weight: var(--fontWeightSemibold, 600);
+  font-variation-settings: "opsz" 36;
+  letter-spacing: -0.15px;
+  line-height: var(--lineHeightBase500, 28px);
+}
+
+.columns {
+  display: flex;
+  align-items: stretch;
+  gap: var(--spacingHorizontalXXL, 24px);
+}
+
+.column {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacingVerticalS, 8px);
+  min-width: 0;
+}
+
+.illustration {
+  display: block;
+  flex-shrink: 0;
+  width: 128px;
+  height: 128px;
+  object-fit: contain;
+}
+
+.value {
+  font-size: var(--fontSizeBase500, 20px);
+  font-weight: 625;
+  line-height: 34px;
+}
+
+.description {
+  width: 100%;
+  margin: 0;
+  font-size: var(--fontSizeBase400, 16px);
+  font-weight: 420;
+  line-height: var(--lineHeightBase400, 22px);
+}
+
+.divider {
+  flex: 0 0 1px;
+  background: #eff4ff;
+}
+
+.footnote {
+  display: grid;
+  gap: var(--spacingVerticalS, 8px);
+  font-size: var(--fontSizeBase200, 12px);
+  font-weight: 420;
+  font-style: italic;
+  line-height: 20px;
+}
+
+.footnote p { margin: 0; }
+
+.visual [data-chart-placeholder] {
+  color: var(--report-muted, #616161);
+  font-size: var(--fontSizeBase300, 14px);
+  font-weight: var(--fontWeightRegular, 400);
+}
+
+@container report (max-width: 640px) {
+  .visual { gap: var(--spacingVerticalXXL, 24px); padding: var(--spacingHorizontalXXL, 24px); }
+  .title { font-size: var(--fontSizeBase500, 20px); }
+  .columns { flex-direction: column; }
+  .column { flex-basis: auto; }
+}

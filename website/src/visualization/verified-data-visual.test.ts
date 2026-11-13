@@ -31,6 +31,7 @@ test("offers only visual treatments compatible with approved data shape", () => 
   assert.deepEqual(compatibleVerifiedVisuals(source), [
     "horizontal-bar-chart",
     "percentage-ring-group",
+    "illustrated-statistics",
   ]);
 });
 

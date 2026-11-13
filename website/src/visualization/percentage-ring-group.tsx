@@ -11,23 +11,33 @@ export function PercentageRingGroup({
 }: {
   block: PercentageRingGroupBlock;
 }) {
+  const isStudioChart = block.source.part === "studio";
+  const note = block.presentation?.note;
+  const footnote = isStudioChart
+    ? block.verifiedSource?.synthetic ? "Synthetic example · Not research findings" : undefined
+    : block.footnote;
+  const hasFootnote = Boolean(note || footnote);
+  function displayValue(id: string, value: number) {
+    const raw = block.verifiedSource?.rows.find(row => row.id === id)?.cells[1]?.replace(/%\s*$/, "").trim();
+    return `${raw && Number(raw) === value ? raw : value}%`;
+  }
   return (
     <figure
       className={styles.visual}
       aria-labelledby={`${block.id}-title`}
-      aria-describedby={`${block.id}-footnote`}
+      aria-describedby={hasFootnote ? `${block.id}-footnote` : undefined}
     >
       <h3 className={styles.title} id={`${block.id}-title`}>
-        {block.title}
+        {block.presentation?.title ?? block.title}
       </h3>
-      <div className={styles.metrics}>
+      <div className={styles.metrics} data-metric-count={block.metrics.length}>
         {block.metrics.map((metric, index) => (
           <div className={styles.metricGroup} key={metric.id}>
             {index > 0 ? <span className={styles.divider} aria-hidden="true" /> : null}
             <div className={styles.metric}>
               <div
                 className={styles.ring}
-                aria-label={`${metric.value}%`}
+                aria-label={displayValue(metric.id, metric.value)}
                 role="img"
               >
                 <svg aria-hidden="true" viewBox="0 0 154 154">
@@ -55,16 +65,17 @@ export function PercentageRingGroup({
                     strokeDashoffset={metric.value}
                   />
                 </svg>
-                <strong>{metric.value}%</strong>
+                <strong>{displayValue(metric.id, metric.value)}</strong>
               </div>
               <p>{metric.description}</p>
             </div>
           </div>
         ))}
       </div>
-      <figcaption className={styles.footnote} id={`${block.id}-footnote`}>
-        {block.footnote}
-      </figcaption>
+      {hasFootnote ? <figcaption className={styles.footnote} id={`${block.id}-footnote`}>
+        {note ? <p>{note}</p> : null}
+        {footnote}
+      </figcaption> : null}
     </figure>
   );
 }
