@@ -44,6 +44,20 @@ test("accepts the minimum valid report manifest", () => {
   assert.equal(result.success, true);
 });
 
+test("accepts current Studio line charts and rejects mismatched period matrices", () => {
+  const chart = {
+    id: "synthetic-trend", type: "line-chart",
+    source: { part: "studio", index: 1 },
+    title: "Synthetic trend", subtitle: "", sourceNote: "Synthetic compatibility example.",
+    periods: [{ id: "p1", label: "Period 1" }, { id: "p2", label: "Period 2" }],
+    series: [{ id: "s1", label: "Example series", values: [25, 50] }],
+  };
+  assert.equal(reportManifestSchema.safeParse({ ...minimumManifest, blocks: [chart] }).success, true);
+  assert.equal(reportManifestSchema.safeParse({
+    ...minimumManifest, blocks: [{ ...chart, series: [{ ...chart.series[0], values: [25] }] }],
+  }).success, false);
+});
+
 test("accepts an author name without a handle and retains existing handles", () => {
   for (const author of [{ name: "Test author" }, { name: "Test author", handle: "@retained" }]) {
     const parsed = reportManifestSchema.parse({ ...minimumManifest, metadata: { ...minimumManifest.metadata, author } });
@@ -371,20 +385,19 @@ test("rejects canonical chart percentages outside 0 to 100", () => {
   assert.equal(result.success, false);
 });
 
-test("requires the Figma-defined number of fixed comparison items", () => {
+test("accepts current variable comparison categories without losing legacy four-category support", () => {
   const block = createCanonicalVisualBlock(
     "grouped-column-comparison",
     "invalid-comparison",
     { part: "studio", index: 1 },
   );
 
-  const result = reportManifestSchema.safeParse({
-    ...minimumManifest,
-    blocks: [
-      ...minimumManifest.blocks,
-      { ...block, groups: block.groups.slice(0, 3) },
-    ],
-  });
-
-  assert.equal(result.success, false);
+  for (const groups of [block.groups, block.groups.slice(0, 3)]) {
+    assert.equal(reportManifestSchema.safeParse({
+      ...minimumManifest, blocks: [...minimumManifest.blocks, { ...block, groups }],
+    }).success, true);
+  }
+  assert.equal(reportManifestSchema.safeParse({
+    ...minimumManifest, blocks: [...minimumManifest.blocks, { ...block, groups: [] }],
+  }).success, false);
 });

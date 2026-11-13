@@ -652,8 +652,9 @@ test("References styling stays within its section and preserves citation text an
     readFileSync(new URL("../src/report-system/report-renderer.tsx", import.meta.url), "utf8"),
     ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
   );
-  const jsx = (type, props, key) => ({ type, props, key });
+  const jsx = (type, props, key) => type === "fragment" ? props.children : ({ type, props, key });
   const scope = {
+    Fragment: "fragment",
     exports: {},
     require() { return { jsx, jsxs: jsx }; },
     RichText: "rich-text",
@@ -725,8 +726,9 @@ test("inline citations match actual References entries and preserve all text and
     readFileSync(new URL("../src/report-system/report-renderer.tsx", import.meta.url), "utf8"),
     ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
   );
-  const jsx = (type, props, key) => ({ type, props, key });
+  const jsx = (type, props, key) => type === "fragment" ? props.children : ({ type, props, key });
   const scope = {
+    Fragment: "fragment",
     exports: {}, require() { return { jsx, jsxs: jsx }; },
     styles: { referenceMarker: "reference-marker" },
     isReferencesHeading: componentFunction("isReferencesHeading", {}, renderer),

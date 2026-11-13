@@ -29,6 +29,117 @@ import {
 } from "./publication-preview.ts";
 import { loadReportCatalog, publicationCatalogItem } from "./report-catalog.ts";
 import { copyApprovedReports } from "./pages-export.ts";
+import { publishedReportSummary } from "./studio-report-library.ts";
+import { createStudioChartSource, type ChartTable } from "../visualization/chart-authoring.ts";
+import { createVerifiedDataVisual, type VerifiedDataVisualType } from "../visualization/verified-data-visual.ts";
+import { validateDraftPublicationPackage } from "../project/publication-package.ts";
+
+test("the public receipt and exported reader use the exact approved homepage placement", async () => {
+  const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-receipt-"));
+  const destination = await mkdtemp(path.join(os.tmpdir(), "glint-receipt-reader-"));
+  try {
+    const { preview: staged } = await ingestUnsignedPublicationPreview(await syntheticZip(), { rootDirectory });
+    const request = { reportId, revision: 1, packageFingerprint: staged.packageFingerprint, approveForWebsite: true };
+    await approvePublicationForLocalWebsite(request, { rootDirectory });
+    const homepageFile = path.join(rootDirectory, "content", "reports", reportId, "homepage.json");
+    const version = "6a042d68-89a8-4578-8dc6-7ea0b5befdb4";
+    await writeFile(homepageFile, JSON.stringify({
+      featured: true, featuredUntil: null, version, packageFingerprint: staged.packageFingerprint,
+    }));
+    await copyApprovedReports(rootDirectory, destination, reportId);
+    const report = await loadApprovedPublication(reportId, { rootDirectory: destination });
+    assert.ok(report);
+    const receipt = publishedReportSummary(report);
+    assert.equal(receipt.id, reportId);
+    assert.equal(receipt.packageFingerprint, staged.packageFingerprint);
+    assert.equal(receipt.homepage.version, version);
+    assert.equal(receipt.homepage.featured, true);
+    assert.equal((await loadReportCatalog({ rootDirectory: destination })).find(item => item.id === reportId)?.featured, true);
+    assert.equal("manifest" in receipt, false);
+    assert.equal("source" in receipt, false);
+    await writeFile(homepageFile, JSON.stringify({
+      featured: false, featuredUntil: null, version, packageFingerprint: "a".repeat(64),
+    }));
+    await assert.rejects(copyApprovedReports(rootDirectory, destination, reportId), /does not match the approved report/);
+  } finally {
+    await rm(rootDirectory, { recursive: true, force: true });
+    await rm(destination, { recursive: true, force: true });
+  }
+});
+
+test("current Studio chart packages retain exact data and reader presentation through approved Pages export", async () => {
+  const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-current-reader-"));
+  try {
+    const table: ChartTable = {
+      columns: ["Period", "Example A", "Example B"],
+      rows: [{ id: "p1", cells: ["First", "25.00", "75"] }, { id: "p2", cells: ["Second", "50", "60"] }],
+    };
+    const findings = { columns: ["Finding", "Percentage"], rows: table.rows.map(row => ({
+      id: row.id, cells: row.cells.slice(0, 2),
+    })) };
+    const examples: { type: VerifiedDataVisualType; table: ChartTable; unit?: "number" }[] = [
+      { type: "line-chart", table },
+      { type: "grouped-bar-comparison", table },
+      { type: "comparison-panel-group", table: { ...table, rows: table.rows.map(row => ({
+        ...row, seriesLabels: ["Example A", "Example B"],
+      })) } },
+      { type: "paired-percentage-comparison", table: findings },
+      { type: "percentage-comparison-grid", table: { ...findings, rows: [
+        ...findings.rows, { id: "p3", cells: ["Third", "35"] }, { id: "p4", cells: ["Fourth", "65"] },
+      ] } },
+      { type: "illustrated-statistics", table: findings },
+      { type: "coefficient-heatmap", unit: "number", table: { ...table, rows: [
+        { id: "f1", cells: ["Factor A", "N/A", ".125"] }, { id: "f2", cells: ["Factor B", "0", "-.25"] },
+      ] } },
+      { type: "quadrant-scatter-plot", table: {
+        columns: ["Point ID", "Label", "X value", "Y value", "Description", "Example share"],
+        rows: [{ id: "a", cells: ["a", "Example A", "-1", "2", "Synthetic point A", "25%"] },
+          { id: "b", cells: ["b", "Example B", "3", "0", "Synthetic point B", "75%"] }],
+      } },
+    ];
+    const manifest = syntheticManifest("non-data");
+    for (const example of examples) {
+      const source = await createStudioChartSource({
+        id: example.type, table: example.table, unit: example.unit, visualType: example.type,
+        sourceName: `Synthetic ${example.type}`, synthetic: true,
+      });
+      manifest.blocks.push(createVerifiedDataVisual(source, example.type, "2026-11-13T17:00:00.000Z"));
+    }
+    manifest.blocks.push({
+      id: "research", type: "research-visual", template: "manager-behaviors",
+      title: "Synthetic research matrix", subtitle: "", sourceNote: "Synthetic compatibility example.",
+      columns: ["Category", "Example behaviors"],
+      rows: [{ id: "r1", cells: [["Synthetic category"], ["Synthetic behavior"]] }],
+      source: { part: "studio", index: 10 },
+    });
+    manifest.readerPresentation = {
+      figureDescriptions: {}, orderedListBlockIds: [], referenceBlockIds: [],
+      rowHeaderTableBlockIds: [], showCoverDetails: true,
+    };
+    const bytes = await syntheticZip(manifest);
+    const { preview } = await ingestUnsignedPublicationPreview(bytes, { rootDirectory });
+    await approvePublicationForLocalWebsite({
+      reportId, revision: 1, packageFingerprint: preview.packageFingerprint, approveForWebsite: true,
+    }, { rootDirectory });
+    const exported = path.join(rootDirectory, "reader");
+    await copyApprovedReports(rootDirectory, exported, reportId);
+    const report = await loadApprovedPublication(reportId, { rootDirectory: exported });
+    assert.ok(report);
+    assert.deepEqual(report.manifest.blocks.slice(3), JSON.parse(JSON.stringify(manifest.blocks.slice(3))));
+    assert.deepEqual(report.manifest.readerPresentation, manifest.readerPresentation);
+    const line = report.manifest.blocks.find(block => block.type === "line-chart");
+    assert.ok(line?.type === "line-chart");
+    assert.deepEqual(line.series.map(series => series.values), [[25, 50], [75, 60]]);
+    const zip = await JSZip.loadAsync(bytes);
+    const tampered = structuredClone(manifest);
+    const changed = tampered.blocks.find(block => block.type === "line-chart");
+    assert.ok(changed?.type === "line-chart" && changed.verifiedSource);
+    changed.series[0].values[0] = 26;
+    changed.verifiedSource.rows[0].cells[1] = "26";
+    zip.file("manifest.json", canonicalJson(tampered));
+    await assert.rejects(validateDraftPublicationPackage(await zip.generateAsync({ type: "uint8array" })), /source hash/);
+  } finally { await rm(rootDirectory, { recursive: true, force: true }); }
+});
 
 const imageBytes = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j6fcAAAAASUVORK5CYII=",

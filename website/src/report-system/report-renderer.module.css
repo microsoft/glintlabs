@@ -774,6 +774,19 @@
   background: url("/figma/annual-canonical/interaction-bookmark.svg") center / contain no-repeat;
 }
 
+.textCallout {
+  margin: 0 0 24px;
+  padding-left: 24px;
+  border-left: 4px solid var(--report-blue, #5c8df8);
+  color: var(--report-text);
+  font-family: "Segoe Sans", "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 36px;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
 .paragraph,
 .list {
   width: 100%;

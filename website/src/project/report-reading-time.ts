@@ -9,6 +9,8 @@ function dataText(data: StructuredData): (string | undefined)[] {
 
 function blockText(block: ReportBlock): (string | undefined)[] {
   switch (block.type) {
+    case "research-visual":
+      return [block.title, block.subtitle, ...block.columns, ...block.rows.flatMap(row => row.cells.flat()), block.sourceNote];
     case "heading":
     case "paragraph":
     case "list-item":
@@ -22,8 +24,21 @@ function blockText(block: ReportBlock): (string | undefined)[] {
       return [];
     case "branded-visual":
       return [block.title, ...block.values];
+    case "paired-percentage-comparison":
+    case "percentage-comparison-grid":
+      return [
+        block.presentation?.title ?? block.title, ...(block.presentation?.leadIns ?? []),
+        ...block.metrics.map(metric => metric.description), block.presentation?.note, block.footnote,
+      ];
     case "percentage-ring-group":
       return [block.title, ...block.metrics.map(metric => metric.description), block.footnote];
+    case "illustrated-statistics":
+      return [block.presentation?.title ?? block.title, ...block.metrics.map(metric => metric.description),
+        block.presentation?.valueLabel, block.presentation?.note, block.footnote];
+    case "quadrant-scatter-plot":
+      return [block.presentation?.title ?? block.title, block.presentation?.subtitle,
+        ...block.points.flatMap(point => [point.label, point.description, ...point.breakdown.map(item => item.label)]),
+        block.presentation?.note, block.footnote];
     case "listening-approach-continuum":
       return [block.eyebrow, block.title, block.description, ...block.rows.flatMap(row => [row.label, row.description])];
     case "featured-statistic":
@@ -38,8 +53,18 @@ function blockText(block: ReportBlock): (string | undefined)[] {
       return [block.quote];
     case "horizontal-bar-chart":
       return [block.title, ...block.items.map(item => item.label), block.legend, block.sourceNote];
+    case "line-chart":
+      return [block.presentation?.title ?? block.title, block.presentation?.subtitle ?? block.subtitle,
+        ...block.series.map(series => series.label), ...block.periods.flatMap(period => [period.label, period.supportingText]),
+        block.sourceNote, block.presentation?.note];
     case "grouped-column-comparison":
+    case "grouped-bar-comparison":
       return [block.title, block.subtitle, ...block.series, ...block.groups.map(group => group.label), block.sourceNote];
+    case "comparison-panel-group":
+      return [block.title, block.subtitle, ...block.panels.flatMap(panel => [panel.title, ...panel.series]), block.sourceNote];
+    case "coefficient-heatmap":
+      return [block.presentation?.title ?? block.title, block.presentation?.subtitle, ...block.columns,
+        ...block.rows.map(row => row.label), block.presentation?.legendLabel, block.presentation?.note, block.sourceNote];
     case "before-after-comparison":
       return [block.title, ...block.sections.flatMap(section => [
         section.label, section.beforeTitle, section.beforeDescription, section.afterTitle, section.afterDescription, section.summary,

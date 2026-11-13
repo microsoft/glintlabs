@@ -3528,8 +3528,8 @@
       "source": "scripts/studio-editing.test.mjs",
       "destination": "website/scripts/studio-editing.test.mjs",
       "sourceSha256": "444b0ba27fc04939b715287253a2b59efb6ea09329e21f775f30e31b044cf631",
-      "destinationSha256": "0c00ba30e5cb16efbd0468d83597ce3db3e8a91b06e90b1728fc3321be454cf7",
-      "intentionalDifference": "Extends renderer tests for colon-free brief headings, unchanged source blocks, rich-text overrides, source dividers, histogram Research Drop versus calendar Annual icons, and faithful source tables retaining the first data row and native row-header semantics."
+      "destinationSha256": "0417389939880b04e4a6032044717766efafcdc5e290116dd0240c3b1edcfa42",
+      "intentionalDifference": "Extends renderer tests for colon-free brief headings, unchanged source blocks, rich-text overrides, source dividers, histogram Research Drop versus calendar Annual icons, and faithful source tables retaining the first data row and native row-header semantics. Current Studio rich-text Fragment rendering is transparent in the existing citation semantics test harness."
     },
     {
       "source": "scripts/studio-owner-key.ts",
@@ -4214,8 +4214,8 @@
       "source": "src/integrity/approved-content.ts",
       "destination": "website/src/integrity/approved-content.ts",
       "sourceSha256": "d79c9ff02eb9c4080092e1fea57b5a5834363479a030398c9d37cac141be90cd",
-      "destinationSha256": "d79c9ff02eb9c4080092e1fea57b5a5834363479a030398c9d37cac141be90cd",
-      "intentionalDifference": ""
+      "destinationSha256": "926f8ca29f34db0333922afb9ae80b297dd6f001054d78f77c4284007549fe8d",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/launch-reports/assets.ts",
@@ -4396,15 +4396,15 @@
       "source": "src/manifest/report-manifest.test.ts",
       "destination": "website/src/manifest/report-manifest.test.ts",
       "sourceSha256": "0f824e59dcf170775a59e5fc65fb513b22541a12cf167a5252fded4a3b8bdffb",
-      "destinationSha256": "0f824e59dcf170775a59e5fc65fb513b22541a12cf167a5252fded4a3b8bdffb",
-      "intentionalDifference": ""
+      "destinationSha256": "2c5cf9061412afbee3a944a7c80d42d51355603b722e5b5d16c577d0a0af6542",
+      "intentionalDifference": "Current Studio compatibility regression coverage, including supported chart schema, approved Pages export, literal data/source integrity, public release receipt, and homepage placement."
     },
     {
       "source": "src/manifest/report-manifest.ts",
       "destination": "website/src/manifest/report-manifest.ts",
       "sourceSha256": "b2de33d8ef120eba6b16988efd7b016c1bfac402d8a7918676791e21363c25fd",
-      "destinationSha256": "b2de33d8ef120eba6b16988efd7b016c1bfac402d8a7918676791e21363c25fd",
-      "intentionalDifference": ""
+      "destinationSha256": "49a8464072722aee8aee5d29072ece7fc7a342e316b0907e068cd54138a4c185",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/middleware.ts",
@@ -4473,8 +4473,8 @@
       "source": "src/project/publication-package.ts",
       "destination": "website/src/project/publication-package.ts",
       "sourceSha256": "dd3da9249c4be0def44ec0ef6c8e9b383c5a4f1a8465be31cd3d8e627efdd9e3",
-      "destinationSha256": "dd3da9249c4be0def44ec0ef6c8e9b383c5a4f1a8465be31cd3d8e627efdd9e3",
-      "intentionalDifference": ""
+      "destinationSha256": "694178d9c7607bf88b0a9730c337f6386668d52ca78212a3ccf75032ccbb7445",
+      "intentionalDifference": "Current Studio line-source hash validation, heading-link evidence, Word-projected reading time, and employee-count metadata compatibility; preserves production caller-supplied employee count."
     },
     {
       "source": "src/project/publication-preparation.ts",
@@ -4508,8 +4508,8 @@
       "source": "src/project/report-reading-time.ts",
       "destination": "website/src/project/report-reading-time.ts",
       "sourceSha256": "62c1ab4e14b6e3333dd45a1985cda9d86b98e5b26546a23dcf2ecfc43a8fc963",
-      "destinationSha256": "62c1ab4e14b6e3333dd45a1985cda9d86b98e5b26546a23dcf2ecfc43a8fc963",
-      "intentionalDifference": ""
+      "destinationSha256": "2cf4354fd094594c208f19f1a11e4260ef46317921710ae74e829dac69b2f873",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/project/studio-project.test.ts",
@@ -4536,8 +4536,8 @@
       "source": "src/publishing/approved-publication.ts",
       "destination": "website/src/publishing/approved-publication.ts",
       "sourceSha256": "76f4c49999e89931f3622337f1314d9f11e3c959a96d20d0c9fdc6d45574c7b7",
-      "destinationSha256": "76f4c49999e89931f3622337f1314d9f11e3c959a96d20d0c9fdc6d45574c7b7",
-      "intentionalDifference": ""
+      "destinationSha256": "7f48e42ea13e816d688e2704e22432c1457fedb7582773d2a91880f2ae8db1d9",
+      "intentionalDifference": "Loads optional fingerprint-bound approved homepage placement without changing signed report integrity checks."
     },
     {
       "source": "src/publishing/featured-illustrations.ts",
@@ -4585,8 +4585,8 @@
       "source": "src/publishing/publication-preview.test.ts",
       "destination": "website/src/publishing/publication-preview.test.ts",
       "sourceSha256": "3ae9fc599384ac299041054983d66ea3bec75c61d778e6cc8d079efc79b37f11",
-      "destinationSha256": "23e28401193ebbaf386f044ba10251cfe3b72874a780f99e1a24daca25a75818",
-      "intentionalDifference": "Retains exact-revision approvals, staged-only rejection, declared-asset copying, tamper detection and corrected April feature order; requires all five P1 reports once each in Reports and never Home Featured."
+      "destinationSha256": "33ef2a231b4a38e3469ed79e9a368b5f966199c5a213209138267f7cdca374f5",
+      "intentionalDifference": "Retains exact-revision approvals, staged-only rejection, declared-asset copying, tamper detection and corrected April feature order; requires all five P1 reports once each in Reports and never Home Featured. Current Studio compatibility regression coverage, including supported chart schema, approved Pages export, literal data/source integrity, public release receipt, and homepage placement."
     },
     {
       "source": "src/publishing/publication-preview.ts",
@@ -4634,8 +4634,8 @@
       "source": "src/publishing/report-catalog.ts",
       "destination": "website/src/publishing/report-catalog.ts",
       "sourceSha256": "bc53dfbeed89e2a7c6cb88cad59d1e1b2eaacf2d138a39d8edc876c93674e773",
-      "destinationSha256": "bc53dfbeed89e2a7c6cb88cad59d1e1b2eaacf2d138a39d8edc876c93674e773",
-      "intentionalDifference": ""
+      "destinationSha256": "f8e9b27244324533dbab2e56d92c8fb09049d68bc6dd84a3f64c02ee961e952a",
+      "intentionalDifference": "Applies approved homepage placement while retaining production launch report ordering."
     },
     {
       "source": "src/report-system/README.md",
@@ -4648,15 +4648,15 @@
       "source": "src/report-system/report-renderer.module.css",
       "destination": "website/src/report-system/report-renderer.module.css",
       "sourceSha256": "2f87ac1839f8a7735beb5b2ead6e4fb33edff245d971bdab0ab6d39561c98668",
-      "destinationSha256": "2f87ac1839f8a7735beb5b2ead6e4fb33edff245d971bdab0ab6d39561c98668",
-      "intentionalDifference": ""
+      "destinationSha256": "e0a3ced517e83b6f94e05d9892fce11547b2342fdeb52f51a06a249c44192094",
+      "intentionalDifference": "Adds exact current Studio text-callout styling while retaining production reader spacing and mobile metadata."
     },
     {
       "source": "src/report-system/report-renderer.tsx",
       "destination": "website/src/report-system/report-renderer.tsx",
       "sourceSha256": "862d43be55da72ef46d10dad23395372be76513cefac999a68410138eb5fabf8",
-      "destinationSha256": "6865f50623d9982126769c50c45dd08c3b4ab879a6d6e5e5cc11e78348c2b70a",
-      "intentionalDifference": "Adds optional source-derived ordered-list groups using existing list styling, a shared colon-free display label for brief headings and side navigation, and semantic source divider markers using existing section rules without duplicating a following heading border. Imported text, section anchors, other punctuation and styles remain unchanged."
+      "destinationSha256": "03689f973627107e92d08c6e4f5b19af1eb865d083409eaa1940f6a9d105ae68",
+      "intentionalDifference": "Adds optional source-derived ordered-list groups using existing list styling, a shared colon-free display label for brief headings and side navigation, and semantic source divider markers using existing section rules without duplicating a following heading border. Imported text, section anchors, other punctuation and styles remain unchanged. Selectively integrates current Studio public formats, rich marks, callouts, Word styles, reader presentation, table headers, and explicit heroes while preserving production layout/date/mobile metadata/footer/editing behavior."
     },
     {
       "source": "src/report-system/report-side-nav.module.css",
@@ -4704,22 +4704,22 @@
       "source": "src/visualization/canonical-report-blocks.ts",
       "destination": "website/src/visualization/canonical-report-blocks.ts",
       "sourceSha256": "b63c6ce883fbce37618feca478a63fe8ceef80a75e4c50f3de65752a391c2a47",
-      "destinationSha256": "b63c6ce883fbce37618feca478a63fe8ceef80a75e4c50f3de65752a391c2a47",
-      "intentionalDifference": ""
+      "destinationSha256": "14250333146291d5cb8fad496a3d03914ebc8dfc899b84f5fc00134b6ede1cd8",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/visualization/canonical-report-components.module.css",
       "destination": "website/src/visualization/canonical-report-components.module.css",
       "sourceSha256": "10466dee345bd4ffe34a768c354032cb9be395d6b8deb3a89beddebac69d7c10",
-      "destinationSha256": "10466dee345bd4ffe34a768c354032cb9be395d6b8deb3a89beddebac69d7c10",
-      "intentionalDifference": ""
+      "destinationSha256": "285652c7f5d506dd0f9967129b44602def510422f94386222b3c8d58d8fa481e",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/visualization/canonical-report-components.tsx",
       "destination": "website/src/visualization/canonical-report-components.tsx",
       "sourceSha256": "a24316f406d6688c53d5890c48751fef8fe785d97f74ed10cac4cd994a71b581",
-      "destinationSha256": "a24316f406d6688c53d5890c48751fef8fe785d97f74ed10cac4cd994a71b581",
-      "intentionalDifference": ""
+      "destinationSha256": "c311351763dc8efc3c6503f04a58fb67e40cc9be3687e9d75f9ee9983643cfdb",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/visualization/data-visual-preview.ts",
@@ -4753,29 +4753,29 @@
       "source": "src/visualization/percentage-ring-group.module.css",
       "destination": "website/src/visualization/percentage-ring-group.module.css",
       "sourceSha256": "5dfb4b99caa9c08bd1b123a0c86d57c0725cda9c510b77a765319bc22c1341ad",
-      "destinationSha256": "5dfb4b99caa9c08bd1b123a0c86d57c0725cda9c510b77a765319bc22c1341ad",
-      "intentionalDifference": ""
+      "destinationSha256": "4586492927da2ac0432855f86119ad03f1517bc5b8890fa072bb58d43cafe13a",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/visualization/percentage-ring-group.tsx",
       "destination": "website/src/visualization/percentage-ring-group.tsx",
       "sourceSha256": "2f87e0f351ead7d3ba7ee5fa0bffb785d3272d0f9e83a6151576b661aa5bfff9",
-      "destinationSha256": "2f87e0f351ead7d3ba7ee5fa0bffb785d3272d0f9e83a6151576b661aa5bfff9",
-      "intentionalDifference": ""
+      "destinationSha256": "fdadf089e0385905f87833b8991769de5a2539d3aaf36f78a3fc9ccad706e172",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/visualization/verified-data-visual.test.ts",
       "destination": "website/src/visualization/verified-data-visual.test.ts",
       "sourceSha256": "56c1e16d7679a1ebaa17621ebecc182a75e3c2ddc220ae7fdf00aabb4c372296",
-      "destinationSha256": "56c1e16d7679a1ebaa17621ebecc182a75e3c2ddc220ae7fdf00aabb4c372296",
-      "intentionalDifference": ""
+      "destinationSha256": "ab9c8685486b04deb2de3025e6490fadcc8bda345f7fc3b28db87548797a17fc",
+      "intentionalDifference": "Current Studio compatibility regression coverage, including supported chart schema, approved Pages export, literal data/source integrity, public release receipt, and homepage placement."
     },
     {
       "source": "src/visualization/verified-data-visual.ts",
       "destination": "website/src/visualization/verified-data-visual.ts",
       "sourceSha256": "22978a99a85852f306a6122553818c6f1927a51f461f72d9c9bfbb8c0b3fb390",
-      "destinationSha256": "22978a99a85852f306a6122553818c6f1927a51f461f72d9c9bfbb8c0b3fb390",
-      "intentionalDifference": ""
+      "destinationSha256": "980d15438d98ba7efce837cf0a5e5b47c7c6eefd266ac7b757e4b273d791381b",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "tsconfig.json",

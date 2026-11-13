@@ -8,6 +8,7 @@ import { getLaunchReports } from "../src/launch-reports/reports.ts";
 import { launchReportAsset } from "../src/launch-reports/assets.ts";
 import { copyApprovedReports } from "../src/publishing/pages-export.ts";
 import { listApprovedPublications } from "../src/publishing/approved-publication.ts";
+import { publishedReportSummary } from "../src/publishing/studio-report-library.ts";
 import { publicPath } from "../src/telemetry/contract.ts";
 import { verifyPages } from "./verify-pages.mjs";
 
@@ -126,8 +127,6 @@ export async function buildPages() {
     if (process.env.GLINTLABS_PAGES_TELEMETRY === "true" || process.env.GLINTLABS_PAGES_CLARITY === "true") {
       const reports = [
         ...getLaunchReports({ includePrivatePreview: false }).map(report => report.slug),
-        ...(await listApprovedPublications({ rootDirectory: path.join(root, "pages-publications") }))
-          .map(report => report.publication.slug),
       ];
       for (const slug of reports) {
         assert(publicPath(`/reports/${slug}`),
@@ -196,6 +195,9 @@ export function pagesSitePath(value: string) {
       revision: process.env.GITHUB_SHA ?? null,
       sourceRevision: "7991c205b54b9efabffa1fdceb8208099ccf8848",
       delivery: "static-reader",
+      reports: (await listApprovedPublications({
+        rootDirectory: path.join(root, "pages-publications"),
+      })).map(publishedReportSummary),
     }, null, 2));
     await verifyPages();
     console.log(`Public reader exported to ${output}; Studio and APIs remain local.`);
