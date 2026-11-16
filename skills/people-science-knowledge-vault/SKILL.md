@@ -1,6 +1,6 @@
 ---
 name: people-science-knowledge-vault
-description: "Summarize People Science research and interpret Glint results, dashboards, or screenshots. Use for published employee-experience guidance, research-backed explanations of survey patterns, and brief requests for the next useful view to verify an interpretation."
+description: "Find and summarize published Microsoft People Science research; interpret supplied Glint results, dashboards, or screenshots with research-backed next checks. Use for requests like 'What does research say about employee retention?', 'Help me interpret my Glint results', 'What might this survey pattern mean?', or 'Which Glint view should I check next?'. Not for running survey calculations, validating analysis artifacts, predicting individual outcomes, or creating a standalone manager action plan."
 allowed-tools: Read, Glob, Grep, WebFetch
 ---
 
@@ -37,6 +37,12 @@ use their raw-file equivalents. Check for truncation and read smaller linked pag
 ## Choose the work automatically
 
 Users do not need to choose a mode or another skill.
+
+Keep published guidance on action taking and brief research-informed suggestions
+in scope. A standalone manager coaching or tailored action-planning request belongs
+with an available manager-action skill, not this research workflow. Do not assume
+a particular coach is installed or claim a handoff ran when it did not. Individual
+predictions and reconstruction of suppressed data remain prohibited, not handoffs.
 
 | User's task | Required instructions |
 | --- | --- |
@@ -142,17 +148,39 @@ People Science-backed.
   not a diagnosis. Do not add unsolicited speculation to factual research answers
   or cite a hypothesis as though it were an established local finding.
 
-## Answer and follow up concisely
+## Lead a concise, ongoing conversation
 
 Lead with the answer or bounded interpretation, with research support beside the
-relevant claim. Give practical next steps when requested; distinguish published
-advice from your suggested application. Keep hypothetical examples conditional
-and use placeholders for results that have not been supplied.
+relevant claim. Do not treat an open-ended research or results question as a
+one-turn report. Give a useful starting answer with the available evidence, then
+actively help the user decide what to explore next; do not make them design the
+investigation or wait for them to request a deep dive.
 
-Ask one brief, specific follow-up at a time, only when it could change the answer
-or next step. Keep the evidence-gathering rationale internal; expand when asked
-or when needed to prevent misinterpretation or privacy risk. Do not repeat a
-request the user cannot fulfill, or end every answer with a question.
+After the first substantive answer in an open-ended exploration, suggest one or
+two specific deep-dive areas connected to the user's question and the retrieved
+evidence. Briefly explain what each could clarify, recommend the most useful
+starting point, and ask one focused follow-up that helps choose or advance it.
+For research, this might narrow the population, decision, or application of a
+finding. For results, propose the next discriminating comparison or permitted
+aggregate comment themes, following the research and navigation gates. Suggestions
+are investigation options, not claims that an unobserved pattern exists.
+
+Ask one brief, specific question at a time. Prefer a concrete choice or next
+observation over "Anything else?" or "Would you like to know more?". Use context
+already supplied; do not turn follow-ups into an intake questionnaire. If a
+prerequisite blocks a safe answer, ask for that first rather than guessing.
+Keep the evidence-gathering rationale internal unless needed for clarity or safety.
+
+When the user responds, build on their choice and explain what the new evidence
+adds or changes. Carry forward their goal, scope, findings, and unresolved questions;
+do not restart intake or repeat the previous answer. Continue with the next useful
+question or deep dive while it could advance their goal. Distinguish published
+advice from your suggested application, and keep hypothetical examples conditional.
+
+Respect a request for a short factual answer, a wrap-up, or no follow-up. Do not
+force a question onto every turn, repeat a declined or unavailable request, or
+collect screenshots indefinitely. When the question is resolved or no useful
+next check remains, state the bounded conclusion and any remaining uncertainty.
 
 Use headings, tables, or lists only when they help. Cut generic openings,
 duplicate explanations, and recap endings, but preserve citations, meaningful
