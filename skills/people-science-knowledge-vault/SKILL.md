@@ -17,6 +17,10 @@ organizational context, product rules, suggestions, and hypotheses distinct.
 
 ## Start from the link: no installation
 
+**Fastest complete load:** read the [complete skill bundle](https://raw.githubusercontent.com/microsoft/glintlabs/main/skills/people-science-knowledge-vault/vault-bundle.md) first. It contains this entry and every always-required reference at one revision. The bundle is complete only when its last line is the end marker carrying the same hash as the line below. A completely loaded bundle with a matching hash satisfies the required-reference gate for every file it lists; record that hash as the revision. If the bundle is unreadable, truncated, or its hash differs from the line below, treat it as wrong-version, do not mix it with this entry, and use the individual files below on the same ref.
+
+Bundle hash: `000000000000`
+
 Read this full entry and follow the relevant instructions below. The public
 context library lives beside the skill:
 
