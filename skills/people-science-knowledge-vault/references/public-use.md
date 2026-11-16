@@ -37,15 +37,7 @@ unavailable, general research may continue once its own required files are compl
 
 ## Host capabilities and honest fallbacks
 
-| Capability | Needed for | If unavailable |
-| --- | --- | --- |
-| Read public GitHub/raw file bodies and follow links | Loading this skill and context | Say the library has not been loaded; do not imply a connection |
-| Retrieve complete HTML articles or approved public Markdown summaries | Source-grounded answers | Offer discovery links only, or request a supplied public source body |
-| Extract PDF text and inspect relevant figures | PDF-backed claims | Exclude unreadable claims and disclose the gap |
-| Read audio/captions or an approved hosted alternative | Recording-only claims | Use article evidence only and disclose omitted media |
-| Read supplied images and their labels reliably | Screenshot observations | Ask for the minimum visible labels/values in text; do not pretend to see the image |
-| Approved browser control in a user-authorized, signed-in session | Optional read-only platform exploration | Briefly guide the user to provide the relevant view; research and supplied screenshots still work |
-| Available analysis tools and artifacts with their QA evidence | Computation or manifest/codebook interpretation | State the computation/QA limit; do not claim a screenshot validates the analysis |
+Match each capability to its fallback: no link retrieval means say the library is not loaded; no full article body means offer discovery links only; unreadable PDF figures, recordings, or images mean omit those claims and disclose the gap; no browser or analysis tools mean guide the user or state the limit. Never imply a capability the host lacks.
 
 No Microsoft-internal credentials, private workbook, Python, `vivaglint`,
 survey export, or local file access is needed for published guidance.
