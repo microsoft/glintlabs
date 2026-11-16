@@ -42,7 +42,7 @@ test("catalog tags never invent a date while publication details are incomplete 
 });
 
 test("the Studio card preview uses the same dated tag as the catalog", async () => {
-  const dialog = await readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8");
+  const dialog = await readFile(new URL("../app/studio/_components/publication-card-editor.tsx", import.meta.url), "utf8");
   assert.match(dialog, /badge: publicationCardBadge\(metadata\.displayDate, metadata\.eyebrow\)/);
 });
 
@@ -146,15 +146,13 @@ test("summary suggestions preserve numeric claims, quoted punctuation, and safe 
   assert.equal(suggestedPublicationSummary(summaryReport([{ type: "paragraph", text: exact.replace(/\.$/, "x.") }])), undefined);
 });
 
-test("summary suggestions require explicit use and keep the existing metadata change safeguards", async () => {
-  const dialog = await readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8");
-  assert.match(dialog, /summary: "", eyebrow,/, "new publication summaries stay empty until chosen");
-  assert.match(dialog, /onClick=\{\(\) => setSummarySuggestion\(suggestedPublicationSummary\(project\.manifest\) \?\? null\)\}/);
-  assert.match(dialog, /Excerpt from your report\. Review and edit before publishing\./);
-  assert.match(dialog, /changeMetadata\(\{ \.\.\.metadata, summary: summarySuggestion \}\)/);
-  assert.match(dialog, /metadata\.summary\.trim\(\) \? "Replace summary" : "Use summary"/);
-  assert.match(dialog, /aria-label="Summary suggestion" aria-describedby="publication-summary-suggestion-text"/);
-  assert.match(dialog, /We couldn&apos;t find a suitable excerpt/);
+test("report text insertion requires explicit use and keeps the existing metadata change safeguards", async () => {
+  const [editor, defaults] = await Promise.all([
+    readFile(new URL("../app/studio/_components/publication-card-editor.tsx", import.meta.url), "utf8"),
+    readFile(new URL("./publication-flow.ts", import.meta.url), "utf8"),
+  ]);
+  assert.match(defaults, /summary: "", eyebrow,/, "new publication summaries stay empty until chosen");
+  assert.match(editor, /onChange\(\{ \.\.\.metadata, summary: reportSummary \}\)/);
 });
 
 test("employee count is optional and accepts only positive safe whole numbers", () => {
@@ -177,11 +175,13 @@ test("employee count is optional and accepts only positive safe whole numbers", 
   }
 });
 
-test("publishing exposes an optional employee count linked to its hint, errors and card preview", async () => {
-  const dialog = await readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8");
-  assert.match(dialog, /name="publication-employee-count" label="Employee count"[^>]*required=\{false\}/);
-  assert.match(dialog, /inputProps\("employeeCount", "publication-employee-count", true, false\)/);
-  assert.match(dialog, /inputMode="numeric" pattern="\[0-9\]\*"/);
+test("publishing inherits employee count from Word without a manual field and retains the card preview", async () => {
+  const [dialog, defaults] = await Promise.all([
+    readFile(new URL("../app/studio/_components/publication-card-editor.tsx", import.meta.url), "utf8"),
+    readFile(new URL("./publication-flow.ts", import.meta.url), "utf8"),
+  ]);
+  assert.doesNotMatch(dialog, /publication-employee-count|employeeCountInput|changeEmployeeCount/);
+  assert.match(defaults, /const employeeCount = project\.manifest\.metadata\.employeeCount/);
   assert.match(dialog, /employeeCount: metadata\.employeeCount/);
 });
 
@@ -202,64 +202,65 @@ test("suggests an address without silently changing the chosen address", () => {
 });
 
 test("publishing omits unused Topics and ZIP options and keeps the compact catalog image picker", async () => {
-  const [dialog, styles] = await Promise.all([
-    readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8"),
+  const [dialog, styles, modal] = await Promise.all([
+    readFile(new URL("../app/studio/_components/publication-card-editor.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/studio/_components/publication-package-dialog.module.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8"),
   ]);
   assert.doesNotMatch(dialog, /publication-topics|topicsText|setTopicsText/);
   assert.doesNotMatch(dialog, /Other publishing options|Download publication ZIP|downloadPackage|"downloading"/);
   assert.doesNotMatch(dialog, /Catalog card preview/);
   assert.match(dialog, /<aside[^>]+aria-label="Draft catalog card">/);
-  assert.match(styles, /\.thumbnailChoices \{[^}]*minmax\(104px, 1fr\)[^}]*max-height: 240px;[^}]*overflow: auto;/);
-  assert.match(styles, /\.thumbnailChoice img \{[^}]*width: 72px; height: 72px; object-fit: contain;/);
-  assert.match(styles, /\.header \{[^}]*padding: 12px 24px;/);
-  assert.match(styles, /\.closeButton \{[^}]*width: 44px; height: 44px;[^}]*font-size: 20px;/);
-  const detailsStyles = styles.match(/\.detailsSection \{([^}]*)\}/)?.[1];
-  assert.ok(detailsStyles);
-  assert.doesNotMatch(detailsStyles, /border/);
+  assert.match(styles, /\.cardEditor \.thumbnailChoices \{[^}]*repeat\(4, minmax\(0, 1fr\)\)[^}]*max-height: none;/);
+  assert.match(styles, /\.thumbnailChoice img \{[^}]*width: min\(72px, 100%\);[^}]*object-fit: contain;/);
+  assert.match(styles, /\.header \{[^}]*padding: var\(--spacingVerticalXXXL, 32px\) var\(--spacingHorizontalXXXL, 32px\) 0;/);
+  assert.match(styles, /\.closeButton \{[^}]*width: 44px; height: 44px;/);
+  assert.match(modal, /<Dismiss20Regular aria-hidden="true" \/>/);
   assert.doesNotMatch(dialog, /publication-thumbnail-alt|label="Image description"/);
   assert.match(dialog, /alt: illustration\.description/);
 });
 
-test("publishing keeps all detail inputs visible without a redundant heading or summary", async () => {
-  const dialog = await readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8");
-  assert.doesNotMatch(dialog, /<details\b|<summary\b|HTMLDetailsElement|Author, date, and report details|Address and homepage options/);
-  const section = dialog.match(/<section[^>]+aria-label="Details">([\s\S]*?)<\/section>/)?.[1];
-  assert.ok(section);
-  assert.doesNotMatch(dialog, /publication-details-heading/);
-  assert.doesNotMatch(section, /<h[1-6]\b|<p\b|min read|Add the report's author and publication details/);
+test("card details use a flat form with a visible address and compact homepage controls", async () => {
+  const dialog = await readFile(new URL("../app/studio/_components/publication-card-editor.tsx", import.meta.url), "utf8");
+  assert.match(dialog, /aria-labelledby="publication-details-tab" hidden=\{tab !== "details"\}/);
+  assert.match(dialog, /aria-label="Card content"/);
+  assert.doesNotMatch(dialog, />Reports page<\/h2>|>Homepage<\/h2>|<details|<summary>|addressExpanded/);
+  assert.match(dialog, /className=\{styles\.cardFeatureRow\}/);
+  assert.match(dialog, /<DetailField name="publication-slug" label="Report address"/);
   assert.doesNotMatch(dialog, /Use the report's approved label or series/);
   assert.doesNotMatch(dialog, /publication-eyebrow|label="Report series"|Add a report series/);
   for (const name of ["date", "slug", "featured"]) {
-    assert.ok(section.includes(`name="publication-${name}"`), name);
+    assert.ok(dialog.includes(`name="publication-${name}"`), name);
   }
-  assert.match(section, /inputProps\("catalog\.featuredUntil", "publication-featured-until", false, false\)/);
+  assert.match(dialog, /inputProps\("catalog\.featuredUntil", "publication-featured-until"\)\} required=\{false\}/);
 });
 
-test("publishing pairs a compact employee count with the display date after the summary", async () => {
-  const [dialog, styles] = await Promise.all([
-    readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/studio/_components/publication-package-dialog.module.css", import.meta.url), "utf8"),
-  ]);
-  const fields = ['aria-label="Catalog image"', ...["title", "summary", "date", "employee-count", "slug"].map(name => `name="publication-${name}"`)];
+test("card dates remain separate from homepage featuring without an employee count input", async () => {
+  const dialog = await readFile(new URL("../app/studio/_components/publication-card-editor.tsx", import.meta.url), "utf8");
+  const fields = ['aria-label="Catalog image"', ...["title", "summary", "date", "featured", "slug"].map(name => `name="publication-${name}"`)];
   let previous = -1;
   for (const field of fields) {
     const position = dialog.indexOf(field);
     assert.ok(position > previous, field);
     previous = position;
   }
-  assert.match(dialog, /className=\{`\$\{styles\.cardBadgeFields\} \$\{styles\.wide\}`\}/);
-  assert.match(styles, /\.cardBadgeFields \{[^}]*grid-template-columns: minmax\(0, 1fr\) minmax\(0, 160px\);[^}]*gap: 16px;/);
-  assert.match(styles, /\.cardBadgeFields > :last-child \{ max-width: 160px; \}/);
-  assert.match(styles, /@media \(max-width: 600px\) \{[\s\S]*?\.cardBadgeFields \{ grid-template-columns: minmax\(0, 1fr\); \}/);
+  const reports = dialog.match(/<DetailField name="publication-date" label="Card date"[^>]*>([\s\S]*?)<\/DetailField>/)?.[1];
+  assert.ok(reports);
+  assert.match(reports, /Shown in the card&apos;s date badge/);
+  assert.doesNotMatch(reports ?? "", /publication-featured/);
+  assert.doesNotMatch(dialog, /publication-employee-count/);
 });
 
 test("publishing inherits the report author and omits manual author and reading-time controls", async () => {
-  const dialog = await readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8");
+  const [dialog, defaults] = await Promise.all([
+    readFile(new URL("../app/studio/_components/publication-card-editor.tsx", import.meta.url), "utf8"),
+    readFile(new URL("./publication-flow.ts", import.meta.url), "utf8"),
+  ]);
   assert.doesNotMatch(dialog, /publication-author|publication-handle|publication-reading-time|label="Author name"|label="Author handle"|label="Reading time \(minutes\)"/);
-  assert.match(dialog, /author: reportAuthor\(manifest\)/);
-  assert.match(dialog, /const readTimeMinutes = estimateReportReadingTime\(project\.manifest\)/);
-  assert.match(dialog, /const metadata = \{ \.\.\.project\.publicationPreparation\.metadata, readTimeMinutes, eyebrow \}/);
+  assert.match(defaults, /author: reportAuthor\(manifest\)/);
+  assert.match(defaults, /const manifest = wordStyleView\(project\.manifest\)/);
+  assert.match(defaults, /const readTimeMinutes = estimateReportReadingTime\(manifest\)/);
+  assert.match(defaults, /const metadata = \{ \.\.\.saved, readTimeMinutes, employeeCount, eyebrow,/);
   const metadata = {
     slug: "automatic-details", title: "Report", summary: "A short summary.", eyebrow: "Research Drop",
     displayDate: "2026-10-23", author: { name: "Test author" }, readTimeMinutes: 1, topics: [],
@@ -272,64 +273,56 @@ test("publishing inherits the report author and omits manual author and reading-
 
 test("homepage featuring is an optional checkbox and publishing fields use consistent spacing", async () => {
   const [dialog, styles] = await Promise.all([
-    readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/studio/_components/publication-card-editor.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/studio/_components/publication-package-dialog.module.css", import.meta.url), "utf8"),
   ]);
   assert.doesNotMatch(dialog, /<select id="publication-featured"|Homepage placement/);
   assert.match(dialog, /name="publication-featured" type="checkbox" checked=\{metadata\.catalog\.featured\}/);
-  assert.match(dialog, /<span>Feature on the homepage<\/span>/);
+  assert.match(dialog, /<span>Feature on homepage<\/span>/);
   assert.match(dialog, /featured: event\.target\.checked, featuredUntil: event\.target\.checked \? metadata\.catalog\.featuredUntil : null/);
-  const placement = dialog.match(/<div className=\{`\$\{styles\.homepagePlacement\} \$\{styles\.wide\}`\}>([\s\S]*?)<\/div>/)?.[1];
+  const placement = dialog.match(/<div className=\{styles\.cardFeatureRow\}>([\s\S]*?)<\/div>/)?.[1];
   assert.ok(placement);
-  assert.ok(placement.indexOf('htmlFor="publication-featured"') < placement.indexOf('htmlFor="publication-featured-until"'));
+  assert.ok(placement.includes('htmlFor="publication-featured"') && placement.includes('htmlFor="publication-featured-until"'));
   assert.doesNotMatch(placement, /metadata\.catalog\.featured \?/);
-  assert.match(placement, /className=\{`\$\{styles\.field\} \$\{styles\.featureUntil\}`\}/);
-  assert.match(placement, /<label htmlFor="publication-featured-until"><span className=\{styles\.srOnly\}>Feature <\/span>Until<\/label>/);
-  assert.match(placement, /inputProps\("catalog\.featuredUntil", "publication-featured-until", false, false\)\} disabled=\{!metadata\.catalog\.featured\}/);
+  assert.match(placement, /<label htmlFor="publication-featured-until">Until \(optional\)<\/label>/);
+  assert.match(placement, /inputProps\("catalog\.featuredUntil", "publication-featured-until"\)\} required=\{false\} disabled=\{!metadata\.catalog\.featured\}/);
   assert.match(placement, /id="publication-featured-until-error"/);
-  assert.match(styles, /\.homepagePlacement \{[^}]*grid-template-columns: minmax\(0, 1fr\) minmax\(0, 216px\);[^}]*align-items: center;[^}]*gap: 16px;/);
-  assert.match(styles, /\.featureUntil \{[^}]*grid-template-columns: auto minmax\(0, 1fr\);[^}]*align-items: center;/);
-  assert.match(styles, /\.featureUntil > \.fieldError \{ grid-column: 1 \/ -1; \}/);
-  assert.match(styles, /@media \(max-width: 600px\) \{[\s\S]*?\.homepagePlacement \{ grid-template-columns: minmax\(0, 1fr\); \}/);
-  assert.match(styles, /\.fields \{[^}]*gap: 16px;/);
-  assert.match(styles, /\.metaGrid \{[^}]*gap: 16px;/);
+  assert.match(styles, /\.fields \{[^}]*gap: 24px;/);
+  assert.match(styles, /\.cardFeatureRow \{[^}]*gap: var\(--spacingHorizontalXXL, 24px\);/);
   assert.match(styles, /\.field \{[^}]*gap: 8px;/);
-  assert.match(styles, /\.detailsSection \{[^}]*padding: 0;/);
+  assert.match(styles, /\.fields \{[^}]*padding: 0;[^}]*border: 0;/);
   assert.match(styles, /\.catalogCardPreview \{ margin: 0; \}/);
 });
 
-test("publishing separates draft saving from preview and publish actions without changing close protection", async () => {
-  const [dialog, styles] = await Promise.all([
-    readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/studio/_components/publication-package-dialog.module.css", import.meta.url), "utf8"),
-  ]);
+test("publication confirmation keeps the code associated with its form and prevents closing during publishing", async () => {
+  const dialog = await readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8");
   const footer = dialog.match(/<footer className=\{styles\.footer\}>([\s\S]*?)<\/footer>/)?.[1];
   assert.ok(footer);
-  const [draftActions, publishActions] = footer.split('<div className={styles.footerActions}>');
-  assert.match(draftActions, /className=\{styles\.draftActions\}/);
-  assert.match(draftActions, /!websiteUpdate \? <button[^\n]*disabled=\{busy\}[^\n]*savePreparation\(\)[^\n]*>Save draft<\/button>/);
-  assert.match(draftActions, /className=\{styles\.footerStatus\} role="status"/);
+  const [status, publishActions] = footer.split('<div className={styles.footerActions}>');
+  assert.match(status, /className=\{styles\.footerStatus\} role="status"/);
   assert.doesNotMatch(dialog, /"Unsaved changes"/);
-  assert.match(dialog, /unsaved \? ""/);
-  assert.match(dialog, /operation === "saving" \? "Saving your draft\.\.\."/);
+  assert.doesNotMatch(dialog, /Not published to the test site/);
   assert.doesNotMatch(publishActions, /Save draft/);
-  assert.doesNotMatch(footer, />Cancel<\/button>|"Cancel"/);
+  assert.doesNotMatch(footer, /Save draft/);
+  assert.match(publishActions, /!websiteUpdate \? <button className=\{studioStyles\.secondaryAction\} disabled=\{busy\} onClick=\{requestClose\} type="button">Cancel<\/button>/);
+  assert.doesNotMatch(footer, /Lock publishing/);
   assert.match(publishActions, /websiteUpdate \? <button[^>]*onClick=\{requestClose\}[^>]*>Done<\/button>/);
-  assert.match(publishActions, /Preview report/);
-  assert.match(publishActions, /Publish report/);
-  assert.match(draftActions, /className=\{studioStyles\.secondaryAction\}/);
-  assert.match(publishActions, /ref=\{previewButtonRef\} className=\{studioStyles\.secondaryAction\}/);
-  assert.match(publishActions, /ref=\{previewLinkRef\} className=\{studioStyles\.secondaryAction\}/);
-  assert.match(publishActions, /ref=\{publishButtonRef\} className=\{studioStyles\.primaryAction\}/);
+  assert.doesNotMatch(dialog, /Preview report|previewButtonRef|previewLinkRef|OwnerAccessPanel|unlockRequested/);
+  assert.match(dialog, /<label htmlFor="studio-owner-key">Publishing code<\/label>/);
+  assert.match(dialog, /type="password" form="studio-publish-confirmation"/);
+  assert.match(publishActions, /needsOwnerKey && !ownerKey\.trim\(\)/);
+  assert.match(publishActions, /<form id="studio-publish-confirmation" className=\{styles\.publishForm\} noValidate onSubmit=/);
+  assert.match(publishActions, /"Publishing\.\.\." : "Publish"/);
+  assert.match(publishActions, /<button className=\{studioStyles\.primaryAction\}/);
   assert.doesNotMatch(publishActions, /className=\{styles\.(?:primaryButton|secondaryButton|textButton)\}/);
   assert.match(dialog, /aria-label="Close publishing" disabled=\{busy\} onClick=\{requestClose\}/);
-  assert.match(dialog, /unsaved && !window\.confirm\("Close without saving these changes\?/);
-  assert.match(styles, /\.draftActions \{[^}]*display: flex;[^}]*gap: 12px;/);
+  assert.match(dialog, /if \(busy \|\| preparingRef\.current\) return;/);
+  assert.doesNotMatch(dialog, /PublicationCardPreview|Review publication|<dl/);
 });
 
-test("short summary uses two lines and enforces the 220-character publishing limit", async () => {
-  const dialog = await readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8");
-  assert.match(dialog, /inputProps\("summary", "publication-summary"\)\} rows=\{2\} maxLength=\{PUBLICATION_SUMMARY_MAX_LENGTH\}/);
+test("short summary uses four lines and enforces the 220-character publishing limit", async () => {
+  const dialog = await readFile(new URL("../app/studio/_components/publication-card-editor.tsx", import.meta.url), "utf8");
+  assert.match(dialog, /inputProps\("summary", "publication-summary"\)\} rows=\{4\} maxLength=\{PUBLICATION_SUMMARY_MAX_LENGTH\}/);
   assert.equal(PUBLICATION_SUMMARY_MAX_LENGTH, 220);
   const metadata = {
     slug: "summary-limit", title: "Report", summary: "", eyebrow: "Research",
@@ -382,10 +375,13 @@ test("offers only the unique new Blue Figma illustrations with complete native-s
 });
 
 test("illustration descriptions are automatic while existing authored descriptions are retained", async () => {
-  const dialog = await readFile(new URL("../app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8");
+  const [dialog, defaults] = await Promise.all([
+    readFile(new URL("../app/studio/_components/publication-card-editor.tsx", import.meta.url), "utf8"),
+    readFile(new URL("./publication-flow.ts", import.meta.url), "utf8"),
+  ]);
   assert.doesNotMatch(dialog, /publication-thumbnail-alt|label="Image description"/);
-  assert.match(dialog, /illustration && needsImageDescription\(metadata\.thumbnail\.alt\)/);
-  assert.match(dialog, /\? \{ \.\.\.metadata, thumbnail: \{ \.\.\.metadata\.thumbnail, alt: illustration\.description \} \}\s*: metadata/);
+  assert.match(defaults, /illustration && needsImageDescription\(metadata\.thumbnail\.alt\)/);
+  assert.match(defaults, /\? \{ \.\.\.metadata, thumbnail: \{ \.\.\.metadata\.thumbnail, alt: illustration\.description \} \}\s*: metadata/);
   assert.match(dialog, /source: illustration\.src, alt: illustration\.description, presentation: "illustration"/);
 });
 

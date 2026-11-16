@@ -6,6 +6,7 @@ import { launchReportAsset } from "./assets.ts";
 import { getLaunchReport, getLaunchReports, isLaunchReportSlug, isLaunchReportSource, launchSourceVisible } from "./reports.ts";
 import { launchReportSources } from "./source-data.ts";
 import { wordPlainText, wordTextRuns } from "./word-format.ts";
+import { reportManifestSchema } from "../manifest/report-manifest.ts";
 
 const fingerprints: Record<string, { paragraphs: number; text: string; source: string }> = {
   "GLPS_RD_April '26.docx": { paragraphs: 63, text: "4602b759865eca070a4eb5717520d326393917fd80438e9ffab4cacf1b18a46a", source: "ada87229c122545428a73dfa14e321c94b2f6b7853c20a2cbd6d2d46a384738c" },
@@ -125,7 +126,7 @@ test("figure descriptions retain native disclosure semantics with a branded Flue
 test("brief headings and side-nav labels share colon-free presentation without rewriting Word evidence", async () => {
   const renderer = await readFile(new URL("../report-system/report-renderer.tsx", import.meta.url), "utf8");
   assert.match(renderer, /function headingLabel\(/);
-  assert.match(renderer, /isResearchBriefHeading\(block\) \? headingLabel\(block\) : props\.textOverrides/);
+  assert.match(renderer, /end=\{isResearchBriefHeading\(block\) \? headingLabel\(block\)\.length : block\.text\.length\}/);
   assert.match(renderer, /label: headingLabel\(heading\)/);
   assert.match(renderer, /href: `#report-block-\$\{heading\.id\}`/);
   for (const source of launchReportSources) {
@@ -173,7 +174,7 @@ test("January and December preserve original wording, archival context and study
   ] as const) {
     const source = launchReportSources.find(item => item.slug === slug)!;
     const report = allReports.find(item => item.slug === slug)!;
-    const text = source.manifest.blocks.flatMap(block => "text" in block ? [block.text] : []);
+    const text = source.manifest.blocks.flatMap(block => typeof block.text === "string" ? [block.text] : []);
     assert.equal(text.length, count);
     assert.equal(createHash("sha256").update(text.join("\n")).digest("hex"), hash);
     assert.equal(report.catalog.title, text[0].slice(1, -1));
@@ -271,7 +272,7 @@ test("P0 rich-text formatting remains unchanged when document-spanning marks are
   for (const source of launchReportSources.filter(item => p0Slugs.has(item.slug))) {
     const report = allReports.find(item => item.slug === source.slug)!;
     assert.equal(report.orderedListBlockIds.size, 0);
-    for (const block of source.manifest.blocks) {
+    for (const block of reportManifestSchema.parse(source.manifest).blocks) {
       if (!("text" in block) || !report.textRuns[block.id]) continue;
       assert.deepEqual(report.textRuns[block.id], wordTextRuns(block), `${source.slug}/${block.id}`);
     }
@@ -280,7 +281,7 @@ test("P0 rich-text formatting remains unchanged when document-spanning marks are
 
 test("May applies only the author-confirmed 2024 AI-adoption citation correction and preserves source evidence", () => {
   const source = launchReportSources.find(item => item.slug === may.slug)!;
-  const original = source.manifest.blocks.find(block => block.id === "block-45")!;
+  const original = reportManifestSchema.parse(source.manifest).blocks.find(block => block.id === "block-45")!;
   assert.ok("text" in original);
   assert.match(original.text, /AI optimism and adoption\[open superscript\]2\[close superscript\]/);
   const displayed = may.manifest.blocks.find(block => block.id === original.id)!;

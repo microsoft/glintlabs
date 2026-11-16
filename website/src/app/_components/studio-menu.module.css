@@ -1,0 +1,64 @@
+.popover:global(.fui-MenuPopover) {
+  --studio-menu-radius: 20px;
+  --studio-menu-inset: 8px;
+  --studio-menu-border: 1px;
+  padding: var(--studio-menu-inset) 0;
+  border: var(--studio-menu-border) solid var(--colorNeutralStroke2);
+  border-radius: var(--studio-menu-radius);
+  background: var(--colorNeutralBackground1);
+  box-shadow: var(--shadow16);
+}
+
+.popover :global(.fui-MenuList) { gap: 0; }
+
+.popover :global(.fui-MenuItem),
+.popover :global(.fui-MenuItemRadio) {
+  align-items: center;
+  gap: var(--spacingHorizontalS, 8px);
+  width: calc(100% - var(--studio-menu-inset) - var(--studio-menu-inset));
+  min-height: 40px;
+  max-width: none;
+  margin-inline: var(--studio-menu-inset);
+  padding: var(--spacingVerticalS, 8px) var(--spacingHorizontalM, 12px);
+  border-radius: calc(var(--studio-menu-radius) - var(--studio-menu-inset) - var(--studio-menu-border));
+  color: var(--colorNeutralForeground1);
+  font-size: var(--fontSizeBase300, 14px);
+  font-weight: var(--fontWeightRegular, 400);
+  line-height: var(--lineHeightBase300, 20px);
+}
+
+.popover :global(.fui-MenuItem__icon),
+.popover :global(.fui-MenuItemRadio__checkmark) { color: inherit; }
+
+.popover :global(.fui-MenuItemRadio)[aria-checked="true"] {
+  background: var(--colorNeutralBackground1Hover);
+}
+
+.popover :global(.fui-MenuItem)[aria-disabled="true"] {
+  color: var(--colorNeutralForegroundDisabled);
+}
+
+.popover :global(.fui-MenuDivider) { margin-inline: var(--studio-menu-inset); }
+
+.popover :global(.fui-MenuItem):focus-visible,
+.popover :global(.fui-MenuItemRadio):focus-visible {
+  outline: 2px solid var(--colorStrokeFocus2);
+  outline-offset: 2px;
+}
+
+.popover :global(.fui-MenuItem):focus-visible::after,
+.popover :global(.fui-MenuItemRadio):focus-visible::after { border: 0; }
+
+@media (max-width: 600px), (pointer: coarse) {
+  .popover :global(.fui-MenuItem),
+  .popover :global(.fui-MenuItemRadio) { min-height: 44px; }
+}
+
+@media (forced-colors: active) {
+  .popover :global(.fui-MenuItemRadio)[aria-checked="true"] {
+    color: HighlightText;
+    background: Highlight;
+  }
+  .popover :global(.fui-MenuItem):focus-visible,
+  .popover :global(.fui-MenuItemRadio):focus-visible { outline-color: CanvasText; }
+}

@@ -224,9 +224,12 @@ export async function preparePublicationPackage({
   if (issues.length > 0) {
     throw new Error(`Publication package is not ready:\n${issues.map((issue) => `${issue.field}: ${issue.message}`).join("\n")}`);
   }
+  const parsedMetadata = publicationMetadataSchema.parse(inputMetadata);
   const metadata = {
-    ...publicationMetadataSchema.parse(inputMetadata),
+    ...parsedMetadata,
     readTimeMinutes: estimateReportReadingTime(wordStyleView(project.manifest)),
+    employeeCount: project.manifest.wordStyles || Object.hasOwn(project.manifest.metadata, "employeeCount")
+      ? project.manifest.metadata.employeeCount : parsedMetadata.employeeCount,
   };
   const approvedContent = project.approvedContent;
   if (!approvedContent || await sha256Text(canonicalJson(approvedContent.snapshot)) !== approvedContent.sha256) {

@@ -2,9 +2,11 @@ import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { readerBasePath } from "./pages-config.mjs";
 
 const root = fileURLToPath(new URL("../out/", import.meta.url));
-const base = "/glintlabs";
+const base = readerBasePath();
+const port = Number(process.env.PORT ?? 3011);
 const types = {
   ".html": "text/html; charset=utf-8", ".js": "application/javascript",
   ".css": "text/css", ".json": "application/json", ".txt": "text/plain",
@@ -16,7 +18,7 @@ await stat(path.join(root, "index.html"));
 const server = createServer(async (request, response) => {
   try {
     const pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname);
-    if (pathname === "/" || pathname === base) {
+    if (base && (pathname === "/" || pathname === base)) {
       response.writeHead(302, { Location: `${base}/` }).end();
       return;
     }
@@ -49,4 +51,4 @@ const server = createServer(async (request, response) => {
     }
   }
 });
-server.listen(3011, "127.0.0.1", () => console.log("Pages preview: http://127.0.0.1:3011/glintlabs/"));
+server.listen(port, "127.0.0.1", () => console.log(`Pages preview: http://127.0.0.1:${port}${base}/`));

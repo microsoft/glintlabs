@@ -1,8 +1,9 @@
 # Glint results interpretation and exploration
 
-Use the [Knowledge Vault](../SKILL.md) as the single entry point for interpreting
+Use [Platform Screenshot Interpretation](../SKILL.md) as the entry point for interpreting
 user-authorized screenshots, dashboard views, or supplied aggregates. Follow
-its shared evidence rules and [research workflow](research-workflow.md).
+its evidence rules and the shared
+[research workflow](../../people-science-knowledge-vault/references/research-workflow.md).
 This is bounded interpretation, not a replacement statistical engine or Analysis QA.
 Apply the entry's [required-reference gate](../SKILL.md#required-reference-gate)
 before interpreting or proposing a research-informed check. If required guidance
@@ -44,6 +45,9 @@ Maintain a compact factual evidence record across turns:
   or superseded; do not replace these states with invented confidence percentages.
 - Retrieved research/product evidence, supported premises, provisional
   explanations, unanswered checks, and views already reviewed or unavailable.
+- Optional WorkIQ organizational context: user-authorized source/topic and period,
+  inspected source provenance, relevance to the survey scope, and access gaps.
+  Keep user-reported context distinct from retrieved document content.
 - Required-guidance identities, revisions, load states, and retrieval/preload
   provenance under the entry's gate; a retained "loaded" summary is not the body.
 
@@ -55,6 +59,27 @@ When the user changes filters, cycles, comparisons, or corrects a value, revisit
 affected comparisons and conclusions. Explain consequential corrections rather
 than silently carrying old results into the new scope. Preserve unaffected
 context and do not restart intake.
+
+### Relate results to the user's organization
+
+Use [optional WorkIQ organizational context](../../people-science-knowledge-vault/references/public-use.md#optional-workiq-organizational-context)
+when the host supports it and the user has authorized the relevant scope.
+A manager can combine supplied aggregate results, published research, and their
+organization's documented priorities or changes. Do not require WorkIQ, assume
+the manager can repurpose every accessible document, or replace research retrieval
+with internal search. New computations and artifact QA still belong to `analyze-survey`.
+
+Use relevant context to refine a question or select a discriminating aggregate
+check, not to diagnose the cause of a score. A documented initiative or change
+does not establish that it reached this population or preceded these responses.
+Verify dates and population fit, preserve contradictory evidence, and distinguish
+survey observation, published finding, organizational context, and hypothesis.
+Never join work activity or person records to survey responses to identify
+respondents, infer individual attitudes, or attribute anonymous comments.
+
+If context cannot be retrieved, retain the survey/research interpretation and
+state only the missing organizational context. Continue with an available next
+check or a user-supplied non-identifying summary; do not restart intake.
 
 ## Interpret before choosing a check
 

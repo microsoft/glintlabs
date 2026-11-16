@@ -161,8 +161,11 @@ of committed fixtures and public evaluation traces.
 
 ## Glint navigation regression scenarios
 
-The conditional `glint-navigation.md` guide is shipped and checked as a runtime
-page, but is loaded only for named Glint report/view recommendations, click paths,
+The conditional `glint-navigation.md` guide now lives under
+`skills/platform-screenshot-interpretation/references/`, beside its
+`results-exploration.md` workflow. Both are checked with the shared research
+context; the catalog and topic/source pages remain in Knowledge Vault.
+The navigation guide is loaded only for named Glint report/view recommendations, click paths,
 or browser navigation. Keep this boundary when extending the skill: do not make
 research-only users load product instructions.
 

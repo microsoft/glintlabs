@@ -1,0 +1,226 @@
+.library {
+  --library-gap: 24px;
+  --library-radius-small: 8px;
+  --library-radius-control: 8px;
+  --library-radius-card: 16px;
+  --library-radius-dialog: 20px;
+  min-height: 100dvh;
+  padding: 40px 32px 56px;
+  font-family: "Segoe UI", sans-serif;
+}
+.controls, .cardFooter, .badge, .dialogActions {
+  display: flex;
+  align-items: center;
+}
+.header { margin-bottom: 32px; }
+.heading { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font-size: 16px; line-height: 24px; font-weight: 600; }
+.heading svg { width: 20px; height: 20px; flex: 0 0 auto; }
+.toolbar { display: flex; align-items: flex-end; gap: 24px; }
+.newReport.newReport {
+  margin-left: auto;
+  min-height: 40px;
+  padding-inline: 12px;
+  border-radius: var(--library-radius-small);
+  font-family: inherit;
+  font-weight: 400;
+  color: var(--colorNeutralBackground1);
+  background: var(--colorNeutralForeground1);
+}
+.newReport.newReport:hover { background: var(--colorNeutralForeground2); }
+.controls { gap: 16px; }
+.controls button { min-height: 40px; padding: 8px 12px; border-color: var(--colorNeutralStroke2); border-radius: var(--library-radius-control); font-family: inherit; font-size: var(--fontSizeBase400, 16px); line-height: var(--lineHeightBase400, 22px); font-weight: var(--fontWeightRegular, 400); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(288px, 1fr)); gap: 16px var(--library-gap); }
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 0;
+  border: 1px solid var(--colorNeutralStroke1);
+  border-radius: var(--library-radius-card);
+  background: var(--colorNeutralBackground1);
+}
+.cardContent { padding: var(--spacingVerticalXXL, 24px) var(--spacingHorizontalXXL, 24px); }
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacingHorizontalS, 8px);
+  min-height: 96px;
+  margin-bottom: var(--spacingVerticalS, 8px);
+}
+.illustration { display: block; flex: 0 0 auto; object-fit: contain; }
+.cardStatus { display: grid; justify-items: end; gap: var(--spacingVerticalS, 8px); min-width: 0; }
+.cardStatus .published { border: 1px solid var(--library-published-foreground); background: transparent; }
+.title {
+  min-height: calc(var(--lineHeightBase400, 22px) * 2);
+  margin: 0 0 var(--spacingVerticalS, 8px);
+  color: var(--colorNeutralForeground1);
+  font-size: var(--fontSizeBase400, 16px);
+  line-height: var(--lineHeightBase400, 22px);
+  font-weight: var(--fontWeightSemibold, 600);
+  overflow-wrap: anywhere;
+}
+.metadata {
+  display: grid;
+  align-content: start;
+  gap: var(--spacingVerticalXS, 4px);
+  min-height: 36px;
+  margin: 0 0 var(--spacingVerticalM, 12px);
+  color: var(--colorNeutralForeground3);
+  font-size: var(--fontSizeBase200, 12px);
+  line-height: var(--lineHeightBase200, 16px);
+  overflow-wrap: anywhere;
+}
+.metadata p { margin: 0; }
+.summary {
+  display: -webkit-box;
+  min-height: calc(var(--lineHeightBase200, 16px) * 3);
+  margin: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  color: var(--colorNeutralForeground3);
+  font-size: var(--fontSizeBase200, 12px);
+  line-height: var(--lineHeightBase200, 16px);
+  overflow-wrap: anywhere;
+}
+.cardFooter {
+  justify-content: space-between;
+  gap: var(--spacingHorizontalM, 12px);
+  margin-top: auto;
+  padding: var(--spacingVerticalXL, 20px) var(--spacingHorizontalXXL, 24px);
+  border-top: 1px solid var(--colorNeutralStroke2);
+}
+.cardActions { display: flex; align-items: center; gap: var(--spacingHorizontalM, 12px); }
+.cardAction.cardAction {
+  position: relative;
+  min-width: var(--studio-compact-action-height, 32px);
+  height: var(--studio-compact-action-height, 32px);
+  padding: 0 var(--spacingHorizontalS, 8px);
+  border-radius: var(--studio-action-radius, 8px);
+  font-family: inherit;
+  font-weight: var(--fontWeightRegular, 400);
+  color: var(--colorNeutralForeground1);
+  background: var(--colorNeutralBackground3);
+}
+.cardAction.cardAction:hover { background: var(--colorNeutralBackground3Hover); }
+.cardAction.cardAction:active { background: var(--colorNeutralBackground3Pressed); }
+.cardAction.cardAction:focus-visible { outline: 2px solid var(--colorBrandForeground1); outline-offset: 2px; }
+.cardAction.cardAction:disabled, .cardAction.cardAction[aria-disabled="true"] {
+  color: var(--colorNeutralForegroundDisabled);
+  background: var(--colorNeutralBackground3);
+}
+.badge {
+  --library-published-foreground: #326119;
+  --library-published-background: #f1f8ef;
+  --library-changes-foreground: #cd4808;
+  gap: 4px;
+  min-height: 20px;
+  padding: 0 8px;
+  border-radius: var(--library-radius-small, 8px);
+  color: var(--colorNeutralForeground1);
+  background: var(--colorNeutralBackground5);
+  font-size: 12px;
+  line-height: 16px;
+}
+.badge svg { width: 16px; height: 16px; flex: 0 0 auto; }
+.published { min-width: 90px; justify-content: center; color: var(--library-published-foreground); background: var(--library-published-background); }
+.unpublished { border: 1px solid var(--library-changes-foreground); color: var(--library-changes-foreground); background: transparent; }
+.changes { font-size: 12px; line-height: 16px; color: var(--colorNeutralForeground2); }
+.more.more { position: relative; min-width: 32px; width: 32px; height: 32px; border-radius: var(--studio-action-radius, 8px); }
+.actionMenu.actionMenu {
+  max-width: min(300px, calc(100vw - 32px));
+}
+.actionDivider.actionDivider { margin: var(--spacingVerticalXS) 0; }
+.actionMenu .dangerAction:global(.fui-MenuItem),
+.actionMenu .dangerAction:hover,
+.actionMenu .dangerAction:active { color: var(--colorPaletteRedForeground1); }
+.actionMenu :global(.fui-MenuItem) :global(.fui-MenuItem__icon),
+.actionMenu :global(.fui-MenuItem:hover) :global(.fui-MenuItem__icon) { color: inherit; }
+.notice { margin: 0 0 24px; font-size: 14px; line-height: 20px; }
+.empty { display: grid; justify-items: center; padding: 56px 24px; text-align: center; }
+.empty h2 { margin: 24px 0 8px; font-size: 20px; line-height: 28px; }
+.empty p { margin: 0; color: var(--colorNeutralForeground3); }
+.dialog {
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 32px;
+  overflow-y: auto;
+  border: 0;
+  border-radius: var(--library-radius-dialog);
+  color: var(--colorNeutralForeground1);
+  background: var(--colorNeutralBackground1);
+  box-shadow: var(--shadow16);
+  font-family: "Segoe UI", sans-serif;
+}
+.dialog::backdrop { background: rgb(0 0 0 / 50%); }
+.dialog h2 { margin: 0 0 12px; font-size: 20px; line-height: 28px; }
+.dialog p { margin: 0 0 24px; font-size: 14px; line-height: 20px; }
+.dialogActions { justify-content: flex-end; gap: 12px; margin-top: 24px; }
+.deleteDialog { width: min(512px, calc(100vw - 32px)); margin: auto; }
+.deleteDialog .dialogHeader { margin-bottom: 8px; padding-right: 44px; }
+.deleteDialog h2 { margin: 0; font-weight: 600; }
+.deleteDialog p { margin: 0; overflow-wrap: anywhere; }
+.deleteDialog .error { margin-top: 24px; }
+.dialogClose.dialogClose {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: var(--library-radius-small);
+}
+.deleteDialog .dialogActions { gap: 16px; margin-top: 32px; }
+.deleteDialog .dialogActions button {
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 16px;
+  border-radius: var(--library-radius-small);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+}
+.deletePrimary.deletePrimary:not(:disabled) {
+  color: var(--colorNeutralBackground1);
+  background: var(--colorNeutralForeground1);
+}
+.deletePrimary.deletePrimary:hover:not(:disabled) { background: var(--colorNeutralForeground2); }
+.deletePrimary.deletePrimary:active:not(:disabled) { background: var(--colorNeutralForeground3); }
+.code { display: grid; gap: 8px; margin-bottom: 24px; font-size: 14px; }
+.code input {
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--colorNeutralStroke1);
+  border-radius: var(--library-radius-small);
+  color: var(--colorNeutralForeground1);
+  background: var(--colorNeutralBackground1);
+  font: inherit;
+}
+.library :is(button, a):focus-visible,
+.dialog :is(button, input):focus-visible { outline: 2px solid var(--colorStrokeFocus2); outline-offset: 2px; }
+.deleteDialog .code { margin-top: 24px; }
+.error { color: var(--colorPaletteRedForeground1); }
+@media (max-width: 600px) {
+  .library { padding: 24px 16px 40px; }
+  .toolbar { flex-wrap: wrap; gap: 16px; }
+  .newReport, .controls button, .more, .dialogActions button { min-height: 44px; }
+  .controls { flex-wrap: wrap; gap: 12px; }
+  .grid { gap: 16px; }
+  .cardAction.cardAction, .more.more { min-width: 44px; min-height: 44px; height: 44px; }
+  .more.more { width: 44px; }
+  .newReport.newReport { min-height: 44px; }
+  .dialog { padding: 24px; }
+  .dialogClose.dialogClose { top: 16px; right: 16px; }
+  .deleteDialog .dialogActions { flex-wrap: wrap; }
+  .deleteDialog .dialogActions button { min-height: 44px; }
+  .code input { min-height: 44px; }
+}
+@media (forced-colors: active) {
+  .actionMenu .dangerAction:global(.fui-MenuItem) { color: CanvasText; }
+  .actionMenu .dangerAction:hover,
+  .actionMenu .dangerAction:active { color: HighlightText; }
+}

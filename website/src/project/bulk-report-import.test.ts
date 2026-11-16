@@ -45,6 +45,16 @@ for (const { id: reportStyle, label } of reportStyleOptions) {
       list: async () => [...records.values()],
       load: async (id) => records.get(id),
       save: async (project) => { records.set(project.id, project); },
+      remove: async (id) => { records.delete(id); },
+      saveIfAbsent: async (project) => {
+        if (!records.has(project.id)) records.set(project.id, project);
+        return records.get(project.id);
+      },
+      replaceIfUnchanged: async (project, expected) => {
+        if (JSON.stringify(records.get(project.id)) !== JSON.stringify(expected)) return false;
+        records.set(project.id, project);
+        return true;
+      },
     });
     const progress: string[] = [];
     const results = await importWordReports(

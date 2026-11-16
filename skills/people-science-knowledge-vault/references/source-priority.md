@@ -17,6 +17,17 @@ product, program, metric, and role. Research collection rank cannot override
 current product definitions or privacy controls. Glint, Pulse, and 360 guidance
 is not interchangeable. Distinguish product documentation from research findings.
 
+### User-authorized organizational context is a separate evidence lane
+
+The user's own organizational documents retrieved through optional WorkIQ are
+eligible context only under [the consent and retrieval rules](public-use.md#optional-workiq-organizational-context).
+This is not access to the publisher's private research library. Organizational
+context does not enter the research hierarchy, override published findings, or
+replace required source retrieval. Internal sources support only what those
+documents state within their verified scope, not employees' experiences or a
+causal explanation of survey results. Keep their attribution separate from
+research citations and never add private context to the public catalog.
+
 ## Collection precedence: new catalog before the original vault
 
 Filter for relevance and applicability before ranking. Among sources that answer
@@ -159,7 +170,9 @@ documentation, and navigation signposts.
 ## Explicit exclusions
 
 Private publisher workbooks, unpublished drafts, internal-only records, and private
-extraction caches are not eligible research-library evidence. Only the publisher's
+extraction caches are not eligible research-library evidence. User-authorized
+organizational context is separate from this research-library exclusion and
+remains subject to the optional WorkIQ rules above. Only the publisher's
 `External` worksheet informs the saved original-vault catalog; maintenance
 must not import other worksheets.
 

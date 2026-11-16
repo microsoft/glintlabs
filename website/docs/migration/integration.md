@@ -31,6 +31,21 @@ and export tooling are documented below. No original DOCX files are required for
 normal builds. No ignored local data, credentials, build outputs, browser saves,
 owner keys, or staged/published packages were transferred.
 
+## Full staging/public reconciliation
+
+The full release reconciles staging `fd194a41cd8a53a7e208174e0dd67e34fb7c06b2`
+with public `26b78294340203f81ef604c21c9bce72e053d4b9`. Studio v1 authoring,
+library restoration/removal, Word refresh and source fidelity remain alongside
+the public release receipt, fingerprint-bound homepage placement, research
+visuals, line charts and generalized comparison charts. Optional author notes
+remain visible without reintroducing generated Studio source footers.
+
+Word metadata owns employee counts when Word styles or an explicit source count
+are present, including an explicit blank. Legacy callers without that source
+metadata can still provide the count in publication details. Library summaries
+retain homepage placement through schema validation. Migration destination
+hashes describe the reconciled files; original source hashes are unchanged.
+
 ## Launch-polish follow-up
 
 The follow-up branch `users/ericschroen/launch-report-polish` starts from the

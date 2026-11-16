@@ -3,6 +3,9 @@ import { Rocket20Regular } from "@fluentui/react-icons/svg/rocket";
 import Image from "next/image";
 
 import { AnalyzeSurveyModalTrigger } from "./analyze-survey/analyze-survey-modal-trigger";
+import { knowledgeVaultContent } from "./people-science-knowledge-vault/knowledge-vault-content";
+import { KnowledgeVaultModalTrigger } from "./people-science-knowledge-vault/knowledge-vault-modal-trigger";
+import { ToolFeedback } from "./tool-feedback";
 import styles from "./tools-catalog.module.css";
 
 export function ToolsCatalog() {
@@ -13,6 +16,27 @@ export function ToolsCatalog() {
         <p>Use prompts, skills, and analysis resources created to help People Science and HR teams explore questions, work with evidence, and move from insight to action.</p>
       </header>
         <div className={styles.grid}>
+          <article className={styles.card}>
+            <div className={styles.cardVisual}>
+              <Image src="/figma/illustrations/blue/briefcase.png" alt="" aria-hidden="true" width={170} height={170} unoptimized />
+            </div>
+            <div className={styles.cardContent}>
+              <div>
+                <div className={styles.titleRow}>
+                  <h3>{knowledgeVaultContent.title}</h3>
+                  <span className={styles.skillBadge}><Flash16Regular aria-hidden="true" />Skill</span>
+                </div>
+                <p className={styles.byline}>By Microsoft People Science</p>
+                <p className={styles.description}>{knowledgeVaultContent.description}</p>
+              </div>
+              <div className={styles.cardActions}>
+                <KnowledgeVaultModalTrigger className={styles.primaryAction}>
+                  <Rocket20Regular aria-hidden="true" />Start using
+                </KnowledgeVaultModalTrigger>
+                <ToolFeedback tool="knowledge-vault" title={knowledgeVaultContent.title} />
+              </div>
+            </div>
+          </article>
           <article className={styles.card}>
             <div className={styles.cardVisual}>
               <Image src="/figma/illustrations/blue/report.png" alt="" aria-hidden="true" width={170} height={170} unoptimized />
@@ -26,9 +50,12 @@ export function ToolsCatalog() {
                 <p className={styles.byline}>By Microsoft People Science</p>
                 <p className={styles.description}>Turn employee survey data into advanced analysis with an AI-guided, no-code workflow. Explore inter-item correlations, factor analysis, attrition analysis, and comparisons across surveys in an interactive report you can filter, export, and share.</p>
               </div>
-              <AnalyzeSurveyModalTrigger className={styles.primaryAction}>
-                <Rocket20Regular aria-hidden="true" />Start using
-              </AnalyzeSurveyModalTrigger>
+              <div className={styles.cardActions}>
+                <AnalyzeSurveyModalTrigger className={styles.primaryAction}>
+                  <Rocket20Regular aria-hidden="true" />Start using
+                </AnalyzeSurveyModalTrigger>
+                <ToolFeedback tool="analyze-survey" title="Analyze Survey" />
+              </div>
             </div>
           </article>
         </div>

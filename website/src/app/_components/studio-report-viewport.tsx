@@ -34,7 +34,6 @@ export function StudioReportViewport({
     let checking = false;
     let styleVersion = 0;
     let revealFrame = 0;
-
     function revealWhenReady() {
       if (disposed || revealed || failed || checking) return;
       const report = previewDocument!.querySelector("article[data-report-style]");
@@ -89,7 +88,7 @@ export function StudioReportViewport({
       }
       const root = previewDocument!.documentElement;
       root.lang = sourceDocument.documentElement.lang;
-      root.className = sourceDocument.documentElement.className;
+      root.className = `${sourceDocument.documentElement.className} ${styles.previewScrollbars}`;
       root.dataset.sitePalette = sourceDocument.documentElement.dataset.sitePalette ?? "blue";
       const inherited = getComputedStyle(frame!);
       for (const property of inherited) {
@@ -132,6 +131,7 @@ export function StudioReportViewport({
       cancelAnimationFrame(revealFrame);
       contentObserver.disconnect();
       observer.disconnect();
+      previewDocument.documentElement.classList.remove(styles.previewScrollbars);
       previewDocument.removeEventListener("click", navigatePreviewLink, true);
       previewDocument.removeEventListener("pointerdown", onInteract);
       previewDocument.removeEventListener("focusin", onInteract);

@@ -171,6 +171,11 @@ export function automaticallyVerifiedVisualType(
     : undefined;
 }
 
+export function createVerifiedDataVisual<T extends VerifiedDataVisualType>(
+  source: DataVisualSourceBlock,
+  type: T,
+  verifiedAt: string,
+): Extract<VerifiedDataVisualBlock, { type: T }>;
 export function createVerifiedDataVisual(
   source: DataVisualSourceBlock,
   type: VerifiedDataVisualType,

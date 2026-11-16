@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Advanced survey experiment",
+  "type": "object",
+  "required": ["schema_version", "source", "experiment"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "source": {"$ref": "#/$defs/source"},
+    "survey": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 300, "pattern": "\\S"},
+        "invited_count": {"type": "integer", "minimum": 5},
+        "respondent_column": {"type": "string", "minLength": 1}
+      },
+      "dependentRequired": {"invited_count": ["respondent_column"]},
+      "additionalProperties": false
+    },
+    "joins": {
+      "type": "array", "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["source", "key", "columns", "eligibility_confirmed", "provenance_confirmed"],
+        "properties": {
+          "source": {"$ref": "#/$defs/source"},
+          "key": {"type": "string", "minLength": 1},
+          "columns": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "eligibility_confirmed": {"const": true},
+          "provenance_confirmed": {"const": true},
+          "available_at": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "experiment": {
+      "type": "object",
+      "required": ["task", "features", "group", "seed", "min_group_size", "validation", "budget", "models", "metric", "utility_threshold"],
+      "properties": {
+        "task": {"enum": ["regression", "classification", "svd"]},
+        "features": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "exclude": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+        "target": {"type": "string", "minLength": 1},
+        "group": {"type": "string", "minLength": 1},
+        "time": {"type": "string"},
+        "seed": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+        "split_seed": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+        "min_group_size": {"type": "integer", "minimum": 5},
+        "score_scale": {"type": "integer", "minimum": 2, "maximum": 11},
+        "scale": {"type": "boolean"},
+        "components": {"type": "integer", "minimum": 1},
+        "metric": {"enum": ["mae", "rmse", "r2", "accuracy", "balanced_accuracy", "log_loss", "roc_auc", "reconstruction_rmse"]},
+        "utility_threshold": {"type": "number", "minimum": 0},
+        "selected_model": {"$ref": "#/$defs/model"},
+        "models": {"type": "array", "maxItems": 50, "items": {"$ref": "#/$defs/model"}},
+        "validation": {
+          "type": "object",
+          "required": ["kind", "folds", "holdout_fraction", "unseen_groups"],
+          "properties": {
+            "kind": {"enum": ["group", "time"]},
+            "folds": {"type": "integer", "minimum": 2, "maximum": 10},
+            "holdout_fraction": {"type": "number", "minimum": 0.1, "maximum": 0.4},
+            "unseen_groups": {"type": "boolean"}
+          },
+          "additionalProperties": false
+        },
+        "budget": {
+          "type": "object",
+          "required": ["threads", "max_trials", "max_rows", "max_seconds"],
+          "properties": {
+            "threads": {"type": "integer", "minimum": 1, "maximum": 8},
+            "max_trials": {"type": "integer", "minimum": 1, "maximum": 50},
+            "max_rows": {"type": "integer", "minimum": 30, "maximum": 200000},
+            "max_seconds": {"type": "integer", "minimum": 1, "maximum": 86400}
+          },
+          "additionalProperties": false
+        }
+      },
+      "allOf": [
+        {"if": {"properties": {"task": {"const": "svd"}}},
+         "then": {"required": ["components"], "properties": {"models": {"maxItems": 0}, "metric": {"const": "reconstruction_rmse"}}},
+         "else": {"required": ["target"], "properties": {"models": {"minItems": 1}}}},
+        {"if": {"properties": {"task": {"const": "classification"}}},
+         "then": {"not": {"required": ["score_scale"]}}}
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object", "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "sheet": {"type": "string"},
+        "attribute_sheet": {"type": "string"},
+        "prepared": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "model": {
+      "type": "object", "required": ["id", "method"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]{0,40}$"},
+        "method": {"enum": ["dummy", "linear", "random_forest", "gradient_boosting", "extra_trees"]},
+        "parameters": {"type": "object", "additionalProperties": {"type": ["number", "string", "boolean", "null"]}},
+        "grid": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "array", "minItems": 1, "maxItems": 50, "items": {"type": ["number", "string", "boolean", "null"]}}},
+        "components": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

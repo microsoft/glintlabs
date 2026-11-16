@@ -129,6 +129,13 @@ export function isCanonicalVisualBlock(
   return canonicalVisualTypes.some((type) => block.type === type);
 }
 
+export function createCanonicalVisualBlock<
+  T extends Exclude<CanonicalVisualType, "illustrated-statistics" | "quadrant-scatter-plot" | "coefficient-heatmap" | "line-chart">,
+>(
+  type: T,
+  id: string,
+  source: ReportBlock["source"],
+): Extract<CanonicalVisualBlock, { type: T }>;
 export function createCanonicalVisualBlock(
   type: Exclude<CanonicalVisualType, "illustrated-statistics" | "quadrant-scatter-plot" | "coefficient-heatmap" | "line-chart">,
   id: string,

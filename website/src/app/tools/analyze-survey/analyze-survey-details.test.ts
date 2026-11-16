@@ -2,9 +2,10 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const source = await readFile(new URL("./analyze-survey-details.tsx", import.meta.url), "utf8");
-const styles = await readFile(new URL("./analyze-survey-details.module.css", import.meta.url), "utf8");
-const modalSource = await readFile(new URL("./analyze-survey-modal-trigger.tsx", import.meta.url), "utf8");
+const source = (await Promise.all(["./analyze-survey-details.tsx", "../skill-details.tsx"]
+  .map(file => readFile(new URL(file, import.meta.url), "utf8")))).join("\n");
+const styles = await readFile(new URL("../skill-details.module.css", import.meta.url), "utf8");
+const modalSource = await readFile(new URL("../skill-modal-trigger.tsx", import.meta.url), "utf8");
 
 test("the shared Analyze Survey card uses the approved clipboard illustration without changing its size or decorative semantics", async () => {
   const catalog = await readFile(new URL("../tools-catalog.tsx", import.meta.url), "utf8");

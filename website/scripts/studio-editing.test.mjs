@@ -3,9 +3,16 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import ts from "typescript";
 
-import { reportManifestSchema } from "../src/manifest/report-manifest.ts";
-import { createStudioProject, hasStudioProjectChanges } from "../src/project/studio-project.ts";
+import { chartPresentationSchema, heatmapPresentationSchema, pairedComparisonPresentationSchema, reportManifestSchema } from "../src/manifest/report-manifest.ts";
+import { createStudioProject, hasStudioProjectChanges, publicationEditingFingerprint } from "../src/project/studio-project.ts";
 import { reportAuthor } from "../src/project/report-author.ts";
+import { initialPublicationMetadata } from "../src/project/publication-flow.ts";
+import { createDataVisualPreview } from "../src/visualization/data-visual-preview.ts";
+import { automaticallyVerifiedVisualType, compatibleVerifiedVisuals, createVerifiedDataVisual, parseChartValue, verifiedDataVisualName } from "../src/visualization/verified-data-visual.ts";
+import { sortChartItems } from "../src/visualization/chart-order.ts";
+import { isCanonicalVisualBlock } from "../src/visualization/canonical-report-blocks.ts";
+import { createStudioChartSource, validateChartTable } from "../src/visualization/chart-authoring.ts";
+import { setTextCallout } from "../src/project/text-callout.ts";
 
 const source = ts.createSourceFile(
   "publishing-studio.tsx",
@@ -68,23 +75,124 @@ function project(title) {
   });
 }
 
-function studio({ selectedImage = false, loadError, extractDocx = async () => ({ manifest: project("Import").manifest }) } = {}) {
+test("canonical heatmaps label all five legend bands and keep the factor header accessible without displaying it", () => {
+  const heatmapSource = ts.createSourceFile(
+    "coefficient-heatmap.tsx",
+    readFileSync(new URL("../src/visualization/coefficient-heatmap.tsx", import.meta.url), "utf8"),
+    ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
+  );
+  const jsx = (type, props) => ({ type, props });
+  const render = componentFunction("CoefficientHeatmap", {
+    exports: {},
+    require() { return { jsx, jsxs: jsx }; },
+    heatmapPresentationSchema,
+    styles: new Proxy({}, { get: (_, key) => key }),
+  }, heatmapSource);
+  const block = {
+    id: "canonical-heatmap", type: "coefficient-heatmap", title: "Editable coefficients",
+    columns: ["April", "July", "November"],
+    rows: [{ id: "factor", label: "Safety", values: [null, .147, .307] }],
+    sourceNote: "Original source note.",
+  };
+  const descendants = node => [
+    node,
+    ...[node?.props?.children].flat(Infinity).filter(child => child && typeof child === "object").flatMap(descendants),
+  ];
+  const content = descendants(render({ block }));
+  const legend = content.find(node => node.props?.className === "endpoints");
+  assert.deepEqual(legend.props.children.map(node => node.props.children), [".100", ".150", ".200", ".250", ".300"]);
+  const factorHeader = content.find(node => node.type === "th" && node.props?.className === "corner");
+  assert.equal(factorHeader.props.children.props.className, "screenReaderOnly");
+  assert.equal(factorHeader.props.children.props.children, "Factor");
+  assert.deepEqual(content.filter(node => node.type === "td").map(node => node.props.children), ["N/A", ".147", ".307"]);
+  assert.equal(content.find(node => node.type === "figcaption").props.children, block.sourceNote);
+  const configured = descendants(render({ block: { ...block, presentation: {
+    title: block.title, scaleMin: -.2, scaleMax: .3, decimals: 2,
+  } } }));
+  assert.deepEqual(configured.find(node => node.props?.className === "endpoints").props.children.map(node => node.props.children),
+    ["-.20", "-.10", "0.00", ".10", ".20"]);
+});
+
+test("heatmap compact date headers preserve full accessible labels and leave custom periods untouched", () => {
+  const heatmapSource = ts.createSourceFile(
+    "coefficient-heatmap.tsx",
+    readFileSync(new URL("../src/visualization/coefficient-heatmap.tsx", import.meta.url), "utf8"),
+    ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
+  );
+  const jsx = (type, props) => ({ type, props });
+  const render = componentFunction("CoefficientHeatmap", {
+    exports: {},
+    require() { return { jsx, jsxs: jsx }; },
+    heatmapPresentationSchema,
+    styles: new Proxy({}, { get: (_, key) => key }),
+  }, heatmapSource);
+  const columns = ["April 2024", "JULY '25", "November 2025", "Follow-up cohort", "May 27"];
+  const descendants = node => [
+    node,
+    ...[node?.props?.children].flat(Infinity).filter(child => child && typeof child === "object").flatMap(descendants),
+  ];
+  const content = descendants(render({ block: {
+    id: "compact-heatmap", type: "coefficient-heatmap", title: "Coefficients",
+    columns, rows: [{ id: "factor", label: "Safety", values: [.147, .231, .307, null, null] }], sourceNote: "",
+  } }));
+  const headers = content.filter(node => node.type === "th" && node.props?.scope === "col" && node.props.className !== "corner");
+  assert.deepEqual(headers.map(node => node.props["aria-label"]), columns);
+  assert.deepEqual(content.filter(node => node.props?.className === "compactPeriod").map(node => ({
+    hidden: node.props["aria-hidden"], parts: node.props.children.map(part => part.props.children),
+  })), [
+    { hidden: true, parts: ["Apr", "2024"] },
+    { hidden: true, parts: ["Jul", "'25"] },
+    { hidden: true, parts: ["Nov", "2025"] },
+  ]);
+  assert.deepEqual(headers.slice(3).map(node => node.props.children[0].props.children), ["Follow-up cohort", "May 27"]);
+});
+
+test("publication history records the approved editing snapshot without overwriting a newer saved draft", async () => {
+  const published = project("Published heading");
+  const latest = structuredClone(published);
+  latest.manifest.metadata.title = "Newer draft title";
+  let stored = latest;
+  const record = componentFunction("recordWebsitePublication", {
+    window: { localStorage: {} },
+    BrowserProjectStorage: class {
+      async load() { return stored; }
+      async save(value) { stored = value; }
+      async list() { return [stored]; }
+    },
+    publicationEditingFingerprint,
+    setCurrentProject() {}, setPackageProject() {}, setSavedProjects() {},
+  });
+  await record(published, 3, "c".repeat(64));
+  assert.equal(stored.manifest.metadata.title, "Newer draft title");
+  assert.equal(stored.websitePublication.revision, 3);
+  assert.equal(stored.websitePublication.editingFingerprint, await publicationEditingFingerprint(published));
+  assert.notEqual(stored.websitePublication.editingFingerprint, await publicationEditingFingerprint(stored));
+});
+
+function studio({ selectedImage = false, unsavedChanges = false, loadError, folderError, extractDocx = async () => ({ manifest: project("Import").manifest }) } = {}) {
   const reducer = componentFunction("reducer", {});
   let state = { status: "empty" };
   let currentProject;
   const messages = [];
   const actions = [];
+  let leaveRequests = 0;
   const saved = project("Saved draft");
   const scope = {
     state: { status: "ready" }, manifest: saved.manifest,
-    hasUnsavedChanges: false,
+    hasUnsavedChanges: unsavedChanges,
     selectedBlockId: selectedImage ? "image-1" : undefined,
     selectedBlock: selectedImage ? { id: "image-1", type: "image" } : undefined,
     importVersionRef: { current: 0 },
+    sourceFolderRef: { current: undefined },
+    savedSourceFolder: async () => { if (folderError) throw folderError; return undefined; },
+    setConnectedSourceFolder() {},
     documentMenuRef: { current: null },
-    homeDialogRef: { current: { close() {}, showModal() { throw new Error("Unexpected leave dialog"); } } },
+    sourcesDialogRef: { current: null },
+    homeDialogRef: { current: { close() {}, showModal() { leaveRequests++; } } },
+    bulkDialogRef: { current: null },
+    pendingLeaveProjectRef: { current: undefined },
     DEFAULT_STUDIO_REPORT_STYLE: "new-fluent-colors",
-    reportStyle: "new-fluent-colors",
+    reportStyle: "new-fluent-colors", publicationMetadataDraft: undefined,
     window: { confirm: () => true, requestAnimationFrame() {} },
     BrowserProjectStorage: class {
       constructor() { throw new Error("Unapplied edits must not reach storage"); }
@@ -98,16 +206,20 @@ function studio({ selectedImage = false, loadError, extractDocx = async () => ({
     },
     dispatch(action) { actions.push(action); state = reducer(state, action); },
     setCurrentProject(value) { currentProject = value; },
+    storageMessage: undefined,
     setStorageMessage(message) { messages.push(message); },
   };
   for (const name of [
     "setActiveTool", "setSelectedBlockId", "setPendingImageBlockId", "setHighlightedBlockId",
     "setRemovedBlocks", "setIsUndoVisible", "setImageReviews", "setImageAttention",
     "setAcceptedReviewItemIds", "setPackageProject", "setHomeNavigationError", "setReportViewport",
-    "setReportStyle", "setCanvasScale",
+    "setReportStyle", "setCanvasScale", "setSourceFolderIssue", "setSourceFolderAccess",
+    "setAreSavedDraftsOpen", "setIsDocumentMenuOpen", "setIsStartingReport",
+    "setPublicationMetadataDraft", "setStudioView", "setValidateCard",
   ]) scope[name] = () => {};
   scope.requireAppliedEdits = componentFunction("requireAppliedEdits", scope);
   scope.returnToStart = componentFunction("returnToStart", scope);
+  scope.openProject = componentFunction("openProject", scope);
   return {
     handleFile: componentFunction("handleFile", scope),
     goHome: componentFunction("goHome", scope),
@@ -116,25 +228,18 @@ function studio({ selectedImage = false, loadError, extractDocx = async () => ({
     load: componentFunction("loadProject", scope),
     state: () => state,
     currentProject: () => currentProject,
+    leaveRequests: () => leaveRequests,
     messages, actions, saved,
   };
 }
 
 test("publishing fixes the series to Research Drop and preserves the report or saved author", () => {
-  const dialogSource = ts.createSourceFile(
-    "publication-package-dialog.tsx",
-    readFileSync(new URL("../src/app/studio/_components/publication-package-dialog.tsx", import.meta.url), "utf8"),
-    ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
-  );
-  const initial = componentFunction("initialMetadata", {
-    reportAuthor, estimateReportReadingTime: () => 3,
-    suggestedPublicationSlug: (title) => title,
-    publicationIllustrations: [], needsImageDescription: () => false,
-  }, dialogSource);
+  const initial = initialPublicationMetadata;
   const imported = project("Report");
   const before = structuredClone(imported);
   assert.deepEqual(initial(imported).author, { name: "Megan Benzing" });
   assert.equal(initial(imported).eyebrow, "Research Drop");
+  assert.equal(initial(imported).summary, "", "Summaries stay empty until explicitly authored or chosen.");
   assert.deepEqual(imported, before, "resolving the default does not rewrite the imported report");
   const explicit = structuredClone(imported);
   explicit.manifest.metadata.author = { name: "Another author", handle: "@another" };
@@ -160,6 +265,30 @@ test("publishing fixes the series to Research Drop and preserves the report or s
   assert.equal(saved.publicationPreparation.metadata.eyebrow, "Old saved series", "opening the dialog does not rewrite stored drafts");
   const renderer = readFileSync(new URL("../src/report-system/report-renderer.tsx", import.meta.url), "utf8");
   assert.match(renderer, /const author = reportAuthor\(props\.manifest\)/);
+});
+
+test("publication details reopen with the Word Date and reading time excludes hidden metadata", () => {
+  const initial = initialPublicationMetadata;
+  const imported = project("Report");
+  imported.manifest = reportManifestSchema.parse({
+    ...imported.manifest, metadata: { ...imported.manifest.metadata, publishedDate: "2026-11-07" },
+    wordStyles: [{ id: "Title", name: "Title", target: "report-title" }, { id: "Date", name: "Date", target: "keep" }],
+    blocks: [
+      { id: "title", type: "paragraph", wordStyle: "Title", text: "Report", source: { part: "word/document.xml", index: 0 } },
+      { id: "date", type: "paragraph", wordStyle: "Date", text: "11/11/25", source: { part: "word/document.xml", index: 1 } },
+      { id: "body", type: "paragraph", text: "word ".repeat(200), source: { part: "word/document.xml", index: 2 } },
+    ],
+  });
+  imported.publicationPreparation = { metadata: { ...initial(project("Report")), displayDate: "2026-11-07" }, imageReviews: [] };
+  const before = structuredClone(imported);
+  assert.equal(initial(imported).displayDate, "2025-11-11");
+  assert.equal(initial(imported).readTimeMinutes, 1);
+  assert.deepEqual(imported, before);
+  const invalid = structuredClone(imported);
+  invalid.manifest.blocks[1].text = "February 30, 2026";
+  assert.equal(initial(invalid).displayDate, "", "An impossible Word date never rolls forward or reuses the stale saved date.");
+  invalid.publicationMetadataDraft = { ...initial(imported), displayDate: "2026-02-20" };
+  assert.equal(initial(invalid).displayDate, "2026-02-20", "An explicitly authored listing date survives Word metadata refresh.");
 });
 
 test("Research Drop heroes omit the series eyebrow while Annual Report labels remain configurable", () => {
@@ -200,6 +329,814 @@ test("reader preview presets include an actual browser viewport height", () => {
     { id: "tablet", label: "Tablet", width: 1024, height: 768 },
     { id: "mobile", label: "Mobile", width: 390, height: 844 },
   ]);
+});
+
+test("automatically verified Word charts remain editable in Studio but not Reader preview", () => {
+  const renderer = ts.createSourceFile(
+    "report-renderer.tsx",
+    readFileSync(new URL("../src/report-system/report-renderer.tsx", import.meta.url), "utf8"),
+    ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
+  );
+  const jsx = (type, props) => ({ type, props });
+  const render = componentFunction("renderBlock", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; },
+    isCanonicalVisualBlock,
+    automaticallyVerifiedVisualType, compatibleVerifiedVisuals, createDataVisualPreview,
+    CanonicalReportComponent: "chart", styles: {},
+  }, renderer);
+  const source = {
+    id: "word-chart", type: "data-visual-source",
+    source: { part: "word/document.xml", index: 1 },
+    data: {
+      sourceKind: "word-table", title: "Synthetic comparison", unit: "percentage",
+      recommendedVisualType: "horizontal-bar-chart", sha256: "a".repeat(64),
+      columns: ["Team", "Percentage"],
+      rows: [{ id: "a", cells: ["Research", "24.00%"] }, { id: "b", cells: ["Support", "0"] }],
+    },
+  };
+  const selected = [];
+  const props = { manifest: { blocks: [] }, onSelectBlock: id => selected.push(id) };
+  for (const block of [source, createDataVisualPreview(source, "horizontal-bar-chart")]) {
+    const button = render(block, props).props.children[0].props.children;
+    assert.equal(button?.type, "button", "automatic source verification must not hide chart editing");
+    assert.equal(button.props.children, "Edit chart");
+    button.props.onClick();
+    assert.equal(render(block, { ...props, mode: "read" }).props.children[0], null);
+    for (const [state, expected] of [
+      [props, false],
+      [{ ...props, selectedBlockId: block.id }, true],
+      [{ ...props, selectedBlockId: "another-chart" }, false],
+      [{ ...props, selectedBlockId: block.id, mode: "read" }, false],
+    ]) {
+      const preview = render(block, { ...state, chartEditingOrder: { blockId: block.id, rowIds: ["b", "a"] } }).props.children[1];
+      assert.equal(preview.props.expandSupportingBullets, expected,
+        "Only the chart being edited temporarily expands supporting bullets; Reader stays at rest");
+      assert.deepEqual(preview.props.editingOrder, expected ? ["b", "a"] : undefined,
+        "Only the selected authoring preview receives the temporary editing order");
+    }
+  }
+  assert.deepEqual(selected, [source.id, source.id]);
+});
+
+test("bar charts default to Glint Labs before editing and preserve explicit palettes", () => {
+  const source = {
+    id: "palette-default", type: "data-visual-source",
+    source: { part: "word/document.xml", index: 1 },
+    data: {
+      sourceKind: "word-table", title: "Teams", unit: "percentage",
+      recommendedVisualType: "horizontal-bar-chart", sha256: "a".repeat(64),
+      columns: ["Team", "Percentage"],
+      rows: ["Product", "Support", "Engineering", "Operations"].map((label, index) => ({
+        id: `row-${index}`, cells: [label, String(20 + index * 10)],
+      })),
+    },
+  };
+  const block = createDataVisualPreview(source, "horizontal-bar-chart");
+  const before = structuredClone(block);
+  const backgrounds = [];
+  const jsx = (type, props) => {
+    if (type === "i" && props.style?.background) backgrounds.push(props.style.background);
+    return { type, props };
+  };
+  const componentSource = ts.createSourceFile("chart.tsx", readFileSync(new URL(
+    "../src/visualization/canonical-report-components.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const render = componentFunction("HorizontalBarChart", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {}, sortChartItems,
+  }, componentSource);
+  for (const [palette, expected] of [
+    [undefined, ["blue", "teal", "lavender", "mauve"]],
+    ["brand", ["blue", "teal", "lavender", "mauve"]],
+    ["blue", ["blue", "blue", "blue", "blue"]],
+    ["teal", ["teal", "teal", "teal", "teal"]],
+  ]) {
+    backgrounds.length = 0;
+    render({ block: palette ? { ...block, presentation: { palette } } : block });
+    assert.deepEqual(backgrounds, expected.map(color => `var(--chart-${color})`),
+      `${palette ?? "No saved presentation"} uses the selected or default palette`);
+  }
+  assert.deepEqual(block, before, "Resolving the default does not rewrite the imported chart");
+});
+
+test("bar supporting disclosures open for the editing preview and default to collapsed", async () => {
+  const source = await createStudioChartSource({
+    id: "supporting-preview", sourceName: "Chart data", synthetic: false,
+    table: { columns: ["Category", "Percentage"], rows: [
+      { id: "first", cells: ["First", "24.00"], supportingText: "First point\nSecond point" },
+      { id: "second", cells: ["Second", "36"] },
+    ] },
+  });
+  const block = createVerifiedDataVisual(source, "horizontal-bar-chart", "2026-11-04T22:00:00.000Z");
+  const before = structuredClone(block);
+  const disclosures = [];
+  const jsx = (type, props) => {
+    if (type === "details") disclosures.push(props);
+    return { type, props };
+  };
+  const componentSource = ts.createSourceFile("chart.tsx", readFileSync(new URL(
+    "../src/visualization/canonical-report-components.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const render = componentFunction("HorizontalBarChart", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {}, sortChartItems,
+    ChevronDown16Regular: "chevron-icon",
+  }, componentSource);
+  for (const [expandSupportingBullets, expected] of [[undefined, false], [true, true], [false, false]]) {
+    disclosures.length = 0;
+    render({ block, expandSupportingBullets });
+    assert.deepEqual(disclosures.map(props => Boolean(props.open)), [expected],
+      "Only a category with supporting text expands, and only in the editing preview");
+  }
+  assert.deepEqual(block, before, "Preview expansion does not become saved chart data");
+});
+
+test("bar preview follows focused editing order without changing saved sorting or evidence", async () => {
+  const source = await createStudioChartSource({
+    id: "focused-order", sourceName: "Teams", synthetic: false,
+    table: { columns: ["Label", "Value"], rows: [
+      { id: "alpha", cells: ["Alpha", "1.25"] }, { id: "beta", cells: ["Beta", "47.00"] },
+    ] },
+  });
+  const block = { ...createVerifiedDataVisual(source, "horizontal-bar-chart", "2026-11-05T02:00:00.000Z"),
+    presentation: { title: "Teams", subtitle: "", note: "", palette: "brand", density: "comfortable", sort: "descending" } };
+  const before = structuredClone(block);
+  const labels = [];
+  const jsx = (type, props) => {
+    if (props.className === "row") labels.push(props.children[0].props.children[0]);
+    return { type, props };
+  };
+  const componentSource = ts.createSourceFile("chart.tsx", readFileSync(new URL(
+    "../src/visualization/canonical-report-components.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const render = componentFunction("HorizontalBarChart", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: { horizontalRow: "row" }, sortChartItems,
+  }, componentSource);
+  for (const [editingOrder, expected] of [[undefined, ["Beta", "Alpha"]], [["alpha", "beta"], ["Alpha", "Beta"]], [undefined, ["Beta", "Alpha"]]]) {
+    labels.length = 0;
+    render({ block, editingOrder });
+    assert.deepEqual(labels, expected, "The preview freezes only while an editing order is supplied");
+  }
+  assert.deepEqual(block, before, "Source rows, selected sort, values and evidence are never reordered or rewritten");
+});
+
+test("changing a compatible chart layout preserves untouched source data", () => {
+  const editorSource = ts.createSourceFile("verified-chart-editor.tsx", readFileSync(new URL(
+    "../src/app/_components/verified-chart-editor.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const dataSource = {
+    id: "chart", type: "data-visual-source",
+    data: { unit: "percentage", title: "Confidence", recommendedVisualType: "horizontal-bar-chart",
+      columns: ["Finding", "Percentage"],
+      rows: [{ id: "one", cells: ["First", "0%"] }, { id: "two", cells: ["Second", "100%"] }] },
+  };
+  const copies = [];
+  const select = componentFunction("changeChartType", {
+    tableDraft: { table: dataSource.data, sourceName: "Confidence", synthetic: false },
+    dataSource, editable: undefined, compatibleVerifiedVisuals,
+    setSelectedType() {}, setFrozenOrder() {}, setTab() {},
+    changeData(value) { copies.push(value); }, typeButton: { current: undefined },
+  }, editorSource);
+  select("paired-percentage-comparison");
+  assert.equal(copies.length, 0, "A layout-only change must not reclassify unchanged Word values as Studio data");
+  select("percentage-ring-group");
+  assert.equal(copies.length, 0, "Two-row sources are compatible with rings without copying or changing their evidence");
+  select("percentage-comparison-grid");
+  assert.equal(copies.length, 1, "An incompatible shape still enters the editable-data guidance flow");
+});
+
+test("chart drafts use field-specific placeholders without inventing research data", () => {
+  const jsx = (type, props) => ({ type, props });
+  const text = node => Array.isArray(node) ? node.map(text).join(" ")
+    : !node || typeof node === "boolean" ? ""
+    : typeof node === "object" ? text(typeof node.type === "function" ? node.type(node.props) : node.props?.children) : String(node);
+  const scope = { exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {}, parseChartValue };
+  const canonicalSource = ts.createSourceFile("canonical-report-components.tsx", readFileSync(new URL(
+    "../src/visualization/canonical-report-components.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const PercentageComparisonGrid = componentFunction("PercentageComparisonGrid", scope, canonicalSource);
+  const componentSource = ts.createSourceFile("chart-draft-preview.tsx", readFileSync(new URL(
+    "../src/report-system/chart-draft-preview.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const render = componentFunction("ChartDraftPreview", {
+    ...scope, PercentageComparisonGrid,
+  }, componentSource);
+  for (const type of ["horizontal-bar-chart", "paired-percentage-comparison", "percentage-ring-group",
+    "percentage-comparison-grid", "grouped-column-comparison"]) {
+    const preview = text(render({ draft: {
+      blockId: "draft", type, title: "Comparison", table: { columns: [], rows: [] }, unit: "percentage",
+    } }));
+    assert.doesNotMatch(preview, /Draft preview|Missing values are shown|Complete the data to apply/,
+      `${type} omits redundant helper copy`);
+    assert.match(preview, /Add percentage/, `${type} identifies the expected numeric input`);
+    assert.ok(preview.includes(type === "horizontal-bar-chart" || type === "grouped-column-comparison"
+      ? "Add category" : "Describe this finding"), `${type} identifies the expected label`);
+    assert.doesNotMatch(preview, /—|\d+%/, `${type} does not imply missing data or fabricate example values`);
+    if (type === "grouped-column-comparison") assert.match(preview, /Add series name/);
+    const grouped = type === "grouped-column-comparison";
+    const draft = {
+      blockId: "partial", type, title: "Comparison", unit: "percentage",
+      table: { columns: grouped ? ["Category", "Current", "Earlier"] : ["Label", "Value"],
+        rows: Array.from({ length: grouped || type === "percentage-comparison-grid" ? 4 : type === "percentage-ring-group" ? 3 : 2 },
+          (_, index) => ({ id: `row-${index}`, cells: grouped
+            ? [index ? "" : "Existing finding", index ? "" : "0", ""]
+            : [index ? "" : "Existing finding", index ? "" : "0"] })) },
+    };
+    const before = structuredClone(draft);
+    const partial = text(render({ draft }));
+    assert.match(partial, /0%/, `${type} preserves zero as real data`);
+    assert.match(partial, /Existing finding/);
+    assert.match(partial, /Add percentage/);
+    assert.deepEqual(draft, before, `${type} does not write instructional copy into chart data`);
+    if (type !== "horizontal-bar-chart") {
+      const needsPercentages = text(render({ draft: { ...draft, unit: "number" } }));
+      assert.match(needsPercentages, /Add percentage/, "Percentage-only charts identify the required unit");
+      assert.doesNotMatch(needsPercentages, /Add number/);
+    }
+  }
+  const numbers = text(render({ draft: {
+    blockId: "numbers", type: "horizontal-bar-chart", title: "", unit: "number",
+    table: { columns: ["Label", "Value"], rows: [{ id: "count", cells: ["Count", "1234.50"] }, { id: "empty", cells: ["", ""] }] },
+  } }));
+  assert.match(numbers, /Add number/);
+  assert.match(numbers, /1234\.50/);
+  assert.doesNotMatch(numbers, /Add percentage|1234\.50%/);
+  const twoRings = text(render({ draft: {
+    blockId: "two-rings", type: "percentage-ring-group", title: "Two findings", unit: "percentage",
+    table: { columns: ["Label", "Value"], rows: [
+      { id: "first", cells: ["First finding", "0"] }, { id: "second", cells: ["Second finding", ""] },
+    ] },
+  } }));
+  assert.match(twoRings, /First finding/);
+  assert.match(twoRings, /Second finding/);
+  assert.match(twoRings, /0%/);
+  assert.equal(twoRings.match(/Add percentage/g)?.length, 1, "Only the missing second value gets a hint");
+  assert.doesNotMatch(twoRings, /Describe this finding/, "A third finding must not be invented");
+});
+
+test("incomplete chart previews retain their subtitle, series, paired headings and note", () => {
+  const jsx = (type, props) => ({ type, props });
+  const text = node => Array.isArray(node) ? node.map(text).join(" ")
+    : !node || typeof node === "boolean" ? "" : typeof node === "object" ? text(node.props?.children) : String(node);
+  const componentSource = ts.createSourceFile("chart-draft-preview.tsx", readFileSync(new URL(
+    "../src/report-system/chart-draft-preview.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const render = componentFunction("ChartDraftPreview", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {}, parseChartValue,
+  }, componentSource);
+  const table = { columns: ["Label", "Current", "Earlier"], rows: Array.from({ length: 4 }, (_, index) => ({
+    id: `row-${index}`, cells: [`Category ${index + 1}`, index ? "83.00" : "", "43.50"],
+  })) };
+  const grid = text(render({ draft: {
+    blockId: "grid", type: "grouped-column-comparison", title: "Teams", subtitle: "Two independent series", table, unit: "percentage",
+  } }));
+  for (const value of ["Teams", "Two independent series", "Current", "Earlier", "Add percentage", "83.00%", "43.50%"]) {
+    assert.ok(grid.includes(value), `Incomplete grid retains ${value}`);
+  }
+  const paired = text(render({ draft: {
+    blockId: "pair", type: "paired-percentage-comparison", title: "Findings",
+    leadIns: ["While...", "Only..."], note: "Independent findings", unit: "percentage",
+    table: { columns: ["Label", "Value"], rows: table.rows.slice(0, 2).map(row => ({ ...row, cells: row.cells.slice(0, 2) })) },
+  } }));
+  for (const value of ["While...", "Only...", "Independent findings", "Add percentage", "83.00%"]) {
+    assert.ok(paired.includes(value), `Incomplete paired chart retains ${value}`);
+  }
+});
+
+test("ring and comparison grid displays preserve verified decimal precision", async () => {
+  const jsx = (type, props) => ({ type, props });
+  const text = node => Array.isArray(node) ? node.map(text).join(" ")
+    : !node || typeof node === "boolean" ? "" : typeof node === "object" ? text(node.props?.children) : String(node);
+  for (const [type, name, file, count, columns] of [
+    ["percentage-ring-group", "PercentageRingGroup", "percentage-ring-group.tsx", 3, ["Category", "Value"]],
+    ["grouped-column-comparison", "GroupedColumnComparison", "canonical-report-components.tsx", 4, ["Category", "Current", "Earlier"]],
+  ]) {
+    const source = await createStudioChartSource({
+      id: type, sourceName: "Precision", synthetic: false, visualType: type,
+      table: { columns, rows: Array.from({ length: count }, (_, index) => ({
+        id: `row-${index}`, cells: [`Category ${index + 1}`, index ? "43.50" : "83.00", ...(columns.length === 3 ? ["12.500"] : [])],
+      })) },
+    });
+    const block = createVerifiedDataVisual(source, type, "2026-11-05T02:00:00.000Z");
+    const before = structuredClone(block);
+    const componentSource = ts.createSourceFile(file, readFileSync(new URL(
+      `../src/visualization/${file}`, import.meta.url), "utf8"), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    const render = componentFunction(name, {
+      exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {}, SourceNote: "note",
+    }, componentSource);
+    const output = text(render({ block }));
+    assert.ok(output.includes("83.00%") && output.includes("43.50%"), `${type} keeps entered precision`);
+    if (columns.length === 3) assert.ok(output.includes("12.500%"));
+    assert.deepEqual(block, before, "Display formatting leaves verified values and evidence unchanged");
+  }
+});
+
+test("chart review issues remain actionable without duplicating source warnings or accepting unverified data", () => {
+  const manifest = { reviewItems: [
+    { id: "source-review", blockId: "chart-1", severity: "warning", message: "Check chart values." },
+    { id: "other", blockId: "image", severity: "warning", message: "Describe this image." },
+  ] };
+  const before = structuredClone(manifest);
+  const issues = componentValue("issues", {
+    manifest,
+    dataVisualsNeedingReview: [{ id: "chart-1", title: "First chart" }, { id: "chart-2", title: "Second chart" }],
+    useMemo: callback => callback(),
+  });
+  assert.equal(issues.length, 3, "An existing source warning gains a review action instead of a duplicate issue");
+  assert.deepEqual(issues.filter(issue => issue.action === "review-chart").map(issue => [issue.blockId, issue.severity]),
+    [["chart-1", "blocker"], ["chart-2", "blocker"]]);
+  const accepted = componentValue("acceptedIssueIds", {
+    issues, acceptedReviewItemIds: ["source-review", "other"], useMemo: callback => callback(),
+  });
+  assert.deepEqual([...accepted], ["other"], "Prior acceptance never masks a chart that now requires verification");
+  assert.deepEqual(manifest, before);
+});
+
+test("switching report items and tools cannot apply unreviewed chart previews", () => {
+  const messages = [];
+  const scope = {
+    manifest: { blocks: [{ id: "next-item", type: "visual-placeholder" }] },
+    selectedBlockId: "chart-being-edited",
+    selectedBlock: { type: "horizontal-bar-chart" },
+    pendingImageBlockId: undefined,
+    useCallback: callback => callback,
+    window: { confirm: () => true },
+    setStorageMessage: message => messages.push(message),
+    setSelectedBlockId() { assert.fail("Unapplied chart edits must not be dismissed"); },
+  };
+  scope.requireAppliedEdits = componentFunction("requireAppliedEdits", scope);
+  const select = componentValue("selectBlock", scope, "PublishingStudio");
+  assert.equal(select("next-item"), false);
+  componentFunction("changeTool", scope)("issues");
+  assert.equal(messages.length, 2, "both exits require Apply or Cancel");
+});
+
+test("Studio-authored charts omit source footers while retaining optional author notes", async () => {
+  const jsx = (type, props) => ({ type, props });
+  const text = node => Array.isArray(node) ? node.map(text).join(" ")
+    : !node || typeof node === "boolean" ? ""
+    : typeof node === "object" ? text(typeof node.type === "function" ? node.type(node.props) : node.props?.children)
+    : String(node);
+  for (const [type, name, count, grouped] of [
+    ["horizontal-bar-chart", "HorizontalBarChart", 4, false],
+    ["paired-percentage-comparison", "PairedPercentageComparison", 2, false],
+    ["percentage-ring-group", "PercentageRingGroup", 3, false],
+    ["grouped-column-comparison", "GroupedColumnComparison", 4, true],
+  ]) {
+    const source = await createStudioChartSource({
+      id: type, sourceName: "Chart data", synthetic: false, visualType: type,
+      table: {
+        columns: grouped ? ["Category", "Before", "After"] : ["Category", "Percentage"],
+        rows: Array.from({ length: count }, (_, index) => ({
+          id: `row-${index}`, cells: grouped ? [`Group ${index + 1}`, "24", "36"] : [`Group ${index + 1}`, "24"],
+        })),
+      },
+    });
+    const block = {
+      ...createVerifiedDataVisual(source, type, "2026-11-04T22:00:00.000Z"),
+      presentation: { title: "Research chart", subtitle: "", note: "Test", palette: "brand", leadIns: ["First", "Second"] },
+    };
+    const before = structuredClone(block);
+    const componentSource = ts.createSourceFile("chart.tsx", readFileSync(new URL(
+      type === "percentage-ring-group" ? "../src/visualization/percentage-ring-group.tsx"
+        : "../src/visualization/canonical-report-components.tsx", import.meta.url), "utf8"),
+    ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    const render = componentFunction(name, {
+      exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {}, sortChartItems,
+      SourceNote: ({ children }) => jsx("figcaption", { children }),
+    }, componentSource);
+    const studioText = text(render({ block }));
+    assert.doesNotMatch(studioText, /Source: Chart data|Author-provided Studio table/,
+      `${type} omits generated source footers`);
+    assert.match(studioText, /Test/, "Author notes remain visible independently of generated source footers");
+    assert.deepEqual(block, before, "Rendering preserves source evidence and the saved presentation");
+    const existing = { ...block, source: { part: "word/document.xml", index: 0 } };
+    assert.match(text(render({ block: existing })), /Test/, "Existing report notes remain visible");
+    if (type !== "horizontal-bar-chart") {
+      assert.match(text(render({ block: existing })), /Source: Chart data/, "Existing report citations remain visible");
+    }
+    const synthetic = { ...block, verifiedSource: { ...block.verifiedSource, synthetic: true } };
+    assert.match(text(render({ block: synthetic })), /Synthetic example/, "Synthetic data stays clearly identified");
+  }
+});
+
+test("chart content fields follow the visual reading order for every chart type", () => {
+  const editorSource = ts.createSourceFile("verified-chart-editor.tsx", readFileSync(new URL(
+    "../src/app/_components/verified-chart-editor.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const jsx = (type, props) => ({ type, props });
+  const render = componentFunction("SimpleChartEditor", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; }, styles: {},
+    useRef: current => ({ current }), useState: initial => [typeof initial === "function" ? initial() : initial, () => {}],
+    useEffect() {}, useMemo: callback => callback(),
+    chartPresentationSchema, pairedComparisonPresentationSchema, compatibleVerifiedVisuals,
+    createVerifiedDataVisual, parseChartValue, sortChartItems, validateChartTable,
+    Button: "button", Dropdown: "dropdown", Option: "option", Caption1: "caption",
+    Body1: "body", Body1Strong: "strong", Dismiss20Regular: "dismiss",
+    Add16Regular: "add", Delete16Regular: "delete", ChevronDown16Regular: "chevron", Checkmark16Regular: "check",
+  }, editorSource);
+  const nodes = node => !node || typeof node !== "object" ? []
+    : [node, ...[node.props?.children].flat(Infinity).flatMap(nodes)];
+  const text = node => Array.isArray(node) ? node.map(text).join("")
+    : !node || typeof node === "boolean" ? "" : typeof node === "object" ? text(node.props?.children) : String(node);
+  for (const [type, expected] of [
+    ["horizontal-bar-chart", ["Title", "Subtitle (optional)", "Label, row 1", "Value (%), row 1",
+      "Supporting bullet 1 for category 1", "Label, row 2", "Value (%), row 2"]],
+    ["paired-percentage-comparison", ["Title", "First heading (optional)", "Value (%), row 1", "Label, row 1",
+      "Second heading (optional)", "Value (%), row 2", "Label, row 2", "Note (optional)"]],
+    ["percentage-ring-group", ["Title", "Value (%), row 1", "Label, row 1",
+      "Value (%), row 2", "Label, row 2", "Value (%), row 3", "Label, row 3"]],
+    ["percentage-comparison-grid", ["Title", "First row heading (optional)", "Value (%), row 1", "Label, row 1",
+      "Value (%), row 2", "Label, row 2", "Second row heading (optional)", "Value (%), row 3", "Label, row 3",
+      "Value (%), row 4", "Label, row 4", "Note (optional)"]],
+    ["grouped-column-comparison", ["Title", "Subtitle (optional)", "Series 1 (%), row 1",
+      "Series 2 (%), row 1", "Label, row 1", "Series 1 (%), row 4", "Series 2 (%), row 4",
+      "Label, row 4", "Series 1 name", "Series 2 name"]],
+  ]) {
+    const view = nodes(render({
+      block: { id: "new-chart", type: "visual-placeholder", source: { part: "studio", index: 0 } },
+      initialType: type, intent: "insert", onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
+    }));
+    const names = view.filter(node => node.type === "label").flatMap(label => {
+      const input = nodes(label).find(node => node.type === "input" || node.type === "textarea");
+      return input ? [input.props["aria-label"] ?? text(label)] : [];
+    });
+    const positions = expected.map(name => names.indexOf(name));
+    assert.ok(positions.every(index => index >= 0), `${type} exposes all content fields together: ${names.join(" -> ")}`);
+    assert.deepEqual(positions, [...positions].sort((a, b) => a - b), `${type} follows the chart's reading order`);
+    assert.deepEqual(view.filter(node => node.props?.role === "tab").map(text),
+      type === "horizontal-bar-chart" || type === "paired-percentage-comparison" || type === "percentage-comparison-grid"
+        ? ["Content", "Palette"] : ["Content"],
+      "Content is not split between Data and Text tabs");
+  }
+});
+
+test("percentage grids show four standalone findings in both complete and missing-value previews", async () => {
+  const jsx = (type, props) => ({ type, props });
+  const scope = { exports: {}, require() { return { jsx, jsxs: jsx }; },
+    styles: { canonicalVisual: "canonical", interactiveVisual: "interactive", chartAuthoring: "authoring", selected: "selected" },
+    parseChartValue };
+  const canonicalSource = ts.createSourceFile("canonical-report-components.tsx", readFileSync(new URL(
+    "../src/visualization/canonical-report-components.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const PercentageComparisonGrid = componentFunction("PercentageComparisonGrid", scope, canonicalSource);
+  const render = componentFunction("CanonicalReportComponent", { ...scope, PercentageComparisonGrid }, canonicalSource);
+  const previewSource = ts.createSourceFile("chart-draft-preview.tsx", readFileSync(new URL(
+    "../src/report-system/chart-draft-preview.tsx", import.meta.url), "utf8"),
+  ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const preview = componentFunction("ChartDraftPreview", { ...scope, PercentageComparisonGrid }, previewSource);
+  const nodes = node => !node || typeof node !== "object" ? []
+    : typeof node.type === "function" ? nodes(node.type(node.props))
+      : [node, ...[node.props?.children].flat(Infinity).flatMap(nodes)];
+  const text = node => Array.isArray(node) ? node.map(text).join(" ")
+    : !node || typeof node === "boolean" ? "" : typeof node === "object"
+      ? text(typeof node.type === "function" ? node.type(node.props) : node.props?.children) : String(node);
+  const table = { columns: ["Finding", "Percentage"], rows: [
+    { id: "one", cells: ["First finding", "38.00"] }, { id: "two", cells: ["Second finding", "29"] },
+    { id: "three", cells: ["Third finding", "80"] }, { id: "four", cells: ["Fourth finding", "75.125"] },
+  ] };
+  const source = await createStudioChartSource({
+    id: "grid", sourceName: "Chart data", table, synthetic: false, visualType: "percentage-comparison-grid",
+  });
+  const presentation = {
+    title: "Four findings", leadIns: ["In the last six months...", "Yet..."], palette: "brand", note: "Independent findings.",
+  };
+  const block = { ...createVerifiedDataVisual(source, "percentage-comparison-grid", "2026-11-05T03:40:00.000Z"), presentation };
+  const before = structuredClone(block);
+  const complete = render({ block });
+  const incomplete = preview({ draft: {
+    blockId: "grid", type: "percentage-comparison-grid", title: presentation.title,
+    leadIns: presentation.leadIns, note: presentation.note, palette: "brand", unit: "percentage",
+    table: { ...table, rows: table.rows.map((row, index) => index ? row : { ...row, cells: ["First finding", ""] }) },
+  } });
+  assert.equal(incomplete.props.className, "canonical interactive authoring selected",
+    "An incomplete grid retains the selected chart authoring wrapper");
+  for (const view of [complete, incomplete]) {
+    const findings = nodes(view).filter(node => node.props?.["data-percentage-finding"]);
+    assert.equal(findings.length, 4);
+    assert.equal(nodes(view).filter(node => node.type === "strong").length, 4);
+    assert.equal(nodes(view).filter(node => node.type === "i").length, 0, "Neither state has bars");
+    for (const token of ["In the last six months...", "Yet...", "Independent findings.", "75.125%"]) assert.ok(text(view).includes(token));
+    assert.doesNotMatch(text(view), /Source: Chart data|Series 1|Series 2/);
+  }
+  assert.match(text(complete), /38\.00%/);
+  assert.match(text(incomplete), /Add percentage/);
+  assert.equal(nodes(complete).filter(node => node.props?.["data-chart-placeholder"]).length, 0,
+    "Published chart components do not carry editing placeholders");
+  assert.deepEqual(block, before, "Rendering does not change verified evidence");
+});
+
+test("Word chart data is immediately editable without copying or changing the original on open", () => {
+  const editorSource = ts.createSourceFile(
+    "verified-chart-editor.tsx",
+    readFileSync(new URL("../src/app/_components/verified-chart-editor.tsx", import.meta.url), "utf8"),
+    ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
+  );
+  const jsx = (type, props) => ({ type, props });
+  const effects = [];
+  const updates = [];
+  const previews = [];
+  let selectedTab = "data";
+  const original = {
+    id: "word-chart", type: "data-visual-source",
+    source: { part: "word/document.xml", index: 1 },
+    data: {
+      sourceKind: "word-table", title: "Team comparison", unit: "percentage",
+      recommendedVisualType: "horizontal-bar-chart", sha256: "a".repeat(64),
+      columns: ["Team", "Percentage"],
+      rows: [{ id: "a", cells: ["Research", "24.00%"] }, { id: "b", cells: ["Support", "0"] }],
+    },
+  };
+  const before = structuredClone(original);
+  const render = componentFunction("SimpleChartEditor", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; },
+    useRef: current => ({ current }),
+    useState: initial => [initial === "data" ? selectedTab : typeof initial === "function" ? initial() : initial, value => updates.push(value)],
+    useEffect: effect => effects.push(effect),
+    useMemo: callback => callback(),
+    chartPresentationSchema, pairedComparisonPresentationSchema, automaticallyVerifiedVisualType, compatibleVerifiedVisuals, createVerifiedDataVisual, parseChartValue, sortChartItems, verifiedDataVisualName, validateChartTable,
+    createStudioChartSource() { assert.fail("Opening a chart must not create replacement source data"); },
+    Dismiss20Regular: "dismiss-icon", Delete16Regular: "delete-icon",
+    TextEditStyle20Regular: "text-icon", DataBarVertical20Regular: "data-icon", Color20Regular: "color-icon", Checkmark16Regular: "check-icon",
+    DataBarHorizontal20Regular: "bar-icon", DataPie20Regular: "ring-icon", TextPercent20Regular: "percent-icon", ChevronDown16Regular: "chevron-icon",
+    Add16Regular: "add-icon", ArrowUpload20Regular: "upload-icon", ClipboardPaste20Regular: "paste-icon",
+    Button: "button", MenuButton: "button", Checkbox: "checkbox", Dropdown: "dropdown", Option: "option",
+    Menu: "menu", MenuItem: "menuitem", MenuList: "menulist", MenuPopover: "popover", MenuTrigger: "trigger",
+    styles: {}, Caption1: "caption", Body1: "body", Body1Strong: "strong", Subtitle1: "heading",
+  }, editorSource);
+  function nodes(node) {
+    if (!node || typeof node !== "object") return [];
+    return [node, ...[node.props?.children, node.props?.icon].flat(Infinity).flatMap(nodes)];
+  }
+  const rendered = nodes(render({
+    block: original, source: original, onPreview: value => previews.push(value),
+    onDone() {}, onCancel() {}, onRemove() {},
+  }));
+  const editorHeader = nodes(rendered.find(node => node.type === "header"));
+  const chartSelector = editorHeader.find(node => node.type === "dropdown" && node.props["aria-label"] === "Chart type");
+  assert.ok(chartSelector, "Chart type uses the same standard dropdown as other chart controls");
+  assert.equal(chartSelector.props.value, "Bar chart");
+  assert.deepEqual(chartSelector.props.selectedOptions, ["horizontal-bar-chart"]);
+  assert.deepEqual(nodes(chartSelector).filter(node => node.type === "option").map(node => node.props.children),
+    ["Bar chart", "Paired comparison", "Percentage rings", "Illustrated statistics", "Percentage comparison grid", "2×2 quadrant", "Coefficient heatmap"],
+    "The dropdown contains the available chart names without extra descriptions");
+  assert.equal(editorHeader.some(node => node.type === "h2"), false,
+    "The chart selector replaces the duplicate header title");
+  for (const initialType of ["horizontal-bar-chart", "paired-percentage-comparison", "percentage-ring-group", "grouped-column-comparison"]) {
+    const insertion = nodes(render({
+      block: { id: "new-chart", type: "visual-placeholder", source: { part: "studio", index: 0 } },
+      initialType, intent: "insert", onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
+    }));
+    assert.equal(nodes(insertion.find(node => node.type === "header")).some(node =>
+      node.type === "button" && /^(Add|Replace) data$/.test(node.props.children)), false,
+    `${initialType} insertion has no Add data button`);
+    assert.ok(insertion.some(node => node.props?.["aria-label"] === "Label, row 1"),
+      `${initialType} retains direct manual data entry`);
+  }
+  const input = rendered.find(node => node.props?.["aria-label"] === "Value (%), row 1");
+  assert.equal(rendered.filter(node => node.type === "caption").length, 2,
+    "Each category retains an accessible table caption without an extra visible heading");
+  assert.ok(rendered.some(node => node.type === "th" && node.props.children === "Value"),
+    "The visible Value heading stays unit-neutral; input names retain percentage context");
+  assert.ok(rendered.some(node => node.type === "th" && node.props.children === "Label"),
+    "The editable label column is generic rather than derived from source headings");
+  assert.ok(rendered.some(node => node.props?.["aria-label"] === "Label, row 1"),
+    "Accessible input names match the generic column heading");
+  const valueTypes = rendered.find(node => node.type === "dropdown" && node.props["aria-label"] === "Value type");
+  assert.ok(valueTypes, "Both value types are available in the compact dropdown");
+  assert.deepEqual(valueTypes.props.selectedOptions, ["percentage"]);
+  assert.deepEqual(nodes(valueTypes).filter(node => node.type === "option").map(node => node.props.value),
+    ["percentage", "number"]);
+  assert.ok(rendered.findIndex(node => node.props?.["aria-label"] === "Sort by") <
+    rendered.findIndex(node => node.props?.["aria-label"] === "Value type"),
+  "Sort by precedes Value type in both visual and keyboard order");
+  assert.ok(input, "Imported chart values can be edited directly");
+  assert.equal(input.props.value, "24.00", "Percentage inputs omit the glyph without dropping source precision");
+  assert.equal(rendered.find(node => node.props?.["aria-label"] === "Value (%), row 2").props.value, "0");
+  assert.equal(rendered.filter(node => node.type === "input" && node.props.type === "checkbox").length, 0,
+    "The Data tab has no source settings or confirmation checkboxes");
+  assert.equal(rendered.some(node => node.type === "summary" && node.props.children === "Source details"), false,
+    "Source details are kept out of the editor");
+  const remove = rendered.find(node => node.props?.["aria-label"] === "Remove row 1");
+  assert.ok(nodes(remove).some(node => node.type === "delete-icon" && node.props["aria-hidden"] === "true"),
+    "Row removal uses a decorative trash icon inside the labeled button");
+  effects.forEach(effect => effect());
+  assert.equal(previews.length, 1);
+  assert.deepEqual(previews[0].verifiedSource.rows, before.data.rows);
+  assert.equal(previews[0].verifiedSource.sha256, before.data.sha256);
+  input.props.onChange({ target: { value: "36" } });
+  assert.ok(updates.some(value => value?.table?.rows[0].cells[1] === "36"));
+  assert.deepEqual(original, before, "Editing a Studio copy leaves the Word source intact");
+  const bulletsSource = structuredClone(original);
+  bulletsSource.data.rows[0].breakdown = [
+    { id: "themes", label: "Identify themes", value: "62.50%" },
+    { id: "sentiment", label: "Analyze sentiment", value: "0" },
+  ];
+  bulletsSource.data.rows[1].supportingText = "One\nTwo\nThree\nFour\nFive\nSix";
+  const bulletView = nodes(render({
+    block: bulletsSource, source: bulletsSource, onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
+  }));
+  const researchBullets = bulletView.filter(node => node.type === "input" &&
+    /^Supporting bullet \d+ for Research$/.test(node.props["aria-label"] ?? ""));
+  assert.deepEqual(researchBullets.map(node => node.props.value),
+    ["Identify themes: 62.50%", "Analyze sentiment: 0%", ""],
+    "Legacy numeric breakdowns retain their precision in the three initial bullet slots");
+  assert.deepEqual(bulletView.filter(node => node.type === "input" &&
+    /^Supporting bullet \d+ for Support$/.test(node.props["aria-label"] ?? "")).map(node => node.props.value),
+    ["One", "Two", "Three", "Four", "Five", "Six", ""],
+    "Existing supporting text is never capped at four bullets");
+  researchBullets[0].props.onChange({ target: { value: "Reviewed finding" } });
+  const bulletEdit = updates.findLast(value => value?.table);
+  assert.equal(bulletEdit.table.rows[0].supportingText, "Reviewed finding\nAnalyze sentiment: 0%");
+  assert.equal(bulletEdit.table.rows[0].breakdown, undefined, "Only an actual edit replaces legacy details");
+  assert.equal(bulletEdit.table.rows[0].cells[1], "24.00%");
+  assert.equal(bulletEdit.table.rows[1].supportingText, "One\nTwo\nThree\nFour\nFive\nSix");
+  let pasteHandled = false;
+  researchBullets[0].props.onPaste({
+    clipboardData: { getData: () => "First\r\n\r\nThird\rFourth\nFifth" },
+    currentTarget: { value: "Identify themes: 62.50%", selectionStart: 0, selectionEnd: 23 },
+    preventDefault() { pasteHandled = true; },
+  });
+  assert.equal(pasteHandled, true);
+  assert.equal(updates.findLast(value => value?.table).table.rows[0].supportingText,
+    "First\n\nThird\nFourth\nFifth\nAnalyze sentiment: 0%",
+    "Multiline paste expands into separate bullets, retaining blank lines and following content");
+  assert.deepEqual(rendered.filter(node => node.props?.role === "tab").map(node =>
+    nodes(node).find(child => child.type === "span").props.children),
+    ["Content", "Palette"], "The editor keeps all content together and palettes separate");
+  assert.ok(rendered.filter(node => node.props?.role === "tab").every(tab =>
+    nodes(tab).every(node => !String(node.type).endsWith("-icon"))),
+  "Chart editing tabs use text labels without decorative icons");
+  for (const tab of ["data", "palette"]) {
+    selectedTab = tab;
+    const view = nodes(render({
+      block: original, source: original, onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
+    }));
+    assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, tab === "data" ? 13 : 0,
+      "Content contains chart text, category cells and supporting-bullet inputs together");
+    assert.equal(view.filter(node => node.type === "select").length, 0, "Chart controls never open native operating-system menus");
+    assert.equal(view.filter(node => node.type === "dropdown").length, tab === "data" ? 3 : 1,
+      "Chart type is always available; Content adds Sort by and Value type, while palettes remain radio tiles");
+    if (tab === "palette") {
+      const palette = view.find(node => node.type === "input" && node.props.name === "word-chart-palette" && node.props.value === "teal");
+      assert.ok(palette, "Each palette is directly selectable without opening a dropdown");
+      palette.props.onChange();
+      assert.equal(updates.at(-1)({ palette: "brand", sort: "source" }).palette, "teal");
+      assert.deepEqual(original, before, "An appearance choice cannot rewrite the source");
+    }
+    if (tab === "data") {
+      assert.ok(view.some(node => node.type === "strong" && node.props.children === "Title"));
+    }
+  }
+  assert.equal(rendered.some(node => node.type === "button" && node.props.children === "Remove chart"), false,
+    "Imported charts keep their existing removal restriction");
+  let removed = 0;
+  for (const tab of ["data", "palette"]) {
+    selectedTab = tab;
+    const studioBlock = { ...original, source: { ...original.source, part: "studio" } };
+    const view = nodes(render({
+      block: studioBlock, source: original, onPreview() {}, onDone() {}, onCancel() {},
+      onRemove() { removed++; },
+    }));
+    const footer = view.find(node => node.type === "footer");
+    const removeChart = nodes(footer).find(node => node.type === "button" && node.props.children === "Remove chart");
+    assert.ok(removeChart, `Remove chart remains in the footer on the ${tab} tab`);
+    assert.equal(view.filter(node => node.type === "button" && node.props.children === "Remove chart").length, 1);
+    removeChart.props.onClick();
+  }
+  assert.equal(removed, 2, "The footer action retains the existing removal callback");
+  const pairSource = {
+    ...original, data: { ...original.data, recommendedVisualType: "paired-percentage-comparison" },
+  };
+  const pair = {
+    ...createVerifiedDataVisual(pairSource, "paired-percentage-comparison", "2026-11-03T20:00:00.000Z"),
+    presentation: { title: "Two findings", leadIns: ["While...", "Only..."], note: "", palette: "brand" },
+  };
+  for (const part of ["word/document.xml", "studio"]) {
+    selectedTab = "data";
+    const view = nodes(render({
+      block: { ...pair, source: { ...pair.source, part } }, source: pairSource,
+      onPreview() {}, onDone() {}, onCancel() {}, onRemove() {},
+    }));
+    assert.equal(view.filter(node => node.type === "input" && node.props.type === "text").length, 8);
+    assert.equal(view.some(node => node.props?.["aria-label"] === "Remove row 1"), false);
+    assert.equal(view.some(node => node.type === "button" && node.props.children === "Add category"), false);
+    assert.equal(view.some(node => node.props?.role === "radiogroup"), false,
+      "Paired percentages cannot switch to a Number unit");
+    assert.ok(view.some(node => node.props?.role === "tab" && nodes(node).some(child => child.props?.children === "Palette")));
+    assert.deepEqual(view.filter(node => node.type === "input" && node.props.type === "text")
+      .map(node => node.props.value), ["Two findings", "While...", "24.00", "Research", "Only...", "0", "Support", ""]);
+  }
+  selectedTab = "data";
+  for (const [initialType, cells] of [
+    ["horizontal-bar-chart", 4], ["paired-percentage-comparison", 4],
+    ["percentage-ring-group", 6], ["grouped-column-comparison", 12],
+  ]) {
+    const view = nodes(render({
+      block: { id: "new-chart", type: "visual-placeholder", source: { part: "studio", index: 1 } },
+      intent: "insert", initialType, onPreview() {},
+      onDone() { assert.fail("An empty chart cannot be inserted"); }, onCancel() {}, onRemove() {},
+    }));
+    assert.deepEqual(view.filter(node => node.type === "input" && node.props.type === "text" && node.props["inputMode"])
+      .map(node => node.props.value), Array(cells).fill(""), `${initialType} starts with the correct blank data shape`);
+    assert.equal(view.some(node => node.props["aria-invalid"] === true), false, "Untouched fields do not begin in error");
+    const apply = view.find(node => node.type === "button" && node.props.children === "Apply changes");
+    assert.ok(apply, "New chart previews use the same Apply changes action as existing charts");
+    assert.equal(apply.props.disabled, true);
+    apply.props.onClick();
+    assert.equal(view.some(node => node.type === "button" && node.props.children === "Remove chart"), false,
+      "A draft is canceled, not deleted from the report");
+  }
+});
+
+test("local Undo prevents duplicate restores and preserves a newer notification", async () => {
+  let finish;
+  let restores = 0;
+  const notification = {
+    message: "Draft deleted.",
+    undoAction: async () => {
+      restores++;
+      await new Promise(resolve => { finish = resolve; });
+      return "Draft restored.";
+    },
+  };
+  let current = notification;
+  let busy = false;
+  const undo = componentFunction("undoNotification", {
+    storageMessage: notification,
+    undoingNotificationRef: { current: false },
+    setUndoingNotification(value) { busy = value; },
+    setStorageMessage(update) { current = update(current); },
+  });
+  const restoring = undo();
+  await undo();
+  assert.equal(restores, 1);
+  assert.equal(busy, true);
+  const newer = { message: "Another report was saved." };
+  current = newer;
+  finish();
+  await restoring;
+  assert.equal(current, newer);
+  assert.equal(busy, false);
+});
+
+test("a failed local Undo remains retryable and a successful retry clears its action", async () => {
+  let attempts = 0;
+  let current = {
+    message: "Draft deleted.",
+    undoAction: async () => {
+      if (++attempts === 1) throw new Error("Storage is temporarily unavailable.");
+      return "Draft restored.";
+    },
+  };
+  const undoingNotificationRef = { current: false };
+  const undo = () => componentFunction("undoNotification", {
+    storageMessage: current, undoingNotificationRef,
+    setUndoingNotification() {},
+    setStorageMessage(update) { current = update(current); },
+  })();
+  const action = current.undoAction;
+  await undo();
+  assert.equal(current.undoAction, action);
+  assert.match(current.message, /Select Undo to try again/);
+  assert.equal(undoingNotificationRef.current, false);
+  await undo();
+  assert.deepEqual(current, { message: "Draft restored." });
+});
+
+test("callout conversion applies immediately and undo restores only affected formatting", () => {
+  const first = { id: "first", type: "paragraph", text: "Before. Highlighted text. After.",
+    callouts: [{ start: 0, end: 6 }], source: { part: "word/document.xml", index: 1 } };
+  const second = { id: "second", type: "paragraph", text: "Another paragraph.",
+    source: { part: "word/document.xml", index: 2 } };
+  const manifest = { ...project("Immediate callouts").manifest, blocks: [first, second] };
+  const actions = [];
+  let message;
+  const scope = {
+    manifest, setTextCallout, requireAppliedEdits: () => true,
+    dispatch: action => actions.push(action),
+    setStorageMessage: value => { message = value; },
+    setActiveTool() {},
+    window: { requestAnimationFrame() {} },
+  };
+  const apply = componentFunction("openTextCallout", scope);
+  assert.equal(apply([{ blockId: first.id, start: 8, end: 19 }], true), true);
+  assert.equal(actions.length, 1, "Conversion is committed without Apply");
+  assert.equal(actions[0].type, "format-text");
+  assert.deepEqual(actions[0].blocks[0].callouts, [{ start: 0, end: 6 }, { start: 8, end: 19 }]);
+  assert.equal(message.message, "Callout successfully added");
+  const changedLink = { start: 0, end: 6, href: "https://example.com/updated" };
+  const current = { ...manifest, blocks: [
+    { ...actions[0].blocks[0], links: [changedLink] },
+    { ...second, callouts: [{ start: 0, end: 7 }] },
+  ] };
+  componentFunction("undoTextCallout", { ...scope, manifest: current, storageMessage: message })();
+  assert.deepEqual(actions[1].blocks, [{ ...first, links: [changedLink] }],
+    "Undo restores previous ranges, not stale paragraph text, links, or unrelated formatting");
+  assert.deepEqual(message, { message: "Formatting undone." });
+  actions.length = 0;
+  assert.equal(apply([
+    { blockId: first.id, start: 8, end: 19 }, { blockId: second.id, start: 0, end: 999 },
+  ], true), false);
+  assert.equal(actions.length, 0, "Invalid multi-paragraph selections cannot partially apply");
 });
 
 test("image accessibility shows a directly labeled description and preserves saved image data", () => {
@@ -308,7 +1245,7 @@ test("closable panels support Escape without dismissing panels that require expl
   const jsx = (type, props) => ({ type, props });
   const render = componentFunction("PanelShell", {
     exports: {}, require() { return { jsx, jsxs: jsx }; },
-    styles: {}, Subtitle1: "heading",
+    styles: {}, Subtitle1: "heading", Dismiss20Regular: "dismiss-icon",
   });
   for (const closable of [true, false]) {
     let closed = 0;
@@ -354,12 +1291,13 @@ test("Studio ignores cached comment warnings without hiding other warnings or bl
   ];
   const issues = componentValue("issues", {
     manifest: { reviewItems },
+    dataVisualsNeedingReview: [],
     useMemo: (callback) => callback(),
   }, "PublishingStudio");
   assert.deepEqual(issues.map((issue) => issue.id), ["warning", "blocker", "comment-blocker"]);
   assert.equal(reviewItems.length, 4, "cached manifests remain unchanged");
   assert.equal(componentValue("issues", {
-    manifest: null, useMemo: (callback) => callback(),
+    manifest: null, dataVisualsNeedingReview: [], useMemo: (callback) => callback(),
   }, "PublishingStudio").length, 0);
 });
 
@@ -416,15 +1354,17 @@ test("the last report section becomes current at document bottom and resets when
   assert.equal(activeIndex, -1, "empty navigation has no active section");
 });
 
-test("Full width uses outward arrows without changing the device icons", () => {
+test("viewport navigation uses the Figma-connected 20px Fluent icons", () => {
   const icon = componentFunction("ReportViewportIcon", {
-    ArrowExpand16Regular: "expand", Desktop16Regular: "desktop",
-    Tablet16Regular: "tablet", Phone16Regular: "mobile",
+    ArrowExpand16Regular: "old-expand", Desktop16Regular: "old-desktop",
+    Tablet16Regular: "old-tablet", Phone16Regular: "old-mobile",
+    ArrowBidirectionalLeftRight20Regular: "width", Desktop20Regular: "desktop",
+    Tablet20Regular: "tablet", Phone20Regular: "mobile",
     exports: {},
     require() { return { jsx: (type, props) => ({ type, props }) }; },
   });
   for (const [viewport, expected] of [
-    ["full-width", "expand"], ["desktop", "desktop"], ["tablet", "tablet"], ["mobile", "mobile"],
+    ["full-width", "width"], ["desktop", "desktop"], ["tablet", "tablet"], ["mobile", "mobile"],
   ]) {
     assert.deepEqual(icon({ viewport }), { type: expected, props: { "aria-hidden": "true" } });
   }
@@ -562,7 +1502,7 @@ test("only lists in the Research Drop in Brief section get a card", () => {
   ].map((block, index) => ({
     ...block, id: `block-${index}`, source: { part: "word/document.xml", index },
   }));
-  const rendered = render(blocks, {});
+  const rendered = render(blocks, { manifest: { wordStyleMappings: {} } });
   const cards = rendered.filter((node) => node.props.className === "brief-container");
   assert.equal(cards.length, 2);
   for (const card of cards) {
@@ -597,7 +1537,7 @@ test("only lists in the Research Drop in Brief section get a card", () => {
     assert.equal(rendered.props.children, expected);
     assert.equal(block.text, text);
     const override = jsx("span", { children: text });
-    assert.equal(renderHeading(block, { textOverrides: { heading: override } }).props.children, compact ? expected : override);
+    assert.equal(renderHeading(block, { textOverrides: { heading: override } }).props.children, override);
   }
 });
 
@@ -652,11 +1592,12 @@ test("References styling stays within its section and preserves citation text an
     readFileSync(new URL("../src/report-system/report-renderer.tsx", import.meta.url), "utf8"),
     ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
   );
-  const jsx = (type, props, key) => type === "fragment" ? props.children : ({ type, props, key });
+  const Fragment = Symbol.for("react.fragment");
+  const jsx = (type, props, key) => type === Fragment ? props.children : ({ type, props, key });
   const scope = {
-    Fragment: "fragment",
     exports: {},
-    require() { return { jsx, jsxs: jsx }; },
+    Fragment,
+    require() { return { jsx, jsxs: jsx, Fragment }; },
     RichText: "rich-text",
     renderBlock: (block, props, reference) => ({ block, reference }),
     isResearchBriefHeading: componentFunction("isResearchBriefHeading", {}, rendererSource),
@@ -684,7 +1625,8 @@ test("References styling stays within its section and preserves citation text an
     ...block, id: `block-${index}`, source: { part: "word/document.xml", index },
   }));
   scope.reportReferenceMarkers = componentFunction("reportReferenceMarkers", scope, rendererSource);
-  const rendered = componentFunction("reportContent", scope, rendererSource)(blocks, {});
+  const contents = componentFunction("reportContent", scope, rendererSource);
+  const rendered = contents(blocks, {});
   assert.deepEqual(rendered.filter((node) => node.type === "div").map((node) => node.props.children.reference), [
     false, true, true, true, true, false, false, false, false,
   ]);
@@ -718,6 +1660,29 @@ test("References styling stays within its section and preserves citation text an
   assert.equal(overlapping[0].props.children[0].type, "sup");
   assert.equal(text(overlapping[0]), block.text.slice(0, block.links[0].end));
   assert.equal(text(overlapping), block.text);
+  const insertionProps = { onInsertChart() {} };
+  const automaticReferences = [blocks[2], blocks[4], blocks[6], blocks[7]];
+  const automatic = contents(automaticReferences, {
+    manifest: { wordStyles: [] }, referenceBlockIds: new Set([blocks[2].id]),
+  });
+  assert.equal(automatic[0].props.children[0].type, "h2");
+  assert.equal(automatic[0].props.children[0].props.children, "References");
+  assert.equal(automatic[0].props.children[1].block, blocks[2]);
+  assert.equal(automatic[1].props.children.reference, true, "Methodology stays with References until the next section");
+  assert.equal(automatic[3].props.children.reference, false);
+  const legacy = contents(automaticReferences, {
+    manifest: {}, referenceBlockIds: new Set([blocks[2].id]),
+  });
+  assert.equal(legacy[0].props.children.block, blocks[2], "Legacy readers keep their existing reference layout");
+  const referenceSection = blocks.slice(0, 6);
+  assert.deepEqual(contents(referenceSection, insertionProps).map(node => node.props["data-chart-insert-before"]).filter(id => id !== undefined),
+    ["block-0", "block-1"], "Insert before References, never between citations or after them");
+  assert.ok(contents(referenceSection, { ...insertionProps, mode: "read" })
+    .every(node => node.props["data-chart-insert-before"] === undefined), "Reader has no authoring boundaries");
+  assert.deepEqual(contents([{
+    id: "references", type: "references", source: { part: "studio", index: 0 },
+  }], insertionProps).map(node => node.props["data-chart-insert-before"]).filter(id => id !== undefined),
+  ["references"], "A self-contained references block also ends the editable body");
 });
 
 test("inline citations match actual References entries and preserve all text and link offsets", () => {
@@ -726,9 +1691,10 @@ test("inline citations match actual References entries and preserve all text and
     readFileSync(new URL("../src/report-system/report-renderer.tsx", import.meta.url), "utf8"),
     ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
   );
-  const jsx = (type, props, key) => type === "fragment" ? props.children : ({ type, props, key });
+  const Fragment = Symbol.for("react.fragment");
+  const jsx = (type, props, key) => type === Fragment ? props.children : ({ type, props, key });
   const scope = {
-    Fragment: "fragment",
+    Fragment,
     exports: {}, require() { return { jsx, jsxs: jsx }; },
     styles: { referenceMarker: "reference-marker" },
     isReferencesHeading: componentFunction("isReferencesHeading", {}, renderer),
@@ -778,11 +1744,61 @@ test("inline citations match actual References entries and preserve all text and
     assert.equal(nodes(rendered).filter(n => n.type === "sup").map(text).join(""), "[12]");
     assert.equal(text(rendered), value);
     assert.deepEqual(block, before, "approved text and link ranges are unchanged");
+    const boundaries = [0, start + 1, start + 3, value.length];
+    const segments = boundaries.slice(1).map((end, index) => richText({
+      block, referenceMarkers: markers, start: boundaries[index], end,
+    }));
+    assert.equal(text(segments), value, "partial callouts retain every source character in order");
+    assert.equal(nodes(segments).filter(n => n.type === "sup").map(text).join(""), "[12]");
+    assert.equal(nodes(segments).filter(n => n.type === "a").map(text).join(""), value.slice(from, to));
+    assert.ok(nodes(segments).filter(n => n.type === "a").every(link => link.props.href === block.links[0].href));
   }
   const label = { id: "label", type: "paragraph", text: "  [1] Original reference." };
   const renderedLabel = richText({ block: label, reference: true, referenceMarkers: markers });
   assert.equal(text(renderedLabel), label.text);
   assert.deepEqual(nodes(renderedLabel).filter(n => n.type === "sup").map(text), ["[1]"]);
+});
+
+test("applying editorial formatting preserves review warnings and participates in unsaved-edit protection", () => {
+  const reducer = componentFunction("reducer", {});
+  const original = project("Editorial");
+  original.manifest.blocks.push({ id: "paragraph", type: "paragraph", text: "Before. Selected. After.", source: { part: "word/document.xml", index: 1 } });
+  original.manifest.reviewItems.push({ id: "paragraph-review", blockId: "paragraph", severity: "warning", message: "Review this source." });
+  const loaded = reducer({ status: "empty" }, { type: "load-project", project: original });
+  const draft = { ...original.manifest.blocks.at(-1), callouts: [{ start: 8, end: 17 }] };
+  const applied = reducer(loaded, { type: "format-text", blocks: [draft] });
+  assert.deepEqual(applied.manifest.reviewItems, loaded.manifest.reviewItems);
+  assert.deepEqual(applied.manifest.blocks.at(-1), draft);
+  assert.equal(loaded.manifest.blocks.at(-1).callouts, undefined);
+  assert.equal(changeStatus(loaded, { currentProject: original }).edits, false);
+  assert.equal(changeStatus(applied, { currentProject: original }).edits, true);
+});
+
+test("callout rendering keeps explicit text overrides authoritative and outside selection formatting", () => {
+  const renderer = ts.createSourceFile(
+    "report-renderer.tsx",
+    readFileSync(new URL("../src/report-system/report-renderer.tsx", import.meta.url), "utf8"),
+    ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
+  );
+  const jsx = (type, props, key) => ({ type, props, key });
+  const render = componentFunction("renderBlock", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; },
+    isCanonicalVisualBlock: () => false,
+    textCalloutSegments: block => block.callouts.map(range => ({ ...range, callout: true })),
+    RichText: "rich-text", styles: { paragraph: "paragraph", textCallout: "callout" },
+  }, renderer);
+  const block = { id: "paragraph", type: "paragraph", text: "Approved text.", callouts: [{ start: 0, end: 14 }],
+    source: { part: "word/document.xml", index: 0 } };
+  const props = { onSelectText: () => true };
+  const callout = render(block, props);
+  assert.equal(callout.props.children[0].props["data-text-callout"], true);
+  assert.equal(callout.props["data-report-text-block"], block.id);
+  for (const override of ["Display override.", ""]) {
+    const displayed = render(block, { ...props, textOverrides: { [block.id]: override } });
+    assert.equal(displayed.type, "p");
+    assert.equal(displayed.props.children, override);
+    assert.equal(displayed.props["data-report-text-block"], undefined);
+  }
 });
 
 test("preview readiness waits for report content, stylesheets, fonts, and a render frame", async () => {
@@ -891,7 +1907,7 @@ test("preview fits the workspace in both dimensions without depending on report 
     setAvailableCanvasHeight(value) { size[1] = value; },
   })();
   assert.equal(scale, 1);
-  assert.deepEqual(size, [1200, 700]);
+  assert.deepEqual(size, [1200, 620], "Full width retains the preview's vertical canvas inset");
 });
 
 test("review issue navigation scrolls the preview document, not the Studio", () => {
@@ -950,10 +1966,13 @@ function changeStatus(state, {
   acceptedReviewItemIds = [],
   imageReviews = [],
   hasUnappliedImageChanges = false,
+  chartInsertion,
+  publicationMetadataDraft = currentProject?.publicationMetadataDraft,
 } = {}) {
   const scope = {
-    state, currentProject, reportStyle, acceptedReviewItemIds, imageReviews,
+    state, currentProject, reportStyle, acceptedReviewItemIds, imageReviews, publicationMetadataDraft,
     hasUnappliedImageChanges,
+    chartInsertion,
     manifest: state.status === "ready" ? state.manifest : undefined,
     hasStudioProjectChanges,
     useMemo: callback => callback(),
@@ -963,6 +1982,22 @@ function changeStatus(state, {
   scope.hasUnsavedChanges = componentValue("hasUnsavedChanges", scope);
   return { edits: scope.hasUnsavedEdits, lossWarning: scope.hasUnsavedChanges };
 }
+
+test("Word selection leaves native type filtering off and validates after selection", () => {
+  const jsx = (type, props) => ({ type, props });
+  const render = componentFunction("FilePicker", {
+    exports: {}, require() { return { jsx, jsxs: jsx }; },
+    styles: { filePicker: "picker" }, ArrowUpload16Regular: "upload-icon",
+  });
+  const onChange = () => {};
+  for (const disabled of [false, true]) {
+    const picker = render({ label: "Choose Word file", disabled, onChange });
+    const input = picker.props.children.find(child => child.type === "input");
+    assert.equal(input.props.accept, undefined, "macOS must not disable valid Word files through its native type filter");
+    assert.equal(input.props.disabled, disabled);
+    assert.equal(input.props.onChange, onChange);
+  }
+});
 
 test("upload establishes the edit baseline without removing unsaved-draft protection", async () => {
   const app = studio();
@@ -976,6 +2011,14 @@ test("upload establishes the edit baseline without removing unsaved-draft protec
   assert.deepEqual(changeStatus(imported, { reportStyle: "research-report" }), { edits: true, lossWarning: true });
   assert.deepEqual(changeStatus(imported), { edits: false, lossWarning: true });
   assert.deepEqual(changeStatus(imported, { hasUnappliedImageChanges: true }), { edits: true, lossWarning: true });
+});
+
+test("Word upload still succeeds when this browser cannot read remembered source-folder storage", async () => {
+  const app = studio({ folderError: new Error("IndexedDB is unavailable.") });
+  await app.handleFile({ target: {
+    files: [{ name: "Import.docx", arrayBuffer: async () => new ArrayBuffer(0) }], value: "Import.docx",
+  } });
+  assert.equal(app.state().status, "ready");
 });
 
 test("content and review edits compare against import until saved, then against the saved draft", () => {
@@ -1001,7 +2044,6 @@ test("content and review edits compare against import until saved, then against 
   for (const state of [{ status: "empty" }, { status: "extracting" }, { status: "failed" }]) {
     assert.deepEqual(changeStatus(state), { edits: false, lossWarning: false });
   }
-  assert.match(source.getText(), /\{hasUnsavedEdits \? \(\s*<Caption1[^>]*role="status">Unsaved changes/);
 });
 
 test("opening or reverting image edits preserves the original block without synthesizing presentation changes", () => {
@@ -1073,6 +2115,32 @@ for (const navigation of ["home", "load"]) {
   }
 }
 
+test("switching a dirty draft waits for the save-or-discard dialog before opening another project", () => {
+  const app = studio({ unsavedChanges: true });
+  assert.equal(app.load(app.saved), false);
+  assert.equal(app.leaveRequests(), 1);
+  assert.deepEqual(app.actions, []);
+  assert.equal(app.currentProject(), undefined);
+});
+
+test("Save and leave opens the newly saved revision when the current draft is also the destination", async () => {
+  const original = project("Original");
+  const saved = { ...project("Saved revision"), id: original.id };
+  const pendingLeaveProjectRef = { current: original };
+  let opened;
+  const finishLeaving = componentFunction("finishLeaving", {
+    pendingLeaveProjectRef,
+    openProject(value) { opened = value; },
+    returnToStart() { assert.fail("A pending draft must not return home"); },
+  });
+  await componentFunction("saveAndLeave", {
+    pendingLeaveProjectRef, finishLeaving,
+    saveCurrentProject: async () => saved,
+    setIsSavingToLeave() {}, setHomeNavigationError() {},
+  })();
+  assert.equal(opened.manifest.metadata.title, "Saved revision");
+});
+
 test("a failed lazy extractor download surfaces the import error and resets the file input", async () => {
   const app = studio({ loadError: new Error("Synthetic extractor chunk failed to load") });
   const input = {
@@ -1097,6 +2165,50 @@ test("unapplied image edits block saving, Home, publishing, project switching, a
   assert.equal(app.currentProject(), undefined);
   assert.equal(app.messages.length, 5);
   assert.ok(app.messages.every(message => message.includes("Apply or cancel")));
+});
+
+test("header actions expose their busy state, block duplicate writes, and recover after success or failure", async () => {
+  for (const [name, operation] of [["saveCurrentProject", "saving"], ["showPackageDialog", "opening-publish"]]) {
+  for (const failure of [undefined, new Error("Synthetic save failure")]) {
+    const saved = project("Saving states");
+    const operations = [], messages = [], openedProjects = [];
+    let release, writes = 0;
+    const pendingWrite = new Promise(resolve => { release = resolve; });
+    const headerOperationRef = { current: false };
+    const save = componentFunction(name, {
+      requireAppliedEdits: () => true,
+      manifest: saved.manifest,
+      state: { status: "ready", result: {}, sourceManifest: saved.manifest },
+      currentProject: saved, reportStyle: saved.reportStyle, canPublish: false,
+      acceptedReviewItemIds: [], imageReviews: [], publicationMetadataDraft: undefined,
+      activeAcceptedReviewItemIds: () => [],
+      updateStudioProject: () => saved,
+      headerOperationRef,
+      setHeaderOperation: value => operations.push(value),
+      sourceFolderRef: { current: undefined },
+      wordSourceRef: { current: undefined },
+      importVersionRef: { current: 0 },
+      window: { localStorage: {} },
+      BrowserProjectStorage: class {
+        async save() { writes++; await pendingWrite; if (failure) throw failure; }
+        async list() { return [saved]; }
+      },
+      setCurrentProject() {}, setSavedProjects() {}, setValidateCard() {},
+      setPackageProject: value => openedProjects.push(value),
+      setStorageMessage: value => messages.push(value),
+    });
+    const saving = save();
+    assert.deepEqual(operations, [operation], "The pending header action is visibly busy");
+    assert.equal(await save(), undefined, "Repeated activation does not start another save");
+    assert.equal(writes, 1);
+    release();
+    assert.equal(await saving, !failure && name === "saveCurrentProject" ? saved : undefined);
+    assert.deepEqual(operations, [operation, undefined], "Success and failure both restore the controls");
+    assert.equal(headerOperationRef.current, false);
+    assert.equal(messages.at(-1), failure ? failure.message : name === "saveCurrentProject" ? "Changes saved to this device." : undefined);
+    assert.deepEqual(openedProjects, !failure && name === "showPackageDialog" ? [saved] : []);
+  }
+  }
 });
 
 function publicationLoader() {

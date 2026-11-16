@@ -9,7 +9,7 @@ export const publicationDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
     return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value;
   }, "Enter a valid calendar date.");
 
-export const publicationMetadataSchema = z.object({
+const publicationMetadataFields = z.object({
   slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase words separated by hyphens.")
     .refine((value) => value !== "preview", "Choose a report address other than preview."),
   title: z.string().trim().min(1, "Enter the public report title."),
@@ -33,7 +33,23 @@ export const publicationMetadataSchema = z.object({
     featured: z.boolean(),
     featuredUntil: publicationDateSchema.nullable(),
   }).strict(),
-}).strict().refine(
+}).strict();
+
+export const publicationMetadataDraftSchema = publicationMetadataFields.extend({
+  slug: z.string(),
+  title: z.string(),
+  summary: z.string(),
+  displayDate: z.string(),
+  thumbnail: publicationMetadataFields.shape.thumbnail.extend({
+    source: z.string(),
+    alt: z.string(),
+  }),
+  catalog: publicationMetadataFields.shape.catalog.extend({
+    featuredUntil: z.string().nullable(),
+  }),
+});
+
+export const publicationMetadataSchema = publicationMetadataFields.refine(
   (value) => !value.catalog.featuredUntil || value.catalog.featuredUntil >= value.displayDate,
   { message: "The feature end date cannot precede the report date.", path: ["catalog", "featuredUntil"] },
 );

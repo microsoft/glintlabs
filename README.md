@@ -29,10 +29,25 @@ This plugin provides a set of focused skills that share a common analysis contra
    and Methodology are always included.
 2. `analyze-survey-ai-preview` adds staged, evidence-grounded People Science
    summaries to the same shared report pipeline.
-3. `people-science-knowledge-vault` synthesizes published People Science knowledge
-   and interprets authorized Glint screenshots/results using relevant research.
-   It asks briefly for the next useful view when needed to verify an interpretation,
-   using a reviewed topic/source index and explicit collection priorities.
+3. `people-science-knowledge-vault` focuses on general PS research guidance:
+   published evidence, conceptual questions, questionnaire review, and
+   research-backed recommendations using the reviewed topic/source library.
+4. `platform-screenshot-interpretation` interprets authorized Glint screenshots,
+   dashboard views, and supplied aggregate results. It retains the platform
+   investigation, uses the vault's shared research library, and asks briefly
+   for the next useful view when needed to verify an interpretation.
+5. `analyze-survey-advanced` collaborates with expert data scientists on Random
+   Forest, gradient boosting, centered SVD, approved baselines/challengers, and
+   explicitly authorized tuning. It proactively suggests experiments and asks
+   about useful company context/external data, but never tunes without instruction.
+   It produces an advanced report, aggregate diagnostics and clean notebook/code
+   using a separate runtime and manifest; the basic workflow is unchanged.
+
+Advanced execution requires Python 3.11+ and the separate
+`requirements-advanced-runtime.txt` environment. The engine extension is
+[under review](https://github.com/microsoft/vivaglint_py/pull/5); the advanced
+runtime pins that review commit, not a released engine version. See the
+[advanced workflow](skills/analyze-survey-advanced/references/modeling-workflow.md).
 
 The plugin deliberately does not duplicate the `vivaglint` analysis package. It calls a pinned package version and treats the output manifest as the stable interface between execution and interpretation.
 
@@ -49,8 +64,9 @@ Its context library is hosted in the skill's [references folder](skills/people-s
 No download, installation, Python, survey export, or Microsoft-internal access
 is required. See [link-only use](skills/people-science-knowledge-vault/references/public-use.md).
 
-The same skill can interpret authorized, redacted Glint screenshots or aggregate
-values in an approved host, with research-backed checks. Browser navigation is
+Use the separate [Platform Screenshot Interpretation skill](skills/platform-screenshot-interpretation/SKILL.md)
+for authorized, redacted Glint screenshots or aggregate values in an approved
+host, with research-backed checks. Browser navigation is
 optional and requires separately available approved tools and a signed-in session;
 the link does not grant platform access. Screenshots do not establish Analysis QA.
 
@@ -146,8 +162,10 @@ Schema: `schemas/analysis-manifest.schema.json`
 | Skill | Use when |
 |---|---|
 | `analyze-survey` | The user wants the standard survey analysis package, QA of output validity/privacy/readiness, or People Science interpretation of existing outputs. |
+| `analyze-survey-advanced` | An expert wants collaborative modeling, explicit tuning, model comparison, centered SVD, reproducible notebooks and research-grounded model interpretation. |
 | `analyze-survey-ai-preview` | The user explicitly wants the staged AI-summary report experience. |
-| `people-science-knowledge-vault` | The user wants published People Science guidance, research-backed Glint screenshot/results interpretation, or the next useful view to verify an explanation. |
+| `people-science-knowledge-vault` | The user wants general PS research guidance, published evidence, conceptual explanations, questionnaire review, or research-backed recommendations. |
+| `platform-screenshot-interpretation` | The user wants research-backed interpretation of authorized platform screenshots/results, a useful next view, or read-only Glint navigation. |
 
 ### Knowledge vault status
 
