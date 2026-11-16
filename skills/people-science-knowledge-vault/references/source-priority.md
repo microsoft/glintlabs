@@ -58,39 +58,13 @@ dependency.
 ### Within the original vault: column J drives priority, not channel
 
 Column J, `Priority to add to context library`, is the authoritative ranking
-signal within that collection. It has four levels, from highest to lowest:
-
-1. `top5` - the small set judged most essential within the original vault.
-2. `high`
-3. `medium`
-4. `low`
+signal within that collection. Its levels are the tier order stated above.
 
 `catalog.json` carries this as each entry's `priority_tier` field. When two
 original-vault resources could both answer a question, prefer the higher
 `priority_tier`; this does not override the new catalog's collection precedence.
-A fifth value, `curated`, marks resources that are **not** present in the
-External-tab snapshot at all (see "Supplementary curated resources" below) -
-treat `curated` as roughly `top5`-equivalent in authority, since these were
-hand-selected by the content owner, but note they fall outside the workbook's
-own ranking.
 
-### Supplementary curated resources (not in the workbook snapshot)
-
-Two resources predate/sit outside the External-tab snapshot but were
-confirmed by the content owner as externally shareable and high-value:
-
-- [Building a holistic employee listening ecosystem](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/894/1/Holistic%20Listening%20Infographic_09292023%201.pdf)
-- [Redefining High Performance in the New Era of Work](https://www.microsoft.com/content/dam/microsoft/final/en-us/microsoft-brand/documents/Microsoft-HPO-Guide-Oct-2023.pdf)
-
-**Cite and retrieve the public link, not private ownership records.** The
-context library exports public catalog fields only.
-
-Two further resources appear in the workbook as `top5` rows whose `URL`
-column only holds an internal `.pptx` filename (no public link); their public
-PDF substitutes are already catalogued:
-
-- [Research Readout - Agentic Teaming & Trust Research](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/1027.2/2/2025%20Agentic%20Teaming%20%26%20Trust%20Research%20Report%20-%20Chapter%204.pdf)
-- [The state of AI change readiness](https://adoption.microsoft.com/files/viva/The-state-of-AI-change-readiness-eBook.pdf)
+Curated resources (outside the External-tab snapshot, hand-selected by the content owner) rank with top5. Cite and retrieve the public link, not private ownership records.
 
 ### Publisher-approved first-party public summaries
 
