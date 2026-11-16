@@ -16,6 +16,9 @@ export type VerifiedDataVisualBlock = Extract<
       | "percentage-comparison-grid"
       | "horizontal-bar-chart"
       | "coefficient-heatmap"
+      | "grouped-bar-comparison"
+      | "comparison-panel-group"
+      | "line-chart"
       | "grouped-column-comparison";
   }
 >;
@@ -23,6 +26,7 @@ export type VerifiedDataVisualType = VerifiedDataVisualBlock["type"];
 export type ChartValueType = "percentage" | "number";
 
 const verifiedVisualNames: Record<VerifiedDataVisualType, string> = {
+  "line-chart": "Line chart",
   "paired-percentage-comparison": "Paired percentage comparison",
   "percentage-comparison-grid": "Percentage comparison grid",
   "percentage-ring-group": "Percentage ring group",
@@ -30,6 +34,8 @@ const verifiedVisualNames: Record<VerifiedDataVisualType, string> = {
   "quadrant-scatter-plot": "2×2 quadrant",
   "horizontal-bar-chart": "Horizontal bar chart",
   "grouped-column-comparison": "Grouped column comparison",
+  "grouped-bar-comparison": "Grouped bar comparison",
+  "comparison-panel-group": "Comparison panels",
   "coefficient-heatmap": "Coefficient heatmap",
 };
 
@@ -102,6 +108,21 @@ export function compatibleVerifiedVisuals(
   }
 
   const compatible: VerifiedDataVisualType[] = [];
+  if (block.data.rows.some(row => row.seriesLabels)) {
+    return block.data.unit === "percentage" && block.data.columns.length === 3 && rows.length >= 1 && rows.length <= 12 &&
+      block.data.rows.every(row => row.seriesLabels?.length === 2 && row.seriesLabels.every(label => label.trim() && label.length <= 100) &&
+        !row.supportingText?.trim() && !row.breakdown?.length)
+      ? ["comparison-panel-group"] : [];
+  }
+  if (block.data.unit === "percentage" && block.data.columns.length >= 2 && block.data.columns.length <= 4 &&
+      rows.length >= 2 && rows.length <= 12 &&
+      new Set(block.data.columns.map(column => column.trim().toLocaleLowerCase("en-US"))).size === block.data.columns.length &&
+      block.data.columns.every(column => column.trim() && column.length <= 100) &&
+      new Set(rows.map(row => row.label.toLocaleLowerCase("en-US"))).size === rows.length &&
+      new Set(rows.map(row => row.id)).size === rows.length && rows.every(row => row.id) &&
+      (ignoreRecommendation || block.data.recommendedVisualType === "line-chart")) {
+    compatible.push("line-chart");
+  }
   if (
     block.data.columns.length === 2 &&
     rows.length >= 2 &&
@@ -120,8 +141,11 @@ export function compatibleVerifiedVisuals(
   if (block.data.unit === "percentage" && block.data.columns.length === 2 && rows.length === 4) {
     compatible.push("percentage-comparison-grid");
   }
-  if (block.data.unit === "percentage" && block.data.columns.length === 3 && rows.length === 4) {
-    compatible.push("grouped-column-comparison");
+  if (block.data.unit === "percentage" && block.data.columns.length >= 2 && block.data.columns.length <= 4 && rows.length >= 1 && rows.length <= 12 &&
+      (block.data.columns.length > 2 || ignoreRecommendation ||
+        block.data.recommendedVisualType === "grouped-column-comparison" || block.data.recommendedVisualType === "grouped-bar-comparison") &&
+      rows.every(row => !row.supportingText && !row.breakdown?.length)) {
+    compatible.push("grouped-column-comparison", "grouped-bar-comparison");
   }
   if (heatmapCompatible) compatible.push("coefficient-heatmap");
   return block.data.recommendedVisualType && !ignoreRecommendation
@@ -147,6 +171,11 @@ export function automaticallyVerifiedVisualType(
     : undefined;
 }
 
+export function createVerifiedDataVisual<T extends VerifiedDataVisualType>(
+  source: DataVisualSourceBlock,
+  type: T,
+  verifiedAt: string,
+): Extract<VerifiedDataVisualBlock, { type: T }>;
 export function createVerifiedDataVisual(
   source: DataVisualSourceBlock,
   type: VerifiedDataVisualType,
@@ -173,6 +202,19 @@ export function createVerifiedDataVisual(
   };
 
   switch (type) {
+    case "line-chart":
+      return {
+        ...shared, type, title: source.data.title, subtitle: source.data.subtitle ?? "",
+        periods: source.data.rows.map(row => ({
+          id: row.id, label: row.cells[0].trim(),
+          ...(row.supportingText ? { supportingText: row.supportingText } : {}),
+        })),
+        series: source.data.columns.slice(1).map((label, index) => ({
+          id: `series-${index + 1}`, label,
+          values: rows.map(row => row.values[index] as number),
+        })),
+        sourceNote: source.data.sourceNote ?? "",
+      };
     case "coefficient-heatmap":
       return {
         ...shared, type, title: source.data.title, columns: source.data.columns.slice(1),
@@ -220,23 +262,29 @@ export function createVerifiedDataVisual(
           source.data.sourceNote ??
           "Source: approved structured data from the reviewed Word report.",
       };
+    case "comparison-panel-group":
+      return {
+        ...shared, type, title: source.data.title, subtitle: source.data.subtitle ?? "Percent favorable",
+        panels: rows.map((row, index) => ({
+          id: row.id, title: row.label,
+          series: [...source.data.rows[index].seriesLabels!] as [string, string],
+          values: [row.values[0] as number, row.values[1] as number],
+        })),
+        sourceNote: source.data.sourceNote ?? "Source: author-provided comparison panels.",
+      };
+    case "grouped-bar-comparison":
     case "grouped-column-comparison":
       return {
         ...shared,
         type,
         title: source.data.title,
         subtitle: source.data.subtitle ?? "Approved structured data",
-        series: [source.data.columns[1], source.data.columns[2]],
+        series: source.data.columns.slice(1),
         groups: rows.map((row) => ({
           id: row.id,
           label: row.label,
-          values: [row.values[0] as number, row.values[1] as number],
-        })) as [
-          { id: string; label: string; values: [number, number] },
-          { id: string; label: string; values: [number, number] },
-          { id: string; label: string; values: [number, number] },
-          { id: string; label: string; values: [number, number] },
-        ],
+          values: row.values as number[],
+        })),
         sourceNote:
           source.data.sourceNote ??
           "Source: approved structured data from the reviewed Word report.",
@@ -253,6 +301,9 @@ export function verifiedVisualMatchesSource(block: ReportBlock) {
     block.type !== "percentage-comparison-grid" &&
     block.type !== "horizontal-bar-chart" &&
     block.type !== "coefficient-heatmap" &&
+    block.type !== "grouped-bar-comparison" &&
+    block.type !== "comparison-panel-group" &&
+    block.type !== "line-chart" &&
     block.type !== "grouped-column-comparison"
   ) {
     return true;
@@ -282,6 +333,7 @@ export function verifiedVisualMatchesSource(block: ReportBlock) {
     provenance: { kind: "imported" },
     source: block.source,
   };
+  if (!compatibleVerifiedVisuals(source, { ignoreRecommendation: true }).includes(block.type)) return false;
   const expected = createVerifiedDataVisual(
     source,
     block.type,
@@ -289,6 +341,10 @@ export function verifiedVisualMatchesSource(block: ReportBlock) {
   );
 
   switch (block.type) {
+    case "line-chart":
+      return expected.type === block.type && block.title === expected.title && block.subtitle === expected.subtitle &&
+        block.sourceNote === expected.sourceNote && JSON.stringify(block.periods) === JSON.stringify(expected.periods) &&
+        JSON.stringify(block.series) === JSON.stringify(expected.series);
     case "coefficient-heatmap":
       return expected.type === block.type && block.title === expected.title && block.sourceNote === expected.sourceNote &&
         JSON.stringify(block.columns) === JSON.stringify(expected.columns) && JSON.stringify(block.rows) === JSON.stringify(expected.rows);
@@ -316,9 +372,13 @@ export function verifiedVisualMatchesSource(block: ReportBlock) {
         block.footnote === expected.footnote &&
         JSON.stringify(block.metrics) === JSON.stringify(expected.metrics)
       );
+    case "comparison-panel-group":
+      return expected.type === block.type && block.title === expected.title && block.subtitle === expected.subtitle &&
+        block.sourceNote === expected.sourceNote && JSON.stringify(block.panels) === JSON.stringify(expected.panels);
+    case "grouped-bar-comparison":
     case "grouped-column-comparison":
       return (
-        expected.type === "grouped-column-comparison" &&
+        expected.type === block.type &&
         block.title === expected.title &&
         block.subtitle === expected.subtitle &&
         block.sourceNote === expected.sourceNote &&

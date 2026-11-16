@@ -137,6 +137,11 @@
   line-height: 14px;
 }
 
+.footnote p {
+  margin: 0;
+  white-space: pre-line;
+}
+
 :global([data-report-style="new-fluent-colors"]) .visual {
   color: var(--report-text);
   background: var(--report-canvas);

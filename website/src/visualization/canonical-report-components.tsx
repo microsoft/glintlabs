@@ -5,6 +5,9 @@ import { PercentageRingGroup } from "./percentage-ring-group";
 import { IllustratedStatistics } from "./illustrated-statistics";
 import { QuadrantScatterPlot } from "./quadrant-scatter-plot";
 import { CoefficientHeatmap } from "./coefficient-heatmap";
+import { ResearchVisual } from "./research-visual";
+import { ComparisonChart } from "./comparison-charts";
+import { LineChart } from "./line-chart";
 import { sortChartItems } from "./chart-order";
 import styles from "./canonical-report-components.module.css";
 
@@ -361,7 +364,7 @@ function HorizontalBarChart({
         })}
       </div>
       {isNumber ? <p className={styles.chartScale}>Number scale: {minimum} to {maximum}</p> : null}
-      {block.source.part !== "studio" && presentation?.note ? <>
+      {presentation?.note ? <>
         <div className={styles.rule} />
         <p className={styles.chartNote}>{presentation.note}</p>
       </> : null}
@@ -420,10 +423,20 @@ function GroupedColumnComparison({
           </span>
         ))}
       </div>
+      {block.presentation?.note ? <p className={styles.chartNote}>{block.presentation.note}</p> : null}
       {block.source.part !== "studio" ? <>
-        {block.presentation?.note ? <p className={styles.chartNote}>{block.presentation.note}</p> : null}
         <SourceNote>{block.sourceNote}</SourceNote>
       </> : block.verifiedSource?.synthetic ? <p className={styles.chartSynthetic}>Synthetic example · Not research findings</p> : null}
+      <div className={styles.chartDataTable}>
+        <table><caption>{block.presentation?.title ?? block.title} · Percentage values in source order</caption>
+          <thead><tr><th scope="col">Category</th>{block.series.map((series, index) =>
+            <th key={index} scope="col">{series}</th>)}</tr></thead>
+          <tbody>{block.groups.map(group => <tr key={group.id}>
+            <th scope="row">{group.label}</th>{group.values.map((value, index) =>
+              <td key={index}>{displayValue(group.id, index + 1, value)}</td>)}
+          </tr>)}</tbody>
+        </table>
+      </div>
     </figure>
   );
 }
@@ -529,7 +542,17 @@ export function CanonicalReportComponent({
   expandSupportingBullets?: boolean;
   editingOrder?: string[];
 }) {
+  const reconstructionNotice = "Reconstructed from printed values in an image and reviewed in Studio.";
+  const sourceCitation = (note: string) => note.split(/\r?\n/).filter(line => line.trim() !== reconstructionNotice).join("\n");
+  if ("sourceNote" in block && block.sourceNote?.includes(reconstructionNotice)) {
+    block = { ...block, sourceNote: sourceCitation(block.sourceNote) };
+  }
+  if ("footnote" in block && block.footnote?.includes(reconstructionNotice)) {
+    block = { ...block, footnote: sourceCitation(block.footnote) };
+  }
   switch (block.type) {
+    case "research-visual":
+      return <ResearchVisual block={block} />;
     case "listening-approach-continuum":
       return <ListeningApproachContinuum block={block} />;
     case "featured-statistic":
@@ -572,8 +595,15 @@ export function CanonicalReportComponent({
         })} />;
     case "horizontal-bar-chart":
       return <HorizontalBarChart block={block} expandSupportingBullets={expandSupportingBullets} editingOrder={editingOrder} />;
+    case "line-chart":
+      return <LineChart block={block} />;
     case "grouped-column-comparison":
-      return <GroupedColumnComparison block={block} />;
+      return block.groups.length === 4 && block.series.length === 2 && !block.presentation?.showDifference &&
+        (!block.presentation?.palette || block.presentation.palette === "brand")
+        ? <GroupedColumnComparison block={block} /> : <ComparisonChart block={block} />;
+    case "grouped-bar-comparison":
+    case "comparison-panel-group":
+      return <ComparisonChart block={block} />;
     case "coefficient-heatmap":
       return <CoefficientHeatmap block={block} />;
     case "before-after-comparison":

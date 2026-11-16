@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { listApprovedPublications, loadApprovedPublication } from "./approved-publication.ts";
 
@@ -19,6 +19,11 @@ export async function copyApprovedReports(source: string, destination: string, r
     for (const name of ["publication.json", "manifest.json"]) {
       await writeFile(path.join(content, name), await readFile(path.join(source, "content", "reports", id, name)));
     }
+    if (report.homepage.version) {
+      await writeFile(path.join(content, "homepage.json"), `${JSON.stringify({
+        ...report.homepage, packageFingerprint: report.publication.approval.packageFingerprint,
+      })}\n`);
+    } else await rm(path.join(content, "homepage.json"), { force: true });
     for (const asset of report.publication.assets) {
       const name = path.basename(asset.path);
       await writeFile(path.join(assets, name),

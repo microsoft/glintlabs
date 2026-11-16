@@ -1,0 +1,839 @@
+[
+  {
+    "template": "manager-behaviors",
+    "name": "Manager behaviors",
+    "description": "Three categories · ten behaviors",
+    "title": "Effective manager behaviors to best support team members",
+    "subtitle": "",
+    "sourceNote": "Source: Microsoft Viva People Science Manager Action Taking Survey, July 2024. n = 500 US people managers with at least 5 direct reports.",
+    "columns": [
+      "Category",
+      "Behaviors"
+    ],
+    "rows": [
+      [
+        [
+          "Coach & Mentor"
+        ],
+        [
+          "Hold growth & development conversations",
+          "Have consistent 1:1s",
+          "Connect daily work to bigger picture/strategy"
+        ]
+      ],
+      [
+        [
+          "Build Cohesion"
+        ],
+        [
+          "Welcome diverse perspectives",
+          "Provide recognition to my team",
+          "Communicate transparently about relevant information"
+        ]
+      ],
+      [
+        [
+          "Facilitate High Performance"
+        ],
+        [
+          "Prioritize work",
+          "Clarify work expectations",
+          "Remove barriers to progress",
+          "Encourage experimentation"
+        ]
+      ]
+    ]
+  },
+  {
+    "template": "ai-metacognition",
+    "name": "Meta-cognition",
+    "description": "Two categories · three practices each",
+    "title": "Meta-cognition around AI",
+    "subtitle": "",
+    "sourceNote": "",
+    "columns": [
+      "Category",
+      "Practices"
+    ],
+    "rows": [
+      [
+        [
+          "Knowledge of how to use AI"
+        ],
+        [
+          "Acknowledge AI skill level",
+          "Understand various AI methodologies",
+          "Discern most effective AI approach"
+        ]
+      ],
+      [
+        [
+          "Ongoing regulation of AI use"
+        ],
+        [
+          "Select appropriate AI plan",
+          "Review AI output relevance/accuracy",
+          "Evaluate success of AI use and iterate"
+        ]
+      ]
+    ]
+  },
+  {
+    "template": "four-is",
+    "name": "The Four I’s",
+    "description": "Four dimensions · principles and examples",
+    "title": "Leading through AI: Evolving the Four I’s",
+    "subtitle": "",
+    "sourceNote": "",
+    "columns": [
+      "Dimension",
+      "Core principle",
+      "Example in AI-enabled work"
+    ],
+    "rows": [
+      [
+        [
+          "Intellectual Stimulation"
+        ],
+        [
+          "Encouraging critical thinking and novel problem-solving"
+        ],
+        [
+          "Modeling how to question and interpret AI outputs, driving accountability, and setting team norms around AI slop"
+        ]
+      ],
+      [
+        [
+          "Individualized Consideration"
+        ],
+        [
+          "Personalizing coaching and developmental support"
+        ],
+        [
+          "Have transparent and authentic conversations around AI, connect the dots to individual goals and growth"
+        ]
+      ],
+      [
+        [
+          "Inspirational Motivation"
+        ],
+        [
+          "Communicating a compelling vision and organizational direction"
+        ],
+        [
+          "Sharing authentic personal conviction (e.g., the why, not just the what), connecting AI to purpose, progress, and meaningful work"
+        ]
+      ],
+      [
+        [
+          "Idealized Influence"
+        ],
+        [
+          "Modeling values and taking principled positions"
+        ],
+        [
+          "Role model human-AI collaboration, decision making processes, and override scenarios"
+        ]
+      ]
+    ]
+  },
+  {
+    "template": "ai-friction",
+    "name": "Reframing friction",
+    "description": "Four reframes · hindrance, challenge, recommendations",
+    "title": "Reframing AI friction",
+    "subtitle": "",
+    "sourceNote": "",
+    "columns": [
+      "Hindrance",
+      "Challenge",
+      "Recommendations"
+    ],
+    "rows": [
+      [
+        [
+          "“I don’t know how to use these new AI features – it feels like a burden.”"
+        ],
+        [
+          "“Upskilling on AI features is an opportunity to expand expertise and future-proof my role.”"
+        ],
+        [
+          "Pair training with coaching or peer shadowing.",
+          "Spotlight employees who embraced learning and grew their impact."
+        ]
+      ],
+      [
+        [
+          "“The pace of AI change is overwhelming.”"
+        ],
+        [
+          "“Rapid change means I’m at the forefront of innovation, shaping new ways of working.”"
+        ],
+        [
+          "Frame change as a strategic advantage in team updates.",
+          "Provide clarity on priorities so employees know where to focus."
+        ]
+      ],
+      [
+        [
+          "“AI is replacing tasks I used to own.”"
+        ],
+        [
+          "“Delegating routine tasks to AI frees me to focus on strategic, high-impact work.”"
+        ],
+        [
+          "Help employees identify higher-value work they can now prioritize.",
+          "Recognize contributions in new areas."
+        ]
+      ],
+      [
+        [
+          "“Integrating AI into workflows disrupts my habits.”"
+        ],
+        [
+          "“Experimenting with new workflows helps me develop adaptability and creative problem-solving.”"
+        ],
+        [
+          "Encourage pilot participation and celebrate experimentation.",
+          "Provide forums for sharing workflow hacks."
+        ]
+      ]
+    ]
+  },
+  {
+    "template": "manager-role-shifts",
+    "name": "Managers’ roles",
+    "description": "Three shifts · mindset, knowledge, skill",
+    "title": "Reimagining the role of managers",
+    "subtitle": "",
+    "sourceNote": "",
+    "columns": [
+      "Shift",
+      "Traditional management",
+      "Management in the era of AI",
+      "Getting there"
+    ],
+    "rows": [
+      [
+        [
+          "Mindset"
+        ],
+        [
+          "Control",
+          "Focused on predictability, consistency, and top-down process."
+        ],
+        [
+          "Curiosity",
+          "Creates psych safety for experimentation, learns in public, and models curiosity over certainty."
+        ],
+        [
+          "The shift from control to curiosity means letting go of the need for certainty, authority, and scarcity thinking. Leaders create psychological safety for learning, distribute intelligence and decision-making, and use AI to expand capacity and share knowledge across people and systems."
+        ]
+      ],
+      [
+        [
+          "Knowledge"
+        ],
+        [
+          "Operational know-how",
+          "Understands how work gets done within current processes."
+        ],
+        [
+          "Systems intelligence",
+          "Understands how human workflows, AI systems, and data connect to create value."
+        ],
+        [
+          "The shift from knowing how things work to understanding how systems, people, and AI interact to create value. It’s about evolving from a single-domain expert to a “+ shaped” professional, anchored in expertise but fluent in data, AI. Moving from compliance driven to proactive responsible AI stewardship."
+        ]
+      ],
+      [
+        [
+          "Skill"
+        ],
+        [
+          "Telling & delegating",
+          "Monitors performance, assigns tasks, and ensures compliance."
+        ],
+        [
+          "Role modeling & orchestrating",
+          "Demonstrating AI learning and use. Designing human-AI workflows."
+        ],
+        [
+          "This means moving from telling to showing and from managing tasks to designing systems where people and AI thrive. Leaders model curiosity, orchestrate workflows, and foster collaboration, shifting from control and efficiency to creating conditions for focus, flow, and creativity."
+        ]
+      ]
+    ]
+  },
+  {
+    "template": "ai-intent",
+    "name": "Low to high intent",
+    "description": "Four paired views · low intent and high intent",
+    "title": "Exploring intentional AI use",
+    "subtitle": "",
+    "sourceNote": "Synthetic example · Editorial illustration, not research findings.",
+    "columns": [
+      "Low-intent views of AI",
+      "High-intent views of AI"
+    ],
+    "rows": [
+      [
+        [
+          "Start with a quick draft",
+          "An illustrative team asks AI for a first response."
+        ],
+        [
+          "Review the draft together",
+          "The team checks assumptions and refines the response."
+        ]
+      ],
+      [
+        [
+          "Keep a personal shortcut",
+          "An illustrative prompt is saved for individual use."
+        ],
+        [
+          "Share a repeatable practice",
+          "The team documents a reusable example and its limitations."
+        ]
+      ],
+      [
+        [
+          "Try a different tool",
+          "An illustrative author changes tools before reviewing the request."
+        ],
+        [
+          "Clarify the request",
+          "The author adds context and checks whether the response improves."
+        ]
+      ],
+      [
+        [
+          "Leave the process unexplained",
+          "An illustrative draft does not describe how AI contributed."
+        ],
+        [
+          "Explain the process",
+          "The team records how approved tools and human review contributed."
+        ]
+      ]
+    ]
+  },
+  {
+    "template": "ai-profiles",
+    "name": "AI profiles",
+    "description": "Five profiles · contribution and support",
+    "title": "Leveraging and supporting different AI transformation profiles during change",
+    "subtitle": "",
+    "sourceNote": "Source: Microsoft Viva People Science AI Transformation Readiness Study, April 2024. n = 1389 global employees.",
+    "columns": [
+      "Profile",
+      "Encourage this profile to contribute to AI transformation by...",
+      "Support this profile through AI transformation by..."
+    ],
+    "rows": [
+      [
+        [
+          "Multipliers"
+        ],
+        [
+          "volunteering as SMEs or for AI leadership positions that allow them to share their excitement for AI with peers."
+        ],
+        [
+          "ensuring there are plenty of opportunities to experiment with AI tools and that their efforts align with the organizational vision for AI transformation."
+        ]
+      ],
+      [
+        [
+          "Advocates"
+        ],
+        [
+          "sharing strong use cases and value generation examples to bolster the excitement from Multipliers with practical AI applications."
+        ],
+        [
+          "clear expectations and direction, this may take the form of a Multiplier AI change buddy to share new ways of using AI."
+        ]
+      ],
+      [
+        [
+          "Persuadables"
+        ],
+        [
+          "offering a balanced perspective of what visions and expectations are realistic and enticing when it comes to AI use at your organization."
+        ],
+        [
+          "providing feedback outlets throughout the change and a clear vision that brings the value of AI to life, helping them to build more AI change confidence."
+        ]
+      ],
+      [
+        [
+          "AI Skeptics"
+        ],
+        [
+          "sharing their concerns around the use of AI and identify the ‘dark side’ impact or potential risks to ensure responsible AI deployment."
+        ],
+        [
+          "giving information on benefits of AI to their work and how the organization is creating safeguards to minimize negative impact."
+        ]
+      ],
+      [
+        [
+          "Change Pessimists"
+        ],
+        [
+          "providing feedback on where previous change initiatives have failed and how AI change initiatives can avoid those previous pitfalls."
+        ],
+        [
+          "doubling down on change support, specifically related to time and resources for AI training and a compelling vision for the changes."
+        ]
+      ]
+    ]
+  },
+  {
+    "template": "industry-utilization",
+    "name": "Industry utilization",
+    "description": "Fourteen industries · two periods and percentage-point change",
+    "title": "Utilization rate for Intent to Stay item year-over-year by industry",
+    "subtitle": "",
+    "sourceNote": "Source: Viva People Science analysis on Glint customer item utilization between September 2022 and August 2023 (n = 729 customers) & September 2023 and August 2024 (n = 728 customers).",
+    "columns": [
+      "Industry",
+      "Client usage 2022–23",
+      "Client usage 2023–24",
+      "YoY change (pp)"
+    ],
+    "rows": [
+      [
+        [
+          "Insurance"
+        ],
+        [
+          "40%"
+        ],
+        [
+          "38%"
+        ],
+        [
+          "-2 pp"
+        ]
+      ],
+      [
+        [
+          "Technology"
+        ],
+        [
+          "29%"
+        ],
+        [
+          "36%"
+        ],
+        [
+          "+7 pp"
+        ]
+      ],
+      [
+        [
+          "Oil, Gas, & Mining"
+        ],
+        [
+          "17%"
+        ],
+        [
+          "31%"
+        ],
+        [
+          "+15 pp"
+        ]
+      ],
+      [
+        [
+          "Utilities"
+        ],
+        [
+          "29%"
+        ],
+        [
+          "31%"
+        ],
+        [
+          "+2 pp"
+        ]
+      ],
+      [
+        [
+          "Finance"
+        ],
+        [
+          "28%"
+        ],
+        [
+          "29%"
+        ],
+        [
+          "+1 pp"
+        ]
+      ],
+      [
+        [
+          "Travel, Hospitality, & Leisure"
+        ],
+        [
+          "24%"
+        ],
+        [
+          "24%"
+        ],
+        [
+          "0 pp"
+        ]
+      ],
+      [
+        [
+          "Healthcare"
+        ],
+        [
+          "25%"
+        ],
+        [
+          "22%"
+        ],
+        [
+          "-2 pp"
+        ]
+      ],
+      [
+        [
+          "Retail"
+        ],
+        [
+          "15%"
+        ],
+        [
+          "21%"
+        ],
+        [
+          "+6 pp"
+        ]
+      ],
+      [
+        [
+          "Transportation & Logistics"
+        ],
+        [
+          "31%"
+        ],
+        [
+          "21%"
+        ],
+        [
+          "-10 pp"
+        ]
+      ],
+      [
+        [
+          "Professional Services"
+        ],
+        [
+          "15%"
+        ],
+        [
+          "20%"
+        ],
+        [
+          "+5 pp"
+        ]
+      ],
+      [
+        [
+          "Manufacturing"
+        ],
+        [
+          "19%"
+        ],
+        [
+          "19%"
+        ],
+        [
+          "0 pp"
+        ]
+      ],
+      [
+        [
+          "Construction"
+        ],
+        [
+          "16%"
+        ],
+        [
+          "14%"
+        ],
+        [
+          "-2 pp"
+        ]
+      ],
+      [
+        [
+          "Food & Beverages"
+        ],
+        [
+          "7%"
+        ],
+        [
+          "11%"
+        ],
+        [
+          "+4 pp"
+        ]
+      ],
+      [
+        [
+          "Pharmaceuticals"
+        ],
+        [
+          "10%"
+        ],
+        [
+          "5%"
+        ],
+        [
+          "-5 pp"
+        ]
+      ]
+    ]
+  },
+  {
+    "template": "performance-barriers",
+    "name": "Performance barriers",
+    "description": "Four work arrangements · three ranked barriers each",
+    "title": "Barriers to high performance by work arrangement",
+    "subtitle": "Which of the following barriers are slowing your organization’s progress toward high performance? (Select all that apply)",
+    "sourceNote": "",
+    "columns": [
+      "Rank",
+      "Fully flexible",
+      "Partially onsite",
+      "Predominantly onsite",
+      "Fully onsite"
+    ],
+    "rows": [
+      [
+        [
+          "1"
+        ],
+        [
+          "Inefficient work culture (e.g., ineffective meetings, long working hours)",
+          "(37%)"
+        ],
+        [
+          "Inefficient work culture (e.g., ineffective meetings, long working hours)",
+          "(37%)"
+        ],
+        [
+          "Inefficient work culture (e.g., ineffective meetings, long working hours)",
+          "(35%)"
+        ],
+        [
+          "Burnt out and disengaged employees",
+          "(44%)"
+        ]
+      ],
+      [
+        [
+          "2"
+        ],
+        [
+          "Burnt out and disengaged employees",
+          "(34%)"
+        ],
+        [
+          "Burnt out and disengaged employees",
+          "(36%)"
+        ],
+        [
+          "Accumulation of tedious tasks and inefficient organizational processes",
+          "(34%)"
+        ],
+        [
+          "Overburdened managers",
+          "(43%)"
+        ]
+      ],
+      [
+        [
+          "3"
+        ],
+        [
+          "Overburdened managers",
+          "(33%)"
+        ],
+        [
+          "Overburdened managers",
+          "(32%)"
+        ],
+        [
+          "Overburdened managers",
+          "(33%)"
+        ],
+        [
+          "Insufficient tools and resources for employees to be productive and do their best work",
+          "(28%)"
+        ]
+      ]
+    ]
+  },
+  {
+    "template": "driver-item-usage",
+    "name": "Driver-item usage",
+    "description": "Ten items · wording, category, and usage",
+    "title": "Example driver-item usage",
+    "subtitle": "",
+    "sourceNote": "Synthetic example · Invented survey wording and percentages, not research findings.",
+    "columns": [
+      "Item",
+      "Survey wording",
+      "People Success Element",
+      "Client usage"
+    ],
+    "rows": [
+      [
+        [
+          "Growth"
+        ],
+        [
+          "Example: I can practice new skills at <COMPANY_NAME>."
+        ],
+        [
+          "Growth"
+        ],
+        [
+          "78%"
+        ]
+      ],
+      [
+        [
+          "Recognition"
+        ],
+        [
+          "Example: My contributions are noticed."
+        ],
+        [
+          "Connection"
+        ],
+        [
+          "71%"
+        ]
+      ],
+      [
+        [
+          "Feedback"
+        ],
+        [
+          "Example: <MY_MANAGER> helps me identify useful next steps."
+        ],
+        [
+          "Clarity"
+        ],
+        [
+          "68%"
+        ]
+      ],
+      [
+        [
+          "Empowerment"
+        ],
+        [
+          "Example: I can choose how to approach my tasks."
+        ],
+        [
+          "Empowerment"
+        ],
+        [
+          "63%"
+        ]
+      ],
+      [
+        [
+          "Action Taking"
+        ],
+        [
+          "Example: The team discusses what to do with feedback."
+        ],
+        [
+          "N/A"
+        ],
+        [
+          "61%"
+        ]
+      ],
+      [
+        [
+          "Leadership Confidence"
+        ],
+        [
+          "Example: I understand the direction leaders have set."
+        ],
+        [
+          "Purpose"
+        ],
+        [
+          "58%"
+        ]
+      ],
+      [
+        [
+          "Collaboration"
+        ],
+        [
+          "Example: Teams at <COMPANY_NAME> share useful information."
+        ],
+        [
+          "Connection"
+        ],
+        [
+          "54%"
+        ]
+      ],
+      [
+        [
+          "Work Life Balance"
+        ],
+        [
+          "Example: I can make time for responsibilities outside work."
+        ],
+        [
+          "Wellbeing"
+        ],
+        [
+          "51%"
+        ]
+      ],
+      [
+        [
+          "Resources"
+        ],
+        [
+          "Example: I can find the tools needed for my tasks."
+        ],
+        [
+          "Empowerment"
+        ],
+        [
+          "48%"
+        ]
+      ],
+      [
+        [
+          "Prospects"
+        ],
+        [
+          "Example: I see opportunities ahead for <COMPANY_NAME>."
+        ],
+        [
+          "Purpose"
+        ],
+        [
+          "45%"
+        ]
+      ]
+    ]
+  }
+]

@@ -339,8 +339,10 @@ function renderBlock(
       const Heading = headingTag(block.level);
       return (
         <Heading className={`${styles[`heading${block.level}`]} ${isResearchBriefHeading(block) ? styles.briefHeading : ""} ${isReferencesHeading(block) ? styles.referencesHeading : ""}`}>
-          {props.textOverrides?.[block.id] ?? <RichText block={block} reference={isReference} referenceMarkers={referenceMarkers}
-            end={isResearchBriefHeading(block) ? headingLabel(block).length : block.text.length} />}
+          {props.textOverrides?.[block.id] ?? (block.marks?.length || block.links?.length
+            ? <RichText block={block} reference={isReference} referenceMarkers={referenceMarkers}
+              end={isResearchBriefHeading(block) ? headingLabel(block).length : block.text.length} />
+            : isResearchBriefHeading(block) ? headingLabel(block) : block.text)}
         </Heading>
       );
     }
@@ -626,7 +628,8 @@ function reportContent(
             /^sources?\s*:/i.test((typeof textOverride === "string" ? textOverride : block.text).trim()) ? true : undefined}
           data-chart-insert-before={props.mode !== "read" && props.onInsertChart && (!isReference || startsReferences) && !isDivider ? block.id : undefined}
         >
-          {startsReferences && !isReferencesHeading(block) ? <>
+          {startsReferences && !isReferencesHeading(block) &&
+            (props.manifest.readerPresentation || props.manifest.wordStyles) ? <>
             <h2 className={`${styles.heading2} ${styles.referencesHeading}`}>References</h2>
             {props.blockOverrides?.[block.id] ?? renderBlock(block, props, isReference, referenceMarkers)}
           </> : isDivider ? null : props.blockOverrides?.[block.id] ?? renderBlock(block, props, isReference, referenceMarkers)}

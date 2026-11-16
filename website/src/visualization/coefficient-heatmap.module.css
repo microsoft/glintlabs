@@ -45,6 +45,7 @@
 .scale { width: 100%; }
 .bands { display: grid; grid-template-columns: repeat(5, 1fr); height: 12px; }
 .bands span { border: 1px solid var(--heatmap-navy); }
+.bands span + span { border-inline-start: 0; }
 .endpoints { display: grid; grid-template-columns: repeat(5, 1fr); margin-top: 4px; }
 .note { margin: 0; padding-top: 32px; border-top: 1px solid var(--heatmap-divider); font-size: 12px; font-style: italic; line-height: 16px; }
 .screenReaderOnly { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
@@ -69,7 +70,7 @@
     background: var(--heatmap-white);
     text-align: left;
   }
-  .matrix tbody th::after { content: ""; position: absolute; inset: 0 0 0 auto; width: 1px; background: var(--heatmap-navy); }
+  .matrix tbody th::after { content: ""; position: absolute; inset: 0 -1px 0 auto; width: 1px; background: var(--heatmap-navy); }
   .matrix thead .corner { position: sticky; left: 0; z-index: 2; background: var(--heatmap-white); }
   .desktopLegend { display: none; }
   .fullPeriod { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

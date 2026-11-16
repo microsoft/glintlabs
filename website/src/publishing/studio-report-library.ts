@@ -5,20 +5,20 @@ import { canonicalJson, createApprovedContentRecord, sha256Text } from "../integ
 import { reportManifestSchema } from "../manifest/report-manifest.ts";
 import { createStudioProject, publicationEditingFingerprint } from "../project/studio-project.ts";
 import { publishedReportSummarySchema } from "../project/report-library.ts";
-import { loadApprovedPublication } from "./approved-publication.ts";
+import type { loadApprovedPublication } from "./approved-publication.ts";
 import { rewriteAssetReferences } from "./publication-preview.ts";
 import { getLaunchReport } from "../launch-reports/reports.ts";
 import { publicationCatalogItem } from "./report-catalog.ts";
 
 type ApprovedReport = NonNullable<Awaited<ReturnType<typeof loadApprovedPublication>>>;
 
-export function publishedReportSummary({ publication }: ApprovedReport) {
-  return publishedReportSummarySchema.parse({
+export function publishedReportSummary({ publication, homepage }: ApprovedReport) {
+  return publishedReportSummarySchema.required({ homepage: true }).parse({
     id: publication.reportId, title: publication.title, slug: publication.slug,
     summary: getLaunchReport(publication.slug)?.catalog.description ?? publication.summary,
     revision: publication.revision, packageFingerprint: publication.approval.packageFingerprint,
     updatedAt: publication.approval.confirmedAt, displayDate: publication.displayDate,
-    eyebrow: publication.eyebrow, employeeCount: publication.employeeCount,
+    eyebrow: publication.eyebrow, employeeCount: publication.employeeCount, homepage,
     thumbnail: getLaunchReport(publication.slug)?.catalog.thumbnail ?? publicationCatalogItem(publication).thumbnail,
   });
 }

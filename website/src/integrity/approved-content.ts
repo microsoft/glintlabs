@@ -107,6 +107,9 @@ function semanticBlock(block: ReportBlock) {
           width: block.data.evidenceImage.width,
           height: block.data.evidenceImage.height,
           sourceAsset: block.data.evidenceImage.sourceAssetSha256,
+          placement: block.data.evidenceImage.placement,
+          eyebrow: block.data.evidenceImage.eyebrow,
+          contentKind: block.data.evidenceImage.contentKind,
         },
       };
     }
@@ -133,6 +136,9 @@ function semanticBlock(block: ReportBlock) {
       block.type === "listening-methods-comparison" ||
       block.type === "horizontal-bar-chart" ||
       block.type === "coefficient-heatmap" ||
+      block.type === "grouped-bar-comparison" ||
+      block.type === "comparison-panel-group" ||
+      block.type === "line-chart" ||
       block.type === "grouped-column-comparison") &&
     block.verifiedSource
   ) {
@@ -146,6 +152,9 @@ function semanticBlock(block: ReportBlock) {
           width: block.verifiedSource.evidenceImage.width,
           height: block.verifiedSource.evidenceImage.height,
           sourceAsset: block.verifiedSource.evidenceImage.sourceAssetSha256,
+          placement: block.verifiedSource.evidenceImage.placement,
+          eyebrow: block.verifiedSource.evidenceImage.eyebrow,
+          contentKind: block.verifiedSource.evidenceImage.contentKind,
         },
       };
     }
@@ -270,6 +279,9 @@ export function evaluateApprovedContentIntegrity(
         block.type === "percentage-comparison-grid" ||
         block.type === "paired-percentage-comparison" ||
         block.type === "horizontal-bar-chart" ||
+        block.type === "grouped-bar-comparison" ||
+        block.type === "comparison-panel-group" ||
+        block.type === "line-chart" ||
         block.type === "grouped-column-comparison") &&
       (!block.verifiedSource ||
         block.verifiedSource.verifiedAt === DATA_VISUAL_PREVIEW_TIMESTAMP ||

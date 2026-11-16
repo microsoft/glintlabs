@@ -1,5 +1,37 @@
 # Local migration validation
 
+## Full staging/public reconciliation — November 16, 2026
+
+Local Windows validation reconciles staging
+`fd194a41cd8a53a7e208174e0dd67e34fb7c06b2` and public
+`26b78294340203f81ef604c21c9bce72e053d4b9`. The unchanged lockfile was restored
+with `npm ci --no-audit --no-fund` after the initial test command reported missing
+dependencies. This machine uses Node 26.13.0; hosted CI still pins Node 22.23.4.
+
+- `npm test`: 455 passed, zero failures or skips, including library restoration,
+  exact-revision receipts/homepage placement, chart-source integrity, generalized
+  comparison categories and both Word-owned and legacy employee counts.
+- `npm run lint` and `npx tsc --noEmit --incremental false`: pass.
+- Public `npm run build` with `NEXT_DIST_DIR=.next-workiq-release-validation`:
+  pass, including lint and type checking.
+- Connected `npm run studio:build` with `NEXT_DIST_DIR=.next-local-studio`: pass;
+  no owner bypass or server was started.
+- `npm run pages:build`: pass; 15 public static routes, 38 original image hashes,
+  `/glintlabs` URL prefixing and private/server-route exclusion verified.
+- `node scripts/verify-migration.mjs`: pass; 684 mappings, 599 byte-identical,
+  84 documented differences and one documented removal.
+- `npm audit --omit=dev --audit-level=high`: blocked by HTTP 429 from the
+  configured package-feed advisory service. Retrying with the public npm
+  registry failed its TLS handshake; TLS verification was not disabled. There
+  is no current successful dependency-audit result for this reconciliation.
+
+Builds retain the existing non-blocking comparison-chart Autoprefixer warning
+for `align-items: end` and its associated Webpack cache warning. Browser,
+accessibility and interaction audits were not rerun for this reconciliation;
+the historical limitations below still apply. Build-generated TypeScript
+configuration changes were reverted. No report approval, server, deployment,
+commit or push was performed by this website reconciliation.
+
 ## Revision and boundary
 
 Source: `0ef824b3ad840a6a75d16261168bd0219f2ee510`.

@@ -715,6 +715,7 @@
   font-style: italic;
   line-height: 16px;
   overflow-wrap: anywhere;
+  white-space: pre-line;
 }
 
 .horizontalChart .chartSubtitle { text-align: left; }

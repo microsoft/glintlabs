@@ -99,9 +99,15 @@ export function wordStyleView(manifest: ReportManifest): ReportManifest {
       if (legacyCover) return [block];
       if (block.wordOutline === 9 && !brief && !references) return [block];
       if (brief || references || target === "section-heading" || target === "subsection-heading") {
+        const marks = block.marks;
+        const fullyBold = block.text.split("").every((character, index) =>
+          !character.trim() || marks?.some(mark => mark.bold && mark.start <= index && mark.end > index));
         return [{
           ...block, type: "heading", level: block.type === "heading" && block.wordOutline !== undefined && !brief && !references
             ? Math.min(6, block.level + 1) : target === "subsection-heading" && !brief && !references ? 3 : 2,
+          marks: fullyBold
+            ? marks?.map(mark => ({ ...mark, bold: undefined })).filter(mark => mark.italic || mark.superscript || mark.subscript)
+            : marks,
         }];
       }
       if (target === "body" && block.type === "heading") {
