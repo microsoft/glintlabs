@@ -130,7 +130,6 @@ const children = [
   field("Author handle", "[@alias]"),
   field("Published date", "[Month Day, Year]"),
   field("Read time minutes", "[Positive whole number]"),
-  field("Employee count", "[Optional positive whole number; leave blank to hide]"),
   field(
     "Topic pages",
     "[Up to three comma-separated Glint Labs topic pages]",

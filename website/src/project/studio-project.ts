@@ -1,11 +1,9 @@
 import { z } from "zod";
 
-import { approvedContentRecordSchema, canonicalJson, sha256Text } from "../integrity/approved-content.ts";
+import { approvedContentRecordSchema, canonicalJson } from "../integrity/approved-content.ts";
 import { activeAcceptedReviewItemIds } from "../review/fidelity-review.ts";
-import { applyWordStyleMappings } from "./word-style-mapping.ts";
 import {
   publicationPreparationSchema,
-  publicationMetadataDraftSchema,
   publicationImageReviewSchema,
   publicationSourceEvidenceSchema,
 } from "./publication-preparation.ts";
@@ -44,19 +42,12 @@ export const studioProjectSchema = z.object({
   approvedContent: approvedContentRecordSchema.optional(),
   sourceApproval: sourceApprovalSchema.optional(),
   reportStyle: reportStyleSchema.default(DEFAULT_REPORT_STYLE),
-  manifest: reportManifestSchema.transform(applyWordStyleMappings),
-  sourceManifest: reportManifestSchema.optional(),
+  manifest: reportManifestSchema,
   acceptedReviewItemIds: z.array(z.string().min(1)).default([]),
   publishReceipts: z.array(publishReceiptSchema).default([]),
   publicationSourceEvidence: publicationSourceEvidenceSchema.optional(),
   publicationPreparation: publicationPreparationSchema.optional(),
-  publicationMetadataDraft: publicationMetadataDraftSchema.optional(),
   imageReviews: z.array(publicationImageReviewSchema).optional(),
-  websitePublication: z.object({
-    revision: z.number().int().positive(),
-    packageFingerprint: z.string().regex(/^[a-f0-9]{64}$/),
-    editingFingerprint: z.string().regex(/^[a-f0-9]{64}$/),
-  }).optional(),
 });
 
 const legacyStudioProjectSchema = z.object({
@@ -80,7 +71,7 @@ export function studioImageReviews(
   return project.imageReviews ?? project.publicationPreparation?.imageReviews ?? [];
 }
 
-type StudioEditingState = Pick<StudioProject, "manifest" | "reportStyle" | "acceptedReviewItemIds" | "imageReviews" | "publicationPreparation" | "publicationMetadataDraft">;
+type StudioEditingState = Pick<StudioProject, "manifest" | "reportStyle" | "acceptedReviewItemIds" | "imageReviews" | "publicationPreparation">;
 
 function editingState({
   manifest,
@@ -88,12 +79,10 @@ function editingState({
   acceptedReviewItemIds,
   imageReviews,
   publicationPreparation,
-  publicationMetadataDraft,
 }: StudioEditingState) {
   return {
     manifest,
     reportStyle,
-    ...(publicationMetadataDraft ? { publicationMetadataDraft } : {}),
     imageReviews: studioImageReviews({ imageReviews, publicationPreparation }),
     acceptedReviewItemIds: activeAcceptedReviewItemIds(
       manifest.reviewItems, acceptedReviewItemIds,
@@ -125,13 +114,6 @@ export function studioEditingSnapshot(project: StudioEditingState) {
   return canonicalJson(editingState(project));
 }
 
-export function publicationEditingFingerprint(project: StudioProject) {
-  return sha256Text(canonicalJson({
-    editing: editingState({ ...project, publicationMetadataDraft: undefined }),
-    metadata: project.publicationMetadataDraft ?? project.publicationPreparation?.metadata,
-  }));
-}
-
 export function createStudioProject({
   acceptedReviewItemIds = [],
   approvedContent,
@@ -139,13 +121,11 @@ export function createStudioProject({
   importedManifestSha256,
   manifest,
   publicationPreparation,
-  publicationMetadataDraft,
   imageReviews = publicationPreparation?.imageReviews,
   publicationSourceEvidence,
   publishReceipts = [],
   reportStyle = DEFAULT_REPORT_STYLE,
   sourceApproval,
-  sourceManifest,
   status,
 }: {
   acceptedReviewItemIds?: string[];
@@ -154,13 +134,11 @@ export function createStudioProject({
   importedManifestSha256: string;
   manifest: ReportManifest;
   publicationPreparation?: StudioProject["publicationPreparation"];
-  publicationMetadataDraft?: StudioProject["publicationMetadataDraft"];
   imageReviews?: StudioProject["imageReviews"];
   publicationSourceEvidence?: StudioProject["publicationSourceEvidence"];
   publishReceipts?: PublishReceipt[];
   reportStyle?: ReportStyle;
   sourceApproval?: SourceApproval;
-  sourceManifest?: ReportManifest;
   status: StudioProject["status"];
 }): StudioProject {
   const timestamp = new Date().toISOString();
@@ -175,9 +153,7 @@ export function createStudioProject({
     sourceApproval,
     reportStyle,
     manifest,
-    sourceManifest,
     imageReviews,
-    publicationMetadataDraft,
     publicationPreparation: publicationPreparation && {
       ...publicationPreparation,
       imageReviews: imageReviews ?? publicationPreparation.imageReviews,
@@ -195,28 +171,22 @@ export function updateStudioProject(
     approvedContent = project.approvedContent,
     manifest,
     publicationPreparation = project.publicationPreparation,
-    publicationMetadataDraft = project.publicationMetadataDraft,
     imageReviews = publicationPreparation?.imageReviews ?? project.imageReviews,
     publicationSourceEvidence = project.publicationSourceEvidence,
     publishReceipts = project.publishReceipts,
     reportStyle = project.reportStyle,
     sourceApproval = project.sourceApproval,
-    sourceManifest = project.sourceManifest,
-    importedManifestSha256 = project.importedManifestSha256,
     status,
   }: {
     acceptedReviewItemIds: string[];
     approvedContent?: StudioProject["approvedContent"];
     manifest: ReportManifest;
     publicationPreparation?: StudioProject["publicationPreparation"];
-    publicationMetadataDraft?: StudioProject["publicationMetadataDraft"];
     imageReviews?: StudioProject["imageReviews"];
     publicationSourceEvidence?: StudioProject["publicationSourceEvidence"];
     publishReceipts?: PublishReceipt[];
     reportStyle?: ReportStyle;
     sourceApproval?: SourceApproval;
-    sourceManifest?: ReportManifest;
-    importedManifestSha256?: string;
     status: StudioProject["status"];
   },
 ): StudioProject {
@@ -228,10 +198,7 @@ export function updateStudioProject(
     sourceApproval,
     reportStyle,
     manifest,
-    sourceManifest,
-    importedManifestSha256,
     imageReviews,
-    publicationMetadataDraft,
     publicationPreparation: publicationPreparation && {
       ...publicationPreparation,
       imageReviews: imageReviews ?? publicationPreparation.imageReviews,

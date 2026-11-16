@@ -21,7 +21,8 @@ test("annual report content preserves the approved Word source", () => {
 
 test("annual report content preserves the complete section sequence", () => {
   const headings = manifest.blocks
-    .flatMap((block) => block.type === "heading" && block.level <= 2 ? [block.text] : []);
+    .filter((block) => block.type === "heading" && block.level <= 2)
+    .map((block) => block.text);
 
   assert.deepEqual(headings, [
     "The next generation of employee listening",

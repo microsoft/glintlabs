@@ -34,7 +34,6 @@ export async function importWordReports(
         approvedContent: extracted.approvedContent,
         publicationSourceEvidence: extracted.publicationSourceEvidence,
         manifest: extracted.manifest,
-        sourceManifest: extracted.manifest,
         reportStyle,
         status: "draft",
       });

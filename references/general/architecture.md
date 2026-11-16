@@ -68,19 +68,3 @@ Use pinned package dependencies for production or marketplace usage:
 - avoid: unpinned `main`
 
 When `vivaglint` changes output columns or analysis semantics, increment the manifest schema version and update downstream skills.
-
-## Advanced modeling
-
-`analyze-survey-advanced` uses the optional `vivaglint.modeling` engine extension,
-a separate pinned advanced runtime, and its own versioned config/manifest/report
-contracts. It does not broaden the basic runner's analysis list or change basic
-manifest version 1. Model fitting stays in the engine; approval, experiment
-history, private project holdout state, safe packaging, and conversation guidance
-belong to the advanced orchestration layer.
-
-Proactive tuning proposals and research-informed requests for company context
-are encouraged; execution, search and data amendments require explicit user
-authorization. Interpretive context is distinct from approved predictor data.
-The existing Knowledge Vault remains the shared research source. Review-branch
-engine pins must be labeled as such until upstream approval; do not silently
-substitute another engine or upgrade the basic environment.

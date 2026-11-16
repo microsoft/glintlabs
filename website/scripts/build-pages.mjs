@@ -11,9 +11,8 @@ import { listApprovedPublications } from "../src/publishing/approved-publication
 import { publishedReportSummary } from "../src/publishing/studio-report-library.ts";
 import { publicPath } from "../src/telemetry/contract.ts";
 import { verifyPages } from "./verify-pages.mjs";
-import { isStagingReader, readerBasePath } from "./pages-config.mjs";
 
-export const pagesBasePath = readerBasePath();
+export const pagesBasePath = "/glintlabs";
 export function readerTelemetryConfig(value, clarity) {
   assert(value === undefined || value === "" || value === "false" || value === "true",
     "GLINTLABS_PAGES_TELEMETRY must be true or false.");
@@ -29,7 +28,6 @@ const excludedRoutes = new Set([
 
 export function readerFile(relative) {
   const parts = relative.split(path.sep);
-  if (!isStagingReader() && /^src\/app\/_components\/staging-badge\.(tsx|module\.css)$/.test(parts.join("/"))) return false;
   if (parts[0] !== "src") return true;
   if (parts[1] === "middleware.ts") return false;
   if (parts[1] !== "app") return true;
@@ -37,14 +35,10 @@ export function readerFile(relative) {
   return !privateRoute || !/^(page|route|layout)\.[jt]sx?$/.test(parts.at(-1));
 }
 
-export function readerSource(text, filename, basePath = pagesBasePath) {
-  if (isStagingReader() && filename.split(path.sep).join("/").endsWith("src/app/layout.tsx")) {
-    assert(text.includes("<Providers>"), "Review staging badge placement: missing root Providers.");
-    text = `import { StagingBadge } from "./_components/staging-badge";\n${text.replace("<Providers>", "<Providers><StagingBadge />")}`;
-  }
+export function readerSource(text, filename) {
   if (filename.endsWith(".css")) {
     return text.replace(/url\((["']?)(\/(?!\/)[^)"']+)\1\)/g,
-      (_match, quote, url) => `url(${quote}${basePath}${url}${quote})`);
+      (_match, quote, url) => `url(${quote}${pagesBasePath}${url}${quote})`);
   }
   if (!filename.endsWith(".tsx")) return text;
   const source = ts.createSourceFile(filename, text, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);

@@ -19,7 +19,7 @@ type ReportSideNavProps = {
   authorName: string;
   authors?: { name: string; role: string }[];
   dark?: boolean;
-  publishedDate?: string;
+  publishedDate: string;
   readTimeMinutes: number;
   sections: ReportSection[];
 };
@@ -122,7 +122,7 @@ export function ReportSideNav({
             </div>
           )}
           <span>
-            {publishedDate ? `${publishedDate} • ` : ""}{readTimeMinutes} min read
+            {publishedDate} • {readTimeMinutes} min read
           </span>
         </div>
       </div>

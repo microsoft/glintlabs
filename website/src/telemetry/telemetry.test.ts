@@ -9,34 +9,6 @@ import {
 } from "./client.ts";
 import { createHandler } from "../../../supabase/functions/glintlabs-telemetry/handler.ts";
 import { getLaunchReports } from "../launch-reports/reports.ts";
-import { getToolFeedbackReasonEvents } from "./tool-feedback.ts";
-
-test("feedback reasons emit only fixed per-tool categories, once per category in a submission", () => {
-  assert.deepEqual(getToolFeedbackReasonEvents("analyze-survey", [
-    "not_useful", "hard_to_use", "not_useful",
-  ]), [
-    "tool_analyze_survey_thumbs_down_reason_not_useful",
-    "tool_analyze_survey_thumbs_down_reason_hard_to_use",
-  ]);
-  assert.deepEqual(getToolFeedbackReasonEvents("knowledge-vault", ["technical_issue", "hard_to_use"]), [
-    "tool_knowledge_vault_thumbs_down_reason_technical_issue",
-    "tool_knowledge_vault_thumbs_down_reason_hard_to_use",
-  ]);
-  assert.deepEqual(getToolFeedbackReasonEvents("knowledge-vault", []), []);
-});
-
-test("feedback reason events discard unknown tools, malformed payloads and arbitrary strings", () => {
-  for (const tool of [null, undefined, {}, "toString", "constructor", "unknown"]) {
-    assert.deepEqual(getToolFeedbackReasonEvents(tool, ["hard_to_use"]), []);
-  }
-  for (const reasons of [null, undefined, {}, "hard_to_use", 1]) {
-    assert.deepEqual(getToolFeedbackReasonEvents("analyze-survey", reasons), []);
-  }
-  assert.deepEqual(getToolFeedbackReasonEvents("analyze-survey", [
-    "arbitrary feedback", "__proto__", {}, ["hard_to_use"], null, "not_useful",
-    "incorrect_information", "not_relevant", "privacy_concern", "other",
-  ]), ["tool_analyze_survey_thumbs_down_reason_not_useful"]);
-});
 
 const event: TelemetryEvent = {
   v: 1, event: "page_view", page_path: "/reports", referrer: "github", campaign_source: "none",

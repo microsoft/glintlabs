@@ -21,8 +21,8 @@
       "source": ".gitignore",
       "destination": "website/.gitignore",
       "sourceSha256": "29c0251edf3536b65a883f204c0104c9dd0a9222a9b107b5f83a31f3f3cb5399",
-      "destinationSha256": "29b0e4871fa40c850bcb6ca10dc54c4f72e260413e91bd0d60d46f822ad816ea",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "29c0251edf3536b65a883f204c0104c9dd0a9222a9b107b5f83a31f3f3cb5399",
+      "intentionalDifference": ""
     },
     {
       "source": "AGENTS.md",
@@ -49,8 +49,8 @@
       "source": "README.md",
       "destination": "website/README.md",
       "sourceSha256": "5d8bf5442839d7989a24a82b72496f407066ecd3381247fdfe35d4995571e0a2",
-      "destinationSha256": "9d8f4cb69b6179a541842b332485c2d01cd4c9210661ab280ab5eb04075fa977",
-      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback. The approved distinct-browser and automatic-analytics extensions document first-visit tracking without on-site consent/opt-out controls, privacy approval, preserved refusals and DNT/GPC, fixed 18-calendar-month random browser IDs, separate server-side keyed hashing, compatible anonymous events and restricted 90-day distinct counts. The requested removal of floating analytics UI moves its disclosure into plain text in the existing marketing footer. The requested Clarity integration documents regional vendor consent defaults without a banner, project cookie settings, privacy/data boundaries, verification and rollback independently of Supabase. Tool feedback documentation specifies the four per-tool rating events, fixed reason events, optional reason dialog and nonmodal submitted confirmation, cancellation and repeat-submission behavior, local-only acknowledgement, interaction-history semantics and intercepted verification without changing Supabase or collecting comments/uploads."
+      "destinationSha256": "8f4b8ba2bf277f097ce24f119dd3d9afeba2c46d00b405b7e3c97b8e3e0841ed",
+      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback. The approved distinct-browser and automatic-analytics extensions document first-visit tracking without on-site consent/opt-out controls, privacy approval, preserved refusals and DNT/GPC, fixed 18-calendar-month random browser IDs, separate server-side keyed hashing, compatible anonymous events and restricted 90-day distinct counts. The requested removal of floating analytics UI moves its disclosure into plain text in the existing marketing footer. The requested Clarity integration documents regional vendor consent defaults without a banner, project cookie settings, privacy/data boundaries, verification and rollback independently of Supabase."
     },
     {
       "source": "artifacts/README.md",
@@ -91,8 +91,8 @@
       "source": "docs/public-site/studio-return-handoff.md",
       "destination": "website/docs/public-site/studio-return-handoff.md",
       "sourceSha256": "1ae45a694f6606e919a8f8559fea8085641a8477f0fa358a7f14ae26c6a24bd0",
-      "destinationSha256": "c7531ac26fcccb846c4527255bcd5016ae7246733dee0427bcb0b7aca489a782",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "1ae45a694f6606e919a8f8559fea8085641a8477f0fa358a7f14ae26c6a24bd0",
+      "intentionalDifference": ""
     },
     {
       "source": "docs/public-site/v1-requirements.md",
@@ -273,15 +273,15 @@
       "source": "docs/templates/README.md",
       "destination": "website/docs/templates/README.md",
       "sourceSha256": "36ab026ef9c359134fa48ce8d1e7fcc9b697d28125508cea5d64f72108039b24",
-      "destinationSha256": "ff89d58dfe960328eafa481f84326f6dea30f05e01509e3030377cbed2e18239",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "36ab026ef9c359134fa48ce8d1e7fcc9b697d28125508cea5d64f72108039b24",
+      "intentionalDifference": ""
     },
     {
       "source": "docs/templates/glint-labs-report-template.docx",
       "destination": "website/docs/templates/glint-labs-report-template.docx",
       "sourceSha256": "50798a6fb211cf1c0ec808cd482bb1c7c7f4bbdbea197faacfd8b202dc833468",
-      "destinationSha256": "036b2147d8b86caaab11ccf53329cd32cdf90e79a7a3980471cac52006a619db",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "50798a6fb211cf1c0ec808cd482bb1c7c7f4bbdbea197faacfd8b202dc833468",
+      "intentionalDifference": ""
     },
     {
       "source": "eslint.config.mjs",
@@ -308,15 +308,15 @@
       "source": "package-lock.json",
       "destination": "website/package-lock.json",
       "sourceSha256": "1436f18dbdbeac5f0699137a7916dec9c0bbc9891c7a57d2e6b49571c4c70541",
-      "destinationSha256": "78ffa92759ce9183ef343de2a844a8180f64cad1238d5bf888c0920e45dc0ad0",
-      "intentionalDifference": "Subsequent maintainer-approved telemetry locks the development-only PGlite migration/permissions test runtime; production dependencies are unchanged. Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "a4d2b922d57ab73c3f277fa4f8309002aee7c3cf3dbca8a943915551ea43c162",
+      "intentionalDifference": "Subsequent maintainer-approved telemetry locks the development-only PGlite migration/permissions test runtime; production dependencies are unchanged."
     },
     {
       "source": "package.json",
       "destination": "website/package.json",
       "sourceSha256": "077e6bd8fb609e100c287c6a2d03dd3a6f5d15d170f2931e6febe3c53249cb27",
-      "destinationSha256": "838260921c1b3ca428f76b881f52e2a20f34bbd523a939e105321e1f0a72b3c1",
-      "intentionalDifference": "Adds static Pages build, explicit approved-report export, loopback preview and browser-check commands; appends focused reader-build tests. Dependencies and lockfile unchanged. Subsequent maintainer-approved telemetry adds focused event/database tests and an intercepted browser command; PGlite is a development-only PostgreSQL test dependency. Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "59098a18708bc55c1222f1f20311b68043214646f35e60bf5cb812b9ba9c4ba7",
+      "intentionalDifference": "Adds static Pages build, explicit approved-report export, loopback preview and browser-check commands; appends focused reader-build tests. Dependencies and lockfile unchanged. Subsequent maintainer-approved telemetry adds focused event/database tests and an intercepted browser command; PGlite is a development-only PostgreSQL test dependency."
     },
     {
       "source": "packages/data-visuals/.gitattributes",
@@ -3493,8 +3493,8 @@
       "source": "scripts/create-word-template.mjs",
       "destination": "website/scripts/create-word-template.mjs",
       "sourceSha256": "ff264a1754c4bfa01c5137b5aadd71ef6d7462e073f7b8f3188c823b7de9bca0",
-      "destinationSha256": "e7e72c877a354d443b6fb96aaf2e5df60e3823e1d89e282f803107ca954ce14e",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "ff264a1754c4bfa01c5137b5aadd71ef6d7462e073f7b8f3188c823b7de9bca0",
+      "intentionalDifference": ""
     },
     {
       "source": "scripts/generate-annual-report-content.mjs",
@@ -3528,8 +3528,8 @@
       "source": "scripts/studio-editing.test.mjs",
       "destination": "website/scripts/studio-editing.test.mjs",
       "sourceSha256": "444b0ba27fc04939b715287253a2b59efb6ea09329e21f775f30e31b044cf631",
-      "destinationSha256": "c4c4964a8505f3b9c79f203bccf6b1e9c97ea1d057e5af8c56d04c607d39971c",
-      "intentionalDifference": "Retains renderer coverage for colon-free brief headings, rich-text overrides, source dividers, report icons, native source tables and transparent Fragment citation semantics. Reconciles approved Studio v1 authoring with production author notes and legacy reference layout."
+      "destinationSha256": "0417389939880b04e4a6032044717766efafcdc5e290116dd0240c3b1edcfa42",
+      "intentionalDifference": "Extends renderer tests for colon-free brief headings, unchanged source blocks, rich-text overrides, source dividers, histogram Research Drop versus calendar Annual icons, and faithful source tables retaining the first data row and native row-header semantics. Current Studio rich-text Fragment rendering is transparent in the existing citation semantics test harness."
     },
     {
       "source": "scripts/studio-owner-key.ts",
@@ -3591,8 +3591,8 @@
       "source": "src/annual-report-2026/approved-content.test.ts",
       "destination": "website/src/annual-report-2026/approved-content.test.ts",
       "sourceSha256": "125405e68454d7ce36e605392f4ff9e1c0c947d34f0cdff93a863259ca814c2f",
-      "destinationSha256": "891a1c767df156504ced1752ba33375684b70b77099567f504b9889de1b696f3",
-      "intentionalDifference": "Narrows heading fixtures for reconciled chart-schema unions; approved content is unchanged."
+      "destinationSha256": "125405e68454d7ce36e605392f4ff9e1c0c947d34f0cdff93a863259ca814c2f",
+      "intentionalDifference": ""
     },
     {
       "source": "src/annual-report-2026/canonical-figma.module.css",
@@ -3654,8 +3654,8 @@
       "source": "src/annual-report-2026/canonical-report.test.ts",
       "destination": "website/src/annual-report-2026/canonical-report.test.ts",
       "sourceSha256": "523b6ea2cc284516e5cb58e76d118082d50aea5a7f207c6f2c3035d7f66ab7e2",
-      "destinationSha256": "0f764f7b026bc7c1e43f394eb6cd877766e42fe4eb73ef855c351ac6826d2b08",
-      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and the approved Caribay quote while retaining placeholder-absence and author-credit checks. Add mobile Figma topics-matrix spacing and natural-row-height coverage while retaining desktop-layout, native-header and nine-cell checks. Verify the survey expansion citation uses the existing 10.32px frame7 superscript style before the sentence punctuation rather than an inline digit. Verify exact wording and scoped emphasis for the three disclaimer sentences in References. Verify all eight decorative quote marks share the local font-independent Figma vector with unchanged 27x26 layout and forced-color-safe inherited color. Require exact sidebar label, destination and order parity with every current page section heading while preserving the retired deep link. Require the approved November 2024 related-research short URL while retaining the external-link accessibility regression. Verify every listening-portfolio popout description, including the owner-requested employee-initiated feedback example, and its use by the shared renderer. Require scoped mobile button centering while preserving compact desktop baseline alignment and mobile touch-target height. Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "abd2f724979012bddacc05dacd223e240d271597f4fb4180d0689afbadcb7e57",
+      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and the approved Caribay quote while retaining placeholder-absence and author-credit checks. Add mobile Figma topics-matrix spacing and natural-row-height coverage while retaining desktop-layout, native-header and nine-cell checks. Verify the survey expansion citation uses the existing 10.32px frame7 superscript style before the sentence punctuation rather than an inline digit. Verify exact wording and scoped emphasis for the three disclaimer sentences in References. Verify all eight decorative quote marks share the local font-independent Figma vector with unchanged 27x26 layout and forced-color-safe inherited color. Require exact sidebar label, destination and order parity with every current page section heading while preserving the retired deep link. Require the approved November 2024 related-research short URL while retaining the external-link accessibility regression. Verify every listening-portfolio popout description, including the owner-requested employee-initiated feedback example, and its use by the shared renderer. Require scoped mobile button centering while preserving compact desktop baseline alignment and mobile touch-target height."
     },
     {
       "source": "src/annual-report-2026/channel-portfolio.tsx",
@@ -3703,15 +3703,15 @@
       "source": "src/app/_components/marketing-footer.module.css",
       "destination": "website/src/app/_components/marketing-footer.module.css",
       "sourceSha256": "4d05dea99065e8a961f12932baca24ee7eb616a5ae18b20d63e2c396f765d04b",
-      "destinationSha256": "122f8ba7fc905546430bf69691129c0e940fa149df5fb9f1b6d9bfc1ba31814a",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "4d05dea99065e8a961f12932baca24ee7eb616a5ae18b20d63e2c396f765d04b",
+      "intentionalDifference": ""
     },
     {
       "source": "src/app/_components/marketing-footer.tsx",
       "destination": "website/src/app/_components/marketing-footer.tsx",
       "sourceSha256": "e03e844604fab71f8025ecfd6500385e459607ef25451e7e7de318a614a309dc",
-      "destinationSha256": "f66a12021d02a4eaf40c187ef4eaaba7992cedf5587152a335356c94c5d05c45",
-      "intentionalDifference": "Move automatic-analytics disclosure into a noninteractive paragraph beside the existing privacy link, gated by the public Pages telemetry build flag. Reuse existing disclaimer styling without a floating widget, consent prompt, new controls or redesign. The requested Clarity integration adds a separately gated plain-text disclosure of heatmaps, recordings, regional tracking limits and privacy opt-outs. Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "1a023355fbbcecb8ce82ee745e975c16df7775381cbb5ea794902777e9110d92",
+      "intentionalDifference": "Move automatic-analytics disclosure into a noninteractive paragraph beside the existing privacy link, gated by the public Pages telemetry build flag. Reuse existing disclaimer styling without a floating widget, consent prompt, new controls or redesign. The requested Clarity integration adds a separately gated plain-text disclosure of heatmaps, recordings, regional tracking limits and privacy opt-outs."
     },
     {
       "source": "src/app/_components/public-site-design.module.css",
@@ -3738,15 +3738,15 @@
       "source": "src/app/_components/publishing-studio.module.css",
       "destination": "website/src/app/_components/publishing-studio.module.css",
       "sourceSha256": "72ae2b3bb6585d17e95860e1180e1d6d80e5404e06b7c850149ad784d5ec693f",
-      "destinationSha256": "349b7492dae69536757103cacb60971cee0c120dcca6d7860e00b60f44a2378f",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "72ae2b3bb6585d17e95860e1180e1d6d80e5404e06b7c850149ad784d5ec693f",
+      "intentionalDifference": ""
     },
     {
       "source": "src/app/_components/publishing-studio.tsx",
       "destination": "website/src/app/_components/publishing-studio.tsx",
       "sourceSha256": "6166f7dd7314d1db0b6fb6a9fb5f07cdcaf02eda68406ee4833733154fe69f52",
-      "destinationSha256": "e89923b6e3f37241ffb5711a457804a53e4995b0bbe6089f9e238daf08dc20e0",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "6166f7dd7314d1db0b6fb6a9fb5f07cdcaf02eda68406ee4833733154fe69f52",
+      "intentionalDifference": ""
     },
     {
       "source": "src/app/_components/site-artwork.module.css",
@@ -3780,8 +3780,8 @@
       "source": "src/app/_components/studio-report-viewport.tsx",
       "destination": "website/src/app/_components/studio-report-viewport.tsx",
       "sourceSha256": "143be23a7c96301771eb453b6310fd15dc3dbc5e5ccf389b8ef473f458db25e9",
-      "destinationSha256": "24127a7db742dc3123e89a6a4f28b89734966d50a99504e1582c490def67b6ff",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "143be23a7c96301771eb453b6310fd15dc3dbc5e5ccf389b8ef473f458db25e9",
+      "intentionalDifference": ""
     },
     {
       "source": "src/app/_components/study-card.module.css",
@@ -3934,8 +3934,8 @@
       "source": "src/app/preview/[id]/preview-client.tsx",
       "destination": "website/src/app/preview/[id]/preview-client.tsx",
       "sourceSha256": "a5573d62359aa66c944190b267ceb351eceb53dfda3dfe9d42b131a5548cd47b",
-      "destinationSha256": "339db0d43c1d4407b014fab6c9a7692a61c163508fb2c487cf819646e0aa9fc3",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "a5573d62359aa66c944190b267ceb351eceb53dfda3dfe9d42b131a5548cd47b",
+      "intentionalDifference": ""
     },
     {
       "source": "src/app/preview/[id]/preview.module.css",
@@ -4074,57 +4074,57 @@
       "source": "src/app/studio/_components/owner-access-panel.tsx",
       "destination": "website/src/app/studio/_components/owner-access-panel.tsx",
       "sourceSha256": "c5b66bd52528b146cd4f898a4466b4d75e86a15b3908eff92a8ba60fa3270e4a",
-      "destinationSha256": null,
-      "intentionalDifference": "Approved Publishing Studio v1 removes the obsolete standalone owner-access panel; owner-key authorization remains enforced by the publishing APIs and integrated confirmation flow."
+      "destinationSha256": "c5b66bd52528b146cd4f898a4466b4d75e86a15b3908eff92a8ba60fa3270e4a",
+      "intentionalDifference": ""
     },
     {
       "source": "src/app/studio/_components/publication-package-dialog.module.css",
       "destination": "website/src/app/studio/_components/publication-package-dialog.module.css",
       "sourceSha256": "d326bc3898b766b3f88431e78f09543694c1191de7a4eff87fc999042b75ba80",
-      "destinationSha256": "886ba02f05b9fd30af804d35d906e6e047d6172338135edacb32d47f35f9a8a1",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "d326bc3898b766b3f88431e78f09543694c1191de7a4eff87fc999042b75ba80",
+      "intentionalDifference": ""
     },
     {
       "source": "src/app/studio/_components/publication-package-dialog.tsx",
       "destination": "website/src/app/studio/_components/publication-package-dialog.tsx",
       "sourceSha256": "efe8b72b9661fa0746fb090433c6c14a833261132c8bb35d9d9fc0f8294bb918",
-      "destinationSha256": "2c1df221e7c8ccc36f3614ae35641b9ebd25b14ec1ad25198a61cff09430bbc4",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "efe8b72b9661fa0746fb090433c6c14a833261132c8bb35d9d9fc0f8294bb918",
+      "intentionalDifference": ""
     },
     {
       "source": "src/app/studio/page.tsx",
       "destination": "website/src/app/studio/page.tsx",
       "sourceSha256": "442655aafd5c5c01963cf798d34026b1183760d02455ba973444fe35203491ea",
-      "destinationSha256": "82001e7c8150ac4a8fc423fc2befa291418910de3c63ade3e1e0b67c4ed11fde",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "442655aafd5c5c01963cf798d34026b1183760d02455ba973444fe35203491ea",
+      "intentionalDifference": ""
     },
     {
       "source": "src/app/tools/analyze-survey/analyze-survey-details.module.css",
-      "destination": "website/src/app/tools/skill-details.module.css",
+      "destination": "website/src/app/tools/analyze-survey/analyze-survey-details.module.css",
       "sourceSha256": "c8c606c052dc5425465afe28d04ea9f435e307d335cff20641bb6fe12ac09ef3",
-      "destinationSha256": "7b9af30b274cc0df3ae242258c58d5146eb7fa2adccc007cfdd1481cf73fd29c",
-      "intentionalDifference": "Use compact setup code, outlined copy actions and the site accent for the three safeguard icons; preserve wrapping, control targets, focus states, forced-color borders and icon dimensions. Relocate the stylesheet to the shared skill-details surface for Analyze Survey and Knowledge Vault, extending its existing focus-visible style to the keyboard-scrollable modal summary. Scope the updated Knowledge Vault typography and spacing to its opt-in class: 22px setup line height, 16px starter prompt, 16px copy-action gap and 12px Results icon-to-text gap; Analyze Survey retains its prior styling."
+      "destinationSha256": "d30c73a58370442d91a6c5b7b197f2f58a75b54f773c6897a18e5a5ec07c25cd",
+      "intentionalDifference": "Use compact setup code, outlined copy actions and the site accent for the three safeguard icons; preserve wrapping, control targets, focus states, forced-color borders and icon dimensions."
     },
     {
       "source": "src/app/tools/analyze-survey/analyze-survey-details.test.ts",
       "destination": "website/src/app/tools/analyze-survey/analyze-survey-details.test.ts",
       "sourceSha256": "62e5f466b96c070b75a48cc29ba94bb641d074b26f3698787d435dc39712f8bc",
-      "destinationSha256": "68d578526de78c22c88c51813267cee000a9180cc271275f897365d075375990",
-      "intentionalDifference": "Retain regressions for canonical terminal instructions, outlined actions, compact text, approved wording, modal-only header-action omission, accent safeguard icons, scrollbar gutter restoration and the approved clipboard illustration. Read the shared details and modal implementation after extraction for Knowledge Vault."
+      "destinationSha256": "6cdcc6dda6250436ed37c0fe39bd8dad07721743d878f180fd12d4d56ed772c2",
+      "intentionalDifference": "Update and extend regressions for canonical terminal instructions, outlined actions, compact text, approved wording, modal-only header-action omission, accent safeguard icons and preserving/restoring an existing scrollbar gutter. Verify the shared Home and Tools card uses the approved existing clipboard illustration while retaining its size and decorative semantics."
     },
     {
       "source": "src/app/tools/analyze-survey/analyze-survey-details.tsx",
       "destination": "website/src/app/tools/analyze-survey/analyze-survey-details.tsx",
       "sourceSha256": "9ddb1b87bbb5f63dbc7357a5e245f8694ad1078a63921c2f3e709cf91933a6e7",
-      "destinationSha256": "6a50cf9d1bfc22da4ac46820a8c5abec25f6fce5a9dc33a6b96e8c28374c248d",
-      "intentionalDifference": "Retain the approved copy, terminal instructions, original URLs and exact clipboard values as Analyze Survey content; share the unchanged interaction and rendering behavior with the requested Knowledge Vault modal through SkillDetails."
+      "destinationSha256": "bdca92002972ca22174b99830db5d9b04bf08773437f9e5b999b1cffb3f0e4fa",
+      "intentionalDifference": "Apply the approved Overview and prompt wording, use outlined setup actions and omit the GitHub header action only in the modal; retain terminal instructions, original URLs and exact clipboard values."
     },
     {
       "source": "src/app/tools/analyze-survey/analyze-survey-modal-trigger.tsx",
       "destination": "website/src/app/tools/analyze-survey/analyze-survey-modal-trigger.tsx",
       "sourceSha256": "f9d483205ea5c812c77bb011a117fb4583a126cd6114ef59cb007693f84d6145",
-      "destinationSha256": "eba22a475b26beb105d8d257362d9014f2575cc3c5b0afe944abd8e3d635a5b8",
-      "intentionalDifference": "Delegate to the shared SkillModalTrigger for Analyze Survey and Knowledge Vault. Preserve Analyze Survey's semantic telemetry marker, native modal behavior, keyboard focus handling, scroll locking and scrollbar gutter restoration."
+      "destinationSha256": "8ef114d02a25e58b1be8575103173d53d9d10e5405a37e5a88cd5dc156e5c108",
+      "intentionalDifference": "Preserve an existing classic-scrollbar gutter while the Analyze Survey modal locks scrolling, then restore its original inline style; do not introduce a gutter on pages without one or override an existing stable gutter. Subsequent maintainer-approved telemetry adds only a semantic event marker to the existing dialog trigger; interaction, content and dialog behavior are preserved."
     },
     {
       "source": "src/app/tools/analyze-survey/page.module.css",
@@ -4151,15 +4151,15 @@
       "source": "src/app/tools/tools-catalog.module.css",
       "destination": "website/src/app/tools/tools-catalog.module.css",
       "sourceSha256": "d3a77322ca2a0836dcdf4b12719a3c1791935a14c4218a805fab0ace8b074fa4",
-      "destinationSha256": "a3b36896ff2743ed2dc1150cff651ca432e52b212256c2038a17aa0969ee21e2",
-      "intentionalDifference": "Add the Glint spacingL gap between tool cards and a wrapping action row for the existing Start using action and tool feedback. Match the updated 40px desktop content padding, distributing spare height between text and actions so the visible insets match; preserve existing card heights, modal styles and narrower-screen padding. Allow centered feedback tooltips to extend beyond the card while clipping illustrations to the original rounded inner corners."
+      "destinationSha256": "d3a77322ca2a0836dcdf4b12719a3c1791935a14c4218a805fab0ace8b074fa4",
+      "intentionalDifference": ""
     },
     {
       "source": "src/app/tools/tools-catalog.tsx",
       "destination": "website/src/app/tools/tools-catalog.tsx",
       "sourceSha256": "0b92989dd11d9f401c796cb3f1880608041c25658783d9219acf455fef925214",
-      "destinationSha256": "4306d337bf6296b9816df3f6085de9be18f3f5d6a15a3827256358cc968ef7dc",
-      "intentionalDifference": "Place People Science Knowledge Vault above Analyze Survey on Home and Tools, matching the updated design. Add the requested Knowledge Vault card and modal action using shared content and the existing decorative 170px Blue briefcase illustration; preserve Analyze Survey copy and its approved Blue report illustration. Add the approved thumbs up/down controls beside both modal actions, tracked only through the guarded Clarity integration."
+      "destinationSha256": "2b75c1b84fa41789fe4e20d486827582dff51e96f0b67785c51d4fefc101cf16",
+      "intentionalDifference": "Use the owner-selected existing Blue report clipboard illustration for the shared Analyze Survey card on Home and Tools; preserve the 170px image box, decorative semantics, layout, copy, modal trigger and all styles."
     },
     {
       "source": "src/app/tools/tools-page.module.css",
@@ -4179,15 +4179,15 @@
       "source": "src/extraction/extract-docx.test.ts",
       "destination": "website/src/extraction/extract-docx.test.ts",
       "sourceSha256": "70f50e429c6dcda1b8d0234dd102b1f331c42553f1b4b9fcad52dc173ce90a91",
-      "destinationSha256": "9695db8ea19edeccda7a050ad4e8d55b34e1800891ef53e7fed52e8eabf85f67",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "70f50e429c6dcda1b8d0234dd102b1f331c42553f1b4b9fcad52dc173ce90a91",
+      "intentionalDifference": ""
     },
     {
       "source": "src/extraction/extract-docx.ts",
       "destination": "website/src/extraction/extract-docx.ts",
       "sourceSha256": "a283946b8f17ef36862e22fdcede9e22c0cb1558914d70a0eed526bfd210dd6b",
-      "destinationSha256": "f18175b1ae1577a9a117563fde06f141380424535563f34b7bad210c71ec16d8",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "a283946b8f17ef36862e22fdcede9e22c0cb1558914d70a0eed526bfd210dd6b",
+      "intentionalDifference": ""
     },
     {
       "source": "src/extraction/word-text-links.test.ts",
@@ -4200,22 +4200,22 @@
       "source": "src/extraction/word-text-links.ts",
       "destination": "website/src/extraction/word-text-links.ts",
       "sourceSha256": "5795850339663d2251a3d9b2d4a1584da6163e999116282b6aec7d0c5881073a",
-      "destinationSha256": "bf274232a9660cc13c2cee2bd267a9902b7717fb91de0e58996592b174033398",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "5795850339663d2251a3d9b2d4a1584da6163e999116282b6aec7d0c5881073a",
+      "intentionalDifference": ""
     },
     {
       "source": "src/integrity/approved-content.test.ts",
       "destination": "website/src/integrity/approved-content.test.ts",
       "sourceSha256": "a1310a4446c6e5f426eff4acdd158d7337bf3fdc6d33f504835dc09f5d44e57a",
-      "destinationSha256": "0df0d00d9ed389baa0857179f8b0a65cfad66b96e2e80a702f78f8c65b6c8a02",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "a1310a4446c6e5f426eff4acdd158d7337bf3fdc6d33f504835dc09f5d44e57a",
+      "intentionalDifference": ""
     },
     {
       "source": "src/integrity/approved-content.ts",
       "destination": "website/src/integrity/approved-content.ts",
       "sourceSha256": "d79c9ff02eb9c4080092e1fea57b5a5834363479a030398c9d37cac141be90cd",
       "destinationSha256": "926f8ca29f34db0333922afb9ae80b297dd6f001054d78f77c4284007549fe8d",
-      "intentionalDifference": "Reconciles approved Studio v1 source fidelity with production standalone Studio public-format integrity support. Historical migration source provenance is unchanged."
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/launch-reports/assets.ts",
@@ -4368,15 +4368,15 @@
       "source": "src/launch-reports/reports.test.ts",
       "destination": "website/src/launch-reports/reports.test.ts",
       "sourceSha256": "6dfc354d95b1d7d670f1e42a312a856670a83f2deb9e993b6574f3e2cfbc4de6",
-      "destinationSha256": "b5873dc4c9070c0b467a8471ee5836933621a841c80b4fdeeb41205a4bf27b36",
-      "intentionalDifference": "Retains original fidelity checks and the April year correction. Adds independently verified P1 text/image evidence, Reports-only placement, selected illustrations, source links, ordered findings, spanning italics, unchanged P0 formatting, May's author-confirmed citation correction, colon-free brief labels, October's approved title and March's complete original table and malformed editorial-marker normalization. Original Word evidence is retained. Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained. Narrows typed source fixtures for the reconciled schemas."
+      "destinationSha256": "18b46e7e52129b42af3888e73a56ae0f5fea43183ef376dff9542addb0189631",
+      "intentionalDifference": "Retains original fidelity checks and the April year correction. Adds independently verified P1 text/image evidence, Reports-only placement, selected illustrations, source links, ordered findings, spanning italics, unchanged P0 formatting, May's author-confirmed citation correction, colon-free brief labels, October's approved title and March's complete original table and malformed editorial-marker normalization. Original Word evidence is retained."
     },
     {
       "source": "src/launch-reports/reports.ts",
       "destination": "website/src/launch-reports/reports.ts",
       "sourceSha256": "994ed10ecc42c729a52b287a5dca7656d4be2e0f21d12020435c96602970c613",
-      "destinationSha256": "47e1eb5e1ad5006901c7dfb9b5fdc1958aa996952dcbfefef983fd8fe3e27536",
-      "intentionalDifference": "Preserves April's corrected year, May's selected artwork and citation correction, explicit feature flags, ordered lists, spanning formatting and October's approved title/artwork. Adds existing compass, chat and trophy artwork for March, January and December, plus March's audited row-header table. Original Word evidence, URLs and P0 records are retained. Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "96069009e955bee47be8e6ea274f83277aeb49e7a5dcc466226674fb5f84ad63",
+      "intentionalDifference": "Preserves April's corrected year, May's selected artwork and citation correction, explicit feature flags, ordered lists, spanning formatting and October's approved title/artwork. Adds existing compass, chat and trophy artwork for March, January and December, plus March's audited row-header table. Original Word evidence, URLs and P0 records are retained."
     },
     {
       "source": "src/launch-reports/source-data.ts",
@@ -4404,7 +4404,7 @@
       "destination": "website/src/manifest/report-manifest.ts",
       "sourceSha256": "b2de33d8ef120eba6b16988efd7b016c1bfac402d8a7918676791e21363c25fd",
       "destinationSha256": "49a8464072722aee8aee5d29072ece7fc7a342e316b0907e068cd54138a4c185",
-      "intentionalDifference": "Reconciles approved Studio v1 authoring with production standalone Studio public-format schemas, line charts, grouped comparisons and independent panel legends. Historical migration source provenance is unchanged."
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/middleware.ts",
@@ -4431,57 +4431,57 @@
       "source": "src/project/bulk-report-import.test.ts",
       "destination": "website/src/project/bulk-report-import.test.ts",
       "sourceSha256": "97d19795d06fd2f43429d56c57cdbd53701637ee9ab4b2349113c56d17c4a8df",
-      "destinationSha256": "61c043a097a9fbd3f1eb2c8e1982f13a44393c37c13ff0871b2d05c4fab27a91",
-      "intentionalDifference": "Completes the import test's in-memory storage mock for the reconciled Studio v1 atomic storage contract."
+      "destinationSha256": "97d19795d06fd2f43429d56c57cdbd53701637ee9ab4b2349113c56d17c4a8df",
+      "intentionalDifference": ""
     },
     {
       "source": "src/project/bulk-report-import.ts",
       "destination": "website/src/project/bulk-report-import.ts",
       "sourceSha256": "7cfec3e64a814d65085069f47d2f78d6e61a77b84da979520e822ad4e4d68fe6",
-      "destinationSha256": "e6350c1ea07904af23e14500eb688bee822c4c98528463e61aff9653fb01850c",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "7cfec3e64a814d65085069f47d2f78d6e61a77b84da979520e822ad4e4d68fe6",
+      "intentionalDifference": ""
     },
     {
       "source": "src/project/project-storage.ts",
       "destination": "website/src/project/project-storage.ts",
       "sourceSha256": "cca6e884387615d8aa78696b096218633fa3f81f7867b681bcc270e62285432a",
-      "destinationSha256": "bf35780978f5200edd5dd021115e86614137b3f39ccf794446b5d5f8d8bfec31",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "cca6e884387615d8aa78696b096218633fa3f81f7867b681bcc270e62285432a",
+      "intentionalDifference": ""
     },
     {
       "source": "src/project/publication-flow.test.ts",
       "destination": "website/src/project/publication-flow.test.ts",
       "sourceSha256": "7d482d544fc3c480bc30b11e30a6ebefb6fcb815804a194d52245d37e6dd837e",
-      "destinationSha256": "0b2974137c56cf1e57309bc4918bf2fe731af08185bb9357855b93eea8ff4c91",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "7d482d544fc3c480bc30b11e30a6ebefb6fcb815804a194d52245d37e6dd837e",
+      "intentionalDifference": ""
     },
     {
       "source": "src/project/publication-flow.ts",
       "destination": "website/src/project/publication-flow.ts",
       "sourceSha256": "f8d1b1ecce398f290b316791bea997dc568e4509f845b26d65d160c522dcaf0c",
-      "destinationSha256": "235e7ce907a648a7a75fa3530544ba4e2d4348ba2e38dba15b5660e4194d4cb0",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "f8d1b1ecce398f290b316791bea997dc568e4509f845b26d65d160c522dcaf0c",
+      "intentionalDifference": ""
     },
     {
       "source": "src/project/publication-package.test.ts",
       "destination": "website/src/project/publication-package.test.ts",
       "sourceSha256": "5c1165228e3c1ec8617d760e74d981f6c48a072799a000acfead2f551531f32d",
-      "destinationSha256": "03b48300dc9e6c4140efcb18104b4bcf404edc01ae665cdd6ef32f2a6008796d",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained. Tests both Word-owned employee counts and production legacy caller-supplied counts."
+      "destinationSha256": "5c1165228e3c1ec8617d760e74d981f6c48a072799a000acfead2f551531f32d",
+      "intentionalDifference": ""
     },
     {
       "source": "src/project/publication-package.ts",
       "destination": "website/src/project/publication-package.ts",
       "sourceSha256": "dd3da9249c4be0def44ec0ef6c8e9b383c5a4f1a8465be31cd3d8e627efdd9e3",
-      "destinationSha256": "b3c5f8c1656bf6e960c354955b164f3f0726b642d33b51cc2b69640b19f28527",
-      "intentionalDifference": "Reconciles Studio v1 Word-owned employee counts and projected reading time with production caller-supplied legacy employee counts, line-source hash validation and heading-link evidence. Historical migration source provenance is unchanged."
+      "destinationSha256": "694178d9c7607bf88b0a9730c337f6386668d52ca78212a3ccf75032ccbb7445",
+      "intentionalDifference": "Current Studio line-source hash validation, heading-link evidence, Word-projected reading time, and employee-count metadata compatibility; preserves production caller-supplied employee count."
     },
     {
       "source": "src/project/publication-preparation.ts",
       "destination": "website/src/project/publication-preparation.ts",
       "sourceSha256": "7f4761f10f8dcb89e8d1446fe0afb7a1b39974dab82dd2a8a890922fb379e771",
-      "destinationSha256": "371205fb9a34d95a242080b042f34277a03d459d93933509372a8f8969d61077",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "7f4761f10f8dcb89e8d1446fe0afb7a1b39974dab82dd2a8a890922fb379e771",
+      "intentionalDifference": ""
     },
     {
       "source": "src/project/report-author.ts",
@@ -4494,8 +4494,8 @@
       "source": "src/project/report-block-history.test.ts",
       "destination": "website/src/project/report-block-history.test.ts",
       "sourceSha256": "bb3f234fbca50f9cd481d9dfa0ba582f893d0df0d4026523d4afd14f4c4a31d6",
-      "destinationSha256": "40576fcd98734411383ce35046f54fdbab606058ab4830eb7c271b72a72e7623",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "bb3f234fbca50f9cd481d9dfa0ba582f893d0df0d4026523d4afd14f4c4a31d6",
+      "intentionalDifference": ""
     },
     {
       "source": "src/project/report-block-history.ts",
@@ -4509,21 +4509,21 @@
       "destination": "website/src/project/report-reading-time.ts",
       "sourceSha256": "62c1ab4e14b6e3333dd45a1985cda9d86b98e5b26546a23dcf2ecfc43a8fc963",
       "destinationSha256": "2cf4354fd094594c208f19f1a11e4260ef46317921710ae74e829dac69b2f873",
-      "intentionalDifference": "Reconciles Studio v1 reading-time estimation with production standalone Studio public formats and comparison panel text. Historical migration source provenance is unchanged."
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/project/studio-project.test.ts",
       "destination": "website/src/project/studio-project.test.ts",
       "sourceSha256": "31e7b5228f2c01d7b432fe921908be4848911abc708e5f75df808e79ebf413c4",
-      "destinationSha256": "6ef8d7e3da64fa8d434ab849aea2d4309200145e34808627e03784710baffb15",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "31e7b5228f2c01d7b432fe921908be4848911abc708e5f75df808e79ebf413c4",
+      "intentionalDifference": ""
     },
     {
       "source": "src/project/studio-project.ts",
       "destination": "website/src/project/studio-project.ts",
       "sourceSha256": "b1ad493e8b79bc0728614050d7742c5556d1b99cbd3382bf565cd344f5d0fab9",
-      "destinationSha256": "39117729ea36685bc5903d33bf8c09c08251389827137d81d7e1ad78f8408727",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "b1ad493e8b79bc0728614050d7742c5556d1b99cbd3382bf565cd344f5d0fab9",
+      "intentionalDifference": ""
     },
     {
       "source": "src/project/website-publishing.ts",
@@ -4536,8 +4536,8 @@
       "source": "src/publishing/approved-publication.ts",
       "destination": "website/src/publishing/approved-publication.ts",
       "sourceSha256": "76f4c49999e89931f3622337f1314d9f11e3c959a96d20d0c9fdc6d45574c7b7",
-      "destinationSha256": "5ac0fb192835d9d67e5cf0874680cca3e87bb46b8d77a88fbc8a703098e9347f",
-      "intentionalDifference": "Retains approved Studio v1 library restore/removal and exact-revision integrity checks while loading production fingerprint-bound homepage placement. Historical migration source provenance is unchanged."
+      "destinationSha256": "7f48e42ea13e816d688e2704e22432c1457fedb7582773d2a91880f2ae8db1d9",
+      "intentionalDifference": "Loads optional fingerprint-bound approved homepage placement without changing signed report integrity checks."
     },
     {
       "source": "src/publishing/featured-illustrations.ts",
@@ -4585,8 +4585,8 @@
       "source": "src/publishing/publication-preview.test.ts",
       "destination": "website/src/publishing/publication-preview.test.ts",
       "sourceSha256": "3ae9fc599384ac299041054983d66ea3bec75c61d778e6cc8d079efc79b37f11",
-      "destinationSha256": "3feeb8584e883ed3c013ed0089325a7c7ab01e351aacf74c131acd42082942b3",
-      "intentionalDifference": "Retains exact-revision approvals, staged-only rejection, asset and source-integrity checks, P0/P1 catalog ordering, Studio v1 library restore/removal, production public-format export, release receipts and homepage placement coverage. Historical migration source provenance is unchanged."
+      "destinationSha256": "33ef2a231b4a38e3469ed79e9a368b5f966199c5a213209138267f7cdca374f5",
+      "intentionalDifference": "Retains exact-revision approvals, staged-only rejection, declared-asset copying, tamper detection and corrected April feature order; requires all five P1 reports once each in Reports and never Home Featured. Current Studio compatibility regression coverage, including supported chart schema, approved Pages export, literal data/source integrity, public release receipt, and homepage placement."
     },
     {
       "source": "src/publishing/publication-preview.ts",
@@ -4648,15 +4648,15 @@
       "source": "src/report-system/report-renderer.module.css",
       "destination": "website/src/report-system/report-renderer.module.css",
       "sourceSha256": "2f87ac1839f8a7735beb5b2ead6e4fb33edff245d971bdab0ab6d39561c98668",
-      "destinationSha256": "0588d609455ce5f0137f6c14d787dee7356536d46cc71564faabcc864c63ac76",
-      "intentionalDifference": "Retains Studio v1 reference icons, chart draft styles and authoring selection with production text-callout styling, reader spacing and mobile metadata. Historical migration source provenance is unchanged."
+      "destinationSha256": "e0a3ced517e83b6f94e05d9892fce11547b2342fdeb52f51a06a249c44192094",
+      "intentionalDifference": "Adds exact current Studio text-callout styling while retaining production reader spacing and mobile metadata."
     },
     {
       "source": "src/report-system/report-renderer.tsx",
       "destination": "website/src/report-system/report-renderer.tsx",
       "sourceSha256": "862d43be55da72ef46d10dad23395372be76513cefac999a68410138eb5fabf8",
-      "destinationSha256": "bc12e9927397316bf0f09f75d0855dfe6a3ddcab38092fdc027d4f5afe4b8322",
-      "intentionalDifference": "Retains ordered source lists, colon-free brief headings, source dividers, Studio v1 chart insertion, authoring selection and Word presentation with production public formats, rich marks, legacy reference layout, date/mobile metadata and explicit heroes. Historical migration source provenance is unchanged."
+      "destinationSha256": "03689f973627107e92d08c6e4f5b19af1eb865d083409eaa1940f6a9d105ae68",
+      "intentionalDifference": "Adds optional source-derived ordered-list groups using existing list styling, a shared colon-free display label for brief headings and side navigation, and semantic source divider markers using existing section rules without duplicating a following heading border. Imported text, section anchors, other punctuation and styles remain unchanged. Selectively integrates current Studio public formats, rich marks, callouts, Word styles, reader presentation, table headers, and explicit heroes while preserving production layout/date/mobile metadata/footer/editing behavior."
     },
     {
       "source": "src/report-system/report-side-nav.module.css",
@@ -4669,8 +4669,8 @@
       "source": "src/report-system/report-side-nav.tsx",
       "destination": "website/src/report-system/report-side-nav.tsx",
       "sourceSha256": "54874a550c44239cead0a29847f1c41b93ad72a2c113a3f37dbcda9dc04e0b87",
-      "destinationSha256": "ee3e1a90f8cae60ee95c976ccdff2b098428036b08e26bd86ea58219aa3a199a",
-      "intentionalDifference": "Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "54874a550c44239cead0a29847f1c41b93ad72a2c113a3f37dbcda9dc04e0b87",
+      "intentionalDifference": ""
     },
     {
       "source": "src/report-system/report-style.ts",
@@ -4704,22 +4704,22 @@
       "source": "src/visualization/canonical-report-blocks.ts",
       "destination": "website/src/visualization/canonical-report-blocks.ts",
       "sourceSha256": "b63c6ce883fbce37618feca478a63fe8ceef80a75e4c50f3de65752a391c2a47",
-      "destinationSha256": "7399fc32713e351baf24a646f7694cc8d20e581f2d96210a2a4833b70fa2a166",
-      "intentionalDifference": "Reconciles approved Studio v1 authoring with production public-format block factories and typed comparison support. Historical migration source provenance is unchanged."
+      "destinationSha256": "14250333146291d5cb8fad496a3d03914ebc8dfc899b84f5fc00134b6ede1cd8",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/visualization/canonical-report-components.module.css",
       "destination": "website/src/visualization/canonical-report-components.module.css",
       "sourceSha256": "10466dee345bd4ffe34a768c354032cb9be395d6b8deb3a89beddebac69d7c10",
       "destinationSha256": "285652c7f5d506dd0f9967129b44602def510422f94386222b3c8d58d8fa481e",
-      "intentionalDifference": "Reconciles approved Studio v1 chart presentation with production public-format styles and multiline author notes. Historical migration source provenance is unchanged."
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/visualization/canonical-report-components.tsx",
       "destination": "website/src/visualization/canonical-report-components.tsx",
       "sourceSha256": "a24316f406d6688c53d5890c48751fef8fe785d97f74ed10cac4cd994a71b581",
       "destinationSha256": "c311351763dc8efc3c6503f04a58fb67e40cc9be3687e9d75f9ee9983643cfdb",
-      "intentionalDifference": "Reconciles Studio v1 chart presentation with production research visuals, line charts, generalized comparisons, author notes and accessible data tables. Historical migration source provenance is unchanged."
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/visualization/data-visual-preview.ts",
@@ -4754,28 +4754,28 @@
       "destination": "website/src/visualization/percentage-ring-group.module.css",
       "sourceSha256": "5dfb4b99caa9c08bd1b123a0c86d57c0725cda9c510b77a765319bc22c1341ad",
       "destinationSha256": "4586492927da2ac0432855f86119ad03f1517bc5b8890fa072bb58d43cafe13a",
-      "intentionalDifference": "Retains approved Studio v1 percentage-ring styling with production multiline chart notes. Historical migration source provenance is unchanged."
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/visualization/percentage-ring-group.tsx",
       "destination": "website/src/visualization/percentage-ring-group.tsx",
       "sourceSha256": "2f87e0f351ead7d3ba7ee5fa0bffb785d3272d0f9e83a6151576b661aa5bfff9",
       "destinationSha256": "fdadf089e0385905f87833b8991769de5a2539d3aaf36f78a3fc9ccad706e172",
-      "intentionalDifference": "Retains approved Studio v1 percentage rings and synthetic labels with production author-note visibility. Historical migration source provenance is unchanged."
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "src/visualization/verified-data-visual.test.ts",
       "destination": "website/src/visualization/verified-data-visual.test.ts",
       "sourceSha256": "56c1e16d7679a1ebaa17621ebecc182a75e3c2ddc220ae7fdf00aabb4c372296",
-      "destinationSha256": "2ff256c2f2485b8f2433cba1b11f72d9a7e474487d90bb5c1966a73802ff484f",
-      "intentionalDifference": "Retains Studio v1 chart authoring and source-fidelity coverage with production generalized comparison categories and typed quadrant assertions. Historical migration source provenance is unchanged."
+      "destinationSha256": "ab9c8685486b04deb2de3025e6490fadcc8bda345f7fc3b28db87548797a17fc",
+      "intentionalDifference": "Current Studio compatibility regression coverage, including supported chart schema, approved Pages export, literal data/source integrity, public release receipt, and homepage placement."
     },
     {
       "source": "src/visualization/verified-data-visual.ts",
       "destination": "website/src/visualization/verified-data-visual.ts",
       "sourceSha256": "22978a99a85852f306a6122553818c6f1927a51f461f72d9c9bfbb8c0b3fb390",
-      "destinationSha256": "35995965305abdab974765a0100400b5a0a00b6c7676e757819992d887d7bb18",
-      "intentionalDifference": "Reconciles Studio v1 chart authoring and source fidelity with production line charts, grouped comparisons and independent panels; preserves literal-type factory results. Historical migration source provenance is unchanged."
+      "destinationSha256": "980d15438d98ba7efce837cf0a5e5b47c7c6eefd266ac7b757e4b273d791381b",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
     },
     {
       "source": "tsconfig.json",
@@ -4788,8 +4788,8 @@
       "source": "tsconfig.publication-preview.json",
       "destination": "website/tsconfig.publication-preview.json",
       "sourceSha256": "eaf1af85e0aac4369bc48224d7d71c2b0be27af081ac24e2cfbb0d131b4d0bd0",
-      "destinationSha256": "4d3fb90b24fbdee7d9cd5c5e283be5d61fdc7cb543611e84d6b98bd07f72f00d",
-      "intentionalDifference": "Include .next-local-studio/types/**/*.ts for the required connected build without build-time source rewriting; retain existing includes. Approved Publishing Studio v1 updates authoring, library, chart/source fidelity, report presentation, and their supporting tests/configuration; original migration source hash retained."
+      "destinationSha256": "3462bd25ce588b623a6d17216803194dbaa73f53c1957a22bd822bc089b4725f",
+      "intentionalDifference": "Include .next-local-studio/types/**/*.ts for the required connected build without build-time source rewriting; retain existing includes."
     }
   ]
 }

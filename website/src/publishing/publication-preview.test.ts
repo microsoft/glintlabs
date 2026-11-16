@@ -4,10 +4,6 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
-import * as approvedPublications from "./approved-publication.ts";
-import { publishedReportSummary, restorePublishedStudioProject, restorePublishedReaderStudioProject } from "./studio-report-library.ts";
-import { getLaunchReport } from "../launch-reports/reports.ts";
-import { publishedReportListSchema, reportLibrary } from "../project/report-library.ts";
 import {
   approvePublicationForLocalWebsite, listApprovedPublications, loadApprovedPublication,
 } from "./approved-publication.ts";
@@ -33,6 +29,7 @@ import {
 } from "./publication-preview.ts";
 import { loadReportCatalog, publicationCatalogItem } from "./report-catalog.ts";
 import { copyApprovedReports } from "./pages-export.ts";
+import { publishedReportSummary } from "./studio-report-library.ts";
 import { createStudioChartSource, type ChartTable } from "../visualization/chart-authoring.ts";
 import { createVerifiedDataVisual, type VerifiedDataVisualType } from "../visualization/verified-data-visual.ts";
 import { validateDraftPublicationPackage } from "../project/publication-package.ts";
@@ -57,8 +54,6 @@ test("the public receipt and exported reader use the exact approved homepage pla
     assert.equal(receipt.packageFingerprint, staged.packageFingerprint);
     assert.equal(receipt.homepage.version, version);
     assert.equal(receipt.homepage.featured, true);
-    assert.deepEqual(publishedReportListSchema.parse({ reports: [receipt] }).reports[0].homepage,
-      receipt.homepage, "Library response validation preserves the approved homepage placement");
     assert.equal((await loadReportCatalog({ rootDirectory: destination })).find(item => item.id === reportId)?.featured, true);
     assert.equal("manifest" in receipt, false);
     assert.equal("source" in receipt, false);
@@ -152,138 +147,6 @@ const imageBytes = Buffer.from(
 );
 const imageHash = createHash("sha256").update(imageBytes).digest("hex");
 const reportId = "861a178c-bb41-4df2-8c5e-5aff2f1d1b35";
-
-test("removing an exact website revision preserves staged reports and unrelated publications", async () => {
-  const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-remove-publication-"));
-  try {
-    const { preview } = await ingestUnsignedPublicationPreview(await syntheticZip(), { rootDirectory });
-    const request = { reportId, revision: 1, packageFingerprint: preview.packageFingerprint };
-    await approvePublicationForLocalWebsite({ ...request, approveForWebsite: true }, { rootDirectory });
-    const otherId = "173eaf15-c88b-4973-9de0-7d7c9dcda51a";
-    const { preview: other } = await ingestUnsignedPublicationPreview(
-      await syntheticZip(undefined, undefined, { reportId: otherId, slug: "other-library-report" }), { rootDirectory },
-    );
-    await approvePublicationForLocalWebsite({
-      reportId: otherId, revision: 1, packageFingerprint: other.packageFingerprint, approveForWebsite: true,
-    }, { rootDirectory });
-    await assert.rejects(approvedPublications.removeApprovedPublication({ ...request, revision: 2 }, { rootDirectory }), /changed/);
-    await assert.rejects(approvedPublications.removeApprovedPublication({ ...request, packageFingerprint: "c".repeat(64) }, { rootDirectory }), /changed/);
-    assert.ok(await loadApprovedPublication(reportId, { rootDirectory }));
-    await writeFile(path.join(rootDirectory, ".publication-preview.lock"), "busy");
-    await assert.rejects(approvedPublications.removeApprovedPublication(request, { rootDirectory }), /Another report/);
-    await rm(path.join(rootDirectory, ".publication-preview.lock"));
-    await approvedPublications.removeApprovedPublication(request, { rootDirectory });
-    assert.equal(await loadApprovedPublication(reportId, { rootDirectory }), undefined);
-    assert.ok(await loadPublicationPreview(reportId, { rootDirectory }));
-    assert.equal((await listApprovedPublications({ rootDirectory }))[0].publication.reportId, otherId);
-    await assert.rejects(readFile(path.join(rootDirectory, "public", "reports-assets", reportId, `${imageHash}.png`)));
-  } finally { await rm(rootDirectory, { recursive: true, force: true }); }
-});
-
-test("seeded launch reports cannot claim removal while their bundled reader stays live", async () => {
-  const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-remove-launch-"));
-  try {
-    const slug = "empowering-managers-for-an-ai-first-future";
-    assert.ok(getLaunchReport(slug, { includePrivatePreview: true }));
-    const { preview } = await ingestUnsignedPublicationPreview(
-      await syntheticZip(undefined, undefined, { slug }), { rootDirectory },
-    );
-    const request = { reportId, revision: 1, packageFingerprint: preview.packageFingerprint };
-    await approvePublicationForLocalWebsite({ ...request, approveForWebsite: true }, { rootDirectory });
-    await assert.rejects(approvedPublications.removeApprovedPublication(request, { rootDirectory }), /bundled.*cannot be removed/i);
-    assert.ok(await loadApprovedPublication(reportId, { rootDirectory }));
-    assert.ok(await readFile(path.join(rootDirectory, "public", "reports-assets", reportId, `${imageHash}.png`)));
-  } finally { await rm(rootDirectory, { recursive: true, force: true }); }
-});
-
-test("a published report can open as one editable local copy without inventing Word-source attestation", async () => {
-  const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-restore-publication-"));
-  try {
-    const { preview } = await ingestUnsignedPublicationPreview(await syntheticZip(), { rootDirectory });
-    const report = await approvePublicationForLocalWebsite({
-      reportId, revision: 1, packageFingerprint: preview.packageFingerprint, approveForWebsite: true,
-    }, { rootDirectory });
-    const restored = await restorePublishedStudioProject(report, { rootDirectory });
-    assert.equal(restored.id, reportId);
-    assert.deepEqual(snapshotApprovedContent(restored.manifest), snapshotApprovedContent(report.manifest));
-    assert.equal(restored.sourceApproval, undefined);
-    assert.equal(restored.publicationSourceEvidence, undefined);
-    const summary = publishedReportSummary(report);
-    assert.equal(summary.thumbnail?.src, `/reports-assets/${reportId}/${imageHash}.png`);
-    assert.equal(summary.summary, "Synthetic content for ingestion tests, not a release report.");
-    const library = await reportLibrary([restored], [summary]);
-    assert.equal(library.length, 1);
-    assert.equal(library[0].unpublishedChanges, false);
-    assert.equal(library[0].comparisonUnknown, false);
-    assert.equal((await loadApprovedPublication(reportId, { rootDirectory }))?.publication.revision, 1);
-  } finally { await rm(rootDirectory, { recursive: true, force: true }); }
-});
-
-test("reader restoration retains canonical text formatting and reader presentation instead of the archived title", async () => {
-  const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-reader-restoration-"));
-  try {
-    const { preview } = await ingestUnsignedPublicationPreview(await syntheticZip(), { rootDirectory });
-    const archived = await approvePublicationForLocalWebsite({
-      reportId, revision: 1, packageFingerprint: preview.packageFingerprint, approveForWebsite: true,
-    }, { rootDirectory });
-    const launch = getLaunchReport("glps-rd-feb-26")!;
-    const assets = path.join(rootDirectory, "src", "launch-reports", "assets", launch.slug);
-    await mkdir(assets, { recursive: true });
-    for (const block of launch.manifest.blocks) {
-      if (block.type === "image") {
-        await writeFile(path.join(assets, path.basename(block.dataUrl)),
-          await readFile(new URL(`../launch-reports/assets/${launch.slug}/${path.basename(block.dataUrl)}`, import.meta.url)));
-      }
-    }
-    const image = archived.manifest.blocks.find(block => block.type === "image")!;
-    assert.equal(image.type, "image");
-    const report = {
-      ...archived,
-      publication: { ...archived.publication, slug: "glps-rd-feb-26" },
-      manifest: reportManifestSchema.parse({
-        ...launch.manifest,
-        blocks: launch.manifest.blocks.map(block => block.type === "image" ? { ...block, dataUrl: image.dataUrl } : block),
-      }),
-    };
-    const restored = await restorePublishedReaderStudioProject(report, { rootDirectory });
-    assert.equal(restored.manifest.metadata.title, "Fighting AI Slop with Meta-Cognition around AI");
-    assert.equal(publishedReportSummary(report).thumbnail?.src, "/figma/illustrations/blue/document-edit-text.png");
-    assert.equal(restored.manifest.metadata.publishedDate, launch.isoDate);
-    assert.ok(restored.manifest.blocks.some(block => "marks" in block && block.marks?.some(mark => mark.bold)));
-    assert.equal(restored.manifest.readerPresentation?.showCoverDetails, true);
-    assert.deepEqual(restored.manifest.readerPresentation?.figureDescriptions, launch.descriptions);
-    assert.ok(restored.manifest.blocks.filter(block => block.type === "image").every(block => block.dataUrl.startsWith("data:")));
-    assert.equal((await reportLibrary([restored], [publishedReportSummary(report)]))[0].unpublishedChanges, false);
-    const differentSource = await restorePublishedReaderStudioProject({
-      ...report, manifest: { ...report.manifest, source: { ...report.manifest.source, sha256: "b".repeat(64) } },
-    }, { rootDirectory });
-    assert.equal(differentSource.manifest.source.sha256, launch.manifest.source.sha256);
-    assert.equal(differentSource.sourceManifest?.source.sha256, launch.sourceManifest.source.sha256);
-    assert.equal(differentSource.sourceApproval, undefined);
-    assert.equal(differentSource.publicationSourceEvidence, undefined);
-    const firstImage = launch.manifest.blocks.find(block => block.type === "image")!;
-    assert.equal(firstImage.type, "image");
-    await writeFile(path.join(assets, path.basename(firstImage.dataUrl)), imageBytes);
-    await assert.rejects(restorePublishedReaderStudioProject(report, { rootDirectory }), /reader image changed/);
-    assert.equal((await loadApprovedPublication(reportId, { rootDirectory }))?.publication.slug, archived.publication.slug);
-  } finally { await rm(rootDirectory, { recursive: true, force: true }); }
-});
-
-test("a restored draft retains its report images and thumbnail after the live publication is removed", async () => {
-  const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-retained-publication-assets-"));
-  try {
-    const { preview } = await ingestUnsignedPublicationPreview(await syntheticZip(), { rootDirectory });
-    const request = { reportId, revision: 1, packageFingerprint: preview.packageFingerprint };
-    const report = await approvePublicationForLocalWebsite({ ...request, approveForWebsite: true }, { rootDirectory });
-    const restored = await restorePublishedStudioProject(report, { rootDirectory });
-    const image = restored.manifest.blocks.find(block => block.type === "image");
-    assert.ok(image?.type === "image" && image.dataUrl.startsWith("data:image/png;base64,"));
-    await approvedPublications.removeApprovedPublication(request, { rootDirectory });
-    assert.equal(createHash("sha256").update(Buffer.from(image.dataUrl.split(",")[1], "base64")).digest("hex"), imageHash);
-    assert.ok(restored.publicationPreparation?.metadata.thumbnail.source.startsWith("data:image/png;base64,"));
-    assert.equal((await createApprovedContentRecord(restored.manifest)).sha256, restored.approvedContent?.sha256);
-  } finally { await rm(rootDirectory, { recursive: true, force: true }); }
-});
 
 test("Pages exports only explicitly approved exact revisions and rejects tampered exported content", async () => {
   const rootDirectory = await mkdtemp(path.join(os.tmpdir(), "glint-pages-approval-"));
