@@ -78,17 +78,6 @@ async function fixtureProject(manifest = fixtureManifest()) {
   });
 }
 
-test("publication hyperlink auditing includes imported heading links", async () => {
-  const manifest = fixtureManifest();
-  const heading = manifest.blocks[0];
-  assert.ok(heading.type === "heading");
-  heading.links = [{ start: 0, end: heading.text.length, href: "https://example.com/heading-source" }];
-  const project = await fixtureProject(manifest);
-  project.publicationSourceEvidence = { sourceSha256: manifest.source.sha256, hyperlinkCount: 1, representedHyperlinkCount: 1 };
-  const result = await preparePublicationPackage({ project, metadata, imageReviews });
-  assert.equal(result.manifest.blocks[0].type === "heading" && result.manifest.blocks[0].links?.length, 1);
-});
-
 test("Studio saves descriptions and optional CSV before publication details exist without changing approved source data", async () => {
   const original = await fixtureProject();
   const accessibleData = {
@@ -276,21 +265,7 @@ test("reuses the same revision for unchanged packages and increments once when p
   assert.equal((await preparePublicationPackage({ project: updated, metadata: changedMetadata, imageReviews })).publication.revision, 2);
 });
 
-test("legacy callers retain employee counts when no Word metadata owns the field", async () => {
-  const project = await fixtureProject();
-  const result = await preparePublicationPackage({
-    project, metadata: { ...metadata, employeeCount: 240 }, imageReviews,
-  });
-  assert.equal(result.publication.employeeCount, 240);
-  assert.equal(result.manifest.metadata.employeeCount, 240);
-  project.manifest.wordStyles = [];
-  const word = await preparePublicationPackage({
-    project, metadata: { ...metadata, employeeCount: 240 }, imageReviews,
-  });
-  assert.equal(word.publication.employeeCount, undefined, "A blank Word employee count stays blank");
-});
-
-test("Word employee counts override saved publishing details and count changes advance the revision", async () => {
+test("optional employee counts survive saving and packaging, and count changes advance the revision", async () => {
   const project = await fixtureProject();
   const originalContent = canonicalJson(project.approvedContent);
   const first = await preparePublicationPackage({ project, metadata, imageReviews });
@@ -299,19 +274,14 @@ test("Word employee counts override saved publishing details and count changes a
     manifest: project.manifest, acceptedReviewItemIds: [], status: "draft",
     publicationPreparation: first.preparation,
   });
-  const updatedSource = updateStudioProject(saved, {
-    manifest: { ...saved.manifest, metadata: { ...saved.manifest.metadata, employeeCount: 12500 } },
-    acceptedReviewItemIds: [], status: "draft",
-  });
   const withCount = await preparePublicationPackage({
-    project: updatedSource, metadata: { ...metadata, employeeCount: 999 }, imageReviews,
+    project: saved, metadata: { ...metadata, employeeCount: 12500 }, imageReviews,
   });
   assert.equal(withCount.publication.employeeCount, 12500);
-  assert.equal(withCount.manifest.metadata.employeeCount, 12500);
   assert.equal(withCount.publication.revision, first.publication.revision + 1);
   assert.equal((await validateDraftPublicationPackage(withCount.zipBytes)).publication.employeeCount, 12500);
-  const counted = parseStudioProject(JSON.parse(JSON.stringify(updateStudioProject(updatedSource, {
-    manifest: updatedSource.manifest, acceptedReviewItemIds: [], status: "draft",
+  const counted = parseStudioProject(JSON.parse(JSON.stringify(updateStudioProject(saved, {
+    manifest: saved.manifest, acceptedReviewItemIds: [], status: "draft",
     publicationPreparation: withCount.preparation,
   }))));
   assert.equal(counted.publicationPreparation?.metadata.employeeCount, 12500);
@@ -321,11 +291,7 @@ test("Word employee counts override saved publishing details and count changes a
   });
   assert.deepEqual(repeat.zipBytes, withCount.zipBytes);
   const cleared = await preparePublicationPackage({
-    project: updateStudioProject(counted, {
-      manifest: { ...counted.manifest, metadata: { ...counted.manifest.metadata, employeeCount: undefined } },
-      acceptedReviewItemIds: [], status: "draft",
-    }),
-    metadata: withCount.preparation.metadata, imageReviews,
+    project: counted, metadata: { ...metadata, employeeCount: undefined }, imageReviews,
   });
   assert.equal(Object.hasOwn(cleared.publication, "employeeCount"), false);
   assert.equal(cleared.publication.revision, withCount.publication.revision + 1);
@@ -372,24 +338,6 @@ test("packages author names without handles and computes reading time instead of
   assert.deepEqual(packaged.manifest.metadata.author, { name: "Test author" });
   assert.equal(packaged.publication.readTimeMinutes, 3);
   assert.equal(canonicalJson(project), original);
-});
-
-test("packaging calculates reading time from displayed Word content, not hidden title and Date paragraphs", async () => {
-  const manifest = fixtureManifest();
-  manifest.wordStyles = [{ id: "Title", name: "Title", target: "report-title" }, { id: "Date", name: "Date", target: "metadata" }];
-  assert.ok(manifest.blocks[0].type === "heading");
-  manifest.blocks[0].wordStyle = "Title";
-  // The fixture image also contributes its two-word eyebrow.
-  manifest.blocks[2] = { ...manifest.blocks[2], type: "paragraph", text: "word ".repeat(198).trim() };
-  manifest.blocks.push({ id: "date", type: "paragraph", wordStyle: "Date", text: "May 12, 2026",
-    source: { part: "word/document.xml", index: 3 } });
-  const project = await fixtureProject(manifest);
-  const result = await preparePublicationPackage({ project, metadata, imageReviews });
-  assert.equal(result.publication.readTimeMinutes, 1);
-  assert.equal(result.manifest.metadata.readTimeMinutes, 1);
-  assert.equal(result.preparation.metadata.readTimeMinutes, 1);
-  assert.equal(result.manifest.blocks.find(block => block.id === "date")?.type, "paragraph");
-  assert.deepEqual(project.manifest.blocks, manifest.blocks);
 });
 
 test("long summaries in saved drafts remain editable without truncation but cannot be packaged", async () => {

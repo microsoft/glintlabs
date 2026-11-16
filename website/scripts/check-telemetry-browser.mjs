@@ -301,148 +301,6 @@ try {
     assert.deepEqual(await evaluate("window.__clarityCalls"), [], "Clarity consent or custom identifiers were fabricated.");
     assert.equal(clarityRequests.at(-1).headers.Referer, undefined, "Tag request leaked the document URL.");
     assert.equal(await evaluate('document.querySelector("footer").textContent.includes("Microsoft Clarity")'), true);
-    await go("/tools/");
-    await waitFor(() => evaluate("Array.isArray(window.__clarityCalls)"), "Clarity did not initialize on Tools.");
-    assert.equal(await evaluate('document.querySelectorAll("button[data-glintlabs-feedback]").length'), 4,
-      "Both tool cards need thumbs up/down controls.");
-    const feedbackCalls = () => evaluate('window.__clarityCalls.filter(args => args[0] === "event")');
-    const feedbackButton = name => `document.querySelector('button[data-glintlabs-feedback="${name}"]')`;
-    const closeFeedback = async () => {
-      await waitFor(() => evaluate('!!document.querySelector(\'[popover][role="dialog"]:popover-open form\')'), "Feedback popover did not open.");
-      await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
-      await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
-      await waitFor(() => evaluate('!document.querySelector(\'[popover][role="dialog"]:popover-open\')'), "Feedback popover did not close.");
-    };
-    const submittedFeedback = async () => {
-      await waitFor(() => evaluate(`!document.querySelector('[popover][role="dialog"]:popover-open') &&
-        document.querySelector("[popover]:popover-open")?.textContent === "Thanks for the feedback"`),
-      "Feedback did not show its nonmodal submitted confirmation.");
-    };
-    const surveyUp = "tool_analyze_survey_thumbs_up";
-    const surveyDown = "tool_analyze_survey_thumbs_down";
-    const vaultUp = "tool_knowledge_vault_thumbs_up";
-    const vaultDown = "tool_knowledge_vault_thumbs_down";
-    for (const name of [vaultUp, vaultDown, surveyUp, surveyDown]) {
-      const position = await evaluate(`(() => {
-        const button = ${feedbackButton(name)};
-        button.focus();
-        button.scrollIntoView({ block: "center" });
-        const bounds = button.getBoundingClientRect();
-        return { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
-      })()`);
-      await send("Input.dispatchMouseEvent", { type: "mouseMoved", ...position });
-      await waitFor(() => evaluate(`(() => {
-        const button = ${feedbackButton(name)};
-        const tooltip = document.getElementById(button.getAttribute("aria-describedby"));
-        return !!tooltip?.getClientRects().length && getComputedStyle(tooltip).visibility === "visible";
-      })()`), "Feedback hover did not show its tooltip.");
-    }
-    assert.deepEqual(await feedbackCalls(), [], "Hovering or focusing feedback must not submit a rating.");
-    await evaluate(`${feedbackButton(surveyUp)}.click()`);
-    await waitFor(async () => (await feedbackCalls()).length === 1, "Survey feedback did not reach Clarity.");
-    assert.deepEqual(await feedbackCalls(), [["event", surveyUp]]);
-    assert.equal(await evaluate(`${feedbackButton(surveyUp)}.getAttribute("aria-pressed")`), "true");
-    await submittedFeedback();
-    await evaluate(`${feedbackButton(surveyUp)}.click()`);
-    await pause();
-    assert.equal((await feedbackCalls()).length, 1, "Repeated selected thumbs inflated feedback events.");
-    await submittedFeedback();
-    await evaluate(`Array.from(${feedbackButton(surveyDown)}.querySelectorAll("svg"))
-      .find(svg => svg.getBoundingClientRect().width).dispatchEvent(
-      new MouseEvent("click", {bubbles:true,cancelable:true}))`);
-    await waitFor(async () => (await feedbackCalls()).length === 2, "Changed feedback was not tracked.");
-    assert.equal(await evaluate(`${feedbackButton(surveyUp)}.getAttribute("aria-pressed")`), "false");
-    assert.equal(await evaluate(`${feedbackButton(surveyDown)}.getAttribute("aria-pressed")`), "true");
-    await closeFeedback();
-    await evaluate(`${feedbackButton(vaultUp)}.focus()`);
-    await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13, text: "\r", unmodifiedText: "\r" });
-    await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Enter", code: "Enter", windowsVirtualKeyCode: 13 });
-    await waitFor(async () => (await feedbackCalls()).length === 3, "Enter did not activate Knowledge Vault feedback.");
-    await submittedFeedback();
-    await evaluate(`${feedbackButton(vaultDown)}.focus()`);
-    await send("Input.dispatchKeyEvent", { type: "keyDown", key: " ", code: "Space", windowsVirtualKeyCode: 32, text: " " });
-    await send("Input.dispatchKeyEvent", { type: "keyUp", key: " ", code: "Space", windowsVirtualKeyCode: 32 });
-    await waitFor(async () => (await feedbackCalls()).length === 4, "Space did not activate Knowledge Vault feedback.");
-    await closeFeedback();
-    assert.deepEqual(await feedbackCalls(), [
-      ["event", surveyUp], ["event", surveyDown], ["event", vaultUp], ["event", vaultDown],
-    ]);
-    assert.equal(await evaluate('!!document.querySelector(\'[popover][role="dialog"]:popover-open\')'), false, "Feedback popover did not dismiss.");
-    await evaluate(`${feedbackButton(surveyDown)}.click()`);
-    await waitFor(() => evaluate('!!document.querySelector(\'[popover][role="dialog"]:popover-open form\')'), "Selected thumbs must reopen reasons.");
-    await evaluate(`document.querySelector('[popover]:popover-open input[value="not_useful"]').click();
-      document.querySelector('[popover]:popover-open input[value="hard_to_use"]').click()`);
-    assert.equal((await feedbackCalls()).length, 4, "Choosing reasons must not send events before Submit.");
-    await evaluate(`(() => {
-      const form = document.querySelector('[popover][role="dialog"]:popover-open form');
-      form.requestSubmit();
-      form.requestSubmit();
-    })()`);
-    await waitFor(async () => (await feedbackCalls()).length === 6, "Submitted reasons did not reach guarded Clarity.");
-    assert.deepEqual(await feedbackCalls(), [
-      ["event", surveyUp], ["event", surveyDown], ["event", vaultUp], ["event", vaultDown],
-      ["event", "tool_analyze_survey_thumbs_down_reason_not_useful"],
-      ["event", "tool_analyze_survey_thumbs_down_reason_hard_to_use"],
-    ], "A repeated Submit must not duplicate reason events.");
-    await submittedFeedback();
-    await evaluate(`${feedbackButton(vaultDown)}.click()`);
-    await waitFor(() => evaluate('!!document.querySelector(\'[popover][role="dialog"]:popover-open form\')'), "Vault reasons did not reopen.");
-    await evaluate('document.querySelector(\'[popover]:popover-open input[value="technical_issue"]\').click()');
-    await closeFeedback();
-    assert.equal((await feedbackCalls()).length, 6, "Dismissal must not submit reasons or repeat the initial vote.");
-    await evaluate(`${feedbackButton(vaultDown)}.click()`);
-    await waitFor(() => evaluate('!!document.querySelector(\'[popover][role="dialog"]:popover-open form\')'), "Vault reasons did not reopen.");
-    assert.equal(await evaluate('document.querySelector(\'[popover]:popover-open button[type=submit]\').disabled'), true,
-      "Empty feedback must keep Submit disabled.");
-    await evaluate('document.querySelector(\'[popover][role="dialog"]:popover-open form\').requestSubmit()');
-    assert.equal(await evaluate('!!document.querySelector(\'[popover][role="dialog"]:popover-open form\')'), true,
-      "An empty submission must not show a submitted confirmation.");
-    assert.equal((await feedbackCalls()).length, 6, "Empty reasons must not fabricate a category.");
-    await closeFeedback();
-    assert.equal(await evaluate(`Array.from(document.querySelectorAll("button[data-glintlabs-feedback]")).every(button => {
-      const rect = button.getBoundingClientRect();
-      return rect.width >= 40 && rect.height >= 40 && !!button.getAttribute("aria-label");
-    })`), true, "Feedback needs labeled, touch-sized controls.");
-    await evaluate(`${await readFile(path.join(root, "node_modules/axe-core/axe.min.js"), "utf8")}\ntrue`);
-    assert.deepEqual(await evaluate(`(async () => (await axe.run(
-      document.querySelector('[aria-labelledby="tools-library-title"]'),
-      {runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21aa"]}})).violations)()`), []);
-    await evaluate(`localStorage.setItem(${JSON.stringify(legacyConsentKeys[0])},
-      JSON.stringify({choice:"denied",expires:Date.now()+86400000})); ${feedbackButton(surveyUp)}.click()`);
-    await waitFor(() => evaluate('window.__clarityCalls.some(args => args[0] === "stop")'),
-      "A feedback click did not recheck privacy before tracking.");
-    assert.equal((await feedbackCalls()).length, 6, "Feedback bypassed an existing refusal.");
-    await submittedFeedback();
-    await changePreference(legacyConsentKeys[0], null);
-    await evaluate(`${feedbackButton(surveyDown)}.click()`);
-    await waitFor(() => evaluate('!!document.querySelector(\'[popover][role="dialog"]:popover-open form\')'), "Stopped analytics blocked the UI.");
-    await evaluate(`document.querySelector('[popover]:popover-open input[value="not_useful"]').click();
-      document.querySelector('[popover][role="dialog"]:popover-open form').requestSubmit()`);
-    await submittedFeedback();
-    assert.equal((await feedbackCalls()).length, 6, "Reasons restarted stopped Clarity.");
-    await go("/tools/");
-    await waitFor(() => evaluate("Array.isArray(window.__clarityCalls)"), "Clarity did not reload for reason privacy checks.");
-    await evaluate(`${feedbackButton(vaultDown)}.click()`);
-    await waitFor(() => evaluate('!!document.querySelector(\'[popover][role="dialog"]:popover-open form\')'), "Vault reason form did not open.");
-    await evaluate(`document.querySelector('[popover]:popover-open input[value="technical_issue"]').click();
-      document.querySelector('[popover][role="dialog"]:popover-open form').requestSubmit()`);
-    await waitFor(async () => (await feedbackCalls()).length === 2, "Vault reason did not reach Clarity.");
-    assert.deepEqual(await feedbackCalls(), [
-      ["event", vaultDown], ["event", "tool_knowledge_vault_thumbs_down_reason_technical_issue"],
-    ]);
-    await submittedFeedback();
-    await evaluate(`${feedbackButton(vaultDown)}.click()`);
-    await waitFor(() => evaluate('!!document.querySelector(\'[popover][role="dialog"]:popover-open form\')'), "Vault reasons did not reopen.");
-    await evaluate(`document.querySelector('[popover]:popover-open input[value="hard_to_use"]').click();
-      localStorage.setItem(${JSON.stringify(legacyConsentKeys[0])}, JSON.stringify({choice:"denied",expires:Date.now()+86400000}));
-      document.querySelector('[popover][role="dialog"]:popover-open form').requestSubmit()`);
-    await waitFor(() => evaluate('window.__clarityCalls.some(args => args[0] === "stop")'),
-      "Reason submission did not recheck privacy at submission time.");
-    assert.equal((await feedbackCalls()).length, 2, "Submitted reasons bypassed a new refusal.");
-    await submittedFeedback();
-    await changePreference(legacyConsentKeys[0], null);
-    await go("/");
-    await waitFor(() => evaluate("Array.isArray(window.__clarityCalls)"), "Clarity did not reload after feedback checks.");
     let before = clarityRequests.length;
     await evaluate(`(() => {
       const link = [...document.querySelectorAll("a[href]")].find(link =>
@@ -467,8 +325,6 @@ try {
     ]) {
       const blocked = await send("Page.addScriptToEvaluateOnNewDocument", { source });
       await go("/about/");
-      await evaluate(`document.dispatchEvent(new CustomEvent("glintlabs:tool-feedback-reasons",
-        {detail:{tool:"analyze-survey",reasons:["technical_issue"]}}))`);
       await pause();
       assert.equal(clarityRequests.length, before, "Clarity bypassed a browser privacy signal or existing refusal.");
       await send("Page.removeScriptToEvaluateOnNewDocument", { identifier: blocked.identifier });
@@ -487,34 +343,22 @@ try {
     await go("/", local);
     await pause();
     assert.equal(clarityRequests.length, before, "Clarity loaded in a local preview.");
-    await evaluate('document.querySelector("button[data-glintlabs-feedback]").click()');
-    await waitFor(() => evaluate('document.querySelector("button[data-glintlabs-feedback]").getAttribute("aria-pressed") === "true"'),
-      "Local feedback controls did not remain interactive.");
-    assert.equal(clarityRequests.length, before, "Local feedback bypassed the production-only guard.");
     rejectClarity = true;
     const eventCount = events.length;
     await go("/tools/");
     await waitFor(() => warnings.some(message => message.includes("Clarity unavailable")), "Clarity failure was not diagnosed.");
-    await evaluate('document.querySelector("button[data-glintlabs-feedback]").click()');
-    await waitFor(() => evaluate('document.querySelector("button[data-glintlabs-feedback]").getAttribute("aria-pressed") === "true"'),
-      "Clarity failure broke the feedback UI.");
-    assert.deepEqual(await evaluate('window.clarity.q.filter(args => args[0] === "event")'), [],
-      "Feedback was queued after the Clarity tag failed.");
     if (telemetryExpected) await waitFor(() => events.length > eventCount, "Clarity failure blocked Supabase.");
     assert.equal(await evaluate('!!document.querySelector(\'[data-glintlabs-event="analyze_survey_click"]\')'), true);
     assert.equal(await evaluate(`!!document.getElementById("analytics-preferences") ||
       !!document.querySelector('[aria-label="Analytics preferences"],[aria-label="Site analytics"]')`), false);
   } else {
-    await go("/tools/");
-    await evaluate('document.querySelector("button[data-glintlabs-feedback]").click()');
-    await waitFor(() => evaluate('document.querySelector("button[data-glintlabs-feedback]").getAttribute("aria-pressed") === "true"'),
-      "Disabled Clarity broke the feedback UI.");
+    await pause();
     assert.equal(clarityRequests.length, 0, "Disabled build loaded Clarity.");
     assert.equal(await evaluate('document.querySelector("footer").textContent.includes("Microsoft Clarity")'), false);
   }
   if (!telemetryExpected) assert.equal(events.length, 0, "Disabled Supabase tracker sent events.");
   if (failures.length) throw failures[0];
-  console.log(`Telemetry browser checks passed (Supabase=${telemetryExpected}, Clarity=${clarityExpected}): tool feedback, no consent UI, regional consent left to Clarity, production/route/privacy gates, lifecycle and failure isolation. All vendor requests intercepted; no test data sent to Supabase or Clarity. Vendor geolocation itself requires live regional verification.`);
+  console.log(`Telemetry browser checks passed (Supabase=${telemetryExpected}, Clarity=${clarityExpected}): no consent UI, regional consent left to Clarity, production/route/privacy gates, lifecycle and failure isolation. All vendor requests intercepted; no test data sent to Supabase or Clarity. Vendor geolocation itself requires live regional verification.`);
 } finally {
   stopping = true;
   socket?.close();

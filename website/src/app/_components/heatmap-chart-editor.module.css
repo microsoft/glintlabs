@@ -1,9 +1,0 @@
-.scroll { max-width: 100%; overflow-x: auto; margin: 12px 0; }
-.scroll:focus-visible { outline: 3px solid var(--colorBrandForeground1); outline-offset: 3px; }
-.matrix { width: 100%; border-collapse: collapse; }
-.matrix th, .matrix td { min-width: 120px; padding: 8px; vertical-align: top; }
-.matrix th:first-child, .matrix td:first-child { min-width: 180px; }
-.matrix input { width: 100%; min-height: 36px; padding: 8px; border: 1px solid var(--colorNeutralStroke1); border-radius: var(--borderRadiusMedium, 8px); font: inherit; }
-.matrix input:focus-visible { outline: 3px solid var(--colorBrandForeground1); outline-offset: 1px; }
-.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.errors { color: var(--colorStatusDangerForeground1, #b10e1c); font-size: 12px; line-height: 18px; }

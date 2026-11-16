@@ -586,7 +586,6 @@ def test_each_skill_has_first_priority_reference_folder():
 
     assert skill_names == [
         "analyze-survey",
-        "analyze-survey-advanced",
         "analyze-survey-ai-preview",
         "people-science-knowledge-vault",
         "platform-screenshot-interpretation",
