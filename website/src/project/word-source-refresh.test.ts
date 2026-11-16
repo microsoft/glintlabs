@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { reportManifestSchema, type ReportManifest } from "../manifest/report-manifest.ts";
+import { reportBlockSchema, reportManifestSchema, type ReportManifest } from "../manifest/report-manifest.ts";
 import { createVerifiedDataVisual } from "../visualization/verified-data-visual.ts";
 import { createStudioChartSource } from "../visualization/chart-authoring.ts";
 import { createApprovedContentRecord, evaluateApprovedContentIntegrity } from "../integrity/approved-content.ts";
@@ -106,7 +106,7 @@ test("Word value updates preserve Studio-selected layouts without mistaking copi
       id: chart.id, table: chart.data, sourceName: chart.data.title,
       synthetic: false, original: chart, visualType: type,
     });
-    const styled = {
+    const styled = reportBlockSchema.parse({
       ...createVerifiedDataVisual(copied, type, "2026-11-05T16:00:00.000Z"),
       source: chart.source,
       presentation: type === "percentage-ring-group"
@@ -114,7 +114,8 @@ test("Word value updates preserve Studio-selected layouts without mistaking copi
           sort: "source" as const, density: "comfortable" as const }
         : { title: "Keep my Studio title", note: "", palette: "teal" as const,
           leadIns: ["", ""] as [string, string] },
-    };
+    });
+    assert.ok(styled.type === type);
     const current = { ...baseline, blocks: [...baseline.blocks.slice(0, 2), styled] };
     const incoming = revision(baseline);
     const updated = refreshWordSource({ current, sourceManifest: baseline, incoming });
@@ -125,12 +126,13 @@ test("Word value updates preserve Studio-selected layouts without mistaking copi
     assert.equal(result.metrics[1].value, 52);
     assert.equal(result.metrics[0].value, 0);
     assert.deepEqual(result.presentation, styled.presentation);
-    assert.equal(evaluateApprovedContentIntegrity(updated.manifest,
-      await createApprovedContentRecord(updated.sourceManifest)).status, "intact");
+    assert.equal((await evaluateApprovedContentIntegrity(updated.manifest,
+      await createApprovedContentRecord(updated.sourceManifest))).status, "intact");
 
     const edited = structuredClone(current);
     const local = edited.blocks[2];
-    assert.ok("metrics" in local && local.verifiedSource);
+    assert.ok((local.type === "paired-percentage-comparison" || local.type === "percentage-ring-group" ||
+      local.type === "percentage-comparison-grid") && local.verifiedSource);
     local.metrics[0].value = 10;
     local.verifiedSource.rows[0].cells[1] = "10%";
     assert.ok(refreshWordSource({ current: edited, sourceManifest: baseline, incoming }).conflicts

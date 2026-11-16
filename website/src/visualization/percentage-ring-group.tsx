@@ -12,7 +12,7 @@ export function PercentageRingGroup({
   block: PercentageRingGroupBlock;
 }) {
   const isStudioChart = block.source.part === "studio";
-  const note = isStudioChart ? undefined : block.presentation?.note;
+  const note = block.presentation?.note;
   const footnote = isStudioChart
     ? block.verifiedSource?.synthetic ? "Synthetic example · Not research findings" : undefined
     : block.footnote;

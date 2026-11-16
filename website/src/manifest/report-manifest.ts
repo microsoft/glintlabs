@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { statisticIllustrations } from "../visualization/statistic-illustrations.ts";
+import { researchVisualColumnCounts, researchVisualTemplates } from "../visualization/research-visual-types.ts";
+import { lineChartFields, lineChartMatrixValid } from "../visualization/line-chart-model.ts";
 
 export const sourceLocatorSchema = z.object({
   part: z.string().min(1),
@@ -25,6 +27,7 @@ const imageSourceSchema = z.union([
   z.string().startsWith("/"),
 ]);
 const verifiedVisualTypeSchema = z.enum([
+  "line-chart",
   "paired-percentage-comparison",
   "percentage-comparison-grid",
   "percentage-ring-group",
@@ -32,6 +35,8 @@ const verifiedVisualTypeSchema = z.enum([
   "quadrant-scatter-plot",
   "horizontal-bar-chart",
   "grouped-column-comparison",
+  "grouped-bar-comparison",
+  "comparison-panel-group",
   "coefficient-heatmap",
 ]);
 
@@ -72,7 +77,15 @@ const bitmapEvidenceSchema = z.object({
   width: z.number().positive(),
   height: z.number().positive(),
   sourceAssetSha256: sha256Schema,
+  placement: z.enum(["body", "hero"]).optional(),
+  eyebrow: z.string().min(1).optional(),
+  contentKind: z.enum(["non-data", "data-bearing"]).optional(),
 });
+
+export const imageChartCropSchema = z.object({
+  x: z.number().min(0).max(1), y: z.number().min(0).max(1),
+  width: z.number().positive().max(1), height: z.number().positive().max(1),
+}).refine(crop => crop.x + crop.width <= 1.000001 && crop.y + crop.height <= 1.000001, "Keep the crop inside the image.");
 
 export const structuredDataSchema = z.object({
   sourceKind: z.enum([
@@ -90,6 +103,7 @@ export const structuredDataSchema = z.object({
       z.object({
         id: z.string().min(1),
         cells: z.array(z.string()).min(2),
+        seriesLabels: z.tuple([z.string().trim().min(1).max(100), z.string().trim().min(1).max(100)]).optional(),
         supportingText: z.string().optional(),
         breakdown: z.array(z.object({
           id: z.string().min(1),
@@ -101,6 +115,12 @@ export const structuredDataSchema = z.object({
     .min(1),
   sha256: sha256Schema,
   evidenceImage: bitmapEvidenceSchema.optional(),
+  imageReconstruction: z.object({
+    engine: z.literal("tesseract.js-7-local"),
+    reviewedAt: z.string().datetime(),
+    reviewedTableSha256: sha256Schema,
+    crop: imageChartCropSchema,
+  }).optional(),
   recommendedVisualType: verifiedVisualTypeSchema.optional(),
   subtitle: z.string().min(1).optional(),
   sourceNote: z.string().min(1).optional(),
@@ -128,12 +148,23 @@ const sourcedVisualBlockSchema = baseBlockSchema.extend({
 export const chartPresentationSchema = z.object({
   title: z.string().trim().min(1).max(120),
   subtitle: z.string().max(240).default(""),
-  note: z.string().max(500).default(""),
+  note: z.string().max(2000).default(""),
   palette: z.enum(["brand", "blue", "teal"]).default("brand"),
   density: z.enum(["comfortable", "compact"]).default("comfortable"),
   sort: z.enum(["source", "ascending", "descending", "alphabetical"]).default("source"),
 });
 export type ChartPresentation = z.infer<typeof chartPresentationSchema>;
+
+export const comparisonPresentationSchema = chartPresentationSchema.extend({
+  showDifference: z.boolean().optional(),
+  panelStyle: z.enum(["bars", "columns", "percentages"]).optional(),
+  sourceBars: z.object({
+    colors: z.array(z.string().regex(/^#[0-9a-f]{6}$/i)).min(2).max(3).optional(),
+    useSourceColors: z.boolean().optional(),
+    annotation: z.string().max(40).optional(),
+  }).optional(),
+});
+export type ComparisonPresentation = z.infer<typeof comparisonPresentationSchema>;
 
 export const heatmapPresentationSchema = chartPresentationSchema.pick({ title: true, subtitle: true, note: true }).extend({
   title: z.string().trim().min(1).max(240),
@@ -190,6 +221,45 @@ const imagePresentationSchema = z.object({
 });
 
 export const reportBlockSchema = z.discriminatedUnion("type", [
+  sourcedVisualBlockSchema.extend({
+    ...lineChartFields,
+    verifiedSource: verifiedDataSourceSchema.optional(),
+  }).refine(lineChartMatrixValid, {
+    path: ["series"], message: "Use unique period and series identities, with one percentage per period in every series.",
+  }),
+  baseBlockSchema.extend({
+    type: z.literal("research-visual"),
+    template: z.enum(researchVisualTemplates),
+    title: z.string().trim().min(1).max(500),
+    subtitle: z.string().max(2000),
+    sourceNote: z.string().max(4000),
+    columns: z.array(z.string().trim().min(1).max(500)).min(2).max(5),
+    rows: z.array(z.object({
+      id: z.string().min(1),
+      cells: z.array(z.array(z.string().max(8000)).min(1).max(30)).min(2).max(5),
+    })).min(1).max(50),
+  }).superRefine((block, context) => {
+    const count = researchVisualColumnCounts[block.template];
+    if (block.columns.length !== count || block.rows.some(row => row.cells.length !== count)) {
+      context.addIssue({ code: "custom", path: ["rows"], message: "Every row must match this template's columns." });
+    }
+    if (new Set(block.rows.map(row => row.id)).size !== block.rows.length) {
+      context.addIssue({ code: "custom", path: ["rows"], message: "Each row needs a unique identifier." });
+    }
+    if (block.template === "driver-item-usage") {
+      block.rows.forEach((row, index) => {
+        const usage = row.cells[3]?.join(" ").trim() ?? "";
+        if (!/^(?:\d+(?:\.\d+)?|\.\d+)%?$/.test(usage) || Number(usage.replace(/%$/, "")) > 100) {
+          context.addIssue({ code: "custom", path: ["rows", index, "cells", 3],
+            message: `Row ${index + 1}: enter a client usage percentage from 0 to 100.` });
+        }
+        if (row.cells.slice(0, 3).some(cell => !cell.some(value => value.trim()))) {
+          context.addIssue({ code: "custom", path: ["rows", index, "cells"],
+            message: `Row ${index + 1}: add an item name, survey wording, and People Success Element.` });
+        }
+      });
+    }
+  }),
   baseBlockSchema.extend({
     type: z.literal("heading"),
     level: z.number().int().min(1).max(6),
@@ -433,19 +503,51 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
   }),
   sourcedVisualBlockSchema.extend({
     type: z.literal("grouped-column-comparison"),
-    presentation: chartPresentationSchema.optional(),
+    presentation: comparisonPresentationSchema.optional(),
     title: z.string().min(1),
     subtitle: z.string().min(1),
-    series: z.tuple([z.string().min(1), z.string().min(1)]),
+    series: z.array(z.string().min(1)).min(1).max(3),
     groups: z
       .array(
         z.object({
           id: z.string().min(1),
           label: z.string().min(1),
-          values: z.tuple([percentageSchema, percentageSchema]),
+          values: z.array(percentageSchema).min(1).max(3),
         }),
       )
-      .length(4),
+      .min(1).max(12),
+    sourceNote: z.string().min(1),
+    verifiedSource: verifiedDataSourceSchema.optional(),
+  }).refine(block => block.groups.every(group => group.values.length === block.series.length), {
+    path: ["groups"], message: "Every category must have one percentage for each series.",
+  }),
+  sourcedVisualBlockSchema.extend({
+    type: z.literal("grouped-bar-comparison"),
+    presentation: comparisonPresentationSchema.optional(),
+    title: z.string().min(1),
+    subtitle: z.string().min(1),
+    series: z.array(z.string().trim().min(1).max(100)).min(1).max(3),
+    groups: z.array(z.object({
+      id: z.string().min(1),
+      label: z.string().trim().min(1).max(160),
+      values: z.array(percentageSchema).min(1).max(3),
+    })).min(1).max(12),
+    sourceNote: z.string().min(1),
+    verifiedSource: verifiedDataSourceSchema.optional(),
+  }).refine(block => block.groups.every(group => group.values.length === block.series.length), {
+    path: ["groups"], message: "Every category must have one percentage for each series.",
+  }),
+  sourcedVisualBlockSchema.extend({
+    type: z.literal("comparison-panel-group"),
+    presentation: comparisonPresentationSchema.optional(),
+    title: z.string().min(1),
+    subtitle: z.string().min(1),
+    panels: z.array(z.object({
+      id: z.string().min(1),
+      title: z.string().trim().min(1).max(160),
+      series: z.tuple([z.string().trim().min(1).max(100), z.string().trim().min(1).max(100)]),
+      values: z.tuple([percentageSchema, percentageSchema]),
+    })).min(1).max(12),
     sourceNote: z.string().min(1),
     verifiedSource: verifiedDataSourceSchema.optional(),
   }),

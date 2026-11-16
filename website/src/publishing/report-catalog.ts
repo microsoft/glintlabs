@@ -40,9 +40,17 @@ export async function loadReportCatalog({
     right.publication.displayDate.localeCompare(left.publication.displayDate) ||
     left.publication.reportId.localeCompare(right.publication.reportId),
   );
+  const placements = new Map(approved.map(report => [
+    getLaunchReports().find(launch => launch.slug === report.publication.slug)?.catalog.href ?? `/reports/${report.publication.slug}`,
+    report.homepage,
+  ]));
   return [
     ...reports.map(({ publication }) => publicationCatalogItem(publication, { now })),
     ...getLaunchReports().map(report => report.catalog),
     ...publishedReports,
-  ];
+  ].map(item => {
+    const homepage = placements.get(item.href);
+    return homepage ? { ...item, featured: homepage.featured &&
+      (!homepage.featuredUntil || homepage.featuredUntil >= now.toISOString().slice(0, 10)) } : item;
+  });
 }

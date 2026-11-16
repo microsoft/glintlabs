@@ -9,6 +9,8 @@ function dataText(data: StructuredData): (string | undefined)[] {
 
 function blockText(block: ReportBlock): (string | undefined)[] {
   switch (block.type) {
+    case "research-visual":
+      return [block.title, block.subtitle, ...block.columns, ...block.rows.flatMap(row => row.cells.flat()), block.sourceNote];
     case "heading":
     case "paragraph":
     case "list-item":
@@ -51,8 +53,15 @@ function blockText(block: ReportBlock): (string | undefined)[] {
       return [block.quote];
     case "horizontal-bar-chart":
       return [block.title, ...block.items.map(item => item.label), block.legend, block.sourceNote];
+    case "line-chart":
+      return [block.presentation?.title ?? block.title, block.presentation?.subtitle ?? block.subtitle,
+        ...block.series.map(series => series.label), ...block.periods.flatMap(period => [period.label, period.supportingText]),
+        block.sourceNote, block.presentation?.note];
     case "grouped-column-comparison":
+    case "grouped-bar-comparison":
       return [block.title, block.subtitle, ...block.series, ...block.groups.map(group => group.label), block.sourceNote];
+    case "comparison-panel-group":
+      return [block.title, block.subtitle, ...block.panels.flatMap(panel => [panel.title, ...panel.series]), block.sourceNote];
     case "coefficient-heatmap":
       return [block.presentation?.title ?? block.title, block.presentation?.subtitle, ...block.columns,
         ...block.rows.map(row => row.label), block.presentation?.legendLabel, block.presentation?.note, block.sourceNote];

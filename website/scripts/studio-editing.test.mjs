@@ -669,7 +669,7 @@ test("switching report items and tools cannot apply unreviewed chart previews", 
   assert.equal(messages.length, 2, "both exits require Apply or Cancel");
 });
 
-test("Studio-authored charts omit source footers while paired comparisons retain optional notes", async () => {
+test("Studio-authored charts omit source footers while retaining optional author notes", async () => {
   const jsx = (type, props) => ({ type, props });
   const text = node => Array.isArray(node) ? node.map(text).join(" ")
     : !node || typeof node === "boolean" ? ""
@@ -706,11 +706,7 @@ test("Studio-authored charts omit source footers while paired comparisons retain
     const studioText = text(render({ block }));
     assert.doesNotMatch(studioText, /Source: Chart data|Author-provided Studio table/,
       `${type} omits generated source footers`);
-    if (type === "paired-percentage-comparison") {
-      assert.match(studioText, /Test/, "Paired comparisons retain the optional explanatory note from Figma");
-    } else {
-      assert.doesNotMatch(studioText, /Test/, "Other chart footer behavior is unchanged");
-    }
+    assert.match(studioText, /Test/, "Author notes remain visible independently of generated source footers");
     assert.deepEqual(block, before, "Rendering preserves source evidence and the saved presentation");
     const existing = { ...block, source: { part: "word/document.xml", index: 0 } };
     assert.match(text(render({ block: existing })), /Test/, "Existing report notes remain visible");
@@ -1538,7 +1534,7 @@ test("only lists in the Research Drop in Brief section get a card", () => {
     const rendered = renderHeading(block, {});
     assert.equal(rendered.type, "h2");
     assert.equal(rendered.props.className.includes("brief-heading"), compact);
-    assert.equal(rendered.props.children.props.block.text.slice(0, rendered.props.children.props.end), expected);
+    assert.equal(rendered.props.children, expected);
     assert.equal(block.text, text);
     const override = jsx("span", { children: text });
     assert.equal(renderHeading(block, { textOverrides: { heading: override } }).props.children, override);
@@ -1641,7 +1637,7 @@ test("References styling stays within its section and preserves citation text an
   }, rendererSource);
   const title = renderHeading(blocks[1], {});
   assert.equal(title.type, "h2");
-  assert.equal(title.props.children.props.block.text, blocks[1].text);
+  assert.equal(title.props.children, blocks[1].text);
   assert.ok(title.props.className.includes("references-heading"));
   const richText = componentFunction("RichText", scope, rendererSource);
   const block = {
@@ -1666,12 +1662,18 @@ test("References styling stays within its section and preserves citation text an
   assert.equal(text(overlapping), block.text);
   const insertionProps = { onInsertChart() {} };
   const automaticReferences = [blocks[2], blocks[4], blocks[6], blocks[7]];
-  const automatic = contents(automaticReferences, { referenceBlockIds: new Set([blocks[2].id]) });
+  const automatic = contents(automaticReferences, {
+    manifest: { wordStyles: [] }, referenceBlockIds: new Set([blocks[2].id]),
+  });
   assert.equal(automatic[0].props.children[0].type, "h2");
   assert.equal(automatic[0].props.children[0].props.children, "References");
   assert.equal(automatic[0].props.children[1].block, blocks[2]);
   assert.equal(automatic[1].props.children.reference, true, "Methodology stays with References until the next section");
   assert.equal(automatic[3].props.children.reference, false);
+  const legacy = contents(automaticReferences, {
+    manifest: {}, referenceBlockIds: new Set([blocks[2].id]),
+  });
+  assert.equal(legacy[0].props.children.block, blocks[2], "Legacy readers keep their existing reference layout");
   const referenceSection = blocks.slice(0, 6);
   assert.deepEqual(contents(referenceSection, insertionProps).map(node => node.props["data-chart-insert-before"]).filter(id => id !== undefined),
     ["block-0", "block-1"], "Insert before References, never between citations or after them");

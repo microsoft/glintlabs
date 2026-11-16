@@ -3,7 +3,7 @@ import test from "node:test";
 import JSZip from "jszip";
 import { quadrantExcelTemplate } from "../visualization/quadrant-template.ts";
 import { listeningPortfolioError, quadrantGeometry } from "../visualization/quadrant-data.ts";
-import { quadrantPresentationSchema } from "../manifest/report-manifest.ts";
+import { quadrantPresentationSchema, type ReportBlock, type ReportManifest } from "../manifest/report-manifest.ts";
 import { createVerifiedDataVisual, compatibleVerifiedVisuals, verifiedVisualMatchesSource } from "../visualization/verified-data-visual.ts";
 import { createApprovedContentRecord, evaluateApprovedContentIntegrity } from "../integrity/approved-content.ts";
 import { connectedQuadrantSources, hydrateFolderQuadrants, quadrantWorkbookSource } from "../project/quadrant-workbook-source.ts";
@@ -211,8 +211,10 @@ test("external Excel enrichment preserves Word evidence and refreshes median/man
   for (const mode of ["median", "manual"] as const) {
     const presentation = quadrantPresentationSchema.parse({ title: "Retain Studio settings", splitMode: mode,
       xSplit: 0, ySplit: 80, quadrants: ["A", "B", "C", "D"] });
-    const styled = { ...visual, wordSource: cached.data, presentation };
-    const current = { ...baseline, blocks: baseline.blocks.map(block => block.id === cached.id ? styled : block) };
+    const styled: Extract<ReportBlock, { type: "quadrant-scatter-plot" }> = {
+      ...visual, wordSource: cached.data, presentation,
+    };
+    const current: ReportManifest = { ...baseline, blocks: baseline.blocks.map(block => block.id === cached.id ? styled : block) };
     assert.equal((await evaluateApprovedContentIntegrity(current, await createApprovedContentRecord(baseline))).status, "intact");
     const incoming = structuredClone(baseline);
     incoming.source.sha256 = "e".repeat(64);
@@ -226,7 +228,7 @@ test("external Excel enrichment preserves Word evidence and refreshes median/man
     const workbookSource = await quadrantWorkbookSource(changed, { id: cached.id, title: cached.data.title });
     const result = refreshWordSource({ current, sourceManifest: baseline, incoming, quadrantSources: { [cached.id]: workbookSource } });
     assert.deepEqual(result.conflicts, []);
-    const refreshed = result.manifest.blocks.find(block => block.id === cached.id);
+    const refreshed: ReportBlock | undefined = result.manifest.blocks.find(block => block.id === cached.id);
     assert.ok(refreshed?.type === "quadrant-scatter-plot");
     assert.deepEqual(refreshed.presentation, presentation);
     assert.equal(refreshed.points[1].id, "example-b");
@@ -241,7 +243,7 @@ test("external Excel enrichment preserves Word evidence and refreshes median/man
     const excelOnly = refreshWordSource({ current, sourceManifest: baseline, incoming: baseline,
       quadrantSources: { [cached.id]: revisedBreakdown } });
     assert.equal(excelOnly.unchanged, false, "Excel breakdown changes refresh even when the Word file is unchanged");
-    const updatedBreakdown = excelOnly.manifest.blocks.find(block => block.id === cached.id);
+    const updatedBreakdown: ReportBlock | undefined = excelOnly.manifest.blocks.find(block => block.id === cached.id);
     assert.ok(updatedBreakdown?.type === "quadrant-scatter-plot");
     assert.equal(updatedBreakdown.points[0].breakdown[0].value, 11);
     assert.deepEqual(excelOnly.conflicts, []);

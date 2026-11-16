@@ -276,6 +276,20 @@ test("reuses the same revision for unchanged packages and increments once when p
   assert.equal((await preparePublicationPackage({ project: updated, metadata: changedMetadata, imageReviews })).publication.revision, 2);
 });
 
+test("legacy callers retain employee counts when no Word metadata owns the field", async () => {
+  const project = await fixtureProject();
+  const result = await preparePublicationPackage({
+    project, metadata: { ...metadata, employeeCount: 240 }, imageReviews,
+  });
+  assert.equal(result.publication.employeeCount, 240);
+  assert.equal(result.manifest.metadata.employeeCount, 240);
+  project.manifest.wordStyles = [];
+  const word = await preparePublicationPackage({
+    project, metadata: { ...metadata, employeeCount: 240 }, imageReviews,
+  });
+  assert.equal(word.publication.employeeCount, undefined, "A blank Word employee count stays blank");
+});
+
 test("Word employee counts override saved publishing details and count changes advance the revision", async () => {
   const project = await fixtureProject();
   const originalContent = canonicalJson(project.approvedContent);

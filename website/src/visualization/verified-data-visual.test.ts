@@ -355,6 +355,7 @@ test("quadrant charts preserve stable point IDs, signed coordinates and numerica
     title: "Reusable quadrant", splitMode: "manual", xSplit: 0, ySplit: 85,
     xLabel: "Growth", yLabel: "Use", xUnit: "number", yUnit: "percentage",
   } });
+  assert.ok(restored.type === "quadrant-scatter-plot");
   assert.equal(restored.verifiedSource?.rows[0].cells[3], "90.00");
   assert.equal(verifiedVisualMatchesSource(restored), true);
   assert.equal(verifiedVisualMatchesSource({ ...restored, points: [
@@ -415,8 +416,18 @@ test("Studio comparison grids accept two percentage series without relaxing bar 
   assert.deepEqual(restored.presentation, presentation);
   assert.equal(restored.verifiedSource?.rows[0].cells[1], "83.00%");
   assert.equal(verifiedVisualMatchesSource(restored), true);
+  for (const count of [1, 3]) {
+    const source = await createStudioChartSource({
+      id: `grid-${count}`, table: { ...table, rows: table.rows.slice(0, count) },
+      sourceName: "Comparison data", synthetic: false, visualType: "grouped-column-comparison",
+    });
+    const chart = createVerifiedDataVisual(source, "grouped-column-comparison", "2026-11-04T20:00:00.000Z");
+    assert.ok(chart.type === "grouped-column-comparison");
+    assert.equal(chart.groups.length, count);
+    assert.equal(verifiedVisualMatchesSource(chart), true);
+  }
   for (const invalid of [
-    { ...table, rows: table.rows.slice(0, 3) },
+    { ...table, rows: [] },
     { ...table, rows: table.rows.map((row, i) => i ? row : { ...row, cells: ["First", "83", "101"] }) },
     { ...table, rows: table.rows.map((row, i) => i ? row : { ...row, cells: ["First", "83", ""] }) },
   ]) {

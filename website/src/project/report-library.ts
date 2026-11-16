@@ -12,6 +12,11 @@ export const publishedReportSummarySchema = z.object({
   displayDate: z.string(),
   eyebrow: z.string(),
   employeeCount: z.number().optional(),
+  homepage: z.object({
+    featured: z.boolean(),
+    featuredUntil: z.string().nullable(),
+    version: z.string().uuid().nullable(),
+  }).optional(),
   thumbnail: z.object({
     src: z.string().startsWith("/"),
     alt: z.string(),

@@ -77,7 +77,7 @@ test("folder permission is checked quietly and requested only by the explicit ac
       permission = "granted";
       return permission;
     },
-    getFileHandle: async () => ({ getFile: async () => new File(["Data"], "Research.xlsx") }),
+    getFileHandle: async () => ({ name: "Research.xlsx", getFile: async () => new File(["Data"], "Research.xlsx") }),
   };
   assert.equal(await sourceFolderPermission(folder), "prompt");
   assert.equal(requests, 0);

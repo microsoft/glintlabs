@@ -31,6 +31,21 @@ and export tooling are documented below. No original DOCX files are required for
 normal builds. No ignored local data, credentials, build outputs, browser saves,
 owner keys, or staged/published packages were transferred.
 
+## Full staging/public reconciliation
+
+The full release reconciles staging `fd194a41cd8a53a7e208174e0dd67e34fb7c06b2`
+with public `26b78294340203f81ef604c21c9bce72e053d4b9`. Studio v1 authoring,
+library restoration/removal, Word refresh and source fidelity remain alongside
+the public release receipt, fingerprint-bound homepage placement, research
+visuals, line charts and generalized comparison charts. Optional author notes
+remain visible without reintroducing generated Studio source footers.
+
+Word metadata owns employee counts when Word styles or an explicit source count
+are present, including an explicit blank. Legacy callers without that source
+metadata can still provide the count in publication details. Library summaries
+retain homepage placement through schema validation. Migration destination
+hashes describe the reconciled files; original source hashes are unchanged.
+
 ## Launch-polish follow-up
 
 The follow-up branch `users/ericschroen/launch-report-polish` starts from the
@@ -239,6 +254,58 @@ server, stop its recorded shell session, not all Node processes. Remove
 instead use `npm run start -- --hostname 127.0.0.1 --port 3011` with preview
 environment variables and `NEXT_DIST_DIR` unset. See `validation.md` for measured
 results and evidence limitations.
+
+## Current Studio public-reader compatibility and release receipts
+
+The bounded compatibility follow-up uses the current standalone Publishing
+Studio's public-format dependency closure, originating from verified staging
+revision `7d5d27a98a206421133010df117204a810353092`. It is not a merge of staging
+PR #30. The original 684-entry inventory, source hashes, source revision, and
+destination base remain historical provenance; only changed mapped destination
+hashes and their intentional-difference explanations are updated.
+
+The manifest, approved-content integrity model, canonical chart components,
+verified-data factories, reading-time helper, and their new model/style/assets
+dependencies are exact source ports. This supports line charts, comparison
+panels, grouped bars, paired percentages, percentage grids, illustrated
+statistics, coefficient heatmaps, quadrant scatter plots, and research visuals.
+The existing `packages/data-visuals` package already matches and is unchanged.
+Line-chart verified-source hashes are checked during package creation and
+validation. Approved package manifests and publication metadata are not
+reinterpreted by the reader.
+
+The public renderer integrates the source formats, rich-text marks, callouts,
+Word-style projection, explicit hero placement, reader presentation, and table
+row headers. Production retains its existing date/layout/mobile-metadata
+behavior, heading spacing, footer, and editing interfaces. Package creation also
+retains the existing caller-supplied employee-count fallback rather than
+overriding it from the draft manifest. These are deliberate compatibility
+boundaries, not redesigns.
+
+Approved homepage placement is an optional `homepage.json` sidecar bound to the
+approved package fingerprint. Its version, featured state, and expiry survive
+approved Pages export and feed the catalog. Existing launch ordering remains
+unchanged. Pages `release.json` retains `revision`, `sourceRevision`, and
+`delivery` and adds a public-only approved report library containing `id`,
+`title`, `slug`, `revision`, `packageFingerprint`, `updatedAt`, `displayDate`,
+`eyebrow`, optional `employeeCount`, `summary`, `thumbnail`, and
+`homepage: {featured, featuredUntil, version}`. It contains no manifests,
+original Word files, drafts, or owner keys.
+
+The homepage, P0/P1 launch content, telemetry configuration/allowlists, release
+workflow, and private-route exclusion remain production-owned. Build assertions
+still check the fixed public launch analytics IDs; arbitrary new report slugs
+do not bypass either client analytics allowlist. No standalone root redirect,
+private GitHub publishing controller, private API/UI, onboarding, or launcher
+is transferred.
+
+Validation includes an observed pre-port rejection of a supported line chart,
+the original test/lint/build commands, migration verification, and a
+telemetry-enabled Pages rehearsal using a synthetic package created by the
+actual standalone source. The rehearsal compares canonical manifest,
+publication, and transport fingerprint, then checks approved export and the
+public-only receipt. Synthetic content is local-only and removed after
+validation; it is never uploaded or published.
 
 ## Eric's ongoing editing workflow
 

@@ -9,33 +9,51 @@ export function validateChartTable(table: ChartTable, unit: ChartValueType = "pe
   if (visualType === "quadrant-scatter-plot") return quadrantTableErrors(table);
   const errors: ChartTableError[] = [];
   const heatmap = visualType === "coefficient-heatmap";
-  const columns = heatmap ? table.columns.length : visualType === "grouped-column-comparison" ? 3 : 2;
+  const grouped = visualType === "grouped-column-comparison" || visualType === "grouped-bar-comparison";
+  const panels = visualType === "comparison-panel-group";
+  const line = visualType === "line-chart";
+  const columns = heatmap || grouped || line ? table.columns.length : panels ? 3 : 2;
+  if (grouped && (columns < 2 || columns > 4)) {
+    errors.push({ row: -1, column: -1, message: "Use a category column and one to three percentage series." });
+  }
+  if (!panels && table.rows.some(row => row.seriesLabels)) {
+    errors.push({ row: -1, column: -1, message: "Independent panel legends cannot be discarded when changing chart type." });
+  }
+  if ((grouped || panels) && table.rows.some(row => row.supportingText?.trim() || row.breakdown?.length)) {
+    errors.push({ row: -1, column: -1, message: "This table includes supporting details. Keep its original chart to preserve those details." });
+  }
+  if (line && (columns < 2 || columns > 4 ||
+    new Set(table.columns.map(value => value.trim().toLocaleLowerCase("en-US"))).size !== columns ||
+    new Set(table.rows.map(row => row.id)).size !== table.rows.length || table.rows.some(row => !row.id))) {
+    errors.push({ row: -1, column: -1, message: "Use a period column and 1–3 uniquely named percentage series, with unique period identifiers." });
+  }
   if (heatmap && (columns < 2 || columns > 13 || unit !== "number" ||
     new Set(table.columns.map(value => value.trim().toLocaleLowerCase("en-US"))).size !== columns)) {
     errors.push({ row: -1, column: -1, message: "Use a factor column and 1–12 uniquely named periods, with number values." });
   }
   if (table.columns.length !== columns || table.columns.some(value => !value.trim() || value.length > 100)) {
-    errors.push({ row: -1, column: -1, message: `Use ${columns === 3 ? "three" : "two"} column headings, each between 1 and 100 characters.` });
+    errors.push({ row: -1, column: -1, message: `Use ${grouped ? columns : columns === 3 ? "three" : "two"} column headings, each between 1 and 100 characters.` });
   }
-  const fixedRows = visualType === "grouped-column-comparison" || visualType === "percentage-comparison-grid" ? 4 : visualType === "paired-percentage-comparison" ? 2 : undefined;
+  const fixedRows = visualType === "percentage-comparison-grid" ? 4 : visualType === "paired-percentage-comparison" ? 2 : undefined;
   if ((visualType === "percentage-ring-group" || visualType === "illustrated-statistics") &&
       (table.rows.length < 2 || table.rows.length > 3)) {
     errors.push({ row: -1, column: -1, message: "Use two or three percentage findings." });
   } else if (fixedRows && table.rows.length !== fixedRows) {
-    errors.push({ row: -1, column: -1, message: visualType === "grouped-column-comparison"
-      ? "Use exactly four categories and two percentage series."
-      : `Use exactly ${fixedRows === 4 ? "four" : "two"} percentage findings.` });
-  } else if (table.rows.length < 2 || table.rows.length > 12) {
-    errors.push({ row: -1, column: -1, message: "Use between 2 and 12 categories." });
+    errors.push({ row: -1, column: -1, message: `Use exactly ${fixedRows === 4 ? "four" : "two"} percentage findings.` });
+  } else if (table.rows.length < (grouped || panels ? 1 : 2) || table.rows.length > 12) {
+    errors.push({ row: -1, column: -1, message: `Use between ${grouped || panels ? 1 : 2} and 12 categories.` });
   }
   if (!heatmap && visualType !== "horizontal-bar-chart" && unit !== "percentage") {
     errors.push({ row: -1, column: -1, message: "Use percentage values for this chart." });
   }
   const seen = new Set<string>();
   table.rows.forEach((row, index) => {
+    if (panels && (row.seriesLabels?.length !== 2 || row.seriesLabels.some(label => !label.trim() || label.length > 100))) {
+      errors.push({ row: index, column: 0, message: "Give this panel its own two series names (1–100 characters each)." });
+    }
     const label = row.cells[0]?.trim() ?? "";
     const key = label.replace(/\s+/g, " ").toLocaleLowerCase("en-US");
-    if (!label || label.length > 160 || seen.has(key)) {
+    if (!label || label.length > 160 || (!panels && seen.has(key))) {
       errors.push({ row: index, column: 0, message: "Use a unique category label between 1 and 160 characters." });
     }
     seen.add(key);
@@ -108,12 +126,21 @@ export function parseChartTable(input: string, header = true, visualType: Verifi
   if (quoted) throw new Error("A quoted cell is unfinished. Close its quotation mark.");
   if (cell || cells.length) finishRow();
   const heatmap = visualType === "coefficient-heatmap";
-  const columnCount = heatmap ? records[0]?.length ?? 0 : visualType === "grouped-column-comparison" ? 3 : 2;
+  const grouped = visualType === "grouped-column-comparison" || visualType === "grouped-bar-comparison";
+  const line = visualType === "line-chart";
+  const columnCount = heatmap || grouped || line ? records[0]?.length ?? 0 : visualType === "comparison-panel-group" ? 3 : 2;
+  if (grouped && (columnCount < 2 || columnCount > 4)) throw new Error("Use a category column and one to three percentage series.");
+  if (line && (columnCount < 2 || columnCount > 4)) throw new Error("Use a period column and 1–3 percentage series.");
   if (heatmap && (columnCount < 2 || columnCount > 13)) throw new Error("Use a factor column and 1–12 period columns.");
-  if (!records.length || records.some(row => row.length !== columnCount)) throw new Error(columnCount === 3
+  if (!records.length || records.some(row => row.length !== columnCount)) throw new Error(grouped
+    ? `Use exactly ${columnCount} columns: category labels and ${columnCount - 1} percentage series.`
+    : columnCount === 3
     ? "Use exactly three columns: category labels and two percentage series."
     : "Use exactly two columns: category labels and percentage values.");
-  const columns = header ? records.shift()! : heatmap ? ["Factor", ...Array.from({ length: columnCount - 1 }, (_, index) => `Period ${index + 1}`)]
+  const columns = header ? records.shift()!
+    : line ? ["Period", ...Array.from({ length: columnCount - 1 }, (_, index) => `Series ${index + 1}`)]
+    : heatmap ? ["Factor", ...Array.from({ length: columnCount - 1 }, (_, index) => `Period ${index + 1}`)]
+    : grouped ? ["Category", ...Array.from({ length: columnCount - 1 }, (_, index) => `Series ${index + 1}`)]
     : columnCount === 3 ? ["Category", "Series 1", "Series 2"] : ["Category", "Percentage (%)"];
   if (records.length > 12 || columns.some(value => !value || value.length > 100) ||
       records.some(row => row[0].length > 160 || row.slice(1).some(value => value.length > 24))) {
@@ -146,14 +173,18 @@ export async function createStudioChartSource({
     columns: table.columns.map(value => value.trim()),
     rows: table.rows.map(row => ({
       id: row.id, cells: row.cells.map(value => value.trim()),
+      ...(row.seriesLabels ? { seriesLabels: row.seriesLabels.map(value => value.trim()) as [string, string] } : {}),
       ...(row.supportingText?.trim() ? { supportingText: row.supportingText.trim() } : {}),
       ...(row.breakdown?.length ? { breakdown: row.breakdown.map(detail => ({
         id: detail.id, label: detail.label.trim(), value: detail.value.trim(),
       })) } : {}),
     })),
     evidenceImage: original?.data.evidenceImage,
+    imageReconstruction: original?.data.imageReconstruction,
     recommendedVisualType: visualType,
-    sourceNote: `${synthetic ? "Synthetic example. Not research findings. " : ""}Source: ${sourceName.trim()}. ${originalSource ? "Edited in Studio; not unchanged Word values." : "Author-provided Studio table."}`,
+    sourceNote: `${synthetic ? "Synthetic example. Not research findings. " : ""}Source: ${sourceName.trim()}. ${original?.data.imageReconstruction
+      ? "Edited in Studio after image reconstruction; current data may differ from the image-reviewed table."
+      : originalSource ? "Edited in Studio; not unchanged Word values." : "Author-provided Studio table."}`,
     synthetic,
     originalSource,
   };
