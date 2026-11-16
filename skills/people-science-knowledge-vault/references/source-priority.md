@@ -104,9 +104,7 @@ column J.
 ## Explicit exclusions
 
 Private publisher workbooks, unpublished drafts, internal-only records, and private
-extraction caches are not eligible research-library evidence. User-authorized
-organizational context is separate from this research-library exclusion and
-remains subject to the optional WorkIQ rules above. Only the publisher's
+extraction caches are not eligible research-library evidence. Only the publisher's
 `External` worksheet informs the saved original-vault catalog; maintenance
 must not import other worksheets.
 
@@ -116,12 +114,4 @@ They must not be added to the public library or sent to public research queries.
 
 ## Precedence and deduplication
 
-1. Canonicalize URLs by removing tracking parameters and normalizing host/path.
-2. Deduplicate identical articles across the catalog, reviewed index, and any live
-   checks.
-3. Filter relevance and applicability, prefer registered new-catalog Research
-   Drops, then retain `top5` / `curated`-equivalent > `high` > `medium` > `low`
-   within the original vault. Use relevance within equal priority.
-4. When sources disagree, describe methodological and contextual differences
-   rather than silently blending them or treating collection rank as proof.
-   Apply the preference only among sources applicable to the claim.
+Canonicalize URLs (strip tracking parameters, normalize host/path) and deduplicate across the catalog, reviewed index, and live checks, then apply the collection precedence above, using relevance within equal priority. When sources disagree, describe methodological and contextual differences rather than blending them or treating rank as proof.
