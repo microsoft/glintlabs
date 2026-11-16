@@ -1,0 +1,40 @@
+name: Knowledge Vault bundle
+
+on:
+  pull_request:
+    paths:
+      - "skills/people-science-knowledge-vault/**"
+      - "scripts/build_vault_bundle.py"
+      - ".github/workflows/vault-bundle.yml"
+  push:
+    branches: [main]
+    paths:
+      - "skills/people-science-knowledge-vault/**"
+      - "scripts/build_vault_bundle.py"
+  workflow_dispatch:
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Rebuild bundle on same-repo pull requests
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          python scripts/build_vault_bundle.py
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+            git add skills/people-science-knowledge-vault/SKILL.md skills/people-science-knowledge-vault/vault-bundle.md
+            git commit -m "Rebuild Knowledge Vault bundle"
+            git push
+          fi
+      - name: Bundle is current and under the size limit
+        run: python scripts/build_vault_bundle.py --check

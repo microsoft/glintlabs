@@ -86,12 +86,6 @@ private notes, speaker/reviewer material, and ownership records are not.
 Do not retrieve the publisher's source workbook or use other worksheets to
 expand the library. Source priority governs the saved public catalog.
 
-The user's authorized organizational context is a separate evidence lane under
-[optional WorkIQ rules](public-use.md#optional-workiq-organizational-context),
-not an exception for private publisher research. Attribute it separately from
-published sources; it cannot replace the original public bodies required above
-or be promoted into the shared research library.
-
 The top5 survey-interpretation profile includes recording-backed themes. Its
 article, companion PDF, and recording are different assets: retrieve the one
 supporting the selected claim. Do not promote theme summaries into evidence or
