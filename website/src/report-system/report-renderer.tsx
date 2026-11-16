@@ -3,7 +3,6 @@ import { ChevronDown16Regular } from "@fluentui/react-icons/svg/chevron-down";
 import { Fragment, type ElementType, type ReactNode } from "react";
 
 import { SiteNavigation } from "../app/_components/site-navigation";
-import { MarketingFooter } from "../app/_components/marketing-footer";
 import type {
   ReportBlock,
   ReportManifest,
@@ -12,10 +11,10 @@ import type {
 import { estimateReportReadingTime } from "../project/report-reading-time.ts";
 import { reportAuthor } from "../project/report-author.ts";
 import { wordReferenceTextIds, wordStyleView } from "../project/word-style-mapping.ts";
-import { textCalloutSegments, type TextCalloutSelection } from "../project/text-callout.ts";
-import { ReportTextSelection } from "./report-text-selection";
+import { textCalloutSegments } from "../project/text-callout.ts";
 import { ListeningMaturityScorecard } from "../visualization/listening-maturity-scorecard";
 import {
+  canonicalVisualOptions,
   isCanonicalVisualBlock,
 } from "../visualization/canonical-report-blocks";
 import { CanonicalReportComponent } from "../visualization/canonical-report-components";
@@ -32,7 +31,6 @@ import {
   type ReportStyle,
 } from "./report-style";
 import styles from "./report-renderer.module.css";
-import { ReportChartInsertion } from "./report-chart-insertion";
 
 type ImageBlock = Extract<ReportBlock, { type: "image" }>;
 type TextBlock = Extract<
@@ -49,7 +47,6 @@ type ReportRendererProps = {
   coverEyebrow?: string;
   coverDetails?: readonly string[];
   coverNotice?: string;
-  disableFooterLinks?: boolean;
   figureDescriptions?: Readonly<Record<string, string>>;
   textOverrides?: Readonly<Record<string, ReactNode>>;
   highlightedBlockId?: string;
@@ -60,12 +57,8 @@ type ReportRendererProps = {
   orderedListBlockIds?: ReadonlySet<string>;
   referenceBlockIds?: ReadonlySet<string>;
   onSelectBlock?: (blockId: string) => void;
-  onSelectText?: (selection: TextCalloutSelection, enabled: boolean) => boolean;
-  onInsertChart?: (beforeBlockId?: string) => void;
-  insertionFocus?: { beforeBlockId: string; onRestored: () => void };
   reportStyle?: ReportStyle;
   selectedBlockId?: string;
-  chartEditingOrder?: { blockId: string; rowIds: string[] };
 };
 
 function headingTag(level: number): ElementType {
@@ -295,41 +288,33 @@ function renderBlock(
   if (isCanonicalVisualBlock(block)) {
     const isEditableVisual =
       block.type === "percentage-ring-group" ||
-      block.type === "illustrated-statistics" ||
-      block.type === "quadrant-scatter-plot" ||
-      block.type === "percentage-comparison-grid" ||
-      block.type === "paired-percentage-comparison" ||
       block.type === "horizontal-bar-chart" ||
-      block.type === "coefficient-heatmap" ||
       block.type === "grouped-column-comparison";
-    const canEdit = isAuthoring && isEditableVisual && Boolean(props.onSelectBlock);
+    const visualName =
+      canonicalVisualOptions.find((option) => option.kind === block.type)?.name ??
+      "report component";
     return (
       <div
         className={`${styles.canonicalVisual} ${
-          canEdit ? `${styles.interactiveVisual} ${styles.chartAuthoring}` : ""
+          isEditableVisual ? styles.interactiveVisual : ""
         } ${
-          canEdit && props.selectedBlockId === block.id
+          isEditableVisual && props.selectedBlockId === block.id
             ? styles.selected
             : ""
         }`}
         data-report-component={block.type}
       >
-        {canEdit ? (
-          <div className={styles.chartEditToolbar}>
-            <button
-              aria-label={`Edit chart: ${"presentation" in block ? block.presentation?.title ?? block.title : block.title}`}
-              className={styles.chartEditAction}
-              onClick={() => props.onSelectBlock?.(block.id)}
-              type="button"
-            >
-              Edit chart
-            </button>
-          </div>
+        {isAuthoring && isEditableVisual && props.onSelectBlock ? (
+          <button
+            aria-label={`Edit ${visualName}`}
+            className={styles.editVisual}
+            onClick={() => props.onSelectBlock?.(block.id)}
+            type="button"
+          >
+            Edit component
+          </button>
         ) : null}
-        <CanonicalReportComponent block={block}
-          editingOrder={canEdit && props.selectedBlockId === block.id && props.chartEditingOrder?.blockId === block.id
-            ? props.chartEditingOrder.rowIds : undefined}
-          expandSupportingBullets={canEdit && props.selectedBlockId === block.id} />
+        <CanonicalReportComponent block={block} />
       </div>
     );
   }
@@ -339,17 +324,16 @@ function renderBlock(
       const Heading = headingTag(block.level);
       return (
         <Heading className={`${styles[`heading${block.level}`]} ${isResearchBriefHeading(block) ? styles.briefHeading : ""} ${isReferencesHeading(block) ? styles.referencesHeading : ""}`}>
-          {props.textOverrides?.[block.id] ?? (block.marks?.length || block.links?.length
-            ? <RichText block={block} reference={isReference} referenceMarkers={referenceMarkers}
+          {block.marks?.length || block.links?.length
+            ? props.textOverrides?.[block.id] ?? <RichText block={block} reference={isReference} referenceMarkers={referenceMarkers}
               end={isResearchBriefHeading(block) ? headingLabel(block).length : block.text.length} />
-            : isResearchBriefHeading(block) ? headingLabel(block) : block.text)}
+            : isResearchBriefHeading(block) ? headingLabel(block) : props.textOverrides?.[block.id] ?? block.text}
         </Heading>
       );
     }
     case "paragraph": {
-      const selectableText = isAuthoring && props.onSelectText && !isReference && props.textOverrides?.[block.id] === undefined;
       if (block.callouts?.length && props.textOverrides?.[block.id] === undefined) {
-        return <div data-report-text-block={selectableText ? block.id : undefined} tabIndex={selectableText ? -1 : undefined}>
+        return <div>
           {textCalloutSegments(block).map(range => <p key={`${range.start}-${range.end}`}
             className={range.callout ? styles.textCallout : styles.paragraph} data-text-callout={range.callout || undefined}>
             <RichText block={block} start={range.start} end={range.end} reference={isReference} referenceMarkers={referenceMarkers} />
@@ -357,7 +341,7 @@ function renderBlock(
         </div>;
       }
       return (
-        <p className={styles.paragraph} data-report-text-block={selectableText ? block.id : undefined} tabIndex={selectableText ? -1 : undefined}>
+        <p className={styles.paragraph}>
           {props.textOverrides?.[block.id] ?? <RichText block={block} reference={isReference} referenceMarkers={referenceMarkers} />}
         </p>
       );
@@ -499,32 +483,26 @@ function renderBlock(
         : undefined;
 
       if (preview) {
-        const canEdit = isAuthoring && Boolean(props.onSelectBlock);
         return (
           <div
-            className={`${styles.canonicalVisual} ${
-              canEdit ? `${styles.interactiveVisual} ${styles.chartAuthoring}` : ""
-            } ${
-              canEdit && props.selectedBlockId === block.id ? styles.selected : ""
+            className={`${styles.interactiveVisual} ${
+              props.selectedBlockId === block.id ? styles.selected : ""
             }`}
             data-report-component={preview.type}
           >
-            {canEdit ? (
-              <div className={styles.chartEditToolbar}>
-                <button
-                  aria-label={`${automaticallyVerifiedType ? "Edit chart" : "Review data"} ${block.data.title}`}
-                  className={styles.chartEditAction}
-                  onClick={() => props.onSelectBlock?.(block.id)}
-                  type="button"
-                >
-                  {automaticallyVerifiedType ? "Edit chart" : "Review data"}
-                </button>
-              </div>
+            {isAuthoring &&
+            props.onSelectBlock &&
+            !automaticallyVerifiedType ? (
+              <button
+                aria-label={`Review data ${block.data.title}`}
+                className={styles.editVisual}
+                onClick={() => props.onSelectBlock?.(block.id)}
+                type="button"
+              >
+                Review data
+              </button>
             ) : null}
-            <CanonicalReportComponent block={preview}
-              editingOrder={canEdit && props.selectedBlockId === block.id && props.chartEditingOrder?.blockId === block.id
-                ? props.chartEditingOrder.rowIds : undefined}
-              expandSupportingBullets={canEdit && props.selectedBlockId === block.id} />
+            <CanonicalReportComponent block={preview} />
           </div>
         );
       }
@@ -541,7 +519,7 @@ function renderBlock(
         >
           <span className={styles.issueLabel}>Needs attention</span>
           <strong>Data visual needs review</strong>
-          <span>Review the source data in the chart editor.</span>
+          <span>Review the extracted source data in the Visuals panel.</span>
         </button>
       ) : (
         <aside className={styles.placeholder}>
@@ -599,13 +577,11 @@ function reportContent(
         briefHeadingLevel = undefined;
       }
     }
-    if (block.type !== "heading" && block.type !== "list-item") briefHeadingLevel = undefined;
     const isReference = referencesHeadingLevel !== undefined || props.referenceBlockIds?.has(block.id) === true;
     const startsReferences = isReference && !previousBlockWasReference;
     previousBlockWasReference = isReference;
     if (block.type !== "list-item") {
-      briefHeadingIndex = isResearchBriefHeading(block) && briefHeadingLevel !== undefined ? content.length : undefined;
-      const textOverride = props.textOverrides?.[block.id];
+      briefHeadingIndex = isResearchBriefHeading(block) ? content.length : undefined;
       const blockClassName = [
         styles.reportBlock,
         isReference ? styles.referencesBlock : "",
@@ -624,9 +600,6 @@ function reportContent(
           id={`report-block-${block.id}`}
           key={block.id}
           role={isDivider ? "separator" : undefined}
-          data-chart-source={!isReference && block.type === "paragraph" &&
-            /^sources?\s*:/i.test((typeof textOverride === "string" ? textOverride : block.text).trim()) ? true : undefined}
-          data-chart-insert-before={props.mode !== "read" && props.onInsertChart && (!isReference || startsReferences) && !isDivider ? block.id : undefined}
         >
           {startsReferences && !isReferencesHeading(block) &&
             (props.manifest.readerPresentation || props.manifest.wordStyles) ? <>
@@ -652,7 +625,6 @@ function reportContent(
       <List
         className={`${styles.list} ${briefHeadingLevel === undefined ? "" : styles.briefList} ${isReference ? styles.referencesList : ""}`}
         key={`list-${items[0].id}`}
-        data-chart-insert-before={props.mode !== "read" && props.onInsertChart && !isReference && briefHeadingLevel === undefined ? items[0].id : undefined}
       >
         {items.map((item) => (
           <li
@@ -685,10 +657,6 @@ function reportContent(
     briefHeadingIndex = undefined;
   }
 
-  const lastVisibleBlock = blocks.findLast(block => !props.hiddenBlockIds?.has(block.id));
-  if (props.mode !== "read" && props.onInsertChart && !previousBlockWasReference && lastVisibleBlock?.type !== "references") {
-    content.push(<div key="chart-insertion-end" data-chart-insert-before="" aria-hidden="true" />);
-  }
   return content;
 }
 
@@ -712,9 +680,7 @@ export function ReportRenderer(props: ReportRendererProps) {
     ?? props.manifest.blocks[firstBodyBlockIndex];
   const heroImageBlock =
     possibleHeroImage?.type === "image" &&
-    (possibleHeroImage.placement === "hero" ||
-      (possibleHeroImage.placement === undefined &&
-        possibleHeroImage.assetSource === "word-import"))
+    possibleHeroImage.placement === "hero"
       ? possibleHeroImage
       : undefined;
   const contentStartIndex = firstBodyBlockIndex + (heroImageBlock && heroImageBlock.id === props.manifest.blocks[firstBodyBlockIndex]?.id ? 1 : 0);
@@ -734,12 +700,10 @@ export function ReportRenderer(props: ReportRendererProps) {
       block.level <= 2 &&
       !props.hiddenBlockIds?.has(block.id),
   );
-  const readTimeMinutes = !props.manifest.wordStyles && props.mode === "read" && props.manifest.metadata.readTimeMinutes
+  const readTimeMinutes = props.mode === "read" && props.manifest.metadata.readTimeMinutes
     ? props.manifest.metadata.readTimeMinutes : estimateReportReadingTime(props.manifest);
   const author = reportAuthor(props.manifest);
-  const sourceDate = props.manifest.metadata.publishedDate;
-  const isoDate = sourceDate?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  const publishedDate = isoDate ? `${Number(isoDate[2])}/${Number(isoDate[3])}/${isoDate[1].slice(-2)}` : sourceDate;
+  const isoDate = props.manifest.metadata.publishedDate?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   const coverDetails = props.coverDetails ?? (presentation?.showCoverDetails ? [
     ...(isoDate ? [`${new Date(`${isoDate[0]}T00:00:00Z`).toLocaleDateString("en-US", {
       month: "long", day: "numeric", year: "numeric", timeZone: "UTC",
@@ -899,7 +863,7 @@ export function ReportRenderer(props: ReportRendererProps) {
           <ReportSideNav
             authorName={author.name}
             dark={reportStyle === "annual-report-2026"}
-            publishedDate={publishedDate}
+            publishedDate={props.manifest.metadata.publishedDate ?? "11/11/25"}
             readTimeMinutes={readTimeMinutes}
             sections={sectionHeadings.map((heading) => ({
               href: `#report-block-${heading.id}`,
@@ -907,6 +871,22 @@ export function ReportRenderer(props: ReportRendererProps) {
             }))}
           />
         </div>
+        <dl className={styles.mobileMetadata}>
+          <div>
+            <dt>Author</dt>
+            <dd>
+              <span>{author.name}</span>
+            </dd>
+          </div>
+          <div>
+            <dt>Published</dt>
+            <dd>{props.manifest.metadata.publishedDate ?? "11/11/25"}</dd>
+          </div>
+          <div>
+            <dt>Reading time</dt>
+            <dd>{readTimeMinutes} min read</dd>
+          </div>
+        </dl>
         <div className={styles.content}>
           {heroImageBlock?.accessibleData ? (
             <AccessibleDataTable data={heroImageBlock.accessibleData} />
@@ -914,10 +894,6 @@ export function ReportRenderer(props: ReportRendererProps) {
           {reportContent(bodyBlocks, props)}
         </div>
       </div>
-      <MarketingFooter disableLinks={props.mode !== "read" || props.disableFooterLinks} />
-      {props.mode !== "read" && props.onSelectText ? <ReportTextSelection blocks={props.manifest.blocks} onSelectText={props.onSelectText} /> : null}
-      {props.mode !== "read" && props.onInsertChart ? <ReportChartInsertion blocks={props.manifest.blocks}
-        onInsertChart={props.onInsertChart} restoreFocus={props.insertionFocus} /> : null}
     </article>
   );
 }

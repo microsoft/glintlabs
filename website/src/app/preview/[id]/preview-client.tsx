@@ -74,7 +74,6 @@ export function PreviewClient({ projectId }: { projectId: string }) {
       <div className={styles.canvas}>
         <div className={styles.reportSurface}>
           <ReportRenderer
-            disableFooterLinks
             manifest={project.manifest}
             mode="read"
             reportStyle={project.reportStyle}

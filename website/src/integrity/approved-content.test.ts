@@ -4,7 +4,6 @@ import test from "node:test";
 import { reportManifestSchema } from "../manifest/report-manifest.ts";
 import { createDataVisualPreview } from "../visualization/data-visual-preview.ts";
 import { createVerifiedDataVisual } from "../visualization/verified-data-visual.ts";
-import { createStudioChartSource } from "../visualization/chart-authoring.ts";
 import {
   createApprovedContentRecord,
   evaluateApprovedContentIntegrity,
@@ -191,52 +190,6 @@ test("automatically verifies deterministic guided data visuals", async () => {
     evaluateApprovedContentIntegrity(verifiedManifest, approvedContent).status,
     "intact",
   );
-});
-
-test("editing imported chart supporting text retains Word evidence without masking report drift", async () => {
-  const dataManifest = reportManifestSchema.parse({
-    ...manifest,
-    blocks: [manifest.blocks[0], {
-      id: "imported-chart", type: "data-visual-source",
-      source: { part: "word/document.xml", index: 1 },
-      data: {
-        sourceKind: "word-table", title: "Usage", unit: "percentage",
-        columns: ["Item", "Usage"], rows: [
-          { id: "growth", cells: ["Growth", "75%"] },
-          { id: "recognition", cells: ["Recognition", "72%"] },
-        ],
-        sha256: "c".repeat(64),
-      },
-    }],
-  });
-  const original = dataManifest.blocks[1];
-  if (original.type !== "data-visual-source") throw new Error("Missing chart fixture");
-  const approved = await createApprovedContentRecord(dataManifest);
-  const edited = await createStudioChartSource({
-    id: original.id, original, sourceName: "Reviewed chart", synthetic: false,
-    table: { columns: original.data.columns, rows: original.data.rows.map(row => ({
-      ...row, supportingText: "I have good opportunities to learn and grow.",
-    })) },
-  });
-  const visual = createVerifiedDataVisual(edited, "horizontal-bar-chart", "2026-11-09T22:00:00.000Z");
-  const changed = reportManifestSchema.parse({ ...dataManifest, blocks: [manifest.blocks[0], visual] });
-  assert.equal(evaluateApprovedContentIntegrity(changed, approved).status, "intact");
-  assert.equal(visual.verifiedSource?.sourceKind, "verified-upload");
-  const saved = changed.blocks[1];
-  if (!("verifiedSource" in saved) || !saved.verifiedSource) throw new Error("Missing saved chart source");
-  const reedited = await createStudioChartSource({
-    id: edited.id, original: { ...original, data: saved.verifiedSource, wordSource: saved.wordSource, source: saved.source },
-    sourceName: "Reviewed chart", synthetic: false,
-    table: { columns: edited.data.columns, rows: edited.data.rows.map(row => ({
-      ...row, supportingText: "Updated supporting text.",
-    })) },
-  });
-  assert.equal(evaluateApprovedContentIntegrity(reportManifestSchema.parse({
-    ...changed, blocks: [manifest.blocks[0], createVerifiedDataVisual(reedited, "horizontal-bar-chart", "2026-11-09T22:01:00.000Z")],
-  }), approved).status, "intact");
-  assert.equal(evaluateApprovedContentIntegrity({
-    ...changed, blocks: [{ ...manifest.blocks[0], type: "heading", level: 1, text: "Unapproved change" }, changed.blocks[1]],
-  }, approved).reason, "content-drift");
 });
 
 test("requires review for OCR-derived data visuals", async () => {

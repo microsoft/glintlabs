@@ -1,20 +1,5 @@
 # Studio/site integration handoff
 
-## Studio UI consistency: November 4, 2026
-
-Studio controls share 8px corners, 40px form/action heights (32px compact
-toolbar actions), and 14px body text. Panels and dialogs use aligned spacing,
-Fluent dismiss/chart icons, and token-based control borders and feedback.
-Save, formatting, and undo notices use white elevated surfaces. At 600px and below,
-the Studio toolbar separates document, viewport, and publishing actions into
-three rows so controls remain visible without horizontal scrolling. Tablet
-widths use two toolbar rows; desktop retains the single-row toolbar.
-
-These are authoring-shell refinements only. Report content, charts, renderer
-styles, Reader output, exported packages, and the catalog-card preview remain
-unchanged. Chart editing retains Data/Text/Palette tabs, the compact chart
-chooser, native-radio palette tiles, and explicit Apply/Cancel.
-
 ## Current checkpoint: October 22, 2026
 
 The current flow uses one **Publish report** dialog, without a stepper or

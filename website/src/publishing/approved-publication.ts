@@ -1,12 +1,11 @@
 import { createHash, randomUUID } from "node:crypto";
-import { mkdir, open, readFile, readdir, rename, rm, writeFile } from "node:fs/promises";
+import { mkdir, open, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import JSZip from "jszip";
 import { z } from "zod";
 
 import { canonicalJson } from "../integrity/approved-content.ts";
 import { reportManifestSchema } from "../manifest/report-manifest.ts";
-import { isLaunchReportSlug } from "../launch-reports/reports.ts";
 import { draftPublicationSchema, validateDraftPublicationPackage } from "../project/publication-package.ts";
 import { OwnerRequestError } from "./owner-access.ts";
 import { readHomepagePlacement } from "./homepage-placement.ts";
@@ -30,46 +29,6 @@ export const approveWebsiteRequestSchema = z.object({
   approveForWebsite: z.literal(true),
 }).strict();
 type Options = { rootDirectory?: string };
-
-export const removeWebsiteRequestSchema = approveWebsiteRequestSchema.omit({ approveForWebsite: true }).strict();
-
-export async function removeApprovedPublication(input: unknown, options: Options = {}) {
-  const request = removeWebsiteRequestSchema.parse(input);
-  const root = path.resolve(options.rootDirectory ?? process.cwd());
-  const lockPath = path.join(root, ".publication-preview.lock");
-  const lock = await open(lockPath, "wx").catch((error: unknown) => {
-    if (error instanceof Error && "code" in error && error.code === "EEXIST") {
-      throw new OwnerRequestError("Another report is being saved. Try again when it finishes.", 409);
-    }
-    throw error;
-  });
-  try {
-    const report = await loadApprovedPublication(request.reportId, { rootDirectory: root });
-    if (!report) throw new OwnerRequestError("This report is no longer on Glint Labs. Refresh your reports.", 404);
-    if (report.publication.revision !== request.revision ||
-        report.publication.approval.packageFingerprint !== request.packageFingerprint) {
-      throw new OwnerRequestError("The published report changed. Refresh your reports before removing it.", 409);
-    }
-    if (isLaunchReportSlug(report.publication.slug)) {
-      throw new OwnerRequestError("This bundled launch report cannot be removed from Studio. Its website page must be removed in a site update.", 409);
-    }
-    const token = randomUUID();
-    const content = path.join(root, "content", "reports", request.reportId);
-    const assets = path.join(root, "public", "reports-assets", request.reportId);
-    const contentBackup = path.join(root, "content", "reports", `.${request.reportId}-removed-${token}`);
-    const assetBackup = path.join(root, "public", "reports-assets", `.${request.reportId}-removed-${token}`);
-    await rename(content, contentBackup);
-    try { await rename(assets, assetBackup); }
-    catch (error) { await rename(contentBackup, content); throw error; }
-    await Promise.all([
-      rm(contentBackup, { recursive: true, force: true }),
-      rm(assetBackup, { recursive: true, force: true }),
-    ]).catch(() => {
-      console.error("A removed report's hidden backup could not be cleaned up.");
-    });
-    return { reportId: request.reportId, status: "removed" as const };
-  } finally { await lock.close(); await rm(lockPath); }
-}
 
 async function directories(root: string) {
   try { return await readdir(path.join(root, "content", "reports"), { withFileTypes: true }); }

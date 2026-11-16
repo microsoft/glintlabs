@@ -1,11 +1,7 @@
 import { XMLParser } from "fast-xml-parser";
 import JSZip from "jszip";
-import { packageTarget, quadrantCacheMatches, readQuadrantWorkbook, relationshipPart, selectQuadrantTable } from "./quadrant-workbook.ts";
-import { quadrantHeaders } from "../visualization/quadrant-data.ts";
 import type { PublicationSourceEvidence } from "../project/publication-preparation.ts";
 import { extractWordTextLinks } from "./word-text-links.ts";
-import { readWordStyles, wordFormatting } from "./word-styles.ts";
-import { applyWordStyleMappings } from "../project/word-style-mapping.ts";
 
 import {
   createApprovedContentRecord,
@@ -17,8 +13,6 @@ import {
   type ReportBlock,
   type ReportManifest,
   type ReviewItem,
-  type StructuredData,
-  type WordStyleTarget,
 } from "../manifest/report-manifest.ts";
 import {
   compatibleVerifiedVisuals,
@@ -70,8 +64,7 @@ function childNodes(node: XmlNode, key: string): XmlNode[] {
   return Array.isArray(value) ? value.filter(isXmlNode) : [];
 }
 
-function attributes(node: XmlNode | undefined): XmlAttributes {
-  if (!node) return {};
+function attributes(node: XmlNode): XmlAttributes {
   const value = node[":@"];
   if (!isXmlNode(value)) {
     return {};
@@ -100,10 +93,8 @@ function findNodes(value: unknown, key: string, matches: XmlNode[] = []) {
     matches.push(value);
   }
 
-  for (const [childKey, child] of Object.entries(value)) {
-    if (childKey !== ":@") {
-      findNodes(child, key, matches);
-    }
+  for (const child of Object.values(value)) {
+    findNodes(child, key, matches);
   }
 
   return matches;
@@ -601,43 +592,10 @@ function tableData(table: XmlNode) {
 }
 
 function chartData(parsedChart: unknown) {
-  if (findNodes(parsedChart, "scatterChart").length) {
-    const rows: { id: string; cells: string[] }[] = [];
-    for (const [seriesIndex, series] of findNodes(parsedChart, "ser").entries()) {
-      const axisValues = (key: string) => {
-        const container = findNodes(series, key)[0];
-        const format = findNodes(container, "formatCode").map(extractText).join("");
-        const position = key === "xVal" ? "b" : "l";
-        const axis = findNodes(parsedChart, "valAx").find(node =>
-          attributes(findNodes(node, "axPos")[0]).val === position);
-        const axisFormat = attributes(findNodes(axis, "numFmt")[0]).formatCode ?? format;
-        const scale = axisFormat.replace(/"[^"]*"|\\./g, "").includes("%") ? 100 : 1;
-        return new Map(findNodes(container, "pt").map(point => {
-          const value = extractText(point).trim();
-          return [attributes(point).idx, value && Number.isFinite(Number(value))
-            ? `${Number((Number(value) * scale).toPrecision(15))}${scale === 100 ? "%" : ""}` : ""];
-        }));
-      };
-      const x = axisValues("xVal"), y = axisValues("yVal");
-      if (!x.size || x.size !== y.size || [...x].some(([index, value]) => !value || !y.get(index))) return undefined;
-      const name = pointValues(series, "tx")[0];
-      for (const [index, value] of x) {
-        const id = `point-${seriesIndex + 1}-${index}`;
-        rows.push({ id, cells: [id, x.size === 1 && name ? name : `Point ${rows.length + 1}`, value, y.get(index)!, ""] });
-      }
-    }
-    if (rows.length < 2) return undefined;
-    return { sourceKind: "word-chart" as const, title: extractText(findNodes(parsedChart, "title")[0]).trim() || "Approved Word quadrant chart",
-      unit: "number" as const, columns: [...quadrantHeaders], rows,
-      recommendedVisualType: "quadrant-scatter-plot" as const };
-  }
   const formatCode = findNodes(parsedChart, "formatCode")
     .map(extractText)
     .join(" ");
   const isPercentage = formatCode.includes("%");
-  const percentageScale = formatCode.replace(/"[^"]*"|\\./g, "").includes("%")
-    ? 100
-    : 1;
   const series = findNodes(parsedChart, "ser").map((item, seriesIndex) => {
     const categories =
       pointValues(item, "strCache").length > 1
@@ -646,7 +604,7 @@ function chartData(parsedChart: unknown) {
     const values = pointValues(item, "val").map((value) => {
       const numeric = Number(value);
       if (isPercentage && Number.isFinite(numeric)) {
-        return `${numeric * percentageScale}%`;
+        return `${numeric <= 1 ? numeric * 100 : numeric}%`;
       }
       return value;
     });
@@ -677,20 +635,10 @@ function chartData(parsedChart: unknown) {
 
   const titleNode = findNodes(parsedChart, "title")[0];
   const title = titleNode ? extractText(titleNode).trim() : "";
-  const barChart = findNodes(parsedChart, "barChart")[0];
-  const barDirection = barChart && findNodes(barChart, "barDir")[0];
-  const barGrouping = barChart && findNodes(barChart, "grouping")[0];
-  const recommendedVisualType =
-    series.length === 1 &&
-    barDirection && attributes(barDirection).val === "bar" &&
-    (!barGrouping || attributes(barGrouping).val === "clustered")
-      ? ("horizontal-bar-chart" as const)
-      : undefined;
   return {
     sourceKind: "word-chart" as const,
     title: title || "Approved Word chart",
     unit: isPercentage ? ("percentage" as const) : ("unknown" as const),
-    ...(recommendedVisualType ? { recommendedVisualType } : {}),
     columns: ["Category", ...series.map((item) => item.name)],
     rows: categories.map((category, index) => ({
       id: `row-${index + 1}`,
@@ -759,14 +707,11 @@ export async function extractDocx(
     throw new Error("The DOCX is missing required Word document parts.");
   }
 
-  const [documentXml, relationshipsXml, sourceSha256, stylesXml] = await Promise.all([
+  const [documentXml, relationshipsXml, sourceSha256] = await Promise.all([
     documentEntry.async("string"),
     relationshipsEntry.async("string"),
     sha256(bytes),
-    zip.file("word/styles.xml")?.async("string"),
   ]);
-  const wordStyles = readWordStyles(stylesXml);
-  const usedStyles = new Map<string, { id: string; name: string; target: WordStyleTarget }>();
   const body = documentBody(parser.parse(documentXml));
   const metadata = templateMetadata(body);
   const ignoredTemplateIndexes = new Set([
@@ -922,40 +867,7 @@ export async function extractDocx(
         : undefined;
       const chartEntry = chartPath ? zip.file(chartPath) : null;
       if (chartEntry) {
-        const chartXml = parser.parse(await chartEntry.async("string"));
-        let parsedChart: Omit<StructuredData, "sha256"> | undefined = chartData(chartXml);
-        if (parsedChart?.recommendedVisualType === "quadrant-scatter-plot" && chartPath) {
-          const relEntry = zip.file(relationshipPart(chartPath));
-          const external = findNodes(chartXml, "externalData")[0];
-          const externalId = attributes(external).id;
-          if (relEntry && externalId) {
-            const rel = findNodes(parser.parse(await relEntry.async("string")), "Relationship")
-              .map(attributes).find(item => item.Id === externalId);
-            if (rel?.TargetMode === "External") {
-              const leaf = rel.Target?.replace(/\\/g, "/").split("/").at(-1)?.split(/[?#]/)[0];
-              try {
-                const fileName = decodeURIComponent(leaf ?? "");
-                if (/\.xlsx$/i.test(fileName) && fileName.length <= 255 && !/[/\\\0]/.test(fileName)) {
-                  parsedChart = { ...parsedChart, linkedWorkbookFileName: fileName };
-                }
-              } catch { /* Invalid external paths remain unconnected; never follow them. */ }
-            } else if (rel) {
-              const workbookPath = packageTarget(chartPath, rel.Target);
-              const workbook = zip.file(workbookPath);
-              const workbookSize = (workbook as unknown as { _data?: { uncompressedSize?: number } } | null)?._data?.uncompressedSize ?? 0;
-              if (workbook && workbookSize <= MAX_FILE_BYTES && /\.xlsx$/i.test(workbookPath)) {
-                try {
-                  const tables = await readQuadrantWorkbook(workbookPath.split("/").at(-1)!, await workbook.async("uint8array"));
-                  const cache = { ...parsedChart, sha256: "0".repeat(64) };
-                  const table = selectQuadrantTable(tables, { cache });
-                  if (quadrantCacheMatches(table, cache)) parsedChart = { ...parsedChart, ...table };
-                } catch {
-                  // Cached X/Y values remain evidence; missing full tables are connected explicitly in the editor.
-                }
-              }
-            }
-          }
-        }
+        const parsedChart = chartData(parser.parse(await chartEntry.async("string")));
         const blockId = `block-${index}-chart-${imageCount}`;
         if (parsedChart) {
           const recommendedVisualType = guidedVisualType(guidedComponent);
@@ -1131,51 +1043,27 @@ export async function extractDocx(
     }
 
     const blockId = `block-${index}`;
-    let sourceStyle = style ?? "Normal";
-    if (/^references\s*:?\s*$/i.test(text)) {
-      const characterStyle = findNodes(node, "rStyle").map(item => attributes(item).val)
-        .find(id => id && wordStyles.get(id).target === "references");
-      if (characterStyle) sourceStyle = characterStyle;
-    }
-    const definition = wordStyles.get(sourceStyle);
-    usedStyles.set(sourceStyle, { id: sourceStyle, name: definition.name, target: definition.target });
-    const linkedText = extractWordTextLinks(node, relationships, properties => {
-      const runStyle = properties.rStyle as { val?: string } | undefined;
-      return wordFormatting(properties, {
-        ...definition.formatting,
-        ...(runStyle?.val ? wordStyles.get(runStyle.val).formatting : {}),
-      });
-    });
-    const sourceText = linkedText.text || text;
-    const directOutline = findNodes(node, "pPr").flatMap(properties => findNodes(properties, "outlineLvl"))[0];
-    const wordOutline = directOutline ? Number(attributes(directOutline).val) : undefined;
-    const textFields = {
-      wordStyle: sourceStyle,
-      ...(wordOutline !== undefined && Number.isInteger(wordOutline) && wordOutline >= 0 && wordOutline <= 9
-        ? { wordOutline } : {}),
-      ...(linkedText.links.length ? { links: linkedText.links } : {}),
-      ...(linkedText.marks.length ? { marks: linkedText.marks } : {}),
-    };
+    const linkedText = extractWordTextLinks(node, relationships);
+    const retainedLinks = linkedText.text === text ? linkedText.links : [];
     const level = headingLevel(node, style);
     if (level) {
       blocks.push({
         id: blockId,
         type: "heading",
         level,
-        text: sourceText,
-        ...textFields,
+        text,
         source: locator,
       });
       continue;
     }
 
-    if (style === "ListParagraph" || findNodes(node, "numPr").length > 0) {
+    if (style === "ListParagraph") {
       blocks.push({
         id: blockId,
         type: "list-item",
         level: listLevel(node),
-        text: sourceText,
-        ...textFields,
+        text,
+        ...(retainedLinks.length > 0 ? { links: retainedLinks } : {}),
         source: locator,
       });
       continue;
@@ -1202,13 +1090,13 @@ export async function extractDocx(
     blocks.push({
       id: blockId,
       type: "paragraph",
-      text: sourceText,
-      ...textFields,
+      text,
+      ...(retainedLinks.length > 0 ? { links: retainedLinks } : {}),
       provenance: { kind: "imported" },
       source: locator,
     });
 
-    if (style && style !== "Normal" && definition.target === "keep") {
+    if (style && style !== "Normal") {
       reviewItems.push({
         id: `review-${reviewItems.length}`,
         code: "style-flattened",
@@ -1286,12 +1174,6 @@ export async function extractDocx(
     });
   }
 
-  const titleIndex = orderedBlocks.findIndex(block =>
-    (block.type === "paragraph" || block.type === "heading") &&
-    (block.wordStyle && wordStyles.get(block.wordStyle).target === "report-title" ||
-      block === orderedBlocks[0] && block.type === "heading" && block.level === 1));
-  const titleImage = titleIndex >= 0 ? orderedBlocks[titleIndex + 1] : undefined;
-  if (titleImage?.type === "image" && titleImage.assetSource === "word-import") titleImage.placement = "hero";
   const firstHeading = orderedBlocks.find(
     (block): block is Extract<ReportBlock, { type: "heading" }> =>
       block.type === "heading" && block.level === 1,
@@ -1300,23 +1182,13 @@ export async function extractDocx(
   const authorHandle = metadata.fields.get("author handle");
   const publishedDate = metadata.fields.get("published date");
   const readTimeMinutes = Number(metadata.fields.get("read time minutes"));
-  const employeeCountText = metadata.fields.get("employee count");
-  const employeeCount = employeeCountText && !/^\[.*\]$/.test(employeeCountText)
-    ? Number(employeeCountText.replaceAll(",", ""))
-    : undefined;
-  if (employeeCount !== undefined && (
-    !/^(?:\d+|\d{1,3}(?:,\d{3})+)$/.test(employeeCountText ?? "") ||
-    !Number.isSafeInteger(employeeCount) || employeeCount <= 0
-  )) {
-    throw new Error("Employee count in Word metadata must be a positive whole number, or leave it blank.");
-  }
   const topics = metadata.fields
     .get("topic pages")
     ?.split(/[,;]/)
     .map((topic) => topic.trim())
     .filter(Boolean)
     .slice(0, 3);
-  const manifest = applyWordStyleMappings(reportManifestSchema.parse({
+  const manifest = reportManifestSchema.parse({
     schemaVersion: "0.1.0",
     source: {
       fileName,
@@ -1333,18 +1205,16 @@ export async function extractDocx(
       ...(Number.isInteger(readTimeMinutes) && readTimeMinutes > 0
         ? { readTimeMinutes }
         : {}),
-      ...(employeeCount !== undefined ? { employeeCount } : {}),
       ...(topics && topics.length > 0 ? { topics } : {}),
     },
     blocks: orderedBlocks,
-    wordStyles: [...usedStyles.values()],
     reviewItems,
     extraction: {
       paragraphCount,
       imageCount,
       unsupportedCount,
     },
-  }));
+  });
   const manifestSha256 = await sha256(
     new TextEncoder().encode(JSON.stringify(manifest)),
   );
@@ -1365,7 +1235,7 @@ export async function extractDocx(
       sourceSha256,
       hyperlinkCount,
       representedHyperlinkCount: manifest.blocks.reduce((count, block) =>
-        count + (block.type === "paragraph" || block.type === "list-item" || block.type === "heading" ? block.links?.length ?? 0
+        count + (block.type === "paragraph" || block.type === "list-item" ? block.links?.length ?? 0
           : block.type === "references" ? block.references.filter((reference) => reference.href).length : 0), 0),
     },
   };
