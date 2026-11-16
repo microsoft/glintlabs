@@ -17,17 +17,6 @@ product, program, metric, and role. Research collection rank cannot override
 current product definitions or privacy controls. Glint, Pulse, and 360 guidance
 is not interchangeable. Distinguish product documentation from research findings.
 
-### User-authorized organizational context is a separate evidence lane
-
-The user's own organizational documents retrieved through optional WorkIQ are
-eligible context only under [the consent and retrieval rules](public-use.md#optional-workiq-organizational-context).
-This is not access to the publisher's private research library. Organizational
-context does not enter the research hierarchy, override published findings, or
-replace required source retrieval. Internal sources support only what those
-documents state within their verified scope, not employees' experiences or a
-causal explanation of survey results. Keep their attribution separate from
-research citations and never add private context to the public catalog.
-
 ## Collection precedence: new catalog before the original vault
 
 Filter for relevance and applicability before ranking. Among sources that answer
@@ -137,35 +126,6 @@ coverage of the question:
 Do not present a live-only check as if it were the full vault; when you use
 one, say so explicitly in the coverage note, since it is not re-ranked by
 column J.
-
-## When to use which resource: research-question routing
-
-Each `catalog.json` entry's `theme` and `research_questions` fields capture
-*when* that resource is the right one to reach for. The themes group like
-this:
-
-| Theme | Reach for this when the user is asking about... |
-| --- | --- |
-| AI Transformation & Adoption | Whether/how AI helps or harms the organization, what "good" outcomes mean, how sentiment shifts across rollout phases, HR/IT collaboration on AI change |
-| AI Evaluation & Human Judgment | Defining AI quality, behavioral rating anchors, calibrating human reviewers, validating model judges, and continuing human audits |
-| Measurement & Benchmarks | How scores compare to benchmarks, benchmark methodology, interpreting score movement |
-| Frameworks & Definitions | What People Science is and the methodology behind its claims |
-| Psychological Safety & Manager Enablement | How managers build trust and psychological safety on a team |
-| Glint <-> Pulse Integration & Templates | Sustaining action-taking with Pulse follow-ups after a Glint survey |
-| Survey Design & Methodology | Interpreting survey results in context, designing a survey program's cadence/constructs |
-| Adoption & Enablement | HR/IT reactions to AI, organizational AI change-readiness, manager action-taking |
-| Microsoft Learn (Glint) Set-up, Deployment | Tactical how-to for configuring, launching, or administering a Glint survey program |
-| Microsoft Learn (Pulse) Set-up, Deployment | Tactical how-to for Pulse roles, privacy, or access |
-| AI and trust / High performance / Employee listening (supplementary) | Agentic AI trust-building, organizational AI readiness, holistic listening ecosystem design, high-performance org design |
-
-Use this table as a browsing aid, not an exclusive category filter. Search the
-shared topics and source-specific themes across both collections first: a source
-can answer a question outside its single catalog category. Then apply collection
-precedence and the original-vault tier order. The shared `privacy-confidentiality`
-topic covers ordinary data/access protections; `ai-governance` is AI-specific.
-General career development belongs under `growth-development`, not automatically
-under `ai-skills`. Resource theme kinds distinguish findings, guidance, methods,
-documentation, and navigation signposts.
 
 ## Explicit exclusions
 
