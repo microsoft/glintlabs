@@ -23,17 +23,6 @@ product, program, metric, and role. Research collection rank cannot override
 current product definitions or privacy controls. Glint, Pulse, and 360 guidance
 is not interchangeable. Distinguish product documentation from research findings.
 
-### User-authorized organizational context is a separate evidence lane
-
-The user's own organizational documents retrieved through optional WorkIQ are
-eligible context only under [the consent and retrieval rules](public-use.md#optional-workiq-organizational-context).
-This is not access to the publisher's private research library. Organizational
-context does not enter the research hierarchy, override published findings, or
-replace required source retrieval. Internal sources support only what those
-documents state within their verified scope, not employees' experiences or a
-causal explanation of survey results. Keep their attribution separate from
-research citations and never add private context to the public catalog.
-
 ## Collection precedence: new catalog before the original vault
 
 Filter for relevance and applicability before ranking. Among sources that answer
@@ -75,39 +64,13 @@ dependency.
 ### Within the original vault: column J drives priority, not channel
 
 Column J, `Priority to add to context library`, is the authoritative ranking
-signal within that collection. It has four levels, from highest to lowest:
-
-1. `top5` - the small set judged most essential within the original vault.
-2. `high`
-3. `medium`
-4. `low`
+signal within that collection. Its levels are the tier order stated above.
 
 `catalog.json` carries this as each entry's `priority_tier` field. When two
 original-vault resources could both answer a question, prefer the higher
 `priority_tier`; this does not override the new catalog's collection precedence.
-A fifth value, `curated`, marks resources that are **not** present in the
-External-tab snapshot at all (see "Supplementary curated resources" below) -
-treat `curated` as roughly `top5`-equivalent in authority, since these were
-hand-selected by the content owner, but note they fall outside the workbook's
-own ranking.
 
-### Supplementary curated resources (not in the workbook snapshot)
-
-Two resources predate/sit outside the External-tab snapshot but were
-confirmed by the content owner as externally shareable and high-value:
-
-- [Building a holistic employee listening ecosystem](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/894/1/Holistic%20Listening%20Infographic_09292023%201.pdf)
-- [Redefining High Performance in the New Era of Work](https://www.microsoft.com/content/dam/microsoft/final/en-us/microsoft-brand/documents/Microsoft-HPO-Guide-Oct-2023.pdf)
-
-**Cite and retrieve the public link, not private ownership records.** The
-context library exports public catalog fields only.
-
-Two further resources appear in the workbook as `top5` rows whose `URL`
-column only holds an internal `.pptx` filename (no public link); their public
-PDF substitutes are already catalogued:
-
-- [Research Readout - Agentic Teaming & Trust Research](https://techcommunity.microsoft.com/t5/s/gxcuf89792/attachments/gxcuf89792/MicrosoftVivaBlog/1027.2/2/2025%20Agentic%20Teaming%20%26%20Trust%20Research%20Report%20-%20Chapter%204.pdf)
-- [The state of AI change readiness](https://adoption.microsoft.com/files/viva/The-state-of-AI-change-readiness-eBook.pdf)
+Curated resources (outside the External-tab snapshot, hand-selected by the content owner) rank with top5. Cite and retrieve the public link, not private ownership records.
 
 ### Publisher-approved first-party public summaries
 
@@ -144,41 +107,10 @@ Do not present a live-only check as if it were the full vault; when you use
 one, say so explicitly in the coverage note, since it is not re-ranked by
 column J.
 
-## When to use which resource: research-question routing
-
-Each `catalog.json` entry's `theme` and `research_questions` fields capture
-*when* that resource is the right one to reach for. The themes group like
-this:
-
-| Theme | Reach for this when the user is asking about... |
-| --- | --- |
-| AI Transformation & Adoption | Whether/how AI helps or harms the organization, what "good" outcomes mean, how sentiment shifts across rollout phases, HR/IT collaboration on AI change |
-| AI Evaluation & Human Judgment | Defining AI quality, behavioral rating anchors, calibrating human reviewers, validating model judges, and continuing human audits |
-| Measurement & Benchmarks | How scores compare to benchmarks, benchmark methodology, interpreting score movement |
-| Frameworks & Definitions | What People Science is and the methodology behind its claims |
-| Psychological Safety & Manager Enablement | How managers build trust and psychological safety on a team |
-| Glint <-> Pulse Integration & Templates | Sustaining action-taking with Pulse follow-ups after a Glint survey |
-| Survey Design & Methodology | Interpreting survey results in context, designing a survey program's cadence/constructs |
-| Adoption & Enablement | HR/IT reactions to AI, organizational AI change-readiness, manager action-taking |
-| Microsoft Learn (Glint) Set-up, Deployment | Tactical how-to for configuring, launching, or administering a Glint survey program |
-| Microsoft Learn (Pulse) Set-up, Deployment | Tactical how-to for Pulse roles, privacy, or access |
-| AI and trust / High performance / Employee listening (supplementary) | Agentic AI trust-building, organizational AI readiness, holistic listening ecosystem design, high-performance org design |
-
-Use this table as a browsing aid, not an exclusive category filter. Search the
-shared topics and source-specific themes across both collections first: a source
-can answer a question outside its single catalog category. Then apply collection
-precedence and the original-vault tier order. The shared `privacy-confidentiality`
-topic covers ordinary data/access protections; `ai-governance` is AI-specific.
-General career development belongs under `growth-development`, not automatically
-under `ai-skills`. Resource theme kinds distinguish findings, guidance, methods,
-documentation, and navigation signposts.
-
 ## Explicit exclusions
 
 Private publisher workbooks, unpublished drafts, internal-only records, and private
-extraction caches are not eligible research-library evidence. User-authorized
-organizational context is separate from this research-library exclusion and
-remains subject to the optional WorkIQ rules above. Only the publisher's
+extraction caches are not eligible research-library evidence. Only the publisher's
 `External` worksheet informs the saved original-vault catalog; maintenance
 must not import other worksheets.
 
@@ -188,12 +120,4 @@ They must not be added to the public library or sent to public research queries.
 
 ## Precedence and deduplication
 
-1. Canonicalize URLs by removing tracking parameters and normalizing host/path.
-2. Deduplicate identical articles across the catalog, reviewed index, and any live
-   checks.
-3. Filter relevance and applicability, prefer registered new-catalog Research
-   Drops, then retain `top5` / `curated`-equivalent > `high` > `medium` > `low`
-   within the original vault. Use relevance within equal priority.
-4. When sources disagree, describe methodological and contextual differences
-   rather than silently blending them or treating collection rank as proof.
-   Apply the preference only among sources applicable to the claim.
+Canonicalize URLs (strip tracking parameters, normalize host/path) and deduplicate across the catalog, reviewed index, and live checks, then apply the collection precedence above, using relevance within equal priority. When sources disagree, describe methodological and contextual differences rather than blending them or treating rank as proof.
