@@ -1,0 +1,343 @@
+{
+  "schema_version": 1,
+  "reviewed_index_sha256": "0914df1492f6d5e62b35d5d33feb8cbc80f36f23d2ad6d6a5881cf0bd970196e",
+  "study_codes": {
+    "A": {
+      "family_id": "ai-readiness-april-2024",
+      "summary": "April 2024 AI panel: 1,800 full-time staff, nine markets, employers 1,000+; subsets vary, self-reports."
+    },
+    "B": {
+      "family_id": "agentic-teaming-trust-july-2025",
+      "summary": "July 2025 agentic panel: 1,800 staff, nine markets, employers 1,000+; subsets vary, self-reports."
+    },
+    "C": {
+      "family_id": "high-performance-september-2023",
+      "summary": "September 2023: 1,100 leaders, nine markets, employers 1,000+; perceived performance, not audited outcomes."
+    },
+    "M": {
+      "family_id": "manager-action-july-2024",
+      "summary": "Related July 2024 US-manager research: action n=703; behaviors n=500, not interchangeable."
+    },
+    "U": {
+      "family_id": "glint-standard-item-utilization-2022-2024",
+      "summary": "2022-2024 standard-item use, 729/728 customers; no custom items. Use is not favorability."
+    },
+    "V": {
+      "family_id": "ai-outcomes-november-2025",
+      "summary": "November 2025 US AI users n=610; April/May 2026 also reuse A n=910/B n=811. Independent samples, not repeated people."
+    }
+  },
+  "entries": [
+    {
+      "id": "human-judgment-in-ai-evaluation",
+      "themes": ["human-judgment-in-ai-evaluation:01", "human-judgment-in-ai-evaluation:02"],
+      "summary": "Proposed framework: define task-specific quality and rating anchors; pilot and calibrate, not a validated instrument."
+    },
+    {
+      "id": "people-success",
+      "themes": ["people-success:01"],
+      "summary": "Framework: purpose, growth, clarity, empowerment, connection, and wellbeing guide listening, not AI treatment effects."
+    },
+    {
+      "id": "people-science-researchers-reflect-on-siop-2025-learnings",
+      "themes": ["people-science-researchers-reflect-on-siop-2025-learnings:01", "people-science-researchers-reflect-on-siop-2025-learnings:03"],
+      "summary": "Conference commentary favors human oversight and interpersonal support, not proven AI-coaching effects."
+    },
+    {
+      "id": "think-like-a-people-scientist-bridging-hr-and-it-for-ai-success",
+      "themes": ["think-like-a-people-scientist-bridging-hr-and-it-for-ai-success:01"],
+      "study_codes": ["A"],
+      "summary": "Historical employee-self-service recap recommends protecting employee data and addressing privacy concerns."
+    },
+    {
+      "id": "think-like-a-people-scientist-leading-ai-change-with-employee-sentiment",
+      "themes": ["think-like-a-people-scientist-leading-ai-change-with-employee-sentiment:02", "think-like-a-people-scientist-leading-ai-change-with-employee-sentiment:03"],
+      "study_codes": ["A"],
+      "recording": true,
+      "summary": "Webinar guidance: revisit sentiment; combine usage, employee experience, business evidence, and deeper inquiry."
+    },
+    {
+      "id": "what-s-new-with-viva-glint-benchmarks",
+      "themes": ["what-s-new-with-viva-glint-benchmarks:01", "what-s-new-with-viva-glint-benchmarks:03"],
+      "summary": "2025 norms use standard items; percentile norms are item-specific thresholds, not top-company averages."
+    },
+    {
+      "id": "what-is-people-science",
+      "themes": ["what-is-people-science:01"],
+      "summary": "Overview: happiness/success at work combine psychology, organizational development, data, and design."
+    },
+    {
+      "id": "psychological-safety",
+      "themes": ["psychological-safety:01", "psychological-safety:03"],
+      "summary": "Safety permits speaking up without punishment. Guidance: manage defensiveness and respond with curiosity."
+    },
+    {
+      "id": "continuous-improvement",
+      "themes": ["continuous-improvement:01", "continuous-improvement:02"],
+      "summary": "Integration guidance: driver-linked Pulse follow-ups gather context and check progress between Glint cycles."
+    },
+    {
+      "id": "benchmark-documentation",
+      "themes": ["benchmark-documentation:01", "benchmark-documentation:02", "benchmark-documentation:03"],
+      "summary": "2025 guide: norms contextualize, not prescribe success. Preserve standard wording; percentile norms are thresholds."
+    },
+    {
+      "id": "interpret-survey-data",
+      "themes": ["interpret-survey-data:01", "interpret-survey-data:02"],
+      "recording": true,
+      "summary": "Webinar guidance: start with context/comments; consider participation consistency and follow-through, not pressure."
+    },
+    {
+      "id": "people-science-predictions-the-impact-of-ai-on-the-employee-experience",
+      "themes": ["people-science-predictions-the-impact-of-ai-on-the-employee-experience:01", "people-science-predictions-the-impact-of-ai-on-the-employee-experience:02"],
+      "summary": "December 2023 forecasts: inclusive AI support for skill gaps; routine-task help might free coaching time."
+    },
+    {
+      "id": "think-like-a-people-scientist-series-hub",
+      "themes": [],
+      "summary": "KNOWN GAP: directory redirects to a general Viva page; no substantive evidence."
+    },
+    {
+      "id": "deck-understanding-employee-reactions-to-ai",
+      "themes": ["deck-understanding-employee-reactions-to-ai:01", "deck-understanding-employee-reactions-to-ai:02"],
+      "study_codes": ["A"],
+      "summary": "March 2025 deck: engagement accompanies AI support; use can precede sponsorship, not new replication."
+    },
+    {
+      "id": "deck-bridging-hr-and-it-for-ai-success",
+      "themes": ["deck-bridging-hr-and-it-for-ai-success:01", "deck-bridging-hr-and-it-for-ai-success:03"],
+      "study_codes": ["A"],
+      "summary": "April 2025 deck: HR/IT concerns are complementary; frequent use coexists with unequal sponsored access."
+    },
+    {
+      "id": "propel-action-taking",
+      "themes": ["propel-action-taking:01", "propel-action-taking:02", "propel-action-taking:03"],
+      "summary": "2023 guidance: clarify shared ownership and equip managers for feedback; engagement differences are not causal proof."
+    },
+    {
+      "id": "introduction-to-microsoft-viva-glint",
+      "themes": ["introduction-to-microsoft-viva-glint:01", "introduction-to-microsoft-viva-glint:02"],
+      "summary": "Overview: engagement measurement informs action; coordinate tenant setup with a Microsoft 365 Global Administrator."
+    },
+    {
+      "id": "program-types",
+      "themes": ["program-types:02", "program-types:03"],
+      "summary": "Recurring surveys use scheduled cycles; lifecycle surveys trigger around hire/end dates, not a common calendar."
+    },
+    {
+      "id": "template-research",
+      "themes": ["template-research:02", "template-research:03"],
+      "summary": "Templates reflect six common needs, but engagement relationships vary by company; no causal intervention proof."
+    },
+    {
+      "id": "how-viva-people-science-supports-viva-glint",
+      "themes": ["how-viva-people-science-supports-viva-glint:01", "how-viva-people-science-supports-viva-glint:02"],
+      "summary": "Overview: People Science and six People Success elements inform Glint programs."
+    },
+    {
+      "id": "survey-program-design",
+      "themes": ["survey-program-design:01", "survey-program-design:02", "survey-program-design:03"],
+      "summary": "Design: align questions with strategy, stakeholders, and action capacity; more surveys are not always better."
+    },
+    {
+      "id": "viva-glint-survey-templates-introduction-and-terminology",
+      "themes": ["viva-glint-survey-templates-introduction-and-terminology:01", "viva-glint-survey-templates-introduction-and-terminology:02"],
+      "summary": "Matching wording is not item equivalence; check Question ID, scale, and program type."
+    },
+    {
+      "id": "set-up-a-microsoft-viva-glint-recurring-survey",
+      "themes": ["set-up-a-microsoft-viva-glint-recurring-survey:02", "set-up-a-microsoft-viva-glint-recurring-survey:03"],
+      "summary": "Setup allows blank recurring cycles, unlike the overview; cycle edits unlink inheritance without relinking."
+    },
+    {
+      "id": "understand-viva-glint-programs-and-cycles",
+      "themes": ["understand-viva-glint-programs-and-cycles:01", "understand-viva-glint-programs-and-cycles:02", "understand-viva-glint-programs-and-cycles:03"],
+      "summary": "Linked cycles inherit program settings; local edits stop inheritance without supported relinking."
+    },
+    {
+      "id": "survey-qa",
+      "themes": ["survey-qa:01", "survey-qa:02", "survey-qa:03"],
+      "summary": "Prelaunch checks include notices/translations, time zones, communications, alerts, and hierarchies."
+    },
+    {
+      "id": "customize-suggested-action-templates-in-viva-glint",
+      "themes": ["customize-suggested-action-templates-in-viva-glint:01", "customize-suggested-action-templates-in-viva-glint:02"],
+      "summary": "Create Content Resources before Suggested Action Templates; driver mappings connect results to actions."
+    },
+    {
+      "id": "focus-areas",
+      "themes": ["focus-areas:01", "focus-areas:02", "focus-areas:03"],
+      "summary": "Focus Areas need program/report permissions; the Company tab is not every organizational plan."
+    },
+    {
+      "id": "viva-glint-questions-setup",
+      "themes": ["viva-glint-questions-setup:01", "viva-glint-questions-setup:02"],
+      "summary": "Engagement-only setup, not 360: configure participant messages and translations."
+    },
+    {
+      "id": "use-the-viva-glint-culture-survey-template",
+      "themes": ["use-the-viva-glint-culture-survey-template:01", "use-the-viva-glint-culture-survey-template:02"],
+      "summary": "Culture measures collective behaviors, not individual feelings; baseline across the workforce."
+    },
+    {
+      "id": "viva-glint-360-feedback-program-overview",
+      "themes": ["viva-glint-360-feedback-program-overview:01", "viva-glint-360-feedback-program-overview:03"],
+      "summary": "360 is developmental, not performance evaluation; combine self-assessment and other working relationships' feedback."
+    },
+    {
+      "id": "microsoft-viva-glint-360-feedback-email-templates",
+      "themes": ["microsoft-viva-glint-360-feedback-email-templates:01", "microsoft-viva-glint-360-feedback-email-templates:02"],
+      "summary": "Adapt communication samples to voice/audience; coordinate timing to avoid message overload."
+    },
+    {
+      "id": "viva-glint-learning-paths-and-modules",
+      "themes": ["viva-glint-learning-paths-and-modules:01", "viva-glint-learning-paths-and-modules:02"],
+      "summary": "Role-based preparation directory; linked modules are signposts, not reviewed lessons."
+    },
+    {
+      "id": "introduction-to-microsoft-viva-pulse",
+      "themes": ["introduction-to-microsoft-viva-pulse:01", "introduction-to-microsoft-viva-pulse:02"],
+      "summary": "Overview: brief team-led surveys provide aggregate feedback, trends, and next actions."
+    },
+    {
+      "id": "user-roles-in-viva-pulse",
+      "themes": ["user-roles-in-viva-pulse:01", "user-roles-in-viva-pulse:03"],
+      "summary": "Author/provider/admin roles can overlap; custom questions depend on organizational enablement."
+    },
+    {
+      "id": "privacy-protection",
+      "themes": ["privacy-protection:01", "privacy-protection:02", "privacy-protection:03"],
+      "summary": "Sending/reporting are separate gates; results wait for closure. No universal threshold supplied here."
+    },
+    {
+      "id": "how-users-access-viva-pulse-teams-and-web",
+      "themes": ["how-users-access-viva-pulse-teams-and-web:01", "how-users-access-viva-pulse-teams-and-web:02"],
+      "summary": "Installation and access are prerequisites; Teams addition works across clients, not a license exemption."
+    },
+    {
+      "id": "agentic-teaming-trust-research",
+      "themes": ["agentic-teaming-trust-research:01", "agentic-teaming-trust-research:02"],
+      "study_codes": ["B"],
+      "summary": "Chapter 4 only: assistant, human-agent team, human-led/agent-operated work. Enthusiasm is not performance."
+    },
+    {
+      "id": "ai-change-readiness",
+      "themes": ["ai-change-readiness:01", "ai-change-readiness:02", "ai-change-readiness:03"],
+      "study_codes": ["A"],
+      "summary": "AI use outpaces full sponsorship; enthusiasm coexists with expected effort; burnout accompanies lower change capacity."
+    },
+    {
+      "id": "holistic-listening-ecosystem",
+      "themes": ["holistic-listening-ecosystem:01", "holistic-listening-ecosystem:02", "holistic-listening-ecosystem:03"],
+      "summary": "2023 framework: start with business/talent questions; sentiment and aggregate work signals are complementary."
+    },
+    {
+      "id": "redefining-high-performance",
+      "themes": ["redefining-high-performance:01", "redefining-high-performance:02"],
+      "study_codes": ["C"],
+      "summary": "2023 guide: performance includes collaboration, innovation, and resilience. HPO status is leaders' self-report."
+    },
+    {
+      "id": "research-drop-4248311",
+      "themes": ["research-drop-4248311:01", "research-drop-4248311:02", "research-drop-4248311:03"],
+      "study_codes": ["M"],
+      "summary": "Sep 2024: managers value relevant insights; ease and authority to act differ, sometimes requiring shared ownership."
+    },
+    {
+      "id": "research-drop-4283375",
+      "themes": ["research-drop-4283375:01", "research-drop-4283375:02"],
+      "study_codes": ["C"],
+      "summary": "Oct 2024: leader ratings show no simple flexibility gradient. Onsite policy is not attendance or causal evidence."
+    },
+    {
+      "id": "research-drop-4336280",
+      "themes": ["research-drop-4336280:01", "research-drop-4336280:02", "research-drop-4336280:03"],
+      "study_codes": ["A"],
+      "summary": "Nov 2024: engagement/change/AI-sentiment profiles differ in usage; sample-specific profiles are not fixed identities."
+    },
+    {
+      "id": "research-drop-4358710",
+      "themes": ["research-drop-4358710:01", "research-drop-4358710:02", "research-drop-4358710:03"],
+      "study_codes": ["U"],
+      "summary": "Dec 2024: stable core item use; wellbeing rose in popularity, not employee favorability. Include an overall outcome."
+    },
+    {
+      "id": "research-drop-4366600",
+      "themes": ["research-drop-4366600:01", "research-drop-4366600:02"],
+      "study_codes": ["U"],
+      "summary": "Jan 2025: unfavorable Intent to Stay accompanied more exits in a separate 33-customer study; not individual forecasts."
+    },
+    {
+      "id": "research-drop-4375023",
+      "themes": ["research-drop-4375023:01", "research-drop-4375023:02", "research-drop-4375023:03"],
+      "study_codes": ["M"],
+      "summary": "Feb 2025 framework: coaching, team cohesion, and performance support organize behaviors; not a tested intervention."
+    },
+    {
+      "id": "research-drop-4389565",
+      "themes": ["research-drop-4389565:01", "research-drop-4389565:02", "research-drop-4389565:03"],
+      "study_codes": ["A"],
+      "summary": "Mar 2025: HR/IT expertise is complementary; optimism differs in 413 respondents, not proven competence or returns."
+    },
+    {
+      "id": "research-drop-4389566",
+      "themes": ["research-drop-4389566:02", "research-drop-4389566:03"],
+      "study_codes": ["A"],
+      "summary": "Apr 2025: training confidence accompanies daily use and perceived skill relevance; direction/job security unproven."
+    },
+    {
+      "id": "research-drop-4404476",
+      "themes": ["research-drop-4404476:01", "research-drop-4404476:02"],
+      "study_codes": ["A"],
+      "summary": "May 2025: similar sponsored access but lower hourly-worker use; pay type imperfectly represents frontline work."
+    },
+    {
+      "id": "research-drop-4462903",
+      "themes": ["research-drop-4462903:01", "research-drop-4462903:02", "research-drop-4462903:03"],
+      "study_codes": ["B"],
+      "summary": "Oct 2025: align agent work with outcomes/human judgment; alignment accompanies use, not a tested treatment effect."
+    },
+    {
+      "id": "research-drop-4468191",
+      "themes": ["research-drop-4468191:01", "research-drop-4468191:02", "research-drop-4468191:03"],
+      "study_codes": ["B"],
+      "summary": "Nov 2025: manager optimism coexists with strain; guidance favors role modeling/orchestration, not assumed capacity."
+    },
+    {
+      "id": "research-drop-4476233",
+      "themes": ["research-drop-4476233:01", "research-drop-4476233:02", "research-drop-4476233:03"],
+      "study_codes": ["B"],
+      "summary": "Dec 2025: strain coexists with use/value. Support learning and remove technical obstacles, not increase stress."
+    },
+    {
+      "id": "research-drop-4484484",
+      "themes": ["research-drop-4484484:01", "research-drop-4484484:02", "research-drop-4484484:03"],
+      "study_codes": ["B"],
+      "summary": "Jan 2026: ICs report fewer feedback opportunities/support; frequent users report more requests, direction unresolved."
+    },
+    {
+      "id": "research-drop-4493933",
+      "themes": ["research-drop-4493933:01", "research-drop-4493933:02", "research-drop-4493933:03"],
+      "study_codes": ["B"],
+      "summary": "Feb 2026 framework: choose AI methods, plan, check accuracy/relevance, reflect; activity volume is not quality."
+    },
+    {
+      "id": "research-drop-4500556",
+      "themes": ["research-drop-4500556:01", "research-drop-4500556:02", "research-drop-4500556:03"],
+      "study_codes": ["B"],
+      "summary": "Mar 2026: leadership framework covers questioning, individual support, purpose, modeling; not a validated intervention."
+    },
+    {
+      "id": "research-drop-4511230",
+      "themes": ["research-drop-4511230:01", "research-drop-4511230:02", "research-drop-4511230:03"],
+      "study_codes": ["A", "B", "V"],
+      "summary": "Apr 2026: AI value rose across different samples. RIVA averages six item-favorability percentages, not ROI/rescaled means."
+    },
+    {
+      "id": "research-drop-4518613",
+      "themes": ["research-drop-4518613:01", "research-drop-4518613:02", "research-drop-4518613:03"],
+      "study_codes": ["A", "B", "V"],
+      "summary": "May 2026: separate EX-factor models show associations, not causal rankings; sample/geography/referent changes limit trends."
+    }
+  ]
+}

@@ -1,5 +1,11 @@
 # People Science corpus guide
 
+The [skill entry](../SKILL.md) now provides a self-contained one-read digest:
+bounded, attributed paraphrases covering all 57 registered resources, including
+the explicit gap. It is not the complete theme index or source archive. Only its
+included claims bypass further source reads; the discovery and deeper-retrieval
+rules below continue to apply outside that digest.
+
 This repository contains the reviewed discovery context. Start with the
 [topic-first directory](topic-lookup.md), then open the linked
 [source profiles](theme-lookup.md) and public publications. These files work

@@ -5,6 +5,12 @@ See `catalog.json` for the machine-readable list of resources and
 This file is the authoritative retrieval contract; the other two files are
 generated or curated views that must never override it.
 
+The complete [skill entry](../SKILL.md) embeds this collection/tier order and a
+bounded evidence digest. Its included claims need no additional reads; cite the
+linked sources and identify digest-based support. This exception does not apply
+to ordinary discovery themes, unprinted details, or current product rules.
+The original-source retrieval rules below govern evidence beyond that digest.
+
 ## What this hierarchy governs
 
 This contract ranks published research and guidance, including the research

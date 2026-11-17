@@ -3259,7 +3259,7 @@ def test_knowledge_vault_source_priority():
 
     assert "[research workflow](references/research-workflow.md)" in skill
     assert "Microsoft Viva Blog" in workflow
-    assert "only article records from the `External` worksheet" in skill
+    assert "published External-worksheet" in skill
     assert "microsoftvivablog" in sources
     assert "`External`" in sources
     maintenance = (ROOT / "references/maintenance/knowledge-vault/README.md").read_text(

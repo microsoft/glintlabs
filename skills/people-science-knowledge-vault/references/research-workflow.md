@@ -1,5 +1,25 @@
 # Research workflow
 
+## Bounded one-read exception
+
+The complete [skill entry](../SKILL.md) contains instructions and an attributed
+evidence digest for every registered resource. Its included paraphrases may
+support digest-based answers without reading this procedure, topic/source pages,
+or originals. Cite its linked sources and disclose digest-based support.
+Do not treat ordinary discovery themes as this approved digest. The digest is
+not the full publications, all indexed themes, a new source review, or evidence
+of current product behavior. Its missing marker means incomplete coverage.
+
+The deeper-retrieval procedure below still requires full source evidence for
+claims beyond the digest, quotes, unprinted statistics, and live verification.
+Keep the digest as the initial load. When deeper evidence is necessary, recommend
+one to three relevant reads by title and URL, explain the missing detail or
+decision each would inform, and wait for approval before fetching them.
+Never require the full library or automatically follow every linked page.
+If additional reads are declined or unavailable, answer within the digest's
+scope and disclose what remains unresolved; do not keep prompting.
+Platform Screenshot Interpretation retains its own loading/evidence requirements.
+
 Follow the active skill's evidence and privacy rules. This shared procedure
 supports research-only questions and the research required for results
 interpretation. It defines evidence obligations, not a mandatory answer outline.
