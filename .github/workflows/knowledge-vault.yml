@@ -50,6 +50,8 @@ jobs:
         run: python -m pytest tests/test_knowledge_vault_catalog.py tests/test_knowledge_vault_themes.py tests/test_knowledge_vault_portability.py tests/test_skill_structure.py::test_knowledge_vault_source_priority tests/test_skill_structure.py::test_each_skill_has_first_priority_reference_folder
       - name: Validate public context graph and media permissions
         run: python scripts/check_knowledge_vault_context.py
+      - name: Verify self-contained one-read digest
+        run: python scripts/build_knowledge_vault_digest.py --check
       - name: Check public evidence content
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: python scripts/check_knowledge_vault_sources.py --output source-check.json

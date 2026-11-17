@@ -31,6 +31,22 @@ exports only public fields to `skills/people-science-knowledge-vault/references/
 
 ## Review and regeneration
 
+The runtime entry `skills/people-science-knowledge-vault/SKILL.md` is generated
+by `scripts/build_knowledge_vault_digest.py`. Its bounded paraphrases are maintained
+in `evidence-digest.json` here, not hand-edited in the entry. Every registered
+resource must appear, including gaps; selected theme IDs bind each paraphrase to
+reviewed evidence. Recording-backed paraphrases must cite the recording, not its
+recap. These are editorial summaries, not redistributed article/transcript bodies.
+
+After an index change, review affected paraphrases, evidence selections, scope,
+and shared-study codes before updating `reviewed_index_sha256` to the index's
+LF-normalized SHA-256. Do not refresh this hash automatically as a substitute for review.
+The generator fails on missing/duplicate resources, mismatched evidence assets,
+stale index review, or output over 20,000 UTF-8 bytes. Never truncate entries to
+pass the budget; explicitly edit or consolidate supported prose. The entry ends
+with a revision marker so hosts can detect incomplete retrieval. Smaller host
+limits can still prevent a single read.
+
 Retrieve the full public source and review body, figures, context, and any
 claimed media coverage. Update themes, evidence hashes, anchors, review dates,
 and study-family links. Never infer content for an inaccessible resource.
@@ -52,6 +68,8 @@ checker; a successful HTTP response alone is not evidence verification.
 ```text
 python scripts/build_knowledge_vault_resources.py
 python scripts/search_knowledge_vault.py --write-reference
+python scripts/build_knowledge_vault_digest.py
+python scripts/build_knowledge_vault_digest.py --check
 python scripts/check_knowledge_vault_context.py
 python scripts/check_knowledge_vault_sources.py --output source-check.json
 python -m pytest tests/test_knowledge_vault_catalog.py tests/test_knowledge_vault_themes.py tests/test_knowledge_vault_portability.py

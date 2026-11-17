@@ -1,6 +1,7 @@
 """Link-only context traversal, permission gates, and actual-content checks."""
 
 import hashlib
+import copy
 import json
 import shutil
 import sys
@@ -14,6 +15,7 @@ import build_knowledge_vault_resources as builder
 import check_knowledge_vault_context as context_check
 import check_knowledge_vault_sources as live
 import search_knowledge_vault as lookup
+import build_knowledge_vault_digest as digest
 
 
 SCREENSHOT_REFERENCES = context_check.SCREENSHOT_SKILL_PATH.parent / "references"
@@ -305,11 +307,10 @@ def test_runtime_no_longer_requests_workbook_refresh():
 
 def test_shared_skill_link_requires_no_local_installation_and_preserves_ref():
     skill = context_check.SKILL_PATH.read_text(encoding="utf-8")
-    assert f"{lookup.RAW_BASE}/README.md" in skill
-    assert "Do not ask users to download a ZIP" in skill
-    assert "same ref" in skill
-    assert "rather than a stale" in skill
-    assert "not native skill registration" in skill
+    assert "(references/README.md)" in skill
+    assert "No installation or native skill registration" in skill
+    assert "same-ref" in skill
+    assert 'not a stale copy or "loaded" flag' in skill
     assert not (context_check.SKILL_PATH.parent / "bundle.json").exists()
 
 
@@ -318,7 +319,9 @@ def test_optional_workiq_requires_real_capability_scoped_consent_and_public_fall
     public_use = " ".join(
         (lookup.REFERENCES / "public-use.md").read_text(encoding="utf-8").split()
     )
-    assert "(references/public-use.md#optional-workiq-organizational-context)" in skill
+    assert "WorkIQ is optional" in skill
+    assert "scoped consent before searching/" in skill
+    assert "Missing access does not block public guidance" in skill
     for requirement in (
         "WorkIQ is optional",
         "actually exposed, approved read-only WorkIQ capability",
@@ -389,18 +392,16 @@ def test_required_workflows_are_reachable_from_skill_and_public_context():
         context_check.validate_links(SCREENSHOT_REFERENCES / name)
 
 
-def test_reference_gate_requires_complete_guidance_before_substantive_work():
+def test_reference_gate_accepts_complete_digest_without_link_traversal():
     skill = context_check.SKILL_PATH.read_text(encoding="utf-8")
     gate = " ".join(
         skill.split("## Required-reference gate", 1)[1].split("\n## ", 1)[0].split()
     )
-    for name in ("README.md", "source-priority.md", "public-use.md"):
-        assert f"`references/{name}`" in gate
-    assert "task's required workflows from the routing table" in gate
-    assert "complete readable bodies" in gate
-    assert "stop the affected substantive workflow" in gate
-    assert "Do not bypass the gate with model memory" in gate
-    assert "verified visible facts" in gate
+    assert "Included claims need no extra reads" in gate
+    assert "If missing, disclose truncation" in gate
+    assert "never claim complete coverage" in gate
+    assert "recover the same-ref raw body" in gate
+    assert "references/" not in gate
     for name in context_check.RUNTIME_GUIDES:
         body = (lookup.REFERENCES / name).read_text(encoding="utf-8")
         assert "(../SKILL.md#required-reference-gate)" in body
@@ -408,11 +409,9 @@ def test_reference_gate_requires_complete_guidance_before_substantive_work():
 
 def test_reference_reuse_requires_retained_content_not_a_loaded_summary():
     skill = " ".join(context_check.SKILL_PATH.read_text(encoding="utf-8").split())
-    assert "Reuse complete same-ref bodies while they remain available in context" in skill
-    assert "On task changes, load newly required files" in skill
-    assert "after lost context, compaction, or revision changes" in skill
-    assert 'A summary saying "loaded" is not the body' in skill
-    assert "Do not repeatedly fetch unchanged, available files" in skill
+    assert "Reuse retained content" in skill
+    assert "reload after context/revision loss" in skill
+    assert 'not a stale copy or "loaded" flag' in skill
 
 
 def test_controlled_host_guidance_does_not_promise_portable_enforcement():
@@ -616,17 +615,128 @@ def test_separate_entries_route_research_and_platform_work_without_duplicating_t
     screenshot = context_check.SCREENSHOT_SKILL_PATH.read_text(encoding="utf-8")
     description = research.split("description:", 1)[1].splitlines()[0]
     assert "research" in description and "screenshots" not in description
-    assert "not platform screenshot" in research
-    assert "screenshot, manifest, or survey export to answer a research-only question" in research
+    assert "Research needs no survey export" in research
     assert "../platform-screenshot-interpretation/SKILL.md" in research
     assert "Own the screenshot conversation across turns" in screenshot
     assert "do not bounce between skills for every source or" in screenshot
     for name in ("README.md", "source-priority.md", "public-use.md", "research-workflow.md"):
         assert f"(../people-science-knowledge-vault/references/{name})" in screenshot
-    for skill in (research, screenshot):
-        assert "same repository and same ref" in " ".join(skill.split())
+    assert "same-ref raw body" in research
+    assert "same repository and same ref" in " ".join(screenshot.split())
     assert not (SCREENSHOT_REFERENCES / "catalog.json").exists()
     assert not (lookup.REFERENCES / "results-exploration.md").exists()
+
+
+def digest_fixture():
+    return digest.INDEX.read_bytes(), json.loads(digest.MANIFEST.read_text(encoding="utf-8"))
+
+
+def test_one_complete_read_contains_all_resources_evidence_and_citations():
+    index_bytes, manifest = digest_fixture()
+    body = digest.render(index_bytes, manifest)
+    assert context_check.SKILL_PATH.read_text(encoding="utf-8") == body
+    assert len(body.encode("utf-8")) <= context_check.MAX_PAGE_BYTES
+    resources = json.loads(index_bytes)["resources"]
+    assert len(manifest["entries"]) == len(resources) == 57
+    entries = {entry["id"]: entry for entry in manifest["entries"]}
+    for resource in resources:
+        entry = entries[resource["id"]]
+        assert resource["title"] in body
+        assert entry["summary"] in body
+        url = resource["additional_media"][0]["url"] if entry.get("recording") else resource["url"]
+        assert f"]({url})" in body
+    assert body.count("KNOWN GAP:") == 1
+    revision = body.split("Digest revision: `")[1].split("`")[0]
+    assert body.endswith(digest.END_MARKER.format(digest=revision) + "\n")
+    assert "Unprinted statistics, quotes, omitted details, and freshness require originals" in body
+
+
+def test_digest_recommends_targeted_deep_reads_without_automatic_library_loading():
+    skill = " ".join(context_check.SKILL_PATH.read_text(encoding="utf-8").split())
+    assert "Start here. Included claims need no extra reads" in skill
+    assert "Recommend 1-3 reads with a rationale; wait for approval before fetching" in skill
+    assert "Never require the full library" in skill
+    assert "If unavailable/declined, use digest claims only and disclose gaps" in skill
+    for name in ("public-use.md", "research-workflow.md"):
+        guide = " ".join((lookup.REFERENCES / name).read_text(encoding="utf-8").split())
+        assert "one to three" in guide
+        assert "wait for" in guide and "approval" in guide
+        assert "full library" in guide
+
+
+def test_all_17_research_drops_are_included_in_the_default_first_load():
+    index_bytes, manifest = digest_fixture()
+    body = digest.render(index_bytes, manifest)
+    drops = [
+        resource for resource in json.loads(index_bytes)["resources"]
+        if resource["group"] == "research-drop"
+    ]
+    assert len(drops) == 17
+    default_section = body.split("### Research Drops\n", 1)[1].split(
+        "### Original vault:", 1
+    )[0]
+    entries = {entry["id"]: entry for entry in manifest["entries"]}
+    assert default_section.count("](https://") == 17
+    for resource in drops:
+        assert f"[{resource['title']}]({resource['url']})" in default_section
+        assert entries[resource["id"]]["summary"] in default_section
+    assert context_check.SKILL_PATH.read_text(encoding="utf-8") == body
+
+
+@pytest.mark.parametrize("defect", [
+    "missing-resource", "duplicate-resource", "missing-theme", "wrong-asset",
+    "false-gap-evidence", "unmarked-gap", "study-link", "missing-study",
+    "private-location", "stale-index",
+])
+def test_digest_rejects_unreviewed_incomplete_or_misattributed_evidence(defect):
+    index_bytes, manifest = digest_fixture()
+    manifest = copy.deepcopy(manifest)
+    entry = manifest["entries"][0]
+    if defect == "missing-resource":
+        manifest["entries"].pop()
+    elif defect == "duplicate-resource":
+        manifest["entries"].append(copy.deepcopy(entry))
+    elif defect == "missing-theme":
+        entry["themes"] = [entry["id"] + ":missing"]
+    elif defect == "wrong-asset":
+        entry["recording"] = True
+    elif defect in {"false-gap-evidence", "unmarked-gap"}:
+        gap = next(e for e in manifest["entries"] if not e["themes"])
+        if defect == "false-gap-evidence":
+            gap["themes"] = [entry["themes"][0]]
+        else:
+            gap["summary"] = "Pretend this missing resource was reviewed."
+    elif defect == "study-link":
+        next(e for e in manifest["entries"] if e.get("study_codes"))["study_codes"] = []
+    elif defect == "missing-study":
+        manifest["study_codes"].pop("A")
+    elif defect == "private-location":
+        entry["summary"] += " https://example.sharepoint.com/private"
+    else:
+        index_bytes += b"\n"
+    with pytest.raises(ValueError):
+        digest.render(index_bytes, manifest)
+
+
+def test_digest_is_cross_platform_and_fails_instead_of_truncating():
+    index_bytes, manifest = digest_fixture()
+    lf = index_bytes.replace(b"\r\n", b"\n")
+    assert digest.render(lf, manifest) == digest.render(lf.replace(b"\n", b"\r\n"), manifest)
+    manifest["entries"][0]["summary"] += " Unbounded text." * 2_000
+    with pytest.raises(ValueError, match="one-read budget"):
+        digest.render(index_bytes, manifest)
+
+
+def test_digest_check_detects_stale_output_without_writing(tmp_path, monkeypatch):
+    index_bytes, manifest = digest_fixture()
+    target = tmp_path / "SKILL.md"
+    target.write_text("Old skill", encoding="utf-8")
+    monkeypatch.setattr(digest, "SKILL", target)
+    assert digest.main(["--check"]) == 1
+    assert target.read_text(encoding="utf-8") == "Old skill"
+    assert digest.main([]) == 0
+    assert target.read_text(encoding="utf-8") == digest.render(index_bytes, manifest)
+    assert digest.main(["--check"]) == 0
 
 
 @pytest.mark.parametrize("failure", ["private", "broken-link"])

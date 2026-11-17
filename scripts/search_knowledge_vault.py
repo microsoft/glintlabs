@@ -571,7 +571,10 @@ def render_web_context(index: dict) -> dict[str, str]:
         f"**Reviewed {index['reviewed_at']}: {counts['reviewed']} reviewed resources, "
         f"{counts['themes']} source-level summaries, {counts['topics']} topics, "
         f"{len(counts['gaps'])} explicit gap.**", "",
-        f"Read [source priority]({RAW_BASE}/source-priority.md), "
+        "The skill entry is a self-contained, one-read evidence digest. "
+        "No topic, profile, or publication reads are required for its included claims. "
+        "For evidence beyond that digest, read "
+        f"[source priority]({RAW_BASE}/source-priority.md), "
         f"[corpus scope]({RAW_BASE}/corpus-guide.md), and "
         f"[link-only use]({RAW_BASE}/public-use.md). Then choose relevant topics below.", "",
         "Knowledge Vault focuses on general People Science research guidance. "
