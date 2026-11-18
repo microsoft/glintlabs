@@ -1,10 +1,47 @@
 ---
 name: analyze-survey-advanced
-description: "Explore numeric survey-item structure with centered SVD, explicitly approved component comparisons, reproducible diagnostics, and automatic People Science Knowledge Vault grounding for interpretation and question-removal review."
+description: "Opt-in centered-SVD exploration for survey-item structure and question-reduction decisions beyond analyze-survey. Use only when the user explicitly requests this skill or SVD/component experiments, or confirms a proposed advanced handoff. Do not use for routine survey analysis, correlations, factor analysis, attrition, cycle comparisons, segmentation, QA, or interpretation supported by analyze-survey."
 allowed-tools: Read, Glob, Grep, Bash, WebFetch
 ---
 
 # Advanced survey analysis
+
+## Activation gate
+
+Default to `analyze-survey` whenever it can satisfy the request. Loading this
+skill is not authorization to begin advanced intake, inspect respondent data,
+or run an experiment.
+
+Activate this skill only when:
+- The user explicitly requests `analyze-survey-advanced` or centered-SVD analysis
+  (including SVD component comparisons); or
+- A specific unmet objective requires this skill's supported methods, and the
+  user confirms the proposed advanced handoff.
+
+"Go deeper", "advanced insights", "find patterns", and "shorten this survey"
+alone do not authorize SVD. Clarify the intended decision first; continue in
+basic when its supported analyses can answer it. Do not automatically escalate
+because a dataset supports SVD, basic analysis has completed, or the user requests
+factor analysis or more interpretation.
+
+Before proposing a handoff, explain what basic analysis cannot answer and what
+the advanced analysis would add. Ask for confirmation and wait. If the requested
+method is unsupported by both skills, disclose that instead of substituting SVD.
+Carry forward the user's objective, inspected artifacts, QA, constraints and
+approvals; do not restart answered intake questions.
+
+Activation does not authorize execution. Preserve approval requirements for each
+exact bounded fit or comparison, including renewed approval for changed inputs.
+
+| Request | Route |
+| --- | --- |
+| "Analyze this survey" | Basic analysis intake |
+| "Explain these factors" | Basic interpretation of existing outputs |
+| "Go deeper" or "Shorten this survey" | Clarify the decision; no automatic SVD |
+| "Compare centered-SVD component counts" | Advanced intake; obtain bounded execution approval before fitting |
+| Confirmed handoff for an unmet SVD objective | Advanced intake, reusing established context |
+
+## Supported workflow
 
 Support centered SVD only. Be an active exploration partner for an experienced
 data scientist. The conversation
