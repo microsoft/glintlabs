@@ -14,7 +14,7 @@
       "source": ".github/workflows/site-ci.yml",
       "destination": ".github/workflows/site-ci.yml",
       "sourceSha256": "21ed094e6da10c12eb4e2c9b57bbee6305a1f8fafef492661dae0c7ea6951ba0",
-      "destinationSha256": "41613198d151a859f2e3b2c5142bc2af32901434d23513cf1056ca1dd015512f",
+      "destinationSha256": "ea831ea5178e2c7c6edcf7d50f1a437a2a18016cf95c883ecb9b2e1ebaa96423",
       "intentionalDifference": "Relocated to destination root with website working directory/npm cache, Node22.23.4 and inventory check; preserves source checks, adds verified static-reader build and explicitly authorized main-only GitHub Pages deployment. Subsequent maintainer-approved telemetry adds a disabled-by-default main-only Pages flag and an intercepted browser release gate when enabled. The approved automatic-analytics policy renames that gate to match its first-visit and retained privacy-protection checks. The requested Clarity integration adds an independent main-only production flag and extends the intercepted analytics release gate to either provider."
     },
     {
