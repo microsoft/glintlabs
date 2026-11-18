@@ -1,6 +1,6 @@
 ---
 name: analyze-survey
-description: "Analyze a CSV or Excel employee survey export into an interactive HTML report and privacy-safe share ZIP, or QA and interpret existing vivaglint outputs. Use for survey analysis, analysis-manifest.json, output validity and privacy checks, interpretation readiness, descriptives, correlations, factors, cycle comparisons, segments, or attrition findings, caveats, hypotheses, and next analysis questions."
+description: "Default skill for employee survey analysis. Analyze a CSV or Excel export into an interactive HTML report and privacy-safe share ZIP, or QA and interpret existing vivaglint outputs. Use for survey analysis, analysis-manifest.json, output validity and privacy checks, interpretation readiness, descriptives, correlations, factors, cycle comparisons, segments, or attrition findings, caveats, hypotheses, and next analysis questions. Stay here for supported requests; advanced SVD requires an explicit request or confirmed handoff."
 allowed-tools: Bash, Read, Write, Glob, Grep, WebFetch
 ---
 
@@ -15,6 +15,28 @@ report. A broader customer readout or manager action plan is outside this
 skill's scope.
 
 ## Start here
+
+### Basic by default; advanced only by confirmed need
+
+Stay in this skill whenever its supported analyses, QA or interpretation can
+satisfy the request. "Go deeper", "advanced insights", "find patterns", and
+"shorten this survey" alone are not requests for SVD; clarify the intended
+decision without automatically escalating. Factor analysis remains a basic
+analysis option.
+
+Use `../analyze-survey-advanced/SKILL.md` only when the user explicitly requests
+that skill or centered-SVD analysis, or confirms a proposed handoff for a specific
+unmet objective requiring its supported methods. Before proposing the handoff,
+explain what basic cannot answer and what advanced would add; ask for confirmation
+and wait. Do not substitute SVD for a method unsupported by both skills.
+
+Carry the objective, inspected artifacts, established QA, constraints and existing
+approvals into a confirmed handoff without repeating answered intake questions.
+Handoff confirmation does not authorize fitting or comparisons: advanced's exact
+bounded execution approvals still apply. Otherwise continue the basic workflow
+below; do not add advanced analysis as an automatic follow-up or report tab.
+
+### Choose the basic workflow
 
 First distinguish a new analysis from QA or interpretation of existing outputs.
 For dashboard screenshots or supplied aggregate values without a computation/QA
