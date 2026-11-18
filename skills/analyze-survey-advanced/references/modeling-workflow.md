@@ -1,35 +1,34 @@
-# Expert modeling workflow
+# Centered SVD workflow
 
 ## Prepare a concrete experiment
 
-Start with the scientist's question, not an algorithm contest. Separate
-cross-sectional association, unseen-respondent generalization, and future
-forecasting. Confirm the target definition, exclusion of target-derived items,
-permitted predictor meanings/timing, source/cycle comparability, and response
-scale. Do not create unapproved composite scores or binarize an ordinal target.
-Inspect missingness, class support, independent groups, nesting, duplication,
-coverage, and plausible selection bias. Minimum-N is not a modeling sample-size rule.
+Start with the scientist's structural or survey-shortening question. Confirm
+numeric-item eligibility, wording and response scales, source/cycle comparability,
+protected questions, and content/benchmark/trend constraints. Inspect missingness,
+independent groups, nesting, duplication, coverage, and plausible selection bias.
+Do not create unapproved composite scores. Minimum-N is not an SVD sample-size rule.
 
 Use CSV/XLSX/XLSM with explicit columns. Native platform exports first need the
 existing `analyze_survey_export.py --inspect-only` preparation and user-confirmed
 mappings; use the resulting private prepared survey without running the basic
-analysis suite. Keep attributes as explicit approved joins, not implicit sheets.
-Comments, identifiers, protected attributes, and post-outcome features are not
-predictors. User authority does not override privacy or holdout integrity.
+analysis suite. Any additional survey-item source needs an explicit approved
+join, not an implicit worksheet merge. Comments, identifiers, employee attributes,
+and outcome records are not SVD items. User authority does not override privacy
+or holdout integrity.
 
 Create a config matching `schemas/advanced-analysis-config.schema.json`, with
 actual SHA-256 source hashes, explicit features, group key, seed, minimum group
-size, group/chronological validation, metric, utility threshold, candidate
-parameters, and bounded rows/trials/threads/seconds. No silent defaults for these
-scientific decisions. `utility_threshold` is the minimum absolute improvement
-over the dummy baseline in the primary metric's units, not an invented guarantee.
+size, group/chronological development/reserve design, explicit `scale` setting,
+component count, and bounded rows/trials/threads/seconds. No silent defaults for
+these scientific decisions.
 
-Model methods: `dummy`, `linear`, `random_forest`, `gradient_boosting`, and
-`extra_trees`. Each has an analyst-assigned ID, optional scalar `parameters`,
-optional finite `grid`, and optional numeric-item SVD `components`.
-SVD-only task uses an empty model list and `reconstruction_rmse`; it does not
-enter a supervised leaderboard. RF/GBM complexity, feature selection, and SVD
-rank are choices to discuss, not autonomous settings to optimize.
+The only task is `svd`, with an empty `models` list, explicit `components`, and
+`metric: reconstruction_rmse`. No outcome target or estimator settings are
+accepted. The optional legacy `utility_threshold` field may only be zero and
+is unused by SVD; it is not a quality cutoff. The engine's trial/fold settings
+do not create a component search or cross-validated SVD reconstruction scores.
+Rank, scaling, and eligible item sets are choices to discuss, not settings to
+optimize autonomously.
 
 For the header overview, optional config `survey` metadata accepts a confirmed
 `name`, `invited_count`, and `respondent_column`. Supplying `invited_count`
@@ -43,17 +42,17 @@ invitations or infer a survey name from a file path.
 The manifest's aggregate `survey` overview records input response rows,
 selected feature count, survey name, and a supported response rate. N is the
 full input cohort, not just development rows or a claim of independent people.
-For SVD the selected numeric survey features are questions; predictive runs
-label the count as predictors, since approved external features may be present.
+The selected numeric survey features are questions.
 One unambiguous `survey_cycle_title` can supply a missing name. Code-only runs
 do not read data and cannot report observed N or a response rate. Counts below
 the configured privacy minimum remain null.
 
 Group validation keeps repeated people together. For unseen organizations use
 that grouping unit. Chronological validation respects whole date boundaries;
-`unseen_groups: false` is allowed only for explicitly confirmed forecasting of
-known people. Train-fitted imputers/scalers/encoders/SVD remain inside CV.
-Do not pool repeated rows to claim more independent respondents.
+confirm whether the reserved population must be disjoint by respondent/group.
+Imputation, centering/scaling, and SVD are fitted on development rows only.
+Do not pool repeated rows to claim more independent respondents or describe
+development in-sample reconstruction as cross-validated performance.
 
 ## Evidence-led choices and component selection
 
@@ -127,7 +126,7 @@ or manufacture a variance cutoff from an ambiguous elbow.
 
 If comparison needs new fits, first request explicit authorization for the
 exact source-bound candidate configs and bounded actions/budget. A request to
-edit this skill or see options is not permission to fit or tune. Run only the
+edit this skill or see options is not permission to fit or compare. Run only the
 approved candidates through the supported engine in separate run directories
 inside the same project, preserving its reserved holdout design. Do not use
 the sealed holdout for rank selection, silently expand the range, or imply an
@@ -140,9 +139,9 @@ Keep the evidence and choice rationale in the private approval/context record.
 Delivery is inline chat by default. Keep the approved run and aggregate
 artifacts locally, and render charts with their reviewed People Science
 interpretation in the conversation. The runner defaults to `--delivery chat`
-for code, fit, tune, evaluate, interpret and review-items modes: no HTML or share
+for code, fit, interpret and review-items modes: no HTML or share
 ZIP is generated. Only use `--delivery report` when the user explicitly requests
-an HTML export. Changing delivery alone does not authorize new fits or tuning.
+an HTML export. Changing delivery alone does not authorize new fits or comparisons.
 
 Use a separate virtual environment and the complete plugin:
 
@@ -170,7 +169,7 @@ user explicitly authorizes concrete actions, save a private approval JSON:
 }
 ```
 
-Allowed action names are `code`, `fit`, `replay`, `tune`, `join`, `evaluate`,
+Allowed action names are `code`, `fit`, `replay`, `join`,
 `interpret`, and `share`. This record binds actions to content; it is not proof
 that a human consented. The host/assistant must obtain actual user authorization
 and may not manufacture approval from a budget, proposed idea, or this example.
@@ -183,49 +182,50 @@ Keep approvals and conversation context private.
 
 Inspection does not fit models; explicit joins still require join permission.
 `code` generates an unexecuted notebook/script and a clearly marked Not-ready
-manifest; explain in chat that no model has run. `tune` additionally requires
-`tune` approval and an explicitly approved finite parameter grid. `fit` must not
-run a grid. `replay` permission covers
-rerunning only the frozen winning configuration to check deterministic results,
-not rerunning the whole tuning campaign.
+manifest; explain in chat that no decomposition has run. `fit` executes one
+explicit component count, not a grid. `replay` permission covers rerunning only
+that frozen configuration to check deterministic results, not expanding the
+comparison. Separate component counts require separately approved configs.
+The runner rejects unsupported execution modes, including automatic search
+and final holdout evaluation.
 
 Budgets are checked between fits. A single native estimator fit is not forcibly
 interrupted at a wall-clock deadline. CPU threads are bounded. Keyboard
 interruption or a failure writes an explicit private status/error and exits
-nonzero; partial work is not reported as successful. Internal random early
-stopping, weighting, custom decision thresholds, and arbitrary external model
-frameworks are not implemented in the first engine API. If required, discuss a
-separate implementation instead of implying support.
+nonzero; partial work is not reported as successful. Do not install an alternative
+decomposition framework or imply unsupported resampling/stability checks exist.
 
-## Proactively discuss tuning and additional context
+## Proactively discuss SVD comparisons and additional context
 
 Apply the mandatory Knowledge Vault guardrail in `../SKILL.md` and
-`interpretation.md` before offering tuning guidance, including proactive
+`interpretation.md` before offering SVD comparison guidance, including proactive
 experiment proposals and follow-ups. Consult applicable People Science sources
 alongside the diagnostics; do not treat research guidance as a validated setting
 or imply formal People Science approval.
 
 After inspecting each result, offer a short ranked list of next experiments
 with expected trade-offs and falsifiable checks. Examples only when diagnostics
-support them: larger RF leaves for a training/validation gap; a slower GBM
-learning rate with a bounded iteration trade-off; SVD rank/scaling comparisons;
-or a supported challenger with a different inductive bias. Do not promise better
-fit, treat more search as always useful, or auto-run the proposals.
+support them: a bounded rank comparison when reconstruction/content trade-offs
+are unresolved, scaling alternatives when item scales or variances warrant
+review, or an approved item-set comparison after content review. State what
+each would test and what evidence would change the conclusion. Do not promise
+better findings, treat more fits as always useful, or auto-run the proposals.
 
 Ask what the scientist would add: another hypothesis, a constraint, domain
-knowledge, or an external dataset. Retrieve applicable Knowledge Vault research
+knowledge, or question-level context. Retrieve applicable Knowledge Vault research
 before calling a context request research-backed. A specific missing fact, such
-as dated rollout coverage, may distinguish explanations better than more tuning.
+as dated program or wording changes, may distinguish explanations better than more fits.
 Explain that connection briefly and ask one focused question. Keep unanswered,
 unavailable, declined, or user-reported context in the correct evidence state.
 
-External modeling data needs explicit join approval, source hash, provenance,
+Additional survey-item data needs explicit join approval, source hash, provenance,
 rights/permissible use, definitions, complete link keys, many-to-one cardinality,
-coverage and availability before the target/prediction time. In `joins`, declare
+coverage and alignment to the confirmed survey population/cycle. In `joins`, declare
 `source`, `key`, `columns`, `provenance_confirmed: true`,
 `eligibility_confirmed: true`, and an `available_at` column when timestamped.
 The latter is checked against the confirmed survey `time`; otherwise temporal
-eligibility remains an explicit human review obligation. No implicit API access,
+eligibility remains an explicit human review obligation. Only approved numeric
+survey questions may enter the decomposition. No implicit API access,
 scraping, credential requests, or sensitive/granular linkage. Inspect unmatched
 coverage privately and confirm its implications. Never convert interpretive
 context into a predictor without this process.
@@ -334,18 +334,17 @@ attachment rather than claiming completion. Existing `--item-review` assessments
 remain supported for compatibility and their known protected items still
 apply, but final retain/remove decisions are not the new shortlist UI.
 
-## Selection, final evaluation, and readiness
+## Selection, reserved data, and readiness
 
-Compare on consistent CV folds and the approved primary metric. Keep baseline
-lift, variability, generalization, resource cost, and the practical utility
-criterion visible. A model may provide no useful improvement.
+Compare component counts using the same development population, items,
+preprocessing, and reserved split. Keep variance retained, reconstruction error,
+content coverage, complexity, and missing stability evidence visible. Lower
+in-sample reconstruction error alone does not establish a useful component count.
 
-The runner writes `_private/frozen-config.json`. To evaluate a final winner,
-approve its exact frozen config for `fit`, `replay`, and `evaluate` (plus `join`
-if relevant), use a fresh run directory and `--mode evaluate --frozen-from
-<development-run/_private/frozen-config.json>`. Final holdout evaluation cannot
-choose among candidates. Development baseline comparisons remain development
-comparisons, not claimed heldout baseline lift.
+The runner writes `_private/frozen-config.json` for the approved decomposition
+and replays that exact configuration. There is no final holdout evaluation mode
+in this skill. Reserved rows do not inform rank selection, question-removal
+review, interpretation, or claims of out-of-sample reconstruction performance.
 
 All runs for the same study must use the same private project. `_holdouts`
 seals the source selection, grouping/timing inputs and holdout design on the
@@ -354,15 +353,16 @@ Use explicit `split_seed` to preserve that original split when an approved
 experiment changes estimator `seed`; otherwise the latter also seeds the split.
 Changing CV fold count is possible without changing the reserved population.
 The same directory also
-records the primary source hash as consumed before final evaluation starts,
-including failed attempts. Do not delete the ledger, change a source's encoding,
+honors any existing consumed-state record for the primary source hash, including
+legacy evaluation attempts. Do not delete the ledger, change a source's encoding,
 or create another project to evade it. This is a conservative project-local
-guard, not a global proof that no analyst has seen the holdout. After holdout-
-informed iteration, request genuinely new evaluation data for unbiased claims;
-do not tune on or relabel the old test set.
+guard, not a global proof that no analyst has seen reserved rows. If those rows
+have informed selection, disclose that limitation rather than relabeling them
+as untouched.
 
-Compare frozen-fit deterministic aggregate artifacts, not estimator bytes,
-timestamps, or the whole search. Statistical stability across seeds/splits is
-a different approved experiment. Model QA must additionally inspect leakage,
-effective support, baseline usefulness, comparability, diagnostic stability,
-and privacy. Carry the limitations forward; repeatability alone is not Ready.
+Compare frozen-fit deterministic aggregate artifacts, not estimator bytes or
+timestamps. Statistical stability across seeds/splits is a different approved
+experiment and must be supported by the engine before proposing execution.
+SVD QA must additionally inspect effective support, item eligibility,
+comparability, content coverage, diagnostic stability, and privacy.
+Carry the limitations forward; repeatability alone is not Ready.

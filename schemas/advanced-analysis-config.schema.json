@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Advanced survey experiment",
+  "title": "Advanced centered SVD survey experiment",
   "type": "object",
   "required": ["schema_version", "source", "experiment"],
   "properties": {
@@ -34,24 +34,21 @@
     },
     "experiment": {
       "type": "object",
-      "required": ["task", "features", "group", "seed", "min_group_size", "validation", "budget", "models", "metric", "utility_threshold"],
+      "required": ["task", "features", "group", "seed", "min_group_size", "validation", "budget", "models", "metric", "components"],
       "properties": {
-        "task": {"enum": ["regression", "classification", "svd"]},
+        "task": {"const": "svd"},
         "features": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
         "exclude": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
-        "target": {"type": "string", "minLength": 1},
         "group": {"type": "string", "minLength": 1},
         "time": {"type": "string"},
         "seed": {"type": "integer", "minimum": 0, "maximum": 4294967295},
         "split_seed": {"type": "integer", "minimum": 0, "maximum": 4294967295},
         "min_group_size": {"type": "integer", "minimum": 5},
-        "score_scale": {"type": "integer", "minimum": 2, "maximum": 11},
         "scale": {"type": "boolean"},
         "components": {"type": "integer", "minimum": 1},
-        "metric": {"enum": ["mae", "rmse", "r2", "accuracy", "balanced_accuracy", "log_loss", "roc_auc", "reconstruction_rmse"]},
-        "utility_threshold": {"type": "number", "minimum": 0},
-        "selected_model": {"$ref": "#/$defs/model"},
-        "models": {"type": "array", "maxItems": 50, "items": {"$ref": "#/$defs/model"}},
+        "metric": {"const": "reconstruction_rmse"},
+        "utility_threshold": {"const": 0, "description": "Optional legacy placeholder; unused by SVD."},
+        "models": {"type": "array", "maxItems": 0},
         "validation": {
           "type": "object",
           "required": ["kind", "folds", "holdout_fraction", "unseen_groups"],
@@ -75,13 +72,6 @@
           "additionalProperties": false
         }
       },
-      "allOf": [
-        {"if": {"properties": {"task": {"const": "svd"}}},
-         "then": {"required": ["components"], "properties": {"models": {"maxItems": 0}, "metric": {"const": "reconstruction_rmse"}}},
-         "else": {"required": ["target"], "properties": {"models": {"minItems": 1}}}},
-        {"if": {"properties": {"task": {"const": "classification"}}},
-         "then": {"not": {"required": ["score_scale"]}}}
-      ],
       "additionalProperties": false
     }
   },
@@ -94,17 +84,6 @@
         "sheet": {"type": "string"},
         "attribute_sheet": {"type": "string"},
         "prepared": {"type": "boolean"}
-      },
-      "additionalProperties": false
-    },
-    "model": {
-      "type": "object", "required": ["id", "method"],
-      "properties": {
-        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]{0,40}$"},
-        "method": {"enum": ["dummy", "linear", "random_forest", "gradient_boosting", "extra_trees"]},
-        "parameters": {"type": "object", "additionalProperties": {"type": ["number", "string", "boolean", "null"]}},
-        "grid": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "array", "minItems": 1, "maxItems": 50, "items": {"type": ["number", "string", "boolean", "null"]}}},
-        "components": {"type": "integer", "minimum": 1}
       },
       "additionalProperties": false
     }

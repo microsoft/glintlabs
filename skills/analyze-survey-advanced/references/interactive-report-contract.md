@@ -11,7 +11,7 @@ not the current chat deliverable; do not delete or present them as new output.
 
 Render the chart inline from inspected aggregate diagnostics using the host's
 plot/image support, followed immediately by the cited People Science
-interpretation. Then give concise component/model summaries, QA limitations,
+interpretation. Then give concise component summaries, QA limitations,
 the supported SVD shortlist or pending-context explanation, and next choices.
 The host must actually display the chart, not merely return an image path.
 If inline images cannot be displayed, say so and provide a labeled text bar
@@ -26,19 +26,19 @@ requirements for chat delivery.
 ## Optional HTML export
 
 `scripts/build_advanced_analysis_report.py` renders only inspected aggregate
-diagnostics into the colocated `report.html`. It never fits/tunes a model and
+diagnostics into the colocated `report.html`. It never fits a decomposition and
 does not modify the basic golden template, tabs, or narrative defaults.
 
 Use the canonical Glint UI reference and its tokens, Segoe UI, light mode,
 accessible labels/focus, non-color status text, responsive dense tables and
-offline behavior. Navigation leads with SVD, its interpretation anchor, model
-comparison, selected diagnostics, methodology/limitations and downloads.
+offline behavior. Navigation contains SVD, its interpretation anchor,
+methodology/limitations and downloads. Do not offer other analysis methods,
+method comparisons, or estimator selectors.
 For fitted SVD, interpretation is a subsection directly below the item-weight
 chart inside Centered SVD exploration, before Component summaries. Use a
 subheading and the existing section surface, not a separate card or duplicated
-narrative. Reports without a fitted SVD keep interpretation as a separate
-section before Model comparison, so predictive and not-run reports retain their
-interpretation or explicit unavailable state.
+narrative. Code-only reports keep a separate interpretation section after the
+not-run SVD section, with an explicit unavailable state.
 Except for interpretation, each section starts with a short,
 plain-language purpose blurb that explains what the view shows and how to use it,
 as in the basic report.
@@ -59,13 +59,13 @@ config/summary binding and the unavailable-research state remain unchanged.
 Give conditional, practical guidance about interpreting patterns, choosing
 bounded next experiments, resolving QA issues, or safely sharing outputs.
 These are instructions, not findings about the current dataset or permission
-to tune. Do not prescribe causal interventions or employee-level actions from
-component weights or predictive importance.
+to fit. Do not prescribe causal interventions or employee-level actions from
+component weights.
 
 ## Header survey overview
 
 Inside the top header, show **Survey name**, **Responses (N)**, **Questions
-analyzed** for SVD (or **Predictors analyzed** for predictive models), and
+analyzed** (or **Questions planned** before execution), and
 **Response rate**. Use the manifest's aggregate `survey` overview, not browser
 calculations against respondent rows. N counts the full input response cohort,
 including reserved rows, not independent people or development-only support.
@@ -162,25 +162,25 @@ remain compatible historical artifacts, but do not automatically become the
 shortlist or replace its candidate framing. Rendering performs no new
 statistical tests, ranking calculations, model fitting or question deletion.
 
-Survey-score targets with a verified 1-K scale use the 0-100 transformation
-for results and error units. Native targets, AUC, probabilities, explained
-variance, component weights and other non-score metrics retain their units.
+For unstandardized survey items already on a verified 0-100 scale,
+reconstruction RMSE is in score points and MSE in score points squared.
+Document any approved input transformation; never transform an already
+0-100 input again. Standardized reconstruction errors retain standardized units.
+Explained variance and signed component unit weights retain their native units.
 No cross-item average score/index is generated. Missing/suppressed is not zero.
 
-Share only aggregate metrics and eligible diagnostics. Tiny confusion cells
-cause the entire matrix to be suppressed; do not expose its margins. Sparse
-calibration bins cause the entire curve to be suppressed. No respondent
-predictions, IDs, scores, component scores, raw comments, link keys, estimator
+Share only aggregate metrics and eligible diagnostics. No respondent
+IDs, scores, component scores, raw comments, link keys, estimator
 objects or private source paths belong in HTML/JSON/CSV/image exports or ZIPs.
 No subset browser filters that could reconstruct hidden results.
 
 The allowlisted package contains `OPEN_REPORT.html`, the distinct
-`advanced-analysis-manifest.json`, aggregate diagnostics/comparison files, clean
+`advanced-analysis-manifest.json`, aggregate SVD diagnostics, clean
 unexecuted `experiment.ipynb` and `reproduce.py`, placeholder
 `experiment-template.json`, and `SHARING_README.txt`. The template retains
 source hashes and approved scientific configuration, not actual input locations.
-Review feature/target names and narrative text for confidentiality before
-sharing. Metadata and models are not automatically anonymous.
+Review question names and narrative text for confidentiality before
+sharing. Metadata and decompositions are not automatically anonymous.
 
 `_private` and project `_holdouts` never enter the ZIP. Existing/stale files
 are not included unless explicitly allowlisted. Self-contained HTML includes
@@ -188,6 +188,6 @@ offline diagnostics downloads; notebook reproduction requires the complete
 plugin, its exact engine/runtime and authorized private files.
 
 The default interpretation status is unavailable. A separate reviewed narrative
-can be embedded after model QA and the Knowledge Vault evidence review. Missing
+can be embedded after SVD QA and the Knowledge Vault evidence review. Missing
 research must not be disguised as an AI People Science finding. No external
 analytics, remote fonts, network scripts, or employee-data services are included.

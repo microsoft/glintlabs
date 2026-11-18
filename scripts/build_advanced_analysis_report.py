@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import csv
-import io
 import json
 import zipfile
 from pathlib import Path
@@ -85,6 +83,7 @@ def validate_item_review(manifest: dict, review: dict) -> None:
 
 
 def build_report(output: Path, manifest: dict, *, include_report: bool = True) -> None:
+    validate(manifest, "advanced-analysis-manifest.schema.json")
     review_artifacts = ()
     if "item_review" in manifest:
         validate_item_review(manifest, manifest["item_review"])
@@ -97,17 +96,7 @@ def build_report(output: Path, manifest: dict, *, include_report: bool = True) -
         write_json(output / "question-removal-candidates.json", manifest["item_candidates"])
         review_artifacts += ("question-removal-candidates.json",)
     write_json(output / "model-diagnostics.json", manifest["summary"])
-    stream = io.StringIO(newline="")
-    writer = csv.writer(stream)
-    writer.writerow(["model", "method", "metric", "validation", "fold_std", "holdout"])
-    for row in manifest["summary"].get("models", []):
-        for metric, value in row["validation"].items():
-            writer.writerow([
-                row["candidate"]["id"], row["candidate"]["method"], metric, value,
-                row["fold_std"][metric], row.get("holdout", {}).get(metric, ""),
-            ])
-    (output / "model-comparison.csv").write_text(stream.getvalue(), encoding="utf-8")
-    artifact_names = (*CODE_ARTIFACTS, "model-diagnostics.json", "model-comparison.csv", *review_artifacts)
+    artifact_names = (*CODE_ARTIFACTS, "model-diagnostics.json", *review_artifacts)
     if include_report:
         (output / "SHARING_README.txt").write_text(
             "Open OPEN_REPORT.html locally. This package contains aggregate diagnostics and clean code only.\n"
@@ -136,7 +125,7 @@ def build_report(output: Path, manifest: dict, *, include_report: bool = True) -
     html = (
         TEMPLATE.read_text(encoding="utf-8")
         .replace("__SVD_INTERPRETATION__", interpretation if has_svd else "")
-        .replace("__MODEL_INTERPRETATION__", "" if has_svd else interpretation)
+        .replace("__NOT_RUN_INTERPRETATION__", "" if has_svd else interpretation)
         .replace("__AGGREGATE_PAYLOAD__", payload)
     )
     (output / "advanced-report.html").write_text(html, encoding="utf-8")

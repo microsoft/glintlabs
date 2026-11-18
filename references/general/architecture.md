@@ -69,19 +69,25 @@ Use pinned package dependencies for production or marketplace usage:
 
 When `vivaglint` changes output columns or analysis semantics, increment the manifest schema version and update downstream skills.
 
-## Advanced modeling
+## Advanced centered SVD
 
 `analyze-survey-advanced` uses the optional `vivaglint.modeling` engine extension,
 a separate pinned advanced runtime, and its own versioned config/manifest
 contracts. It does not broaden the basic runner's analysis list or change basic
-manifest version 1. Model fitting stays in the engine; approval, experiment
+manifest version 1. This skill accepts centered SVD only; its runner and schemas
+reject other tasks, estimator settings, automatic search, and final holdout
+evaluation. Decomposition fitting stays in the engine; approval, experiment
 history, private project holdout state, safe packaging, and conversation guidance
 belong to the advanced orchestration layer. Delivery is inline chat by default;
 HTML reports and share ZIPs require explicit report delivery.
 
-Proactive tuning proposals and research-informed requests for company context
-are encouraged; execution, search and data amendments require explicit user
-authorization. Interpretive context is distinct from approved predictor data.
-The existing Knowledge Vault remains the shared research source. Review-branch
+Proactive component-count/scaling comparisons and research-informed requests
+for company context are encouraged; execution and survey-item amendments require
+explicit user authorization. Interpretive context is distinct from approved
+numeric survey items.
+The existing Knowledge Vault remains the shared research source. Relevant public
+source retrieval is automatic and bounded during SVD interpretation; private
+results/context never enter public lookups, and missing evidence remains explicit.
+Review-branch
 engine pins must be labeled as such until upstream approval; do not silently
 substitute another engine or upgrade the basic environment.

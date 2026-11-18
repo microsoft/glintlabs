@@ -32,7 +32,13 @@
       },
       "additionalProperties": false
     },
-    "summary": {"type": "object"},
+    "summary": {
+      "type": "object",
+      "properties": {
+        "task": {"const": "svd"},
+        "models": {"type": "array", "maxItems": 0}
+      }
+    },
     "artifacts": {
       "type": "array",
       "items": {
@@ -49,5 +55,11 @@
     "item_review": {"type": "object"},
     "item_candidates": {"type": "object"}
   },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "completed"}}},
+      "then": {"properties": {"summary": {"required": ["task", "svd"]}}}
+    }
+  ],
   "additionalProperties": false
 }

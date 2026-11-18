@@ -67,7 +67,7 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 <body>
 <main>
 <header><p>Glint Labs / Expert exploration</p><h1>Advanced survey analysis</h1>
-<p>Collaborative modeling, reproducible diagnostics, and bounded People Science interpretation.</p>
+<p>Centered SVD exploration, reproducible diagnostics, and bounded People Science interpretation.</p>
 <dl class="survey-overview" aria-label="Survey overview">
 <div><dt>Survey name</dt><dd id="survey-name" class="survey-name">Not recorded</dd></div>
 <div><dt>Responses (N)</dt><dd id="survey-response-count">Not available</dd><small>Survey response rows, not necessarily distinct people</small></div>
@@ -76,11 +76,11 @@ details>summary{cursor:pointer;color:var(--colorBrandForeground1)}
 </dl>
 </header>
 <nav aria-label="Report sections">
-<a href="#svd">SVD</a><a href="#interpretation">Interpretation</a><a href="#comparison">Model comparison</a>
-<a href="#diagnostics">Diagnostics</a><a href="#methodology">Methodology</a><a href="#downloads">Downloads</a>
+<a href="#svd">SVD</a><a href="#interpretation">Interpretation</a>
+<a href="#methodology">Methodology</a><a href="#downloads">Downloads</a>
 </nav>
 <section id="svd"><h2>Centered SVD exploration</h2>
-<p class="section-intro muted">Singular value decomposition (SVD) summarizes variation across numeric survey items as a smaller set of components. Use explained variance and item weights to explore shared response patterns; this is not a validated measurement model or a predictive leaderboard.</p>
+<p class="section-intro muted">Singular value decomposition (SVD) summarizes variation across numeric survey items as a smaller set of components. Use explained variance and item weights to explore shared response patterns; this is not a validated measurement model.</p>
 <div class="section-action"><h3>How to action these results</h3><p>Read the highest-weighted items together to form a working hypothesis about each component. Check content coverage and stability before naming a dimension or shortening a survey; a high weight is not a causal priority for intervention.</p></div>
 <p id="svd-summary" class="muted"></p><p id="svd-status" role="status"></p>
 <div id="svd-visuals" hidden>
@@ -122,24 +122,13 @@ __SVD_INTERPRETATION__
 <div class="scroll"><table id="svd-table"></table></div>
 <h3>All signed item weights</h3><div class="scroll"><table id="svd-weights-table"></table></div>
 <h3>Raw diagnostics</h3><pre id="svd-details"></pre></details></section>
-__MODEL_INTERPRETATION__
-<section id="comparison"><div class="section-head"><h2>Model comparison</h2><div class="toolbar" data-table="comparison-table"></div></div>
-<p class="section-intro muted">Compares predictive models on the same development folds. Use the agreed metric and baseline to judge whether a more complex model adds useful predictive accuracy.</p>
-<div class="section-action"><h3>How to action these results</h3><p>Prefer the simplest candidate that meets your agreed improvement criterion over the baseline. Freeze selection and request untouched-holdout evaluation before making a final performance claim; development scores alone do not establish practical usefulness.</p></div>
-<p>Development validation selects candidates. Fold variation is not a confidence interval. Blank holdout values mean not evaluated, not zero.</p>
-<div class="scroll"><table id="comparison-table"></table></div></section>
-<section id="diagnostics"><h2>Selected diagnostics</h2>
-<p class="section-intro muted">Shows performance measures for the model you select, with residuals, calibration, or feature importance when those diagnostics are available. Use training-versus-validation differences to spot possible overfitting.</p>
-<div class="section-action"><h3>How to action these results</h3><p>Use gaps, residual patterns, or calibration issues to propose one bounded next experiment. Review feature meaning and timing, then obtain explicit instruction before changing inputs, settings, or thresholds; predictive importance does not identify causes.</p></div>
-<p>Choosing a view does not retrain a model. Permutation importance is not causal influence; correlated predictors may share importance.</p>
-<label for="model-select">Approved fitted candidate</label><select id="model-select"></select>
-<pre id="diagnostic-details"></pre></section>
+__NOT_RUN_INTERPRETATION__
 <section id="methodology"><h2>Methodology and limitations</h2>
-<p class="section-intro muted">Documents the approved modeling design, repeatability checks, and limitations. Use this section to judge what the results do and do not support.</p>
+<p class="section-intro muted">Documents the approved SVD design, repeatability checks, and limitations. Use this section to judge what the results do and do not support.</p>
 <div class="section-action"><h3>How to action these results</h3><p>Resolve leakage, privacy, measurement, or validation problems before relying on findings. Carry remaining caveats into decisions and shared outputs; deterministic repeatability alone is not evidence of scientific validity.</p></div>
 <p id="qa"></p><p id="scope" class="muted"></p><ul id="limitations"></ul>
-<p>This report cannot establish causes, representative sampling, individual risk, or a deployable prediction service. Native score units and 100-point survey-score units are distinct.</p>
-<h3>Approved modeling design</h3><pre id="design"></pre>
+<p>This exploratory decomposition cannot establish causes or validated constructs. Reconstruction errors describe development rows only; reserved rows are not evaluated. Native input units and standardized units are distinct.</p>
+<h3>Approved SVD design</h3><pre id="design"></pre>
 <h3>Reproducibility and provenance</h3><pre id="provenance"></pre></section>
 <section id="downloads"><h2>Downloads</h2>
 <p class="section-intro muted">Download aggregate diagnostics and the sharing manifest for offline review. The separate share ZIP also includes clean notebook/code and a placeholder configuration; private inputs and fresh approval are required to reproduce.</p>
@@ -156,11 +145,11 @@ const text=(id,value)=>{document.getElementById(id).textContent=value};
 const survey=M.survey||{}, number=value=>Number.isInteger(value)?value.toLocaleString("en-US"):"Not available";
 text("survey-name",survey.name||"Not recorded");
 text("survey-response-count",number(survey.response_count));
-text("survey-feature-label",M.status==="not_run"?"Questions / predictors planned":S.task==="svd"?"Questions analyzed":"Predictors analyzed");
+text("survey-feature-label",M.status==="not_run"?"Questions planned":"Questions analyzed");
 text("survey-feature-count",number(survey.feature_count??S.svd?.features?.length??S.design?.features?.length));
 text("survey-response-rate",typeof survey.response_rate==="number"?`${survey.response_rate.toFixed(1)}%`:"Not available");
 text("survey-response-rate-note",survey.invited_count==null?"Invitation count not recorded":survey.response_rate==null?"Response count unavailable or suppressed":`${number(survey.invited_count)} invited in the confirmed survey scope`);
-text("scope",`${S.task||"Code-only design"} | score units: ${S.score_units||"not applicable"} | ${S.holdout_evaluated?"Final holdout evaluated":"No final holdout result"}`);
+text("scope",`${S.task||"Code-only SVD design"} | Reconstruction is development in-sample, in the approved preprocessing units; reserved rows are not evaluated.`);
 text("qa",`${M.status} / ${M.qa.verdict}. Frozen-fit repeatability: ${M.qa.repeatability}`);
 text("provenance",JSON.stringify(M.provenance,null,2));
 text("design",JSON.stringify(S.design||{},null,2));
@@ -171,12 +160,6 @@ function table(id,headers,rows){
  const body=t.createTBody();for(const values of rows){const row=body.insertRow();for(const value of values){row.insertCell().textContent=value===null||value===undefined?"Not available":String(value)}}
  if(!rows.length){const cell=body.insertRow().insertCell();cell.colSpan=headers.length;cell.textContent="Not run / no eligible result."}
 }
-const comparison=[];for(const row of S.models||[]){for(const [metric,value] of Object.entries(row.validation)){comparison.push([row.candidate.id,row.candidate.method,metric,value,row.fold_std[metric],row.holdout?.[metric]??null])}}
-table("comparison-table",["Candidate","Method","Metric","Development mean","Fold SD","Holdout"],comparison);
-const models=S.models||[], select=document.getElementById("model-select");
-models.forEach((row,index)=>{const option=document.createElement("option");option.value=index;option.textContent=`${row.candidate.id}: ${JSON.stringify(row.candidate.parameters||{})}`;select.append(option)});
-function diagnostics(){text("diagnostic-details",models.length?JSON.stringify(models[Number(select.value)],null,2):"No supervised model was executed.")}
-select.disabled=!models.length;select.addEventListener("change",diagnostics);diagnostics();
 table("svd-table",["Component","Explained variance ratio"],(S.svd?.explained_variance_ratio||[]).map((value,index)=>[index+1,value]));
 text("svd-details",S.svd?JSON.stringify({features:S.svd.features,weights:S.svd.components,reconstruction_rmse:S.svd.reconstruction_rmse},null,2):"SVD not run.");
 function svgNode(tag,attributes={},value){
@@ -302,7 +285,7 @@ else{for(const claim of M.interpretation.claims){const article=document.createEl
 function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type})),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 document.getElementById("download-json").onclick=()=>download("model-diagnostics.json",JSON.stringify(S,null,2),"application/json");
 document.getElementById("download-manifest").onclick=()=>download("advanced-analysis-manifest.json",JSON.stringify(M,null,2),"application/json");
-function context(){return `task=${S.task||"not run"}; candidate=${models[Number(select.value)]?.candidate.id||"none"}; config=${M.config_sha256}`}
+function context(){return `task=${S.task||"not run"}; components=${S.svd?.components?.length??"not run"}; config=${M.config_sha256}`}
 for(const bar of document.querySelectorAll(".toolbar[data-table]")){
  const id=bar.dataset.table,csv=document.createElement("button"),png=document.createElement("button");
  csv.type=png.type="button";csv.textContent="Export CSV";png.textContent="Save PNG";

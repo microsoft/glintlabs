@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Run explicitly approved advanced experiments; never infer permission to tune."""
+"""Run explicitly approved centered SVD survey experiments only."""
 
 from __future__ import annotations
 
@@ -19,6 +19,7 @@ import pandas as pd
 from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
+MODES = ("inspect", "code", "fit", "interpret", "review-items")
 
 
 def digest(value: Any) -> str:
@@ -211,7 +212,6 @@ def export_code(config: dict, output: Path) -> None:
     for number, join in enumerate(portable.get("joins", [])):
         join["source"]["path"] = f"PRIVATE_JOIN_{number + 1}" + Path(join["source"]["path"]).suffix
     write_json(output / "experiment-template.json", portable)
-    mode = "tune" if any(model.get("grid") for model in config["experiment"]["models"]) else "fit"
     code = (
         '"""Supply private inputs and obtain fresh approval before execution.\n'
         'Install the complete plugin and its pinned advanced runtime first.\n'
@@ -220,7 +220,7 @@ def export_code(config: dict, output: Path) -> None:
         'plugin = Path("PATH_TO_COMPLETE_PLUGIN")\n'
         "command = [sys.executable, str(plugin / 'scripts' / 'run_advanced_survey_analysis.py'),\n"
         "           '--config', 'experiment-template.json', '--project-dir', 'PRIVATE_PROJECT',\n"
-        f"           '--output-dir', 'PRIVATE_PROJECT/NEW_RUN', '--mode', '{mode}',\n"
+        "           '--output-dir', 'PRIVATE_PROJECT/NEW_RUN', '--mode', 'fit',\n"
         "           '--approval', 'PRIVATE_APPROVAL.json']\n"
         "if __name__ == '__main__':\n"
         "    subprocess.run(command, check=True)\n"
@@ -241,17 +241,9 @@ def export_code(config: dict, output: Path) -> None:
 def model_qa(summary: dict, repeatability: str) -> dict:
     limitations = list(summary.get("warnings", []))
     verdict = "Not ready" if repeatability != "passed" else "Use with caveats"
-    if summary.get("task") != "svd" and summary.get("models"):
-        models = summary["models"]
-        baselines = [row for row in models if row["candidate"]["method"] == "dummy"]
-        if not baselines:
-            limitations.append("No dummy baseline in this frozen evaluation; consult the originating comparison.")
-        if not summary.get("holdout_evaluated"):
-            limitations.append("Development results only; the final holdout has not been evaluated.")
-        if summary.get("development_reference", {}).get("meets_utility_criterion") is False:
-            limitations.append("No useful baseline improvement under the user-agreed development criterion.")
-    else:
-        limitations.append("Exploratory SVD is not a validated measurement model or a predictive leaderboard.")
+    if summary.get("task") != "svd":
+        raise ValueError("Advanced analysis supports centered SVD only.")
+    limitations.append("Exploratory SVD is not a validated measurement model.")
     return {"verdict": verdict, "repeatability": repeatability, "limitations": limitations}
 
 
@@ -279,6 +271,9 @@ def run(options: argparse.Namespace) -> None:
     config_path = Path(options.config).resolve()
     config = json.loads(config_path.read_text(encoding="utf-8"))
     validate(config, "advanced-analysis-config.schema.json")
+    mode = options.mode
+    if mode not in MODES:
+        raise ValueError(f"Unsupported SVD mode {mode!r}; choose from {', '.join(MODES)}.")
     output = Path(options.output_dir).resolve()
     project = Path(options.project_dir).resolve()
     if output == project or project not in output.parents:
@@ -287,7 +282,6 @@ def run(options: argparse.Namespace) -> None:
     private = output / "_private"
     private.mkdir(exist_ok=True)
     approval = Path(options.approval).resolve() if options.approval else None
-    mode = options.mode
     include_report = getattr(options, "delivery", "chat") == "report"
     if mode == "review-items":
         authorize(approval, config, {"interpret", "share"})
@@ -333,22 +327,7 @@ def run(options: argparse.Namespace) -> None:
     actions = {"code"} if mode == "code" else {"fit", "replay"}
     if config.get("joins") and mode != "code":
         actions.add("join")
-    if mode == "tune":
-        actions.add("tune")
-    if mode == "evaluate":
-        actions.add("evaluate")
     authorize(approval, config, actions)
-    if mode == "evaluate":
-        if not options.frozen_from:
-            raise ValueError("Final evaluation requires --frozen-from from the approved development run.")
-        frozen_path = Path(options.frozen_from).resolve()
-        if project not in frozen_path.parents:
-            raise ValueError("The frozen development configuration must belong to this project.")
-        if json.loads(frozen_path.read_text(encoding="utf-8")) != config:
-            raise ValueError("Final evaluation configuration differs from the frozen development winner.")
-        origin = json.loads((frozen_path.parent.parent / "advanced-analysis-manifest.json").read_text(encoding="utf-8"))
-        if origin["status"] != "completed" or origin["qa"]["repeatability"] != "passed":
-            raise ValueError("The originating development experiment did not pass verification.")
     with (private / "execution-claimed.json").open("x", encoding="utf-8") as handle:
         json.dump({"config_sha256": digest(config), "action": mode}, handle)
     export_code(config, output)
@@ -368,21 +347,12 @@ def run(options: argparse.Namespace) -> None:
         manifest["survey"] = survey_overview(config, frame)
         if len(frame) > config["experiment"]["budget"]["max_rows"]:
             raise ValueError("The loaded/joined data exceeds the approved row budget.")
-        if mode == "fit" and any(model.get("grid") for model in config["experiment"]["models"]):
-            raise PermissionError("Parameter grids require explicit tune mode and tuning consent.")
         ledger = seal_holdout_design(project, config, frame)
         if ledger.exists():
             raise ValueError("This project's source holdout has been consumed. Use genuinely new evaluation data, not a new config.")
-        if mode == "evaluate":
-            # Claim before evaluation; a failed/aborted evaluation must not reopen the holdout.
-            with ledger.open("x", encoding="utf-8") as handle:
-                json.dump({"config_sha256": digest(config), "state": "consumed"}, handle)
         write_json(private / "status.json", {"status": "running", "action": mode})
         started = time.monotonic()
-        result = run_model_experiment(
-            frame, config["experiment"], tuning_authorized=mode == "tune",
-            evaluate_holdout=mode == "evaluate",
-        )
+        result = run_model_experiment(frame, config["experiment"])
         frozen = {**copy.deepcopy(config), "experiment": result["frozen_config"]}
         write_json(private / "frozen-config.json", frozen)
         write_json(private / "split-membership.json", result["private"])
@@ -391,41 +361,17 @@ def run(options: argparse.Namespace) -> None:
         if remaining <= 0:
             raise TimeoutError("The approved experiment budget has no time left for verification.")
         replay_config["budget"]["max_seconds"] = remaining
-        verification = run_model_experiment(frame, replay_config, evaluate_holdout=mode == "evaluate")
-        if config["experiment"]["task"] == "svd":
-            identical = result["summary"] == verification["summary"]
-        else:
-            selected = result["summary"]["selected_model"]
-            primary = next(row for row in result["summary"]["models"] if row["candidate"] == selected)
-            identical = primary == verification["summary"]["models"][0]
-        if not identical:
+        verification = run_model_experiment(frame, replay_config)
+        if result["summary"] != verification["summary"]:
             raise ValueError("Frozen experiment replay disagreed; do not share or interpret these outputs.")
         manifest["status"] = "completed"
         manifest["summary"] = result["summary"]
         manifest["summary"]["design"] = {
-            "target": config["experiment"].get("target"),
             "features": config["experiment"]["features"],
             "validation": config["experiment"]["validation"],
             "seed": config["experiment"]["seed"],
             "split_seed": config["experiment"].get("split_seed", config["experiment"]["seed"]),
         }
-        if config["experiment"]["task"] != "svd":
-            if mode == "evaluate":
-                manifest["summary"]["development_reference"] = origin["summary"].get("development_reference", {})
-            else:
-                rows = result["summary"]["models"]
-                metric = config["experiment"]["metric"]
-                baseline = next((row for row in rows if row["candidate"]["method"] == "dummy"), None)
-                selected = next(row for row in rows if row["candidate"] == result["summary"]["selected_model"])
-                if baseline is not None:
-                    improvement = selected["validation"][metric] - baseline["validation"][metric]
-                    if metric in {"mae", "rmse", "log_loss"}:
-                        improvement = -improvement
-                    manifest["summary"]["development_reference"] = {
-                        "baseline_improvement": improvement,
-                        "utility_threshold": config["experiment"]["utility_threshold"],
-                        "meets_utility_criterion": improvement >= config["experiment"]["utility_threshold"],
-                    }
         manifest["qa"] = model_qa(result["summary"], "passed")
         manifest["qa"]["limitations"].append(
             "Readiness is bounded diagnostic QA, not proof of representative data or useful business performance."
@@ -442,7 +388,7 @@ def main() -> int:
     parser.add_argument("--config", required=True)
     parser.add_argument("--project-dir", required=True)
     parser.add_argument("--output-dir", required=True)
-    parser.add_argument("--mode", required=True, choices=["inspect", "code", "fit", "tune", "evaluate", "interpret", "review-items"])
+    parser.add_argument("--mode", required=True, choices=MODES)
     parser.add_argument("--delivery", choices=["chat", "report"], default="chat",
                         help="Keep aggregate outputs for inline chat (default), or also create an HTML report and share ZIP.")
     parser.add_argument("--approval")
@@ -450,7 +396,6 @@ def main() -> int:
     assessment = parser.add_mutually_exclusive_group()
     assessment.add_argument("--item-review")
     assessment.add_argument("--item-candidates")
-    parser.add_argument("--frozen-from")
     options = parser.parse_args()
     try:
         run(options)

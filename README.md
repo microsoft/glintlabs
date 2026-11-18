@@ -36,10 +36,11 @@ This plugin provides a set of focused skills that share a common analysis contra
    dashboard views, and supplied aggregate results. It retains the platform
    investigation, uses the vault's shared research library, and asks briefly
    for the next useful view when needed to verify an interpretation.
-5. `analyze-survey-advanced` collaborates with expert data scientists on Random
-   Forest, gradient boosting, centered SVD, approved baselines/challengers, and
-   explicitly authorized tuning. It delivers charts and People Science
-   interpretation inline by default, with aggregate diagnostics and clean
+5. `analyze-survey-advanced` supports centered SVD only: collaborative survey-item
+   structure exploration, explicitly approved component-count comparisons, and
+   provisional question-removal review. It automatically retrieves relevant
+   Knowledge Vault evidence for People Science interpretation and delivers that
+   interpretation with charts inline by default, with aggregate diagnostics and clean
    notebook/code in a separate runtime and manifest. HTML reports and share
    ZIPs are optional with `--delivery report`; the basic workflow is unchanged.
 
@@ -162,7 +163,7 @@ Schema: `schemas/analysis-manifest.schema.json`
 | Skill | Use when |
 |---|---|
 | `analyze-survey` | The user wants the standard survey analysis package, QA of output validity/privacy/readiness, or People Science interpretation of existing outputs. |
-| `analyze-survey-advanced` | An expert wants collaborative modeling, explicit tuning, model comparison, centered SVD, reproducible notebooks and research-grounded model interpretation. |
+| `analyze-survey-advanced` | An expert wants centered SVD, approved component comparisons, provisional question-removal review, reproducible notebooks and research-grounded interpretation. |
 | `analyze-survey-ai-preview` | The user explicitly wants the staged AI-summary report experience. |
 | `people-science-knowledge-vault` | The user wants general PS research guidance, published evidence, conceptual explanations, questionnaire review, or research-backed recommendations. |
 | `platform-screenshot-interpretation` | The user wants research-backed interpretation of authorized platform screenshots/results, a useful next view, or read-only Glint navigation. |

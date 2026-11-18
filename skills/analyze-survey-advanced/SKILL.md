@@ -1,15 +1,17 @@
 ---
 name: analyze-survey-advanced
-description: "Collaborate with an expert data scientist on Random Forest, gradient boosting, centered SVD, model comparison, and explicitly authorized tuning of survey data, with reproducible code, diagnostics, and research-grounded interpretation."
+description: "Explore numeric survey-item structure with centered SVD, explicitly approved component comparisons, reproducible diagnostics, and automatic People Science Knowledge Vault grounding for interpretation and question-removal review."
 allowed-tools: Read, Glob, Grep, Bash, WebFetch
 ---
 
 # Advanced survey analysis
 
-Be an active modeling partner for an experienced data scientist. The conversation
+Support centered SVD only. Be an active exploration partner for an experienced
+data scientist. The conversation
 is the interface; Python runs locally through the supported engine only when the
 user authorizes it. This is separate from basic `analyze-survey`, not an extra
-automatic analysis tab or an unrestricted AutoML service.
+automatic analysis tab. Do not offer other analysis methods through this skill.
+The config schema and runner reject non-SVD tasks and unsupported execution modes.
 
 ## Chat-first delivery
 
@@ -37,7 +39,7 @@ chart is displayed when only its file path was returned.
 Do not generate/open HTML, launch a browser, or package a share ZIP by default.
 Only produce those deliverables when the user explicitly requests them, using
 `--delivery report` and the existing report contract. This changes presentation,
-not fit/tune/interpret/share approval, model QA, privacy, or holdout requirements.
+not fit/replay/interpret/share approval, SVD QA, privacy, or holdout requirements.
 
 ## Required grounding
 
@@ -54,7 +56,7 @@ Every decision in this skill must be evidence-led: use inspected data and
 diagnostics, the user's confirmed objective and constraints, and applicable
 safety requirements. Never substitute habit, convenience, arbitrary defaults,
 or an unexplained recommendation for evidence. This includes component count,
-scaling, features, model/parameter choices, validation, metrics, thresholds,
+scaling, survey-item eligibility, development/reserve design, metrics, thresholds,
 and shortlist membership or ordering.
 
 If evidence or context is insufficient, ask the user for the missing information
@@ -86,18 +88,31 @@ same guardrail in demos.
 
 ## Mandatory Knowledge Vault guardrail
 
-Before offering model interpretation or tuning guidance, consult the colocated
+Before offering SVD interpretation or experiment guidance, consult the colocated
 `../people-science-knowledge-vault/SKILL.md` and follow
-`references/interpretation.md`. This is mandatory for all supported models,
-including SVD, demos, follow-up questions and proactive tuning proposals; do not
+`references/interpretation.md`. This is mandatory for
+SVD, demos, follow-up questions and proactive comparison proposals; do not
 wait for the user to request research. Reuse complete, applicable same-revision
 guidance and reviewed source bodies still available in context.
+
+Automatically consult the Knowledge Vault as part of interpreting each
+QA-eligible SVD result; do not make this a separate opt-in or wait for the user
+to ask for insights. Follow the automatic retrieval steps in
+`references/interpretation.md`: use the same-revision vault to select and read
+up to three directly relevant eligible public source bodies. The user's request
+for this analysis authorizes these bounded read-only source lookups; do not ask
+for a separate source-reading approval. This overrides only the vault's optional
+deeper-reading prompt for this skill, not its evidence, privacy, or source rules.
+Reuse applicable reviewed bodies instead of repeatedly retrieving them.
 
 Ground People Science claims in retrieved eligible sources and cite them beside
 the claims they support. Separate observed diagnostics, published guidance,
 hypotheses and technical proposals. Describe supported advice as
 **People Science-grounded**, not **People Science-approved**: vault consultation
 does not establish formal human approval or model validity.
+Connect the guidance to the actual component patterns, question-content
+distinctions, and removal-review uncertainty. Explain a useful implication or
+next check; do not substitute a generic research summary for interpretation.
 
 If required references or sources are unavailable, or no applicable evidence is
 found, disclose the gap and withhold research-dependent advice. Verified numeric
@@ -108,17 +123,18 @@ override evidence-led choices, confirmed constraints or holdout integrity.
 
 ## Collaborate proactively; execute only by instruction
 
-Propose specific tuning ideas based on inspected diagnostics and explain what
+Propose specific SVD rank, scaling, or item-set comparisons based on inspected
+diagnostics and explain what
 each experiment would test, its trade-off, and what would change your conclusion.
 Ask the scientist which they want to try and what they would add, including
-external data sources, constraints, or alternative hypotheses. Do not passively
-wait for them to name every parameter.
+question-level context, constraints, or alternative hypotheses. Do not passively
+wait for them to name every check.
 
-Never tune by yourself unless the user instructs you to. A discussion of a
-budget/search space is not permission to execute a search. Record explicit
+Never run additional comparisons unless the user instructs you to. A discussion
+of a budget/comparison range is not permission to execute new fits. Record explicit
 approval for the exact source-bound experiment and its actions. Changing a
-feature, target, source, model shortlist, parameter, or validation design requires
-renewed approval. No automatically expanded shortlist or installed frameworks.
+survey item, source, component count, scaling, or development/reserve design
+requires renewed approval. No automatically expanded comparison or installed frameworks.
 Explicit approval may cover one bounded batch; it does not cover future batches.
 
 Follow the mandatory Knowledge Vault guardrail for these discussions. When a
@@ -127,13 +143,14 @@ ask for specific company information absent from Glint: for example, whether a
 dated program rollout or organization change affected the relevant population.
 Do not assume it happened or present generic advice as research-backed. Ask one
 focused question at a time; retain declined/unavailable information. Company
-context is user-reported unless verified and is not automatically a predictor.
+context is user-reported unless verified and is not automatically an SVD input.
 
 ## Intake and supported scope
 
-Clarify the decision, confirmed target/task, predictor eligibility and timing,
-respondent/group identity, repeated cycles, missing values, validation objective,
-metrics, utility criterion, company context, and compute limits. Reuse answers
+Clarify the structural or survey-shortening decision, eligible numeric questions
+and response scales, respondent/group identity, repeated cycles, missing values,
+reconstruction/stability objective, protected questions, benchmark/trend and topic
+coverage constraints, company context, and compute limits. Reuse answers
 already given. Do not invoke the basic skill's fixed five-analysis intake.
 Record the confirmed survey name and, when available, its invitation count and
 respondent ID column in the optional config `survey` metadata. Missing invitation
@@ -141,35 +158,31 @@ coverage does not block analysis: show response rate as unavailable, never infer
 it from the export's respondent count.
 Ask whether to execute locally or generate clean code/notebook guidance.
 If demo data is requested, use only the registered Analyze Survey workbook and
-confirm a non-attrition target and eligible cycles before execution.
+confirm eligible engagement/survey cycles and numeric items before execution.
 
-Prioritize RF/GBM and numeric-item centered SVD. Propose a dummy baseline,
-regularized linear/logistic baseline, and an adaptive shortlist of implemented
-challengers such as Extra Trees; execute only approved candidates. Classification
-currently requires confirmed numeric class codes. SVD is exploratory PCA-style
-decomposition, not confirmatory factor analysis, and is not ranked against
-predictive models on incomparable metrics.
+The only supported analysis is numeric-item centered SVD: exploratory PCA-style
+decomposition, not confirmatory factor analysis. Compare approved component
+counts using explained variance, reconstruction error, content coverage, and
+available stability evidence. There is no outcome target or method-selection intake.
 
 Exclude individual attrition prediction, employee risk rankings, causal
-inference/attribution, and sensitive/identifying predictors. Never recommend
-logistic regression as causal analysis; the optional logistic baseline is purely
-a predictive classifier for an authorized non-attrition survey outcome.
+inference/attribution, and sensitive/identifying inputs.
 
 ## Execution and completion
 
 Follow `references/modeling-workflow.md` for inspection, configuration,
-source hashes, approval, runtime, runs, external-data amendments, frozen replay,
-and final evaluation. All fits/searches require explicit authorization; do not
+source hashes, approval, runtime, runs, approved survey-item amendments, and frozen
+replay. All fits/comparisons require explicit authorization; do not
 silently execute a generated notebook. If execution is unavailable, state that
 limit and offer code-only guidance, never fabricated fitted results.
 
-Inspect the advanced manifest and diagnostics before applying model QA.
-Repeatable output is not necessarily a useful or valid model. Keep a final
-holdout untouched until the scientist freezes selection and requests evaluation.
-Do not tune against it or reset its consumed state.
+Inspect the advanced manifest and diagnostics before applying SVD QA.
+Repeatable output is not necessarily a useful or valid decomposition. Keep the
+reserved holdout untouched: this skill does not support final holdout evaluation.
+Do not select components against it or reset an existing consumed state.
 
 For completed work, deliver the chart and full discussion inline. Explain what
-ran, model QA, baseline comparisons, caveats, and what did not run. Retain the
+ran, SVD QA, component-count trade-offs, caveats, and what did not run. Retain the
 aggregate diagnostics, clean notebook/script and portable config template
 locally; offer files only when requested. Present research interpretation
 only after the required evidence review; otherwise mark it unavailable beside
@@ -179,8 +192,8 @@ citations beside the supported guidance. Explain what the results mean and the
 material limits or next check without Observation / Interpretation / Hypothesis
 blocks. For fitted SVD, place it directly beneath the item-weight chart in the
 chat, before component summaries. When an HTML report is explicitly requested,
-keep that same order inside Centered SVD exploration. Other requested reports
-retain a separate interpretation section before Model comparison.
+keep that same order inside Centered SVD exploration. Code-only reports show
+an explicit not-run interpretation state instead of fitted findings.
 
 For every completed, QA-eligible SVD analysis, including demos and structure-only
 explorations, always prepare and attach a ranked shortlist of the top three

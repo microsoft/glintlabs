@@ -24,24 +24,17 @@ def study(tmp_path):
         "Q_support": rng.uniform(1, 5, 240),
         "PRIVATE_COMMENT": ["PRIVATE_EMPLOYEE_SENTINEL"] * 240,
     })
-    frame["Q_outcome"] = 1 + 0.6 * (frame["Q_work"] - 1) + rng.uniform(0, 0.4, 240)
     source = tmp_path / "confidential.csv"
     frame.to_csv(source, index=False)
     config = {
         "schema_version": "1.0.0",
         "source": {"path": str(source), "sha256": runner.file_hash(source)},
         "experiment": {
-            "task": "regression", "features": ["Q_work", "Q_support"],
-            "target": "Q_outcome", "group": "respondent", "seed": 42,
-            "score_scale": 5, "min_group_size": 5, "metric": "mae",
-            "utility_threshold": 0.5,
+            "task": "svd", "features": ["Q_work", "Q_support"],
+            "group": "respondent", "seed": 42, "scale": False,
+            "min_group_size": 5, "metric": "reconstruction_rmse", "components": 2,
             "validation": {"kind": "group", "folds": 3, "holdout_fraction": 0.2, "unseen_groups": True},
-            "models": [
-                {"id": "baseline", "method": "dummy"},
-                {"id": "linear", "method": "linear"},
-                {"id": "forest", "method": "random_forest", "parameters": {"n_estimators": 8}},
-                {"id": "boost", "method": "gradient_boosting", "parameters": {"n_estimators": 8}},
-            ],
+            "models": [],
             "budget": {"threads": 1, "max_trials": 8, "max_rows": 500, "max_seconds": 60},
         },
     }
@@ -60,7 +53,7 @@ def options(study, config, mode="fit", run_name="run", actions=None):
     return argparse.Namespace(
         config=str(path), project_dir=str(root / "project"),
         output_dir=str(root / "project" / run_name), mode=mode,
-        approval=str(approval), narrative=None, frozen_from=None, delivery="report",
+        approval=str(approval), narrative=None, delivery="report",
     )
 
 
@@ -86,7 +79,7 @@ def test_default_cli_delivery_keeps_aggregate_outputs_without_html(study, monkey
     names = {item["path"] for item in manifest["artifacts"]}
     assert names == {
         "experiment-template.json", "experiment.ipynb", "reproduce.py",
-        "model-diagnostics.json", "model-comparison.csv",
+        "model-diagnostics.json",
     }
     assert all(runner.file_hash(output / item["path"]) == item["sha256"] for item in manifest["artifacts"])
     assert not list(output.glob("*.html"))
@@ -94,11 +87,8 @@ def test_default_cli_delivery_keeps_aggregate_outputs_without_html(study, monkey
     assert not (output / "SHARING_README.txt").exists()
 
 
-@pytest.mark.parametrize("task", ["regression", "svd"])
-def test_chat_fit_preserves_verified_diagnostics_without_html(study, task):
+def test_chat_fit_preserves_verified_diagnostics_without_html(study):
     config = study[2]
-    if task == "svd":
-        config["experiment"].update(task="svd", models=[], components=2, metric="reconstruction_rmse")
     opt = options(study, config)
     opt.delivery = "chat"
     runner.run(opt)
@@ -107,7 +97,7 @@ def test_chat_fit_preserves_verified_diagnostics_without_html(study, task):
     assert manifest["status"] == "completed"
     assert manifest["qa"]["repeatability"] == "passed"
     assert json.loads((output / "model-diagnostics.json").read_text()) == manifest["summary"]
-    assert manifest["summary"]["svd" if task == "svd" else "models"]
+    assert manifest["summary"]["svd"]
     assert manifest["interpretation"]["status"] == "unavailable"
     assert (output / "_private" / "frozen-config.json").is_file()
     assert not list(output.glob("*.html"))
@@ -115,7 +105,7 @@ def test_chat_fit_preserves_verified_diagnostics_without_html(study, task):
     assert "PRIVATE_EMPLOYEE_SENTINEL" not in json.dumps(manifest)
 
 
-def test_source_bound_consent_and_no_autonomous_tuning(study):
+def test_source_bound_consent_is_required_for_svd(study):
     config = study[2]
     opt = options(study, config)
     opt.approval = None
@@ -125,13 +115,6 @@ def test_source_bound_consent_and_no_autonomous_tuning(study):
     config["experiment"]["seed"] = 43
     runner.write_json(Path(opt.config), config)
     with pytest.raises(PermissionError, match="stale"):
-        runner.run(opt)
-    config["experiment"]["models"][2]["grid"] = {"max_depth": [2, 4]}
-    opt = options(study, config, actions=["fit", "replay"])
-    with pytest.raises(PermissionError, match="tune mode"):
-        runner.run(opt)
-    opt = options(study, config, mode="tune", actions=["fit", "replay"])
-    with pytest.raises(PermissionError):
         runner.run(opt)
 
 
@@ -145,7 +128,8 @@ def test_end_to_end_report_replay_and_privacy(study):
     manifest = json.loads((output / "advanced-analysis-manifest.json").read_text())
     assert manifest["status"] == "completed"
     assert manifest["qa"]["repeatability"] == "passed"
-    assert manifest["summary"]["development_reference"]["meets_utility_criterion"]
+    assert manifest["summary"]["task"] == "svd"
+    assert manifest["summary"]["models"] == []
     assert manifest["interpretation"]["status"] == "unavailable"
     assert manifest["survey"] == {
         "name": "Engagement pulse", "response_count": 240, "feature_count": 2,
@@ -170,8 +154,7 @@ def test_end_to_end_report_replay_and_privacy(study):
         runner.run(opt)
 
 
-@pytest.mark.parametrize("task", ["regression", "svd"])
-def test_code_only_does_not_read_or_fit_data(study, monkeypatch, task):
+def test_code_only_does_not_read_or_fit_data(study, monkeypatch):
     import vivaglint.modeling
 
     def forbidden(*args, **kwargs):
@@ -179,8 +162,6 @@ def test_code_only_does_not_read_or_fit_data(study, monkeypatch, task):
 
     monkeypatch.setattr(vivaglint.modeling, "run_model_experiment", forbidden)
     config = study[2]
-    if task == "svd":
-        config["experiment"].update(task="svd", models=[], components=2, metric="reconstruction_rmse")
     config["source"]["path"] = "UNAVAILABLE.csv"
     config["survey"] = {
         "name": "Planned pulse", "invited_count": 300, "respondent_column": "respondent",
@@ -197,7 +178,7 @@ def test_code_only_does_not_read_or_fit_data(study, monkeypatch, task):
     html = (Path(opt.output_dir) / "advanced-report.html").read_text(encoding="utf-8")
     assert '<div id="svd-visuals" hidden>' in html
     assert '<section id="interpretation"><h2>' in html
-    assert html.count("<h3>How to action these results</h3>") == 5
+    assert html.count("<h3>How to action these results</h3>") == 3
 
 
 def test_survey_overview_uses_source_title_without_inventing_invitation_coverage(study):
@@ -239,11 +220,8 @@ def test_survey_overview_rejects_misleading_response_rates(study, invalid):
         runner.survey_overview(config, frame)
 
 
-@pytest.mark.parametrize("task", ["regression", "svd"])
-def test_report_leads_with_svd_and_explains_each_section(study, task):
+def test_report_leads_with_svd_and_explains_each_section(study):
     config = study[2]
-    if task == "svd":
-        config["experiment"].update(task="svd", models=[], components=2, metric="reconstruction_rmse")
     opt = options(study, config)
     runner.run(opt)
     html = (Path(opt.output_dir) / "advanced-report.html").read_text(encoding="utf-8")
@@ -254,28 +232,27 @@ def test_report_leads_with_svd_and_explains_each_section(study, task):
     assert 'id="scope"' not in header
     assert 'id="scope"' in methodology
     assert 'id="qa"' in methodology
-    expected = ["svd", "interpretation", "comparison", "diagnostics", "methodology", "downloads"]
-    expected_sections = [section for section in expected if section != "interpretation"] if task == "svd" else expected
+    expected = ["svd", "interpretation", "methodology", "downloads"]
+    expected_sections = [section for section in expected if section != "interpretation"]
     assert re.findall(r'<section id="([^"]+)"', html) == expected_sections
     nav = re.search(r'<nav aria-label="Report sections">(.*?)</nav>', html, re.DOTALL).group(1)
     assert re.findall(r'href="#([^"]+)"', nav) == expected
     sections = dict(re.findall(r'<section id="([^"]+)"[^>]*>(.*?)</section>', html, re.DOTALL))
     assert html.count('id="interpretation"') == 1
     assert html.count('id="narrative"') == 1
-    assert "__SVD_INTERPRETATION__" not in html and "__MODEL_INTERPRETATION__" not in html
-    if task == "svd":
-        assert '<div id="interpretation"><h3>' in sections["svd"]
-        assert html.index('id="svd-chart"') < html.index('id="interpretation"') < html.index('id="svd-components"')
-    else:
-        assert '<section id="interpretation"><h2>' in html
+    assert "__SVD_INTERPRETATION__" not in html and "__NOT_RUN_INTERPRETATION__" not in html
+    assert '<div id="interpretation"><h3>' in sections["svd"]
+    assert html.index('id="svd-chart"') < html.index('id="interpretation"') < html.index('id="svd-components"')
+    assert "Model comparison" not in html
+    assert 'id="model-select"' not in html
+    assert "predictors" not in html.casefold()
+    assert not (Path(opt.output_dir) / "model-comparison.csv").exists()
     intros = {}
     for section, body in sections.items():
         intro = re.search(r'<p class="section-intro muted">(.*?)</p>', body, re.DOTALL)
         if intro:
             intros[section] = intro.group(1)
     assert set(intros) == set(expected) - {"interpretation"}
-    if task != "svd":
-        assert 'class="section-action"' not in sections["interpretation"]
     assert all(intro.strip() for intro in intros.values())
     assert "Singular value decomposition" in intros["svd"]
     assert "variance" in intros["svd"]
@@ -286,26 +263,53 @@ def test_report_leads_with_svd_and_explains_each_section(study, task):
     )
     assert len(actions) == len(expected) - 1
     assert "not a causal priority for intervention" in actions[0]
-    assert "untouched-holdout evaluation" in actions[1]
-    assert "obtain explicit instruction" in actions[2]
+    assert "deterministic repeatability alone" in actions[1]
+    assert "fresh approval" in actions[2]
 
 
-def test_final_holdout_requires_frozen_plan_and_cannot_be_reused(study):
-    initial = options(study, study[2])
-    runner.run(initial)
-    frozen_path = Path(initial.output_dir) / "_private/frozen-config.json"
-    frozen = json.loads(frozen_path.read_text())
-    final = options(study, frozen, "evaluate", "final", ["fit", "replay", "evaluate"])
-    with pytest.raises(ValueError, match="frozen-from"):
-        runner.run(final)
-    final.frozen_from = str(frozen_path)
-    runner.run(final)
-    manifest = json.loads((Path(final.output_dir) / "advanced-analysis-manifest.json").read_text())
-    assert manifest["summary"]["holdout_evaluated"]
-    second = options(study, frozen, "evaluate", "second", ["fit", "replay", "evaluate"])
-    second.frozen_from = str(frozen_path)
+@pytest.mark.parametrize("mode", ["tune", "evaluate", "unsupported"])
+def test_svd_rejects_unsupported_modes_before_reading_data(study, monkeypatch, mode):
+    def forbidden(*args, **kwargs):
+        pytest.fail("An unsupported mode tried to read respondent data.")
+
+    monkeypatch.setattr(runner, "load_data", forbidden)
+    opt = options(study, study[2], mode=mode, actions=["fit", "replay", mode])
+    with pytest.raises(ValueError, match="Unsupported SVD mode"):
+        runner.run(opt)
+    assert not Path(opt.output_dir).exists()
+    monkeypatch.setattr(sys, "argv", [
+        "run_advanced_survey_analysis.py", "--config", opt.config,
+        "--project-dir", opt.project_dir, "--output-dir", opt.output_dir,
+        "--mode", mode,
+    ])
+    with pytest.raises(SystemExit) as exc:
+        runner.main()
+    assert exc.value.code == 2
+
+
+@pytest.mark.parametrize("task", ["regression", "classification"])
+@pytest.mark.parametrize("mode", ["inspect", "code", "fit", "interpret", "review-items"])
+def test_runner_rejects_non_svd_tasks_before_reading_data(study, monkeypatch, task, mode):
+    def forbidden(*args, **kwargs):
+        pytest.fail("A non-SVD task tried to read respondent data.")
+
+    monkeypatch.setattr(runner, "load_data", forbidden)
+    config = study[2]
+    config["experiment"]["task"] = task
+    opt = options(study, config, mode=mode, actions=["code", "fit", "replay", "interpret", "share"])
+    with pytest.raises(ValidationError, match="'svd' was expected"):
+        runner.run(opt)
+    assert not Path(opt.output_dir).exists()
+
+
+def test_svd_preserves_existing_consumed_holdout_state(study):
+    config = study[2]
+    opt = options(study, config)
+    ledger = Path(opt.project_dir) / "_holdouts" / f'{config["source"]["sha256"]}.json'
+    runner.write_json(ledger, {"state": "consumed"})
     with pytest.raises(ValueError, match="consumed"):
-        runner.run(second)
+        runner.run(opt)
+    assert json.loads(ledger.read_text()) == {"state": "consumed"}
 
 
 def test_external_data_needs_consent_cardinality_and_time_checks(study):
@@ -332,7 +336,7 @@ def test_external_data_needs_consent_cardinality_and_time_checks(study):
         runner.load_data(config, root, root / "private")
 
 
-def test_project_preserves_holdout_while_allowing_approved_model_seed_changes(study):
+def test_project_preserves_holdout_while_allowing_approved_seed_changes(study):
     initial = options(study, study[2])
     runner.run(initial)
     expected = json.loads((Path(initial.output_dir) / "_private/split-membership.json").read_text())
@@ -341,7 +345,7 @@ def test_project_preserves_holdout_while_allowing_approved_model_seed_changes(st
     with pytest.raises(ValueError, match="reserved holdout design"):
         runner.run(options(study, config, run_name="moved-holdout"))
     config["experiment"]["split_seed"] = 42
-    revised = options(study, config, run_name="new-model-seed")
+    revised = options(study, config, run_name="new-seed")
     runner.run(revised)
     actual = json.loads((Path(revised.output_dir) / "_private/split-membership.json").read_text())
     assert actual == expected
@@ -753,12 +757,12 @@ def test_shortlist_accepts_three_in_analyst_order_but_rejects_four(count):
     assert not candidates["content_coverage_reviewed"]
 
 
-def test_skill_has_proactive_collaboration_not_autonomous_tuning():
+def test_skill_has_proactive_svd_collaboration_not_autonomous_comparisons():
     skill = (ROOT / "skills/analyze-survey-advanced/SKILL.md").read_text()
     workflow = (ROOT / "skills/analyze-survey-advanced/references/modeling-workflow.md").read_text()
-    assert "Never tune by yourself unless the user instructs you to" in skill
-    assert "Proactively discuss tuning and additional context" in workflow
-    assert "external dataset" in workflow
+    assert "Never run additional comparisons unless the user instructs you to" in skill
+    assert "Proactively discuss SVD comparisons and additional context" in workflow
+    assert "question-level context" in workflow
     assert "specific company information" in skill
     assert "For every completed, QA-eligible SVD analysis, including demos and structure-only" in skill
     assert "always prepare and attach a ranked shortlist of the top three" in skill
@@ -773,7 +777,7 @@ def test_skill_delivers_chart_and_grounded_interpretation_inline_by_default():
     assert "item-weight chart followed immediately by concise People Science-grounded interpretation with citations" in delivery
     assert "Do not generate/open HTML, launch a browser, or package a share ZIP by default." in delivery
     assert "text bar chart with signed values" in delivery
-    assert "not fit/tune/interpret/share approval, model QA, privacy, or holdout requirements" in delivery
+    assert "not fit/replay/interpret/share approval, SVD QA, privacy, or holdout requirements" in delivery
 
 
 def test_skill_requires_evidence_and_comparable_component_options_before_selection():
@@ -789,22 +793,22 @@ def test_skill_requires_evidence_and_comparable_component_options_before_selecti
     assert "development in-sample reconstruction error" in choices
     assert "not cross-validated or holdout reconstruction performance" in choices
     assert "Not computed" in choices
-    assert "not permission to fit or tune" in choices
+    assert "not permission to fit or compare" in choices
     assert "obtain the user's selection" in choices
     assert "Do not invent other-rank reconstruction errors" in choices
     assert "instead of arbitrarily choosing a" in workflow
 
 
-def test_interpretation_and_tuning_require_vault_grounding_without_implied_approval():
+def test_interpretation_and_svd_comparisons_require_vault_grounding_without_implied_approval():
     skill = (ROOT / "skills/analyze-survey-advanced/SKILL.md").read_text()
     workflow = (ROOT / "skills/analyze-survey-advanced/references/modeling-workflow.md").read_text()
     interpretation = (ROOT / "skills/analyze-survey-advanced/references/interpretation.md").read_text()
     guardrail = skill.split("## Mandatory Knowledge Vault guardrail\n", 1)[1].split("\n## ", 1)[0]
     guardrail = " ".join(guardrail.split())
     interpretation = " ".join(interpretation.split())
-    assert "Before offering model interpretation or tuning guidance, consult" in guardrail
+    assert "Before offering SVD interpretation or experiment guidance, consult" in guardrail
     assert "../people-science-knowledge-vault/SKILL.md" in guardrail
-    assert "SVD, demos, follow-up questions and proactive tuning proposals" in guardrail
+    assert "SVD, demos, follow-up questions and proactive comparison proposals" in guardrail
     assert "same-revision" in guardrail
     assert "cite them beside the claims they support" in guardrail
     assert "**People Science-grounded**, not **People Science-approved**" in guardrail
@@ -813,9 +817,23 @@ def test_interpretation_and_tuning_require_vault_grounding_without_implied_appro
     assert "does not authorize fitting" in guardrail
     assert "mandatory Knowledge Vault guardrail" in workflow
     assert "required-reference gate" in interpretation
-    assert "Do not restart intake or refit unchanged models" in interpretation
+    assert "Do not restart intake or refit unchanged decompositions" in interpretation
     assert "unless that specific review is documented" in interpretation
     assert "Keep report interpretation unavailable until" in interpretation
+
+
+def test_svd_automatically_retrieves_vault_evidence_for_useful_interpretation():
+    skill = (ROOT / "skills/analyze-survey-advanced/SKILL.md").read_text()
+    interpretation = (ROOT / "skills/analyze-survey-advanced/references/interpretation.md").read_text()
+    text = " ".join(interpretation.split())
+    assert "Automatically consult the Knowledge Vault" in skill
+    assert "not an optional follow-up" in text
+    assert "do not pause for a separate source-reading approval" in text
+    assert "up to three directly relevant original eligible public source bodies" in text
+    assert "It does not authorize fitting, new diagnostic analyses, private sources, joins, or sharing." in text
+    assert "not boilerplate or a retelling of item IDs" in text
+    assert "retain a data-only explanation" in text
+    assert "private results, item wording, comments, identities, or company context" in text
 
 
 def test_svd_defaults_to_one_through_eight_metrics_and_actionable_guidance():
@@ -835,21 +853,65 @@ def test_svd_defaults_to_one_through_eight_metrics_and_actionable_guidance():
     assert "obtain the user's selection" in choices
 
 
-def test_authorized_finite_tuning_preserves_comparison_and_replays_only_winner(study):
+@pytest.mark.parametrize("change", ["models", "metric", "target", "selected_model", "score_scale", "utility_threshold"])
+def test_svd_config_rejects_estimator_settings_and_unused_outcome_fields(study, change):
     config = study[2]
-    config["experiment"]["models"] = [{
-        "id": "forest", "method": "random_forest",
-        "parameters": {"n_estimators": 5}, "grid": {"max_depth": [2, 4]},
-    }]
-    opt = options(study, config, "tune", actions=["fit", "replay", "tune"])
+    changes = {
+        "models": [{"id": "forest", "method": "random_forest"}],
+        "metric": "mae", "target": "Q_outcome",
+        "selected_model": {"id": "linear", "method": "linear"},
+        "score_scale": 5, "utility_threshold": 0.5,
+    }
+    config["experiment"][change] = changes[change]
+    with pytest.raises(ValidationError):
+        runner.validate(config, "advanced-analysis-config.schema.json")
+
+
+def test_svd_accepts_legacy_zero_utility_placeholder(study):
+    config = study[2]
+    config["experiment"]["utility_threshold"] = 0
+    runner.validate(config, "advanced-analysis-config.schema.json")
+
+
+@pytest.mark.parametrize("invalid", ["task", "missing_task", "missing_svd", "models"])
+def test_sharing_contract_rejects_non_svd_or_incomplete_completed_results(study, invalid):
+    import build_advanced_analysis_report as report
+
+    opt = options(study, study[2], mode="code", actions=["code"])
+    opt.delivery = "chat"
     runner.run(opt)
     output = Path(opt.output_dir)
-    manifest = json.loads((output / "advanced-analysis-manifest.json").read_text())
-    frozen = json.loads((output / "_private/frozen-config.json").read_text())
-    assert len(manifest["summary"]["models"]) == 2
-    assert len(frozen["experiment"]["models"]) == 1
-    assert "grid" not in frozen["experiment"]["models"][0]
-    assert manifest["qa"]["repeatability"] == "passed"
+    manifest_path = output / "advanced-analysis-manifest.json"
+    original = manifest_path.read_bytes()
+    manifest = json.loads(original)
+    manifest.update(status="completed", summary={"task": "svd", "svd": {}, "models": []})
+    if invalid == "task":
+        manifest["summary"]["task"] = "regression"
+    elif invalid == "missing_task":
+        del manifest["summary"]["task"]
+    elif invalid == "missing_svd":
+        del manifest["summary"]["svd"]
+    else:
+        manifest["summary"]["models"] = [{"candidate": {"method": "linear"}}]
+    with pytest.raises(ValidationError):
+        report.build_report(output, manifest, include_report=False)
+    assert manifest_path.read_bytes() == original
+
+
+def test_skill_offers_only_centered_svd():
+    paths = [
+        ROOT / "skills/analyze-survey-advanced/SKILL.md",
+        ROOT / "skills/analyze-survey-advanced/references/modeling-workflow.md",
+        ROOT / "skills/analyze-survey-advanced/references/interpretation.md",
+        ROOT / "skills/analyze-survey-advanced/references/interactive-report-contract.md",
+    ]
+    for path in paths:
+        body = path.read_text().casefold()
+        assert not re.search(r"regression|classification|random.?forest|gradient.boost|extra.trees|rf/gbm", body)
+    skill = paths[0].read_text()
+    assert "Support centered SVD only." in skill
+    assert "no outcome target or method-selection intake" in skill
+    assert "final holdout evaluation" in skill
 
 
 def test_join_rejects_future_data(study):
