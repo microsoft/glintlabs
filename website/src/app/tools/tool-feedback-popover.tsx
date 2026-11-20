@@ -81,8 +81,9 @@ export function ToolFeedbackPopover({ id, title, triggerRef, onSubmit, onDismiss
         }
       }}
       onBlur={event => {
-        // Non-focusable content clears focus; native light dismissal handles outside clicks.
-        if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) onDismiss(false);
+        // Native closure restores focus, including during Strict Mode effect cleanup.
+        if (event.currentTarget.matches(":popover-open") &&
+            event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) onDismiss(false);
       }}
     >
       <form

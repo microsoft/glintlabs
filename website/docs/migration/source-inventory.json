@@ -3654,8 +3654,8 @@
       "source": "src/annual-report-2026/canonical-report.test.ts",
       "destination": "website/src/annual-report-2026/canonical-report.test.ts",
       "sourceSha256": "523b6ea2cc284516e5cb58e76d118082d50aea5a7f207c6f2c3035d7f66ab7e2",
-      "destinationSha256": "abd2f724979012bddacc05dacd223e240d271597f4fb4180d0689afbadcb7e57",
-      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and the approved Caribay quote while retaining placeholder-absence and author-credit checks. Add mobile Figma topics-matrix spacing and natural-row-height coverage while retaining desktop-layout, native-header and nine-cell checks. Verify the survey expansion citation uses the existing 10.32px frame7 superscript style before the sentence punctuation rather than an inline digit. Verify exact wording and scoped emphasis for the three disclaimer sentences in References. Verify all eight decorative quote marks share the local font-independent Figma vector with unchanged 27x26 layout and forced-color-safe inherited color. Require exact sidebar label, destination and order parity with every current page section heading while preserving the retired deep link. Require the approved November 2024 related-research short URL while retaining the external-link accessibility regression. Verify every listening-portfolio popout description, including the owner-requested employee-initiated feedback example, and its use by the shared renderer. Require scoped mobile button centering while preserving compact desktop baseline alignment and mobile touch-target height."
+      "destinationSha256": "830a9df6e825cf76d867f5ce7e6652b8708e1d79f3122070eb80f96dbe8901bd",
+      "intentionalDifference": "BUG-001: add a source regression for the blue Some exposure outline while retaining its grid geometry and yellow dot treatment. Also verify Chad Bennett's corrected LinkedIn URL and accessible label, and the approved Caribay quote while retaining placeholder-absence and author-credit checks. Add mobile Figma topics-matrix spacing and natural-row-height coverage while retaining desktop-layout, native-header and nine-cell checks. Verify the survey expansion citation uses the existing 10.32px frame7 superscript style before the sentence punctuation rather than an inline digit. Verify exact wording and scoped emphasis for the three disclaimer sentences in References. Verify all eight decorative quote marks share the local font-independent Figma vector with unchanged 27x26 layout and forced-color-safe inherited color. Require exact sidebar label, destination and order parity with every current page section heading while preserving the retired deep link. Require the approved November 2024 related-research short URL while retaining the external-link accessibility regression. Verify every listening-portfolio popout description, including the owner-requested employee-initiated feedback example, and its use by the shared renderer. Require scoped mobile button centering while preserving compact desktop baseline alignment and mobile touch-target height. Update the shared navigation brand gap to the reviewed 16px Glint-logo lockup."
     },
     {
       "source": "src/annual-report-2026/channel-portfolio.tsx",
@@ -3766,15 +3766,15 @@
       "source": "src/app/_components/site-navigation.module.css",
       "destination": "website/src/app/_components/site-navigation.module.css",
       "sourceSha256": "f93a02088788e11ac18329475cbf614a165c9daaacdf2b6cbf0f4fd4cededeef",
-      "destinationSha256": "f93a02088788e11ac18329475cbf614a165c9daaacdf2b6cbf0f4fd4cededeef",
-      "intentionalDifference": ""
+      "destinationSha256": "bbd92301627b9bb85797f71e6e441709c706ae2e7640cbfa79b544768d644486",
+      "intentionalDifference": "Add the reviewed Glint logo lockup with separate logo sizing and a 6px mark-to-name gap, preserving mobile navigation fit."
     },
     {
       "source": "src/app/_components/site-navigation.tsx",
       "destination": "website/src/app/_components/site-navigation.tsx",
       "sourceSha256": "02e13179a8360506b045cf850bd14a831819abdf675cfb0fa55dad819c8efb83",
-      "destinationSha256": "02e13179a8360506b045cf850bd14a831819abdf675cfb0fa55dad819c8efb83",
-      "intentionalDifference": ""
+      "destinationSha256": "41cbad3f26a5b0f5c2f3681882a249fe59a17ed261d9f25a0552422fd2741f1f",
+      "intentionalDifference": "Reuse the existing decorative Glint mark beside the navigation name, with the inverse asset on the Annual Report header."
     },
     {
       "source": "src/app/_components/studio-report-viewport.tsx",

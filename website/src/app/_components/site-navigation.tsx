@@ -74,6 +74,7 @@ export function SiteNavigation({
       <Image
         alt=""
         aria-hidden="true"
+        className={styles.microsoftMark}
         height={18}
         priority
         src={
@@ -85,7 +86,18 @@ export function SiteNavigation({
         width={81}
       />
       <span aria-hidden="true" className={styles.brandDivider} />
-      <span translate="no">Glint Labs</span>
+      <span className={styles.brandName} translate="no">
+        <Image
+          alt=""
+          aria-hidden="true"
+          className={styles.glintMark}
+          height={20}
+          src={isAnnualReport ? "/figma/nav-viva-glint-annual-report.svg" : "/figma/nav-viva-glint-core.svg"}
+          unoptimized
+          width={20}
+        />
+        <span>Glint Labs</span>
+      </span>
     </>
   );
 

@@ -39,8 +39,10 @@
 .link[aria-disabled="true"] { pointer-events: none; }
 .link:focus-visible { outline: 3px solid var(--site-focus); outline-offset: 3px; }
 .annualReport .link:focus-visible { outline-color: var(--annual-focus); }
-.brand { gap: 20px; padding: 8px 16px; font-weight: 600; }
-.brand img { display: block; width: 81px; height: auto; }
+.brand { gap: 16px; padding: 8px 16px; font-weight: 600; }
+.microsoftMark { display: block; width: 81px; height: auto; flex-shrink: 0; }
+.brandName { display: inline-flex; align-items: center; gap: 6px; }
+.glintMark { display: block; width: 20px; height: 20px; flex-shrink: 0; }
 .brandDivider { width: 1px; height: 24px; background: #dedede; }
 .annualReport .brandDivider { background: #3d3d3d; }
 :global(html[data-hero-transition]) .navigation { view-transition-name: annual-navigation; }
@@ -52,7 +54,6 @@
   .navigation:not(.reportPreview) .menuToggle { display: inline-flex; }
   .navigation:not(.reportPreview) .link { min-height: 44px; font-size: 14px; }
   .navigation:not(.reportPreview) .brand { gap: 12px; padding-inline: 12px; }
-  .navigation:not(.reportPreview) .brand img { width: 81px; }
   .navigation:not(.reportPreview) .items { display: none; flex-direction: column; gap: 4px; margin-top: 8px; padding: 6px; border-radius: 16px; background: var(--site-paper); }
   .annualReport:not(.reportPreview) .items { background: var(--annual-canvas); }
   .navigation:not(.reportPreview)[data-menu-open] .items { display: flex; }
@@ -66,7 +67,6 @@
   .reportPreview .menuToggle { display: inline-flex; }
   .reportPreview .link { min-height: 44px; font-size: 14px; }
   .reportPreview .brand { gap: 12px; padding-inline: 12px; }
-  .reportPreview .brand img { width: 81px; }
   .reportPreview .items { display: none; flex-direction: column; gap: 4px; margin-top: 8px; padding: 6px; border-radius: 16px; background: var(--site-paper); }
   .annualReport.reportPreview .items { background: var(--annual-canvas); }
   .reportPreview[data-menu-open] .items { display: flex; }
