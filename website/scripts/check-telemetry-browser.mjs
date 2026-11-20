@@ -9,7 +9,13 @@ import { collectorUrl, parseEvent, productionOrigin } from "../src/telemetry/con
 import { legacyConsentKeys, visitorKey } from "../src/telemetry/client.ts";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
-const local = "http://127.0.0.1:3011";
+const devOrigin = process.env.GLINTLABS_FEEDBACK_DEV_ORIGIN;
+if (devOrigin) {
+  const url = new URL(devOrigin);
+  assert.ok(url.protocol === "http:" && ["127.0.0.1", "localhost"].includes(url.hostname) &&
+    url.origin === devOrigin, "Feedback dev checks require a loopback HTTP origin.");
+}
+const local = devOrigin ?? "http://127.0.0.1:3011";
 const chrome = [
   process.env.CHROME_PATH,
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
@@ -31,8 +37,8 @@ const networkFailureWaiters = new Map();
 const interceptions = new Set();
 const requestLoaders = new Map();
 let stalePrefetches = 0;
-const clarityExpected = process.env.GLINTLABS_PAGES_CLARITY === "true";
-const telemetryExpected = process.env.GLINTLABS_PAGES_TELEMETRY !== "false";
+const clarityExpected = !devOrigin && process.env.GLINTLABS_PAGES_CLARITY === "true";
+const telemetryExpected = !devOrigin && process.env.GLINTLABS_PAGES_TELEMETRY !== "false";
 let rejectClarity = false;
 let socket;
 let sequence = 0;
@@ -127,10 +133,10 @@ async function intercept({ requestId, request }) {
 
 async function go(route, origin = productionOrigin) {
   await Promise.all([...interceptions]);
-  const url = new URL(`${origin}/glintlabs${route}`);
+  const url = new URL(`${devOrigin ?? origin}${devOrigin ? "" : "/glintlabs"}${route}`);
   const { loaderId } = await send("Page.navigate", { url: url.href });
   await waitFor(() => loadedDocuments.has(loaderId), `Page did not finish loading: ${route}`);
-  await waitFor(() => evaluate(`location.pathname === ${JSON.stringify(url.pathname)} &&
+  await waitFor(() => evaluate(`location.pathname.replace(/\\/$/,"") === ${JSON.stringify(url.pathname.replace(/\/$/, ""))} &&
     document.readyState === "complete"`), `Page failed to load: ${route}`);
 }
 
@@ -144,11 +150,13 @@ async function changePreference(key, choice) {
 }
 
 try {
-  let listening = false;
-  start(process.execPath, ["scripts/serve-pages.mjs"]).stdout.on("data", chunk => {
-    if (chunk.toString().includes("Pages preview:")) listening = true;
-  });
-  await waitFor(() => listening, "Cannot start preview; port 3011 must be free.");
+  if (!devOrigin) {
+    let listening = false;
+    start(process.execPath, ["scripts/serve-pages.mjs"]).stdout.on("data", chunk => {
+      if (chunk.toString().includes("Pages preview:")) listening = true;
+    });
+    await waitFor(() => listening, "Cannot start preview; port 3011 must be free.");
+  }
   start(chrome, [
     "--headless=new", "--disable-gpu", "--no-first-run", "--no-default-browser-check",
     "--remote-debugging-port=0", `--user-data-dir=${profile}`, "about:blank",
@@ -382,6 +390,11 @@ try {
       if (clarityExpected) await waitFor(() => evaluate("Array.isArray(window.__clarityCalls)"), "Clarity did not initialize.");
       assert.equal(await evaluate('document.querySelectorAll("button[data-glintlabs-feedback]").length'), 2);
       assert.equal(await evaluate('document.querySelectorAll(\'button[data-glintlabs-feedback*="knowledge_vault"]\').length'), 0);
+      if (devOrigin) {
+        await clickAt(down);
+        await waitFor(() => evaluate(`!!${reasonForm}`), "Pointer activation did not leave reasons open in the dev preview.");
+        await pressEscape();
+      }
       await clickAt(up);
       await confirmation();
       await expectFeedback([expectedRatings[0]]);
