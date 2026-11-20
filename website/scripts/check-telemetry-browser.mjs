@@ -26,6 +26,11 @@ const events = [];
 const warnings = [];
 const clarityRequests = [];
 const loadedDocuments = new Set();
+const networkFailures = new Map();
+const networkFailureWaiters = new Map();
+const interceptions = new Set();
+const requestLoaders = new Map();
+let stalePrefetches = 0;
 const clarityExpected = process.env.GLINTLABS_PAGES_CLARITY === "true";
 const telemetryExpected = process.env.GLINTLABS_PAGES_TELEMETRY !== "false";
 let rejectClarity = false;
@@ -121,6 +126,7 @@ async function intercept({ requestId, request }) {
 }
 
 async function go(route, origin = productionOrigin) {
+  await Promise.all([...interceptions]);
   const url = new URL(`${origin}/glintlabs${route}`);
   const { loaderId } = await send("Page.navigate", { url: url.href });
   await waitFor(() => loadedDocuments.has(loaderId), `Page did not finish loading: ${route}`);
@@ -163,12 +169,37 @@ try {
   });
   socket.addEventListener("message", ({ data }) => {
     const message = JSON.parse(data);
+    if (message.method === "Network.requestWillBeSent") requestLoaders.set(message.params.requestId, message.params.loaderId);
+    if (message.method === "Network.loadingFailed") {
+      networkFailures.set(message.params.requestId, message.params);
+      networkFailureWaiters.get(message.params.requestId)?.(message.params);
+    }
     if (message.method === "Page.lifecycleEvent" && message.params.name === "load") loadedDocuments.add(message.params.loaderId);
     if (message.method === "Fetch.requestPaused") {
-      void intercept(message.params).catch(error => failures.push(new Error(
-        `Intercept failed: ${message.params.request.url}`,
-        { cause: error },
-      )));
+      const interception = intercept(message.params).catch(async error => {
+        const networkId = message.params.networkId;
+        const networkFailure = networkFailures.get(networkId) ?? await new Promise(resolve => {
+          const timer = setTimeout(() => { networkFailureWaiters.delete(networkId); resolve(null); }, 1000);
+          networkFailureWaiters.set(networkId, failure => {
+            clearTimeout(timer);
+            networkFailureWaiters.delete(networkId);
+            resolve(failure);
+          });
+        });
+        const url = new URL(message.params.request.url);
+        const readerPrefetch = url.pathname.startsWith("/glintlabs/_next/static/") ||
+          (url.pathname.startsWith("/glintlabs/") && url.pathname.endsWith("/index.txt") && url.searchParams.has("_rsc"));
+        // Chromium can abandon speculative reader loads before creating a Network request.
+        if (error.code === -32602 && error.message === "Invalid InterceptionId." &&
+            !requestLoaders.has(networkId) && !networkFailure &&
+            url.origin === productionOrigin && readerPrefetch) {
+          stalePrefetches++;
+          return;
+        }
+        failures.push(new Error(`Intercept failed: ${message.params.request.url}; network failure=${JSON.stringify(networkFailure)}`,
+          { cause: error }));
+      }).finally(() => interceptions.delete(interception));
+      interceptions.add(interception);
     }
     if (message.method === "Runtime.exceptionThrown") failures.push(new Error(JSON.stringify(message.params)));
     if (message.method === "Runtime.consoleAPICalled" && message.params.type === "warning") {
@@ -178,12 +209,13 @@ try {
     if (!request) return;
     pending.delete(message.id);
     clearTimeout(request.timer);
-    if (message.error) request.reject(new Error(JSON.stringify(message.error)));
+    if (message.error) request.reject(Object.assign(new Error(message.error.message), { code: message.error.code }));
     else request.resolve(message.result);
   });
   await send("Page.enable");
   await send("Page.setLifecycleEventsEnabled", { enabled: true });
   await send("Runtime.enable");
+  await send("Network.enable");
   await send("Fetch.enable", { patterns: [{ urlPattern: "*" }] });
   await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 900, deviceScaleFactor: 1, mobile: false });
   if (telemetryExpected) {
@@ -532,7 +564,9 @@ try {
     assert.equal(await evaluate('document.querySelector("footer").textContent.includes("Microsoft Clarity")'), false);
   }
   if (!telemetryExpected) assert.equal(events.length, 0, "Disabled Supabase tracker sent events.");
+  await Promise.all([...interceptions]);
   if (failures.length) throw failures[0];
+  if (stalePrefetches) console.log(`Ignored ${stalePrefetches} abandoned speculative static interceptions; active and vendor request failures remain fatal.`);
   console.log(`Telemetry browser checks passed (Supabase=${telemetryExpected}, Clarity=${clarityExpected}): Analyze Survey feedback across 8 responsive states and 2 short touch viewports, keyboard/pointer behavior, axe, fixed events and repeat suppression, no consent UI, regional consent left to Clarity, production/route/privacy gates, lifecycle and failure isolation. All vendor requests intercepted; no test data sent to Supabase or Clarity. Vendor geolocation itself requires live regional verification.`);
 } finally {
   stopping = true;
