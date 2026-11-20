@@ -6,6 +6,7 @@ import { clarityEnabled } from "./config";
 import {
   browserPrivacyRequested, createPreferenceCheck, isProductionLocation, legacyConsentKeys, locationPath,
 } from "./client";
+import { getToolFeedbackReasonEvents, isToolFeedbackEvent, toolFeedbackReasonsEvent } from "./tool-feedback";
 
 type Clarity = ((...args: unknown[]) => void) & { q?: unknown[][] };
 
@@ -59,8 +60,28 @@ export function SiteClarity() {
     const onStorage = (event: StorageEvent) => {
       if (event.key === null || legacyConsentKeys.some(key => key === event.key)) sync();
     };
+    const emitFeedback = (names: string[]) => {
+      if (!names.length) return;
+      sync();
+      if (script && !stopped) {
+        for (const name of names) window.clarity?.("event", name);
+      }
+    };
+    const onFeedback = (event: MouseEvent) => {
+      if (event.defaultPrevented || !(event.target instanceof Element)) return;
+      const name = event.target.closest("button[data-glintlabs-feedback]")?.getAttribute("data-glintlabs-feedback");
+      if (!name || !isToolFeedbackEvent(name)) return;
+      emitFeedback([name]);
+    };
+    const onFeedbackReasons = (event: Event) => {
+      if (!(event instanceof CustomEvent) || !event.detail || typeof event.detail !== "object") return;
+      const detail = event.detail as { tool?: unknown; reasons?: unknown };
+      emitFeedback(getToolFeedbackReasonEvents(detail.tool, detail.reasons));
+    };
     synchronize.current = sync;
     sync();
+    document.addEventListener("click", onFeedback);
+    document.addEventListener(toolFeedbackReasonsEvent, onFeedbackReasons);
     window.addEventListener("storage", onStorage);
     window.addEventListener("focus", sync);
     document.addEventListener("visibilitychange", sync);
@@ -68,6 +89,8 @@ export function SiteClarity() {
       window.removeEventListener("storage", onStorage);
       window.removeEventListener("focus", sync);
       document.removeEventListener("visibilitychange", sync);
+      document.removeEventListener("click", onFeedback);
+      document.removeEventListener(toolFeedbackReasonsEvent, onFeedbackReasons);
       synchronize.current = null;
       stop();
     };

@@ -25,6 +25,7 @@ const pending = new Map();
 const events = [];
 const warnings = [];
 const clarityRequests = [];
+const loadedDocuments = new Set();
 const clarityExpected = process.env.GLINTLABS_PAGES_CLARITY === "true";
 const telemetryExpected = process.env.GLINTLABS_PAGES_TELEMETRY !== "false";
 let rejectClarity = false;
@@ -121,7 +122,8 @@ async function intercept({ requestId, request }) {
 
 async function go(route, origin = productionOrigin) {
   const url = new URL(`${origin}/glintlabs${route}`);
-  await send("Page.navigate", { url: url.href });
+  const { loaderId } = await send("Page.navigate", { url: url.href });
+  await waitFor(() => loadedDocuments.has(loaderId), `Page did not finish loading: ${route}`);
   await waitFor(() => evaluate(`location.pathname === ${JSON.stringify(url.pathname)} &&
     document.readyState === "complete"`), `Page failed to load: ${route}`);
 }
@@ -161,7 +163,13 @@ try {
   });
   socket.addEventListener("message", ({ data }) => {
     const message = JSON.parse(data);
-    if (message.method === "Fetch.requestPaused") void intercept(message.params).catch(error => failures.push(error));
+    if (message.method === "Page.lifecycleEvent" && message.params.name === "load") loadedDocuments.add(message.params.loaderId);
+    if (message.method === "Fetch.requestPaused") {
+      void intercept(message.params).catch(error => failures.push(new Error(
+        `Intercept failed: ${message.params.request.url}`,
+        { cause: error },
+      )));
+    }
     if (message.method === "Runtime.exceptionThrown") failures.push(new Error(JSON.stringify(message.params)));
     if (message.method === "Runtime.consoleAPICalled" && message.params.type === "warning") {
       warnings.push(message.params.args.map(argument => argument.value).join(" "));
@@ -174,6 +182,7 @@ try {
     else request.resolve(message.result);
   });
   await send("Page.enable");
+  await send("Page.setLifecycleEventsEnabled", { enabled: true });
   await send("Runtime.enable");
   await send("Fetch.enable", { patterns: [{ urlPattern: "*" }] });
   await send("Emulation.setDeviceMetricsOverride", { width: 320, height: 900, deviceScaleFactor: 1, mobile: false });
@@ -296,6 +305,165 @@ try {
   }
   await go("/");
   await waitFor(() => evaluate('!!document.querySelector("footer")'), "Public footer did not render.");
+  assert.equal(await evaluate('document.querySelectorAll("button[data-glintlabs-feedback]").length'), 2,
+    "Analyze Survey needs thumbs up/down controls, without restoring a Knowledge Vault card.");
+  const up = 'document.querySelector(\'button[data-glintlabs-feedback="tool_analyze_survey_thumbs_up"]\')';
+  const down = 'document.querySelector(\'button[data-glintlabs-feedback="tool_analyze_survey_thumbs_down"]\')';
+  const reasonForm = 'document.querySelector(\'[popover][role="dialog"]:popover-open form\')';
+  const feedbackCalls = () => evaluate('(window.__clarityCalls ?? []).filter(args => args[0] === "event")');
+  const expectFeedback = async names => {
+    assert.deepEqual(await feedbackCalls(), clarityExpected ? names.map(name => ["event", name]) : []);
+  };
+  const confirmation = () => waitFor(() => evaluate(`!${reasonForm} &&
+    document.querySelector("[popover]:popover-open")?.textContent === "Thanks for the feedback"`),
+  "Feedback must show its text-only acknowledgment.");
+  const pressEscape = async () => {
+    await send("Input.dispatchKeyEvent", { type: "keyDown", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
+    await send("Input.dispatchKeyEvent", { type: "keyUp", key: "Escape", code: "Escape", windowsVirtualKeyCode: 27 });
+    await waitFor(() => evaluate('!document.querySelector("[popover]:popover-open")'), "Feedback did not dismiss.");
+  };
+  const clickAt = async selector => {
+    const position = await evaluate(`(() => {
+      const element = ${selector};
+      element.scrollIntoView({block:"center",behavior:"instant"});
+      const r = element.getBoundingClientRect();
+      const x = r.x+r.width/2, y = r.y+r.height/2;
+      if (!element.contains(document.elementFromPoint(x,y))) {
+        throw Error("Feedback pointer target is obscured: " + JSON.stringify({
+          selector:${JSON.stringify(selector)},x,y,hit:document.elementFromPoint(x,y)?.outerHTML.slice(0,200)
+        }));
+      }
+      return {x,y};
+    })()`);
+    await send("Input.dispatchMouseEvent", { type: "mousePressed", button: "left", clickCount: 1, ...position });
+    await send("Input.dispatchMouseEvent", { type: "mouseReleased", button: "left", clickCount: 1, ...position });
+  };
+  const expectedRatings = ["tool_analyze_survey_thumbs_up", "tool_analyze_survey_thumbs_down"];
+  const expectedReasons = [
+    ...expectedRatings, "tool_analyze_survey_thumbs_down_reason_not_useful",
+    "tool_analyze_survey_thumbs_down_reason_hard_to_use",
+  ];
+  for (const width of [320, 390, 768, 1440]) {
+    for (const route of ["/", "/tools/"]) {
+      await send("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
+      await go(route);
+      if (clarityExpected) await waitFor(() => evaluate("Array.isArray(window.__clarityCalls)"), "Clarity did not initialize.");
+      assert.equal(await evaluate('document.querySelectorAll("button[data-glintlabs-feedback]").length'), 2);
+      assert.equal(await evaluate('document.querySelectorAll(\'button[data-glintlabs-feedback*="knowledge_vault"]\').length'), 0);
+      await clickAt(up);
+      await confirmation();
+      await expectFeedback([expectedRatings[0]]);
+      assert.equal(await evaluate(`${up}.getAttribute("aria-pressed")`), "true");
+      const placement = await evaluate(`(() => {
+        const panel = document.querySelector("[popover]:popover-open");
+        const r = panel.getBoundingClientRect(), anchor = ${up}.getBoundingClientRect();
+        const centered = anchor.x + (anchor.width - r.width) / 2;
+        const left = Math.max(16, Math.min(centered, innerWidth - 16 - r.width));
+        return {fits:r.left >= 15 && r.right <= innerWidth-15, centered:Math.abs(r.left-left)<2,
+          noIcon:!panel.querySelector("svg"), announced:document.querySelector('[role="status"]').textContent};
+      })()`);
+      assert.deepEqual(placement, { fits: true, centered: true, noIcon: true, announced: "Thanks for the feedback on Analyze Survey." });
+      if (width === 320 && route === "/") {
+        const start = Date.now();
+        await waitFor(() => evaluate('!document.querySelector("[popover]:popover-open")'), "Acknowledgment did not auto-dismiss.");
+        assert.ok(Date.now() - start >= 2500, "Acknowledgment disappeared too early.");
+        assert.equal(await evaluate(`${up}.getAttribute("aria-pressed")`), "true");
+      } else await pressEscape();
+      await evaluate(`${up}.click()`);
+      await confirmation();
+      await expectFeedback([expectedRatings[0]]);
+      await pressEscape();
+      await evaluate(`${down}.focus()`);
+      await send("Input.dispatchKeyEvent", { type: "keyDown", key: " ", code: "Space", windowsVirtualKeyCode: 32, text: " " });
+      await send("Input.dispatchKeyEvent", { type: "keyUp", key: " ", code: "Space", windowsVirtualKeyCode: 32 });
+      await waitFor(() => evaluate(`!!${reasonForm}`), "Keyboard activation did not open reasons.");
+      await expectFeedback(expectedRatings);
+      assert.equal(await evaluate(`${reasonForm}.querySelector("button[type=submit]").disabled`), true);
+      await evaluate(`${reasonForm}.requestSubmit()`);
+      assert.equal(await evaluate(`!!${reasonForm}`), true, "Empty submission must not acknowledge or close.");
+      await clickAt(`${reasonForm}.querySelector("legend")`);
+      assert.equal(await evaluate(`!!${reasonForm}`), true, "Internal text clicks must not dismiss reasons.");
+      await clickAt(`${reasonForm}.querySelector("label")`);
+      assert.equal(await evaluate(`${reasonForm}.querySelector('input[value="not_useful"]').checked`), true);
+      await evaluate(`${reasonForm}.querySelector('input[value="not_useful"]').click()`);
+      assert.equal(await evaluate(`${reasonForm}.querySelector("button[type=submit]").disabled`), true);
+      await evaluate(`${reasonForm}.querySelector('input[value="not_useful"]').click();
+        ${reasonForm}.querySelector('input[value="hard_to_use"]').click()`);
+      await expectFeedback(expectedRatings);
+      await evaluate(`(() => {
+        const form = ${reasonForm};
+        form.requestSubmit(); form.requestSubmit();
+      })()`);
+      await confirmation();
+      await expectFeedback(expectedReasons);
+      assert.equal(await evaluate(`document.activeElement === ${down}`), true);
+      await pressEscape();
+      await evaluate(`${down}.click()`);
+      await waitFor(() => evaluate(`!!${reasonForm}`), "Selected thumb must reopen reasons.");
+      await pressEscape();
+      assert.equal(await evaluate(`document.activeElement === ${down}`), true);
+      await expectFeedback(expectedReasons);
+      await evaluate(`${down}.click()`);
+      await waitFor(() => evaluate(`!!${reasonForm}`), "Reasons did not reopen.");
+      await clickAt('document.querySelector("h2")');
+      await waitFor(() => evaluate(`!${reasonForm}`), "Outside click did not dismiss reasons.");
+      await evaluate(`${down}.click()`);
+      await waitFor(() => evaluate(`!!${reasonForm}`), "Reasons did not reopen for accessibility check.");
+      await evaluate(`${await readFile(path.join(root, "node_modules/axe-core/axe.min.js"), "utf8")}\ntrue`);
+      assert.deepEqual(await evaluate(`(async () => (await axe.run(
+        document.querySelector('[popover][role="dialog"]:popover-open'),
+        {runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21aa"]}})).violations)()`), []);
+      await pressEscape();
+      assert.equal(await evaluate('document.documentElement.scrollWidth <= innerWidth'), true, "Feedback caused horizontal overflow.");
+    }
+  }
+  for (const [width, height] of [[320, 568], [1440, 480]]) {
+    await send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: width === 320 });
+    await send("Emulation.setTouchEmulationEnabled", { enabled: true });
+    await go("/tools/");
+    if (clarityExpected) await waitFor(() => evaluate("Array.isArray(window.__clarityCalls)"), "Clarity did not initialize.");
+    const point = await evaluate(`(() => {
+      ${down}.scrollIntoView({block:"center",behavior:"instant"});
+      const r=${down}.getBoundingClientRect();
+      return {x:r.x+r.width/2,y:r.y+r.height/2};
+    })()`);
+    await send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [point] });
+    await send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+    await waitFor(() => evaluate(`!!${reasonForm}`), "Touch did not open feedback.");
+    assert.equal(await evaluate(`(() => {
+      const r=${reasonForm}.parentElement.getBoundingClientRect();
+      return r.left>=15 && r.right<=innerWidth-15 && r.top>=15 && r.bottom<=innerHeight-15;
+    })()`), true, "Short-screen reasons must fit the viewport.");
+    await evaluate(`${reasonForm}.querySelector('input[value="technical_issue"]').click()`);
+    await clickAt(`${reasonForm}.querySelector("button[type=submit]")`);
+    await confirmation();
+    await expectFeedback([expectedRatings[1], "tool_analyze_survey_thumbs_down_reason_technical_issue"]);
+    await pressEscape();
+    await send("Emulation.setTouchEmulationEnabled", { enabled: false });
+  }
+  if (clarityExpected) {
+    await go("/tools/");
+    await waitFor(() => evaluate("Array.isArray(window.__clarityCalls)"), "Clarity did not reload.");
+    await evaluate(`${down}.click()`);
+    await waitFor(() => evaluate(`!!${reasonForm}`), "Reason form did not open.");
+    await evaluate(`document.dispatchEvent(new CustomEvent("glintlabs:tool-feedback-reasons",
+      {detail:{tool:"knowledge-vault",reasons:["not_useful"]}}))`);
+    await expectFeedback([expectedRatings[1]]);
+    await evaluate(`${reasonForm}.querySelector('input[value="technical_issue"]').click();
+      localStorage.setItem(${JSON.stringify(legacyConsentKeys[0])},JSON.stringify({choice:"denied",expires:Date.now()+86400000}));
+      ${reasonForm}.requestSubmit()`);
+    await confirmation();
+    await expectFeedback([expectedRatings[1]]);
+    assert.equal(await evaluate('window.__clarityCalls.some(args => args[0] === "stop")'), true,
+      "Reason submission must recheck privacy.");
+    await changePreference(legacyConsentKeys[0], null);
+    await evaluate(`${up}.click()`);
+    await confirmation();
+    await expectFeedback([expectedRatings[1]]);
+  }
+  await send("Emulation.clearDeviceMetricsOverride");
+  await go("/");
+  await waitFor(() => evaluate('!!document.querySelector("footer")'), "Footer did not render after feedback checks.");
   if (clarityExpected) {
     await waitFor(() => evaluate("Array.isArray(window.__clarityCalls)"), "Build with GLINTLABS_PAGES_CLARITY=true.");
     assert.deepEqual(await evaluate("window.__clarityCalls"), [], "Clarity consent or custom identifiers were fabricated.");
@@ -343,10 +511,17 @@ try {
     await go("/", local);
     await pause();
     assert.equal(clarityRequests.length, before, "Clarity loaded in a local preview.");
+    await evaluate(`${up}.click()`);
+    await confirmation();
+    assert.equal(clarityRequests.length, before, "Local feedback bypassed the production-only guard.");
     rejectClarity = true;
     const eventCount = events.length;
     await go("/tools/");
     await waitFor(() => warnings.some(message => message.includes("Clarity unavailable")), "Clarity failure was not diagnosed.");
+    await evaluate(`${up}.click()`);
+    await confirmation();
+    assert.deepEqual(await evaluate('window.clarity.q.filter(args => args[0] === "event")'), [],
+      "Feedback must not queue events after the Clarity tag fails.");
     if (telemetryExpected) await waitFor(() => events.length > eventCount, "Clarity failure blocked Supabase.");
     assert.equal(await evaluate('!!document.querySelector(\'[data-glintlabs-event="analyze_survey_click"]\')'), true);
     assert.equal(await evaluate(`!!document.getElementById("analytics-preferences") ||
@@ -358,7 +533,7 @@ try {
   }
   if (!telemetryExpected) assert.equal(events.length, 0, "Disabled Supabase tracker sent events.");
   if (failures.length) throw failures[0];
-  console.log(`Telemetry browser checks passed (Supabase=${telemetryExpected}, Clarity=${clarityExpected}): no consent UI, regional consent left to Clarity, production/route/privacy gates, lifecycle and failure isolation. All vendor requests intercepted; no test data sent to Supabase or Clarity. Vendor geolocation itself requires live regional verification.`);
+  console.log(`Telemetry browser checks passed (Supabase=${telemetryExpected}, Clarity=${clarityExpected}): Analyze Survey feedback across 8 responsive states and 2 short touch viewports, keyboard/pointer behavior, axe, fixed events and repeat suppression, no consent UI, regional consent left to Clarity, production/route/privacy gates, lifecycle and failure isolation. All vendor requests intercepted; no test data sent to Supabase or Clarity. Vendor geolocation itself requires live regional verification.`);
 } finally {
   stopping = true;
   socket?.close();

@@ -219,7 +219,7 @@ tracking mode/region rather than treating Clarity as a census. Supabase remains
 the existing event-count baseline; its browser counts are approximate too.
 
 Privacy checks run before loading and again on navigation, focus, visibility,
-and cross-tab preference updates. A refusal stops Clarity and removes the tag;
+cross-tab preference updates, and feedback actions. A refusal stops Clarity and removes the tag;
 already transmitted data cannot be recalled, and stopping can flush prior buffered
 events. Once stopped, Clarity does not restart until a reload passes the checks.
 Tag-loading failure logs a diagnostic and leaves navigation/Supabase unaffected.
@@ -230,6 +230,49 @@ run `npm run pages:build`, then run `npm run pages:test:telemetry` with the same
 flags. The browser check intercepts **all** page requests and uses a fake Clarity
 tag; no test visits reach either analytics provider. A disabled build can be
 checked with both flags `false`.
+
+### Analyze Survey feedback
+
+The Analyze Survey card on Home and Tools includes thumbs up/down. A changed
+selection sends an allowlisted custom event to the existing Clarity project
+`z4zyk0yyz7`; Supabase is unchanged:
+
+| Action | Clarity custom event |
+| --- | --- |
+| Thumbs up | `tool_analyze_survey_thumbs_up` |
+| Thumbs down | `tool_analyze_survey_thumbs_down` |
+| Submit "Not useful to me" | `tool_analyze_survey_thumbs_down_reason_not_useful` |
+| Submit "Hard to use" | `tool_analyze_survey_thumbs_down_reason_hard_to_use` |
+| Submit "Something didn't work" | `tool_analyze_survey_thumbs_down_reason_technical_issue` |
+
+Thumbs down opens a lightweight anchored reasons popover. The initial rating is
+sent immediately; reasons are optional, but Submit requires at least one checked
+reason. Dismissing does not submit reasons or undo the rating. Clicking inside
+keeps the popover open; Escape, outside clicks, or tabbing out dismiss it.
+Escape and Submit return focus to the thumb.
+
+Thumbs up and submitted reasons show the same centered, text-only "Thanks for
+the feedback" acknowledgment for three seconds. The selected thumb stays filled.
+Repeated clicks on the selected thumb reopen its UI without repeating the rating
+event; repeated Submit within one opening cannot duplicate reason events.
+Selection is local component state, not persistent voting. Reopening and making a
+new explicit reason submission can send another event. Counts represent
+interactions, not unique voters or authoritative current-vote totals.
+
+In the linked Clarity project, look for the event names above under Smart events
+in Filters or the Dashboard after Clarity receives them. The integration uses
+Clarity's client-side custom-events API, not a new
+server, database, or API credential. No free text, uploads, new identifiers, or
+Knowledge Vault feedback are collected. Existing production-origin, route,
+DNT/GPC, refusal, and stopped-runtime guards apply to each action. Staging and
+local previews keep the UI interactive without sending live Clarity feedback.
+The acknowledgment confirms the local interaction, not vendor receipt.
+
+`pages:test:telemetry` intercepts all vendor traffic and checks both feedback
+flows, repeat suppression, required reasons, keyboard and pointer dismissal,
+responsive placement, accessibility, and action-time privacy. Live dashboard
+receipt can only be verified after the production PR is merged and deployed;
+staging test clicks must not be used to populate production analytics.
 
 ## Prototype contract
 

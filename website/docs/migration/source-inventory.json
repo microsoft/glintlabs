@@ -49,8 +49,8 @@
       "source": "README.md",
       "destination": "website/README.md",
       "sourceSha256": "5d8bf5442839d7989a24a82b72496f407066ecd3381247fdfe35d4995571e0a2",
-      "destinationSha256": "8f4b8ba2bf277f097ce24f119dd3d9afeba2c46d00b405b7e3c97b8e3e0841ed",
-      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback. The approved distinct-browser and automatic-analytics extensions document first-visit tracking without on-site consent/opt-out controls, privacy approval, preserved refusals and DNT/GPC, fixed 18-calendar-month random browser IDs, separate server-side keyed hashing, compatible anonymous events and restricted 90-day distinct counts. The requested removal of floating analytics UI moves its disclosure into plain text in the existing marketing footer. The requested Clarity integration documents regional vendor consent defaults without a banner, project cookie settings, privacy/data boundaries, verification and rollback independently of Supabase."
+      "destinationSha256": "7876e4229c9a1a2e4553117e04e5b0f7230269a969b44828362f6f7bd4378ca4",
+      "intentionalDifference": "Document the official public reader, local Studio boundary, approved export workflow and source-data safety instead of the obsolete private-staging restriction; retain the Studio contract. Subsequent maintainer-approved telemetry documents privacy boundaries, isolated Supabase deployment, retention, quotas, restricted reporting, verification and rollback. The approved distinct-browser and automatic-analytics extensions document first-visit tracking without on-site consent/opt-out controls, privacy approval, preserved refusals and DNT/GPC, fixed 18-calendar-month random browser IDs, separate server-side keyed hashing, compatible anonymous events and restricted 90-day distinct counts. The requested removal of floating analytics UI moves its disclosure into plain text in the existing marketing footer. The requested Clarity integration documents regional vendor consent defaults without a banner, project cookie settings, privacy/data boundaries, verification and rollback independently of Supabase. Document the approved Analyze Survey-only Clarity rating and fixed-reason events, local acknowledgment, duplicate suppression, production/privacy gates and intercepted verification; no Knowledge Vault UI or feedback is released."
     },
     {
       "source": "artifacts/README.md",
@@ -308,15 +308,15 @@
       "source": "package-lock.json",
       "destination": "website/package-lock.json",
       "sourceSha256": "1436f18dbdbeac5f0699137a7916dec9c0bbc9891c7a57d2e6b49571c4c70541",
-      "destinationSha256": "a4d2b922d57ab73c3f277fa4f8309002aee7c3cf3dbca8a943915551ea43c162",
-      "intentionalDifference": "Subsequent maintainer-approved telemetry locks the development-only PGlite migration/permissions test runtime; production dependencies are unchanged."
+      "destinationSha256": "c993fef048f32c6eabc9e07c6defd7f8a6f4a53e8577efbeb6aff707bac9db85",
+      "intentionalDifference": "Maintainer-approved telemetry locks the development-only PGlite migration/permissions test runtime. The approved Analyze Survey feedback restores Fluent v9 Button and Checkbox controls and their required dependencies."
     },
     {
       "source": "package.json",
       "destination": "website/package.json",
       "sourceSha256": "077e6bd8fb609e100c287c6a2d03dd3a6f5d15d170f2931e6febe3c53249cb27",
-      "destinationSha256": "59098a18708bc55c1222f1f20311b68043214646f35e60bf5cb812b9ba9c4ba7",
-      "intentionalDifference": "Adds static Pages build, explicit approved-report export, loopback preview and browser-check commands; appends focused reader-build tests. Dependencies and lockfile unchanged. Subsequent maintainer-approved telemetry adds focused event/database tests and an intercepted browser command; PGlite is a development-only PostgreSQL test dependency."
+      "destinationSha256": "8c4983dbaa12a240fe53ab4b17ef365e8736ef9a6c7f8ba9ebe5bc3b07e8135e",
+      "intentionalDifference": "Adds static Pages build, explicit approved-report export, loopback preview and browser-check commands; appends focused reader-build tests. Maintainer-approved telemetry adds focused event/database tests and an intercepted browser command; PGlite is a development-only PostgreSQL test dependency. Restore Fluent v9 Button and Checkbox dependencies for the approved Analyze Survey feedback popover."
     },
     {
       "source": "packages/data-visuals/.gitattributes",
@@ -4151,15 +4151,15 @@
       "source": "src/app/tools/tools-catalog.module.css",
       "destination": "website/src/app/tools/tools-catalog.module.css",
       "sourceSha256": "d3a77322ca2a0836dcdf4b12719a3c1791935a14c4218a805fab0ace8b074fa4",
-      "destinationSha256": "d3a77322ca2a0836dcdf4b12719a3c1791935a14c4218a805fab0ace8b074fa4",
-      "intentionalDifference": ""
+      "destinationSha256": "596ea45f516bd8238e6885c0fc99b03d1c5ed518b6f87fa43a28d58584673947",
+      "intentionalDifference": " Add a wrapping feedback action row and allow feedback tooltips outside the card while preserving rounded illustration clipping, existing padding and responsive layout."
     },
     {
       "source": "src/app/tools/tools-catalog.tsx",
       "destination": "website/src/app/tools/tools-catalog.tsx",
       "sourceSha256": "0b92989dd11d9f401c796cb3f1880608041c25658783d9219acf455fef925214",
-      "destinationSha256": "2b75c1b84fa41789fe4e20d486827582dff51e96f0b67785c51d4fefc101cf16",
-      "intentionalDifference": "Use the owner-selected existing Blue report clipboard illustration for the shared Analyze Survey card on Home and Tools; preserve the 170px image box, decorative semantics, layout, copy, modal trigger and all styles."
+      "destinationSha256": "ba112587112ffd25933e2717afc3463e2d7b3f7b8466820f4b4a24c34c816362",
+      "intentionalDifference": "Use the owner-selected existing Blue report clipboard illustration for the shared Analyze Survey card on Home and Tools; preserve the 170px image box, decorative semantics, layout, copy, modal trigger and all styles. Add approved Analyze Survey-only thumbs feedback beside the existing modal action on Home and Tools. Do not restore the Knowledge Vault card."
     },
     {
       "source": "src/app/tools/tools-page.module.css",
