@@ -3,6 +3,7 @@ import { Rocket20Regular } from "@fluentui/react-icons/svg/rocket";
 import Image from "next/image";
 
 import { AnalyzeSurveyModalTrigger } from "./analyze-survey/analyze-survey-modal-trigger";
+import { ToolFeedback } from "./tool-feedback";
 import styles from "./tools-catalog.module.css";
 
 export function ToolsCatalog() {
@@ -26,9 +27,12 @@ export function ToolsCatalog() {
                 <p className={styles.byline}>By Microsoft People Science</p>
                 <p className={styles.description}>Turn employee survey data into advanced analysis with an AI-guided, no-code workflow. Explore inter-item correlations, factor analysis, attrition analysis, and comparisons across surveys in an interactive report you can filter, export, and share.</p>
               </div>
-              <AnalyzeSurveyModalTrigger className={styles.primaryAction}>
-                <Rocket20Regular aria-hidden="true" />Start using
-              </AnalyzeSurveyModalTrigger>
+              <div className={styles.cardActions}>
+                <AnalyzeSurveyModalTrigger className={styles.primaryAction}>
+                  <Rocket20Regular aria-hidden="true" />Start using
+                </AnalyzeSurveyModalTrigger>
+                <ToolFeedback tool="analyze-survey" title="Analyze Survey" />
+              </div>
             </div>
           </article>
         </div>
