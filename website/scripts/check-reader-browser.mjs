@@ -194,6 +194,27 @@ try {
       await waitFor(() => evaluate(
         `window.__readerPending !== true && location.pathname.replace(/\\/$/, "") === ${JSON.stringify(prefix + (route === "/" ? "" : route))} && document.readyState === "complete"`,
       ), `Navigation timeout: ${width}px ${route}`);
+      if (["/", "/tools", "/annual-report-2026"].includes(route)) {
+        const markFile = route === "/annual-report-2026" ? "annual-report" : "core";
+        assert.deepEqual(await evaluate(`(() => {
+          const nav = document.querySelector('nav[aria-label="Primary"]');
+          const mark = nav.querySelector('img[src$="/nav-viva-glint-${markFile}.svg"]');
+          if (!mark) return null;
+          const r = mark.getBoundingClientRect();
+          const label = mark.nextElementSibling.getBoundingClientRect();
+          const toggle = nav.querySelector("button");
+          const brand = mark.closest("a").getBoundingClientRect();
+          return {
+            loaded: mark.complete && mark.naturalWidth > 0,
+            size: [r.width, r.height],
+            gap: Math.round(label.left - r.right),
+            decorative: mark.alt === "" && mark.getAttribute("aria-hidden") === "true",
+            fits: brand.left >= 0 && brand.right <= innerWidth &&
+              (getComputedStyle(toggle).display === "none" || brand.right <= toggle.getBoundingClientRect().left)
+          };
+        })()`), { loaded: true, size: [20, 20], gap: 6, decorative: true, fits: true },
+        `The ${markFile} nav brand must include the Glint mark without crowding the label or mobile menu.`);
+      }
       await evaluate(`${axe}\ntrue`);
       await evaluate(`(async () => {
         const style = document.createElement("style");

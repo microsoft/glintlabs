@@ -350,7 +350,7 @@ test("the mobile topics matrix follows the Figma spacing and lets topic labels d
 });
 
 test("light and dark navigation brands share reviewed spacing while preserving the dark divider color", () => {
-  assert.match(navigationStyles, /\.brand \{ gap: 20px; padding: 8px 16px; font-weight: 600; \}/);
+  assert.match(navigationStyles, /\.brand \{ gap: 16px; padding: 8px 16px; font-weight: 600; \}/);
   assert.doesNotMatch(navigationStyles, /\.annualReport \.brand \{/);
   assert.match(navigationStyles, /\.annualReport \.brandDivider \{ background: #3d3d3d; \}/);
 });
