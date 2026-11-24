@@ -114,6 +114,7 @@ export function wordStyleView(manifest: ReportManifest): ReportManifest {
         return [{
           id: block.id, source: block.source, type: "paragraph", text: block.text,
           wordStyle: block.wordStyle, marks: block.marks, links: block.links,
+          paragraphBreakBefore: block.paragraphBreakBefore,
         }];
       }
       return [block];

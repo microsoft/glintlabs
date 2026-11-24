@@ -31,6 +31,7 @@ import {
   type ReportStyle,
 } from "./report-style";
 import styles from "./report-renderer.module.css";
+import { ReportTable } from "./report-table";
 
 type ImageBlock = Extract<ReportBlock, { type: "image" }>;
 type TextBlock = Extract<
@@ -460,6 +461,11 @@ function renderBlock(
         </div>
       );
     case "data-visual-source": {
+      if (block.tablePresentation) {
+        return <div className={styles.canonicalVisual} data-report-component="data-table">
+          <ReportTable block={block} />
+        </div>;
+      }
       if (props.manifest.readerPresentation?.rowHeaderTableBlockIds.includes(block.id)) {
         const rows = [block.data.columns, ...block.data.rows.map(row => row.cells)];
         return <div className={styles.accessibleData}>
@@ -586,6 +592,8 @@ function reportContent(
         styles.reportBlock,
         isReference ? styles.referencesBlock : "",
         startsReferences ? styles.referencesStart : "",
+        "paragraphBreakBefore" in block && block.paragraphBreakBefore && block.type === "paragraph"
+          ? styles.paragraphBreak : "",
         props.highlightedBlockId === block.id ? styles.highlighted : "",
         isDivider || (!followsDivider && (startsReferences || (block.type === "heading" && block.level <= 2)))
           ? styles.sectionStart
@@ -630,7 +638,7 @@ function reportContent(
           <li
             className={`${styles.listItem} ${
               props.highlightedBlockId === item.id ? styles.highlighted : ""
-            }`}
+            } ${item.paragraphBreakBefore ? styles.paragraphBreak : ""}`}
             id={`report-block-${item.id}`}
             key={item.id}
             style={{ marginInlineStart: `${item.level * 1.25}rem` }}
@@ -828,6 +836,9 @@ export function ReportRenderer(props: ReportRendererProps) {
             alt={heroImageBlock?.alt ?? props.coverImageAlt ?? ""}
             className={styles.coverPhotoImage}
             height={heroImageBlock?.height ?? 640}
+            style={heroImageBlock ? {
+              objectPosition: `${imagePresentation(heroImageBlock).focalPointX}% ${imagePresentation(heroImageBlock).focalPointY}%`,
+            } : undefined}
             priority
             src={
               heroImageBlock?.dataUrl

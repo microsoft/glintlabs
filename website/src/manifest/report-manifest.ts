@@ -60,6 +60,7 @@ export type WordStyleTarget = z.infer<typeof wordStyleTargetSchema>;
 const wordTextFields = {
   wordStyle: z.string().min(1).optional(),
   wordOutline: z.number().int().min(0).max(9).optional(),
+  paragraphBreakBefore: z.boolean().optional(),
   marks: z.array(z.object({
     start: z.number().int().nonnegative(),
     end: z.number().int().positive(),
@@ -97,7 +98,7 @@ export const structuredDataSchema = z.object({
   ]),
   title: z.string().min(1),
   unit: z.enum(["percentage", "number", "unknown"]),
-  columns: z.array(z.string().min(1)).min(2),
+  columns: z.array(z.string()).min(2),
   rows: z
     .array(
       z.object({
@@ -148,6 +149,10 @@ const sourcedVisualBlockSchema = baseBlockSchema.extend({
 export const chartPresentationSchema = z.object({
   title: z.string().trim().min(1).max(120),
   subtitle: z.string().max(240).default(""),
+  xAxisLabel: z.string().max(120).optional(),
+  yAxisLabel: z.string().max(120).optional(),
+  // An empty override removes reader-facing copy without changing source evidence.
+  sourceNote: z.string().max(4000).optional(),
   note: z.string().max(2000).default(""),
   palette: z.enum(["brand", "blue", "teal"]).default("brand"),
   density: z.enum(["comfortable", "compact"]).default("comfortable"),
@@ -156,7 +161,9 @@ export const chartPresentationSchema = z.object({
 export type ChartPresentation = z.infer<typeof chartPresentationSchema>;
 
 export const comparisonPresentationSchema = chartPresentationSchema.extend({
+  valueDecimals: z.number().int().min(0).max(3).optional(),
   showDifference: z.boolean().optional(),
+  showLegend: z.boolean().optional(),
   panelStyle: z.enum(["bars", "columns", "percentages"]).optional(),
   sourceBars: z.object({
     colors: z.array(z.string().regex(/^#[0-9a-f]{6}$/i)).min(2).max(3).optional(),
@@ -185,7 +192,7 @@ export const illustratedStatisticsPresentationSchema = chartPresentationSchema.e
 });
 
 export const pairedComparisonPresentationSchema = chartPresentationSchema
-  .pick({ title: true, note: true, palette: true })
+  .pick({ title: true, note: true, palette: true, sourceNote: true })
   .extend({
     leadIns: z.tuple([z.string().max(80), z.string().max(80)]).default(["", ""]),
   });
@@ -308,7 +315,16 @@ export const reportBlockSchema = z.discriminatedUnion("type", [
   sourcedVisualBlockSchema.extend({
     type: z.literal("data-visual-source"),
     data: structuredDataSchema,
-  }),
+    presentation: chartPresentationSchema.pick({ xAxisLabel: true, yAxisLabel: true }).optional(),
+    tablePresentation: z.object({
+      headerRow: z.boolean(),
+      showTitle: z.boolean(),
+      tone: z.enum(["blue", "neutral"]),
+    }).optional(),
+  }).refine(block => !block.tablePresentation || (
+    block.data.rows.every(row => row.cells.length === block.data.columns.length) &&
+    new Set(block.data.rows.map(row => row.id)).size === block.data.rows.length
+  ), { message: "Every table row must match its columns and have a unique identifier." }),
   baseBlockSchema.extend({
     type: z.literal("visual-placeholder"),
     description: z.string().min(1),

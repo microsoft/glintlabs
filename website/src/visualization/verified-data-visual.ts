@@ -76,6 +76,7 @@ export function compatibleVerifiedVisuals(
   block: DataVisualSourceBlock,
   { ignoreRecommendation = false }: { ignoreRecommendation?: boolean } = {},
 ): VerifiedDataVisualType[] {
+  if (block.data.columns.some(column => !column.trim())) return [];
   if (block.data.recommendedVisualType === "quadrant-scatter-plot" ||
       block.data.columns[0]?.trim().toLowerCase() === "point id") {
     return quadrantTableErrors(block.data).length ? [] : ["quadrant-scatter-plot"];
@@ -181,6 +182,16 @@ export function createVerifiedDataVisual(
   }
 
   const rows = numericRows(source);
+  const presentation = {
+    title: source.data.title,
+    subtitle: source.data.subtitle ?? "",
+    note: "",
+    palette: "brand" as const,
+    density: "comfortable" as const,
+    sort: "source" as const,
+    sourceNote: source.data.sourceNote ?? "",
+    ...source.presentation,
+  };
   const verifiedSource = {
     ...source.data,
     verifiedAt,
@@ -225,6 +236,7 @@ export function createVerifiedDataVisual(
       return {
         ...shared,
         type,
+        presentation,
         title: source.data.title,
         items: rows.map((row) => ({
           id: row.id,
@@ -272,6 +284,7 @@ export function createVerifiedDataVisual(
       return {
         ...shared,
         type,
+        presentation,
         title: source.data.title,
         subtitle: source.data.subtitle ?? "Approved structured data",
         series: source.data.columns.slice(1),

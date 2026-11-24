@@ -63,6 +63,19 @@ failures remain disclosed in `validation.md`, not represented as passing.
 
 ## Intentional differences and additions
 
+The November Word-authoring compatibility follow-up adds the native report-table
+renderer and tests for exact table shape, chart axes, optional source copy, and
+plain single-series columns. Optional manifest fields retain paragraph separation,
+table heading treatment, and chart presentation without changing raw data.
+Reader spacing and comparison formatting match the corrected Studio output.
+Reading-time estimates count displayed chart titles, notes, citations, and axes,
+respect empty source-note overrides, and omit hidden native-table titles. The
+existing 200-words-per-minute rate is unchanged, with boundary tests in both suites.
+The inventory retains all 684 original source mappings and hashes; only affected
+destination hashes and their intentional-difference descriptions change.
+No November draft, Word document, image, package, or publication approval is
+included in this compatibility change.
+
 1. All source paths move under `website/`, except
    `.github/workflows/site-ci.yml`, which belongs at the destination root.
    The original Node application retains its root-relative routes. The separate

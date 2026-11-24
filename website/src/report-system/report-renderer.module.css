@@ -617,6 +617,15 @@
   border-top: 1px solid var(--report-rule);
 }
 
+.report:not(.annualReport) .sectionStart {
+  padding-top: 40px;
+  margin-top: 48px;
+}
+
+.paragraphBreak {
+  padding-top: var(--spacingVerticalXXL, 24px);
+}
+
 .content > .sectionStart:first-child:not(.referencesStart) {
   padding-top: 0;
   margin-top: 0;
@@ -662,6 +671,12 @@
   font-weight: 420;
   letter-spacing: -0.15px;
   line-height: 44px;
+}
+
+.newFluentColors .heading2 {
+  max-width: none;
+  margin-bottom: 32px;
+  font-variation-settings: "wdth" 100;
 }
 
 .annualReport .heading1,
@@ -785,6 +800,99 @@
   line-height: 36px;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
+}
+
+.paragraph,
+.listItem > span {
+  white-space: pre-line;
+}
+
+.reportTable {
+  --borderRadiusXLarge: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 0 0 var(--spacingVerticalXXL, 24px);
+  padding: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--report-light-blue, #cedeff);
+  border-radius: var(--borderRadiusXLarge, 20px);
+  color: var(--report-text);
+  background: var(--colorNeutralBackground1, #fff);
+  font-family: var(--fontFamilyBase, "Segoe UI", "Segoe UI Variable Text", sans-serif);
+  font-size: var(--fontSizeBase300, 14px);
+  line-height: var(--lineHeightBase300, 20px);
+}
+
+.reportTable .accessibleDataScroller {
+  margin-top: 0;
+}
+
+.reportTable .accessibleDataScroller:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.reportTable table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.reportTable caption:not(.visuallyHidden) {
+  padding: var(--spacingVerticalXXL, 24px) var(--spacingHorizontalXXL, 24px);
+  font-size: 20px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.reportTable th,
+.reportTable td {
+  padding: var(--spacingVerticalXXL, 24px) var(--spacingHorizontalXXL, 24px);
+  border-bottom: 1px solid var(--report-rule);
+  vertical-align: top;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.reportTable tbody th {
+  font-weight: 400;
+}
+
+.reportTable tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.reportTable thead tr > * {
+  color: var(--report-heading);
+  background: var(--report-visual-soft);
+  font-weight: 600;
+}
+
+.reportTable[data-table-tone="neutral"] thead tr > * {
+  color: var(--report-text);
+  background: var(--colorNeutralBackground3, #f0f0f0);
+}
+
+.reportTable figcaption {
+  margin: 0;
+  padding: var(--spacingVerticalXXL, 24px) var(--spacingHorizontalXXL, 24px);
+  border-top: 1px solid var(--report-rule);
+  font-size: 12px;
+  line-height: 18px;
+  font-style: italic;
+  white-space: pre-line;
 }
 
 .paragraph,
