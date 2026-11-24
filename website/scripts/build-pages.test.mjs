@@ -7,7 +7,72 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import ts from "typescript";
 import vm from "node:vm";
+import { createRequire } from "node:module";
 import { readerFile, readerSource, readerTelemetryConfig } from "./build-pages.mjs";
+
+async function readerComponent(file, name, props) {
+  const url = new URL(file, import.meta.url);
+  const output = ts.transpileModule(await readFile(url, "utf8"), {
+    compilerOptions: { jsx: ts.JsxEmit.ReactJSX, module: ts.ModuleKind.CommonJS, esModuleInterop: true },
+  }).outputText;
+  const exports = {};
+  const require = createRequire(url);
+  vm.runInNewContext(output, { exports, require: id => id.endsWith(".module.css")
+    ? { __esModule: true, default: new Proxy({}, { get: (_, key) => key }) } : require(id) });
+  return renderToStaticMarkup(createElement(exports[name], props));
+}
+
+test("reader keeps editable Word tables at their exact shape without N/A padding", async () => {
+  const block = {
+    id: "table", type: "data-visual-source",
+    tablePresentation: { headerRow: true, showTitle: false, tone: "blue" },
+    data: { title: "Synthetic activity table", columns: ["Activity", "Gap"],
+      rows: [{ id: "first", cells: ["Concrete change", "+18pp"] }, { id: "second", cells: ["Action plan", "+14pp"] }] },
+  };
+  const markup = await readerComponent("../src/report-system/report-table.tsx", "ReportTable", { block });
+  assert.equal((markup.match(/scope="col"/g) ?? []).length, 2);
+  assert.equal((markup.match(/<tr>/g) ?? []).length, 3);
+  assert.match(markup, /scope="row">Concrete change/);
+  assert.match(markup, /\+18pp/);
+  assert.doesNotMatch(markup, /N\/A/);
+  const noHeader = await readerComponent("../src/report-system/report-table.tsx", "ReportTable", {
+    block: { ...block, tablePresentation: { ...block.tablePresentation, headerRow: false } },
+  });
+  assert.doesNotMatch(noHeader, /<thead/);
+  assert.match(noHeader, /<td>Activity<\/td><td>Gap<\/td>/);
+  const blankHeading = await readerComponent("../src/report-system/report-table.tsx", "ReportTable", {
+    block: { ...block, data: { ...block.data, columns: ["", "Gap"] } },
+  });
+  assert.match(blankHeading, /<thead><tr><td><\/td><th scope="col">Gap<\/th>/);
+  assert.doesNotMatch(blankHeading, /Column 1|<th[^>]*><\/th>/);
+});
+
+test("reader retains chart axes, plain columns, optional notes and exact evidence values", async () => {
+  const block = {
+    id: "columns", type: "grouped-column-comparison", title: "Synthetic manager actions", subtitle: "",
+    sourceNote: "Generated source statement", source: { part: "word/document.xml", index: 0 },
+    series: ["Favorable"], groups: [{ id: "two", label: "2 actions", values: [80] },
+      { id: "three", label: "3 actions", values: [84.61538461538461] }],
+    presentation: { title: "Synthetic manager actions", xAxisLabel: "Number of actions",
+      yAxisLabel: "Favorability (%)", sourceNote: "", note: "Illustrative context", showDifference: true },
+  };
+  const before = structuredClone(block);
+  const markup = await readerComponent("../src/visualization/comparison-charts.tsx", "ComparisonChart", { block });
+  assert.match(markup, /data-axis="x">Number of actions/);
+  assert.match(markup, /data-axis="y">Favorability \(%\)/);
+  assert.match(markup, />80%<\/strong>/);
+  assert.match(markup, />84.6%<\/strong>/);
+  assert.match(markup, /<em>Illustrative context<\/em>/);
+  assert.doesNotMatch(markup, /Generated source statement|data-series-key|minus|pp<\/strong>/);
+  assert.deepEqual(block, before);
+  const hidden = await readerComponent("../src/visualization/comparison-charts.tsx", "ComparisonChart", {
+    block: { ...block, presentation: { ...block.presentation, showLegend: false } },
+  });
+  assert.match(markup, /<ul class="legend"/);
+  assert.doesNotMatch(hidden, /<ul class="legend"/);
+  assert.match(hidden, /aria-label="Favorable: 80%"/);
+  assert.match(hidden, /<td>Favorable<\/td><td>80%<\/td>/);
+});
 
 test("analytics requires an explicit public-reader build flag and rejects ambiguous configuration", () => {
   for (const value of [undefined, "", "false"]) {

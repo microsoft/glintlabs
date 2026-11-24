@@ -13,10 +13,9 @@ export function PercentageRingGroup({
 }) {
   const isStudioChart = block.source.part === "studio";
   const note = block.presentation?.note;
-  const footnote = isStudioChart
-    ? block.verifiedSource?.synthetic ? "Synthetic example · Not research findings" : undefined
-    : block.footnote;
-  const hasFootnote = Boolean(note || footnote);
+  const footnote = block.presentation?.sourceNote ?? (isStudioChart ? undefined : block.footnote);
+  const synthetic = block.verifiedSource?.synthetic;
+  const hasFootnote = Boolean(note || footnote || synthetic);
   function displayValue(id: string, value: number) {
     const raw = block.verifiedSource?.rows.find(row => row.id === id)?.cells[1]?.replace(/%\s*$/, "").trim();
     return `${raw && Number(raw) === value ? raw : value}%`;
@@ -73,8 +72,9 @@ export function PercentageRingGroup({
         ))}
       </div>
       {hasFootnote ? <figcaption className={styles.footnote} id={`${block.id}-footnote`}>
-        {note ? <p>{note}</p> : null}
+        {note ? <p><em>{note}</em></p> : null}
         {footnote}
+        {synthetic ? <p>Synthetic example · Not research findings</p> : null}
       </figcaption> : null}
     </figure>
   );

@@ -202,6 +202,7 @@ function semanticBlock(block: ReportBlock) {
   delete content.source;
   delete content.wordStyle;
   delete content.wordOutline;
+  delete content.paragraphBreakBefore;
   if (block.type === "paragraph") delete content.callouts;
   return {
     id: block.id,
@@ -260,6 +261,7 @@ export function evaluateApprovedContentIntegrity(
   const pendingDataVisual = manifest.blocks.find(
     (block) =>
       block.type === "data-visual-source" &&
+      !block.tablePresentation &&
       !automaticallyVerifiedVisualType(block),
   );
   if (pendingDataVisual) {

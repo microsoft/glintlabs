@@ -3,8 +3,12 @@ import type { ReportBlock, ReportManifest, StructuredData } from "../manifest/re
 const WORDS_PER_MINUTE = 200;
 const words = new Intl.Segmenter("en", { granularity: "word" });
 
-function dataText(data: StructuredData): (string | undefined)[] {
-  return [data.title, data.subtitle, ...data.columns, ...data.rows.flatMap(row => row.cells), data.sourceNote];
+function dataText(data: StructuredData, showTitle = true): (string | undefined)[] {
+  return [showTitle ? data.title : undefined, data.subtitle, ...data.columns, ...data.rows.flatMap(row => row.cells), data.sourceNote];
+}
+
+function chartFootnote(block: { presentation?: { sourceNote?: string }; source: { part: string }; footnote: string }) {
+  return block.presentation?.sourceNote ?? (block.source.part === "studio" ? undefined : block.footnote);
 }
 
 function blockText(block: ReportBlock): (string | undefined)[] {
@@ -18,7 +22,8 @@ function blockText(block: ReportBlock): (string | undefined)[] {
     case "image":
       return [block.eyebrow, ...(block.accessibleData ? dataText(block.accessibleData) : [])];
     case "data-visual-source":
-      return dataText(block.data);
+      return [...dataText(block.data, block.tablePresentation?.showTitle !== false),
+        ...(!block.tablePresentation ? [block.presentation?.xAxisLabel, block.presentation?.yAxisLabel] : [])];
     case "visual-placeholder":
     case "unsupported":
       return [];
@@ -28,13 +33,14 @@ function blockText(block: ReportBlock): (string | undefined)[] {
     case "percentage-comparison-grid":
       return [
         block.presentation?.title ?? block.title, ...(block.presentation?.leadIns ?? []),
-        ...block.metrics.map(metric => metric.description), block.presentation?.note, block.footnote,
+        ...block.metrics.map(metric => metric.description), block.presentation?.note, chartFootnote(block),
       ];
     case "percentage-ring-group":
-      return [block.title, ...block.metrics.map(metric => metric.description), block.footnote];
+      return [block.presentation?.title ?? block.title, ...block.metrics.map(metric => metric.description),
+        block.presentation?.note, chartFootnote(block)];
     case "illustrated-statistics":
       return [block.presentation?.title ?? block.title, ...block.metrics.map(metric => metric.description),
-        block.presentation?.valueLabel, block.presentation?.note, block.footnote];
+        block.presentation?.valueLabel, block.presentation?.note, chartFootnote(block)];
     case "quadrant-scatter-plot":
       return [block.presentation?.title ?? block.title, block.presentation?.subtitle,
         ...block.points.flatMap(point => [point.label, point.description, ...point.breakdown.map(item => item.label)]),
@@ -52,16 +58,25 @@ function blockText(block: ReportBlock): (string | undefined)[] {
     case "pull-quote":
       return [block.quote];
     case "horizontal-bar-chart":
-      return [block.title, ...block.items.map(item => item.label), block.legend, block.sourceNote];
+      return [block.presentation?.title ?? block.title, block.presentation?.subtitle,
+        block.presentation?.xAxisLabel, block.presentation?.yAxisLabel,
+        ...block.items.map(item => item.label), block.legend, block.presentation?.note,
+        block.presentation?.sourceNote ?? (block.source.part === "studio" ? undefined : block.sourceNote)];
     case "line-chart":
       return [block.presentation?.title ?? block.title, block.presentation?.subtitle ?? block.subtitle,
         ...block.series.map(series => series.label), ...block.periods.flatMap(period => [period.label, period.supportingText]),
         block.sourceNote, block.presentation?.note];
     case "grouped-column-comparison":
     case "grouped-bar-comparison":
-      return [block.title, block.subtitle, ...block.series, ...block.groups.map(group => group.label), block.sourceNote];
+      return [block.presentation?.title ?? block.title, block.presentation?.subtitle ?? block.subtitle,
+        block.presentation?.xAxisLabel, block.presentation?.yAxisLabel,
+        ...block.series, ...block.groups.map(group => group.label), block.presentation?.note,
+        block.presentation?.sourceNote ?? block.sourceNote];
     case "comparison-panel-group":
-      return [block.title, block.subtitle, ...block.panels.flatMap(panel => [panel.title, ...panel.series]), block.sourceNote];
+      return [block.presentation?.title ?? block.title, block.presentation?.subtitle ?? block.subtitle,
+        block.presentation?.xAxisLabel, block.presentation?.yAxisLabel,
+        ...block.panels.flatMap(panel => [panel.title, ...panel.series]), block.presentation?.note,
+        block.presentation?.sourceNote ?? block.sourceNote];
     case "coefficient-heatmap":
       return [block.presentation?.title ?? block.title, block.presentation?.subtitle, ...block.columns,
         ...block.rows.map(row => row.label), block.presentation?.legendLabel, block.presentation?.note, block.sourceNote];

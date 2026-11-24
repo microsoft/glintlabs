@@ -315,8 +315,8 @@
       "source": "package.json",
       "destination": "website/package.json",
       "sourceSha256": "077e6bd8fb609e100c287c6a2d03dd3a6f5d15d170f2931e6febe3c53249cb27",
-      "destinationSha256": "8c4983dbaa12a240fe53ab4b17ef365e8736ef9a6c7f8ba9ebe5bc3b07e8135e",
-      "intentionalDifference": "Adds static Pages build, explicit approved-report export, loopback preview and browser-check commands; appends focused reader-build tests. Maintainer-approved telemetry adds focused event/database tests and an intercepted browser command; PGlite is a development-only PostgreSQL test dependency. Restore Fluent v9 Button and Checkbox dependencies for the approved Analyze Survey feedback popover."
+      "destinationSha256": "8c5d7098318faaa1292740ee7386b14b7c07674596642e3b3ce52c30ed17e19d",
+      "intentionalDifference": "Adds static Pages build, explicit approved-report export, loopback preview and browser-check commands; appends focused reader-build tests. Maintainer-approved telemetry adds focused event/database tests and an intercepted browser command; PGlite is a development-only PostgreSQL test dependency. Restore Fluent v9 Button and Checkbox dependencies for the approved Analyze Survey feedback popover. November reader compatibility: reading time follows displayed chart copy and hidden table titles at the unchanged 200wpm rate; registers focused boundary tests."
     },
     {
       "source": "packages/data-visuals/.gitattributes",
@@ -4214,8 +4214,8 @@
       "source": "src/integrity/approved-content.ts",
       "destination": "website/src/integrity/approved-content.ts",
       "sourceSha256": "d79c9ff02eb9c4080092e1fea57b5a5834363479a030398c9d37cac141be90cd",
-      "destinationSha256": "926f8ca29f34db0333922afb9ae80b297dd6f001054d78f77c4284007549fe8d",
-      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
+      "destinationSha256": "003269fd1d9b6c025d45b9dc0d921074d7ab5e6991da85ad6856f227910e5a81",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged. November Word-authoring compatibility: preserve paragraph separation and native tables, chart axes, optional reader notes and comparison formatting without changing raw values or original source provenance."
     },
     {
       "source": "src/launch-reports/assets.ts",
@@ -4396,15 +4396,15 @@
       "source": "src/manifest/report-manifest.test.ts",
       "destination": "website/src/manifest/report-manifest.test.ts",
       "sourceSha256": "0f824e59dcf170775a59e5fc65fb513b22541a12cf167a5252fded4a3b8bdffb",
-      "destinationSha256": "2c5cf9061412afbee3a944a7c80d42d51355603b722e5b5d16c577d0a0af6542",
-      "intentionalDifference": "Current Studio compatibility regression coverage, including supported chart schema, approved Pages export, literal data/source integrity, public release receipt, and homepage placement."
+      "destinationSha256": "7e3f342b84aa6b9e11c3f3005b743fbaeb826f18a70dd30a388a1b8c332cc766",
+      "intentionalDifference": "Current Studio compatibility regression coverage, including supported chart schema, approved Pages export, literal data/source integrity, public release receipt, and homepage placement. November Word-authoring compatibility: preserve paragraph separation and native tables, chart axes, optional reader notes and comparison formatting without changing raw values or original source provenance. Verifies that reader parsing retains saved header focal points and hidden chart legends."
     },
     {
       "source": "src/manifest/report-manifest.ts",
       "destination": "website/src/manifest/report-manifest.ts",
       "sourceSha256": "b2de33d8ef120eba6b16988efd7b016c1bfac402d8a7918676791e21363c25fd",
-      "destinationSha256": "49a8464072722aee8aee5d29072ece7fc7a342e316b0907e068cd54138a4c185",
-      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
+      "destinationSha256": "c95f83cd25ed4fd7729b833d36c22a150984f5a9fc66d03058477c865abef9ee",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged. November Word-authoring compatibility: preserve paragraph separation and native tables, chart axes, optional reader notes and comparison formatting without changing raw values or original source provenance. Retains the optional default-visible chart legend setting from Studio."
     },
     {
       "source": "src/middleware.ts",
@@ -4508,8 +4508,8 @@
       "source": "src/project/report-reading-time.ts",
       "destination": "website/src/project/report-reading-time.ts",
       "sourceSha256": "62c1ab4e14b6e3333dd45a1985cda9d86b98e5b26546a23dcf2ecfc43a8fc963",
-      "destinationSha256": "2cf4354fd094594c208f19f1a11e4260ef46317921710ae74e829dac69b2f873",
-      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
+      "destinationSha256": "f8ebd06338318479f003a22a213f58dae9ec5dd7077d1b54c420a0a49b894ffd",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged. November reader compatibility: reading time follows displayed chart copy and hidden table titles at the unchanged 200wpm rate; registers focused boundary tests."
     },
     {
       "source": "src/project/studio-project.test.ts",
@@ -4648,15 +4648,15 @@
       "source": "src/report-system/report-renderer.module.css",
       "destination": "website/src/report-system/report-renderer.module.css",
       "sourceSha256": "2f87ac1839f8a7735beb5b2ead6e4fb33edff245d971bdab0ab6d39561c98668",
-      "destinationSha256": "e0a3ced517e83b6f94e05d9892fce11547b2342fdeb52f51a06a249c44192094",
-      "intentionalDifference": "Adds exact current Studio text-callout styling while retaining production reader spacing and mobile metadata."
+      "destinationSha256": "1f2a9158f5dcaf161b5231ad6342e049beba7aa46331cea517e2436271ea89ae",
+      "intentionalDifference": "Adds exact current Studio text-callout styling while retaining production reader spacing and mobile metadata. November Word-authoring compatibility: preserve paragraph separation and native tables, chart axes, optional reader notes and comparison formatting without changing raw values or original source provenance. Native tables reuse the existing light-header reader treatment and chart-card light-blue outline with rounded corners. Header fills and row dividers reach the outline; text retains 24px padding, with an inset keyboard focus indicator."
     },
     {
       "source": "src/report-system/report-renderer.tsx",
       "destination": "website/src/report-system/report-renderer.tsx",
       "sourceSha256": "862d43be55da72ef46d10dad23395372be76513cefac999a68410138eb5fabf8",
-      "destinationSha256": "03689f973627107e92d08c6e4f5b19af1eb865d083409eaa1940f6a9d105ae68",
-      "intentionalDifference": "Adds optional source-derived ordered-list groups using existing list styling, a shared colon-free display label for brief headings and side navigation, and semantic source divider markers using existing section rules without duplicating a following heading border. Imported text, section anchors, other punctuation and styles remain unchanged. Selectively integrates current Studio public formats, rich marks, callouts, Word styles, reader presentation, table headers, and explicit heroes while preserving production layout/date/mobile metadata/footer/editing behavior."
+      "destinationSha256": "c4f40ea18549c6e1819d705b432fe1dfead9d5a3ff3e7bb9eb8111acdf89e5c2",
+      "intentionalDifference": "Adds optional source-derived ordered-list groups using existing list styling, a shared colon-free display label for brief headings and side navigation, and semantic source divider markers using existing section rules without duplicating a following heading border. Imported text, section anchors, other punctuation and styles remain unchanged. Selectively integrates current Studio public formats, rich marks, callouts, Word styles, reader presentation, table headers, and explicit heroes while preserving production layout/date/mobile metadata/footer/editing behavior. November Word-authoring compatibility: preserve paragraph separation and native tables, chart axes, optional reader notes and comparison formatting without changing raw values or original source provenance. Applies saved image focal points to explicit header photos without changing the existing hero-selection policy."
     },
     {
       "source": "src/report-system/report-side-nav.module.css",
@@ -4718,8 +4718,8 @@
       "source": "src/visualization/canonical-report-components.tsx",
       "destination": "website/src/visualization/canonical-report-components.tsx",
       "sourceSha256": "a24316f406d6688c53d5890c48751fef8fe785d97f74ed10cac4cd994a71b581",
-      "destinationSha256": "c311351763dc8efc3c6503f04a58fb67e40cc9be3687e9d75f9ee9983643cfdb",
-      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
+      "destinationSha256": "01ce7854e2dd46c890458681e92cc010c7be6e8b5cd85f9f32707422cd5d5d62",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged. November Word-authoring compatibility: preserve paragraph separation and native tables, chart axes, optional reader notes and comparison formatting without changing raw values or original source provenance."
     },
     {
       "source": "src/visualization/data-visual-preview.ts",
@@ -4760,8 +4760,8 @@
       "source": "src/visualization/percentage-ring-group.tsx",
       "destination": "website/src/visualization/percentage-ring-group.tsx",
       "sourceSha256": "2f87e0f351ead7d3ba7ee5fa0bffb785d3272d0f9e83a6151576b661aa5bfff9",
-      "destinationSha256": "fdadf089e0385905f87833b8991769de5a2539d3aaf36f78a3fc9ccad706e172",
-      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
+      "destinationSha256": "a31f8849ebb7c6e83cf041bc98db4b51aec2a735d85c4372a59a7f56bb378551",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged. November Word-authoring compatibility: preserve paragraph separation and native tables, chart axes, optional reader notes and comparison formatting without changing raw values or original source provenance."
     },
     {
       "source": "src/visualization/verified-data-visual.test.ts",
@@ -4774,8 +4774,8 @@
       "source": "src/visualization/verified-data-visual.ts",
       "destination": "website/src/visualization/verified-data-visual.ts",
       "sourceSha256": "22978a99a85852f306a6122553818c6f1927a51f461f72d9c9bfbb8c0b3fb390",
-      "destinationSha256": "980d15438d98ba7efce837cf0a5e5b47c7c6eefd266ac7b757e4b273d791381b",
-      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged."
+      "destinationSha256": "adaebc51b0ac32110869d18869756acc0d77ab564df617c8b304239c062c1160",
+      "intentionalDifference": "Exact current standalone Studio public-format schema/model/rendering dependency port from verified staging 7d5d27a98a206421133010df117204a810353092; historical migration source provenance is unchanged. November Word-authoring compatibility: preserve paragraph separation and native tables, chart axes, optional reader notes and comparison formatting without changing raw values or original source provenance."
     },
     {
       "source": "tsconfig.json",

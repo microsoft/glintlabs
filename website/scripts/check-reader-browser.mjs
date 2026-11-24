@@ -436,9 +436,67 @@ try {
       console.log(`Verified ${width}px ${route}`);
     }
   }
+  const comparisonCss = await readFile(path.join(root, "src/visualization/comparison-charts.module.css"), "utf8");
+  const seriesPatterns = [];
+  for (const palette of ["brand", "blue", "teal"]) for (const mode of ["none", "active"]) {
+    await send("Emulation.setEmulatedMedia", { features: [{ name: "forced-colors", value: mode }] });
+    const distinct = await evaluate(`(() => {
+      document.getElementById("comparison-pattern-fixture")?.remove();
+      const fixture = document.createElement("figure");
+      fixture.id = "comparison-pattern-fixture";
+      fixture.className = "figure";
+      fixture.dataset.palette = ${JSON.stringify(palette)};
+      const css = document.createElement("style");
+      css.textContent = ${JSON.stringify(comparisonCss)};
+      fixture.append(css);
+      for (const name of ["mark", "legend"]) {
+        const group = document.createElement("div");
+        group.className = name;
+        group.innerHTML = [0, 1, 2].map(index => '<i data-series="' + index + '"></i>').join("");
+        fixture.append(group);
+      }
+      document.body.append(fixture);
+      const styles = [...fixture.querySelectorAll("i")].map(node => {
+        const style = getComputedStyle(node);
+        const probe = document.createElement("span");
+        probe.style.color = node.dataset.series === "2"
+          ? "var(--comparison-third-pattern-ink, var(--comparison-pattern-ink))" : "var(--comparison-pattern-ink)";
+        node.append(probe);
+        const ink = getComputedStyle(probe).color;
+        probe.remove();
+        return { image: style.backgroundImage, color: style.backgroundColor, adjust: style.forcedColorAdjust, ink };
+      });
+      if (styles[0].image !== "none" || styles[1].image === "none" || styles[2].image === "none" ||
+          new Set(styles.slice(0, 3).map(style => style.image)).size !== 3 ||
+          styles.slice(0, 3).some((style, index) => JSON.stringify(style) !== JSON.stringify(styles[index + 3]))) {
+        throw Error("Comparison series must have matching, distinct non-color cues in bars and legends");
+      }
+      if (${JSON.stringify(mode)} === "active" &&
+          (new Set(styles.map(style => style.color)).size !== 1 || styles.some(style => style.adjust !== "none"))) {
+        throw Error("Comparison patterns must remain distinct in system forced colors");
+      }
+      const luminance = value => {
+        const channels = value.match(/rgba?\\(([^)]+)\\)/)[1].split(",").slice(0, 3).map(Number)
+          .map(channel => channel / 255).map(channel =>
+            channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4);
+        return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+      };
+      for (const index of [1, 2]) {
+        const ink = luminance(styles[index].ink);
+        const fill = luminance(styles[index].color);
+        if ((Math.max(ink, fill) + 0.05) / (Math.min(ink, fill) + 0.05) < 3) {
+          throw Error("Comparison pattern contrast is below 3:1 for " + ${JSON.stringify(palette)});
+        }
+      }
+      fixture.remove();
+      return 3;
+    })()`);
+    seriesPatterns.push({ palette, mode, distinct });
+  }
+  await send("Emulation.setEmulatedMedia", { features: [] });
   assert.deepEqual(errors, [], "Browser runtime, console, network, or HTTP errors.");
   if (failures.length) throw failures[0];
-  const result = { states, navigation, exposure, sourceImages, privateRoutesAbsent: true, release, errors };
+  const result = { states, navigation, exposure, seriesPatterns, sourceImages, privateRoutesAbsent: true, release, errors };
   await mkdir(path.join(root, "test-results"), { recursive: true });
   await writeFile(path.join(root, "test-results/reader-browser.json"), JSON.stringify(result, null, 2));
   console.log(`Reader browser checks passed: ${states.length} responsive states, ${navigation.length} navigation states, ${exposure.length * 3} exposure grids, ${sourceImages} original images.`);

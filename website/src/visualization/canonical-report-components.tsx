@@ -252,7 +252,7 @@ export function PercentageComparisonGrid({
       </div>
     </section>)}
     {note?.trim() || sourceNote ? <figcaption className={styles.pairedFootnote}>
-      {note?.trim() ? <p>{note}</p> : null}
+      {note?.trim() ? <p><em>{note}</em></p> : null}
       {sourceNote ? <p>{sourceNote}</p> : null}
     </figcaption> : null}
   </figure>;
@@ -264,6 +264,7 @@ function PairedPercentageComparison({
   block: Extract<CanonicalVisualBlock, { type: "paired-percentage-comparison" }>;
 }) {
   const presentation = block.presentation;
+  const sourceNote = presentation?.sourceNote ?? (block.source.part !== "studio" ? block.footnote : undefined);
   return (
     <figure className={`${styles.card} ${styles.pairedComparison}`} data-palette={presentation?.palette}>
       {block.verifiedSource?.synthetic ? <p className={styles.chartSynthetic}>Synthetic example · Not research findings</p> : null}
@@ -281,11 +282,11 @@ function PairedPercentageComparison({
           </div>;
         })}
       </div>
-      {block.source.part !== "studio" || presentation?.note?.trim() ? <>
+      {sourceNote || presentation?.note?.trim() ? <>
         <div className={styles.pairedRule} aria-hidden="true" />
         <figcaption className={styles.pairedFootnote}>
-          {presentation?.note ? <p>{presentation.note}</p> : null}
-          {block.source.part !== "studio" ? <p>{block.footnote}</p> : null}
+          {presentation?.note ? <p><em>{presentation.note}</em></p> : null}
+          {sourceNote ? <p>{sourceNote}</p> : null}
         </figcaption>
       </> : null}
     </figure>
@@ -302,6 +303,7 @@ function HorizontalBarChart({
   editingOrder?: string[];
 }) {
   const presentation = block.presentation;
+  const sourceNote = presentation?.sourceNote ?? (block.source.part !== "studio" ? block.sourceNote : undefined);
   const sortedItems = sortChartItems(block.items, presentation?.sort);
   const items = editingOrder ? [
     ...editingOrder.flatMap(id => sortedItems.filter(item => item.id === id)),
@@ -331,6 +333,7 @@ function HorizontalBarChart({
       <h3>{presentation?.title ?? block.title}</h3>
       {presentation?.subtitle ? <p className={styles.chartSubtitle}>{presentation.subtitle}</p> : null}
       <div className={styles.rule} />
+      {presentation?.yAxisLabel ? <p className={styles.chartScale}>{presentation.yAxisLabel}</p> : null}
       <div className={styles.horizontalRows}>
         {items.map((item) => {
           const bullets = item.supportingText?.split(/\r\n?|\n/).map(line => line.trim()).filter(Boolean)
@@ -363,11 +366,13 @@ function HorizontalBarChart({
           </details> : row;
         })}
       </div>
+      {presentation?.xAxisLabel ? <p className={styles.chartScale}>{presentation.xAxisLabel}</p> : null}
       {isNumber ? <p className={styles.chartScale}>Number scale: {minimum} to {maximum}</p> : null}
       {presentation?.note ? <>
         <div className={styles.rule} />
-        <p className={styles.chartNote}>{presentation.note}</p>
+        <p className={styles.chartNote}><em>{presentation.note}</em></p>
       </> : null}
+      {sourceNote ? <SourceNote>{sourceNote}</SourceNote> : null}
       <div className={styles.chartDataTable}>
         <table><caption>{presentation?.title ?? block.title} · Source order · {isNumber ? "Number" : "Percentage"} values</caption>
           <thead><tr><th scope="col">Category</th><th scope="col">{isNumber ? block.legend.replace(/\s*\(%\)\s*$/, "") : block.legend}</th></tr></thead>
@@ -571,7 +576,7 @@ export function CanonicalReportComponent({
       return <IllustratedStatistics id={block.id} title={block.presentation?.title ?? block.title}
         illustrations={block.presentation?.illustrations} valueLabel={block.presentation?.valueLabel}
         note={block.presentation?.note} synthetic={block.verifiedSource?.synthetic}
-        sourceNote={block.source.part !== "studio" ? block.footnote : undefined}
+        sourceNote={block.presentation?.sourceNote ?? (block.source.part !== "studio" ? block.footnote : undefined)}
         findings={block.metrics.map(metric => {
           const raw = block.verifiedSource?.rows.find(row => row.id === metric.id)?.cells[1]?.replace(/%\s*$/, "").trim();
           return { id: metric.id, description: metric.description,
@@ -585,7 +590,7 @@ export function CanonicalReportComponent({
       return <PercentageComparisonGrid title={block.presentation?.title ?? block.title}
         leadIns={block.presentation?.leadIns} palette={block.presentation?.palette}
         note={block.presentation?.note} synthetic={block.verifiedSource?.synthetic}
-        sourceNote={block.source.part !== "studio" ? block.footnote : undefined}
+        sourceNote={block.presentation?.sourceNote ?? (block.source.part !== "studio" ? block.footnote : undefined)}
         findings={block.metrics.map(metric => {
           const raw = block.verifiedSource?.rows.find(row => row.id === metric.id)?.cells[1]?.replace(/%\s*$/, "").trim();
           return {
@@ -598,8 +603,7 @@ export function CanonicalReportComponent({
     case "line-chart":
       return <LineChart block={block} />;
     case "grouped-column-comparison":
-      return block.groups.length === 4 && block.series.length === 2 && !block.presentation?.showDifference &&
-        (!block.presentation?.palette || block.presentation.palette === "brand")
+      return block.groups.length === 4 && block.series.length === 2 && !block.presentation
         ? <GroupedColumnComparison block={block} /> : <ComparisonChart block={block} />;
     case "grouped-bar-comparison":
     case "comparison-panel-group":

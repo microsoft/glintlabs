@@ -44,6 +44,43 @@ test("accepts the minimum valid report manifest", () => {
   assert.equal(result.success, true);
 });
 
+test("retains Word paragraph spacing and native table treatment through reader parsing", () => {
+  const table = {
+    id: "table", type: "data-visual-source", source: { part: "word/document.xml", index: 1 },
+    tablePresentation: { headerRow: true, showTitle: false, tone: "blue" },
+    data: { sourceKind: "word-table", title: "Activities", unit: "unknown", sha256: "b".repeat(64),
+      columns: ["Activity", "Gap"], rows: [{ id: "first", cells: ["Action plan", "+14pp"] }] },
+  };
+  const parsed = reportManifestSchema.parse({ ...minimumManifest, blocks: [
+    { id: "text", type: "paragraph", text: "Methods.", paragraphBreakBefore: true, source: table.source }, table,
+  ] });
+  assert.equal("paragraphBreakBefore" in parsed.blocks[0] && parsed.blocks[0].paragraphBreakBefore, true);
+  assert.equal(parsed.blocks[1].type === "data-visual-source" && parsed.blocks[1].tablePresentation?.tone, "blue");
+  assert.equal(reportManifestSchema.safeParse({ ...minimumManifest,
+    blocks: [{ ...table, data: { ...table.data, rows: [{ id: "bad", cells: ["Action plan", "+14pp", "N/A"] }] } }],
+  }).success, false);
+});
+
+test("reader parsing retains saved header framing and hidden chart legends", () => {
+  const presentation = { style: "original", crop: "landscape", focalPointX: 35, focalPointY: 0 };
+  const manifest = reportManifestSchema.parse(JSON.parse(JSON.stringify({
+    ...minimumManifest, blocks: [
+      ...minimumManifest.blocks,
+      { id: "photo", type: "image", fileName: "photo.png", dataUrl: "data:image/png;base64,eA==",
+        width: 100, height: 100, alt: "Synthetic photo", placement: "hero", presentation,
+        source: { part: "word/document.xml", index: 1 } },
+      { id: "columns", type: "grouped-column-comparison", title: "Synthetic chart",
+        subtitle: "Synthetic fixture", sourceNote: "Source: Synthetic fixture.",
+        series: ["Favorable"], groups: [{ id: "first", label: "First", values: [80] }],
+        presentation: { title: "Synthetic chart", showLegend: false },
+        source: { part: "word/document.xml", index: 2 } },
+    ],
+  })));
+  assert.equal(manifest.blocks[1].type, "image");
+  assert.deepEqual(manifest.blocks[1].type === "image" && manifest.blocks[1].presentation, presentation);
+  assert.equal(manifest.blocks[2].type === "grouped-column-comparison" && manifest.blocks[2].presentation?.showLegend, false);
+});
+
 test("accepts current Studio line charts and rejects mismatched period matrices", () => {
   const chart = {
     id: "synthetic-trend", type: "line-chart",
